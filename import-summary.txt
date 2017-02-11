@@ -1,0 +1,524 @@
+ECLIPSE ANDROID PROJECT IMPORT SUMMARY
+======================================
+
+Manifest Merging:
+-----------------
+Your project uses libraries that provide manifests, and your Eclipse
+project did not explicitly turn on manifest merging. In Android Gradle
+projects, manifests are always merged (meaning that contents from your
+libraries' manifests will be merged into the app manifest. If you had
+manually copied contents from library manifests into your app manifest
+you may need to remove these for the app to build correctly.
+
+Ignored Files:
+--------------
+The following files were *not* copied into the new Gradle project; you
+should evaluate whether these are still needed in your project and if
+so manually move them:
+
+* .gitignore
+* .idea\
+* .idea\ant.xml
+* .idea\artifacts\
+* .idea\artifacts\Financisto.xml
+* .idea\compiler.xml
+* .idea\copyright\
+* .idea\copyright\gpl2.xml
+* .idea\copyright\profiles_settings.xml
+* .idea\dictionaries\
+* .idea\dictionaries\solomonk.xml
+* .idea\encodings.xml
+* .idea\misc.xml
+* .idea\modules.xml
+* .idea\scopes\
+* .idea\scopes\scope_settings.xml
+* .idea\sqldialects.xml
+* .idea\uiDesigner.xml
+* .idea\vcs.xml
+* .idea\workspace.xml
+* 0001-Filter-by-note-content.patch
+* Financisto.iml
+* build.xml
+* classes\
+* classes\artifacts\
+* classes\artifacts\Financisto\
+* classes\artifacts\Financisto\Financisto.apk
+* classes\production\
+* classes\production\google-play-services_lib\
+* classes\production\google-play-services_lib\android\
+* classes\production\google-play-services_lib\android\UnusedStub.class
+* classes\production\google-play-services_lib\com\
+* classes\production\google-play-services_lib\com\google\
+* classes\production\google-play-services_lib\com\google\android\
+* classes\production\google-play-services_lib\com\google\android\gms\
+* classes\production\google-play-services_lib\com\google\android\gms\BuildConfig.class
+* classes\production\google-play-services_lib\com\google\android\gms\R$attr.class
+* classes\production\google-play-services_lib\com\google\android\gms\R$color.class
+* classes\production\google-play-services_lib\com\google\android\gms\R$drawable.class
+* classes\production\google-play-services_lib\com\google\android\gms\R$id.class
+* classes\production\google-play-services_lib\com\google\android\gms\R$integer.class
+* classes\production\google-play-services_lib\com\google\android\gms\R$string.class
+* classes\production\google-play-services_lib\com\google\android\gms\R$styleable.class
+* classes\production\google-play-services_lib\com\google\android\gms\R.class
+* google-play-services_lib\
+* google-play-services_lib\.classpath
+* google-play-services_lib\AndroidManifest.xml
+* google-play-services_lib\README.txt
+* google-play-services_lib\gen\
+* google-play-services_lib\gen\com\
+* google-play-services_lib\gen\com\google\
+* google-play-services_lib\gen\com\google\android\
+* google-play-services_lib\gen\com\google\android\gms\
+* google-play-services_lib\gen\com\google\android\gms\BuildConfig.java
+* google-play-services_lib\gen\com\google\android\gms\Manifest.java
+* google-play-services_lib\gen\com\google\android\gms\R.java
+* google-play-services_lib\google-play-services_lib.iml
+* google-play-services_lib\libs\
+* google-play-services_lib\libs\google-play-services.jar
+* google-play-services_lib\libs\google-play-services.jar.properties
+* google-play-services_lib\proguard.txt
+* google-play-services_lib\project.properties
+* google-play-services_lib\res\
+* google-play-services_lib\res\color\
+* google-play-services_lib\res\color\common_signin_btn_text_dark.xml
+* google-play-services_lib\res\color\common_signin_btn_text_light.xml
+* google-play-services_lib\res\drawable-hdpi\
+* google-play-services_lib\res\drawable-hdpi\common_signin_btn_icon_disabled_dark.9.png
+* google-play-services_lib\res\drawable-hdpi\common_signin_btn_icon_disabled_focus_dark.9.png
+* google-play-services_lib\res\drawable-hdpi\common_signin_btn_icon_disabled_focus_light.9.png
+* google-play-services_lib\res\drawable-hdpi\common_signin_btn_icon_disabled_light.9.png
+* google-play-services_lib\res\drawable-hdpi\common_signin_btn_icon_focus_dark.9.png
+* google-play-services_lib\res\drawable-hdpi\common_signin_btn_icon_focus_light.9.png
+* google-play-services_lib\res\drawable-hdpi\common_signin_btn_icon_normal_dark.9.png
+* google-play-services_lib\res\drawable-hdpi\common_signin_btn_icon_normal_light.9.png
+* google-play-services_lib\res\drawable-hdpi\common_signin_btn_icon_pressed_dark.9.png
+* google-play-services_lib\res\drawable-hdpi\common_signin_btn_icon_pressed_light.9.png
+* google-play-services_lib\res\drawable-hdpi\common_signin_btn_text_disabled_dark.9.png
+* google-play-services_lib\res\drawable-hdpi\common_signin_btn_text_disabled_focus_dark.9.png
+* google-play-services_lib\res\drawable-hdpi\common_signin_btn_text_disabled_focus_light.9.png
+* google-play-services_lib\res\drawable-hdpi\common_signin_btn_text_disabled_light.9.png
+* google-play-services_lib\res\drawable-hdpi\common_signin_btn_text_focus_dark.9.png
+* google-play-services_lib\res\drawable-hdpi\common_signin_btn_text_focus_light.9.png
+* google-play-services_lib\res\drawable-hdpi\common_signin_btn_text_normal_dark.9.png
+* google-play-services_lib\res\drawable-hdpi\common_signin_btn_text_normal_light.9.png
+* google-play-services_lib\res\drawable-hdpi\common_signin_btn_text_pressed_dark.9.png
+* google-play-services_lib\res\drawable-hdpi\common_signin_btn_text_pressed_light.9.png
+* google-play-services_lib\res\drawable-hdpi\ic_plusone_medium_off_client.png
+* google-play-services_lib\res\drawable-hdpi\ic_plusone_small_off_client.png
+* google-play-services_lib\res\drawable-hdpi\ic_plusone_standard_off_client.png
+* google-play-services_lib\res\drawable-hdpi\ic_plusone_tall_off_client.png
+* google-play-services_lib\res\drawable-mdpi\
+* google-play-services_lib\res\drawable-mdpi\common_signin_btn_icon_disabled_dark.9.png
+* google-play-services_lib\res\drawable-mdpi\common_signin_btn_icon_disabled_focus_dark.9.png
+* google-play-services_lib\res\drawable-mdpi\common_signin_btn_icon_disabled_focus_light.9.png
+* google-play-services_lib\res\drawable-mdpi\common_signin_btn_icon_disabled_light.9.png
+* google-play-services_lib\res\drawable-mdpi\common_signin_btn_icon_focus_dark.9.png
+* google-play-services_lib\res\drawable-mdpi\common_signin_btn_icon_focus_light.9.png
+* google-play-services_lib\res\drawable-mdpi\common_signin_btn_icon_normal_dark.9.png
+* google-play-services_lib\res\drawable-mdpi\common_signin_btn_icon_normal_light.9.png
+* google-play-services_lib\res\drawable-mdpi\common_signin_btn_icon_pressed_dark.9.png
+* google-play-services_lib\res\drawable-mdpi\common_signin_btn_icon_pressed_light.9.png
+* google-play-services_lib\res\drawable-mdpi\common_signin_btn_text_disabled_dark.9.png
+* google-play-services_lib\res\drawable-mdpi\common_signin_btn_text_disabled_focus_dark.9.png
+* google-play-services_lib\res\drawable-mdpi\common_signin_btn_text_disabled_focus_light.9.png
+* google-play-services_lib\res\drawable-mdpi\common_signin_btn_text_disabled_light.9.png
+* google-play-services_lib\res\drawable-mdpi\common_signin_btn_text_focus_dark.9.png
+* google-play-services_lib\res\drawable-mdpi\common_signin_btn_text_focus_light.9.png
+* google-play-services_lib\res\drawable-mdpi\common_signin_btn_text_normal_dark.9.png
+* google-play-services_lib\res\drawable-mdpi\common_signin_btn_text_normal_light.9.png
+* google-play-services_lib\res\drawable-mdpi\common_signin_btn_text_pressed_dark.9.png
+* google-play-services_lib\res\drawable-mdpi\common_signin_btn_text_pressed_light.9.png
+* google-play-services_lib\res\drawable-mdpi\ic_plusone_medium_off_client.png
+* google-play-services_lib\res\drawable-mdpi\ic_plusone_small_off_client.png
+* google-play-services_lib\res\drawable-mdpi\ic_plusone_standard_off_client.png
+* google-play-services_lib\res\drawable-mdpi\ic_plusone_tall_off_client.png
+* google-play-services_lib\res\drawable-xhdpi\
+* google-play-services_lib\res\drawable-xhdpi\common_signin_btn_icon_disabled_dark.9.png
+* google-play-services_lib\res\drawable-xhdpi\common_signin_btn_icon_disabled_focus_dark.9.png
+* google-play-services_lib\res\drawable-xhdpi\common_signin_btn_icon_disabled_focus_light.9.png
+* google-play-services_lib\res\drawable-xhdpi\common_signin_btn_icon_disabled_light.9.png
+* google-play-services_lib\res\drawable-xhdpi\common_signin_btn_icon_focus_dark.9.png
+* google-play-services_lib\res\drawable-xhdpi\common_signin_btn_icon_focus_light.9.png
+* google-play-services_lib\res\drawable-xhdpi\common_signin_btn_icon_normal_dark.9.png
+* google-play-services_lib\res\drawable-xhdpi\common_signin_btn_icon_normal_light.9.png
+* google-play-services_lib\res\drawable-xhdpi\common_signin_btn_icon_pressed_dark.9.png
+* google-play-services_lib\res\drawable-xhdpi\common_signin_btn_icon_pressed_light.9.png
+* google-play-services_lib\res\drawable-xhdpi\common_signin_btn_text_disabled_dark.9.png
+* google-play-services_lib\res\drawable-xhdpi\common_signin_btn_text_disabled_focus_dark.9.png
+* google-play-services_lib\res\drawable-xhdpi\common_signin_btn_text_disabled_focus_light.9.png
+* google-play-services_lib\res\drawable-xhdpi\common_signin_btn_text_disabled_light.9.png
+* google-play-services_lib\res\drawable-xhdpi\common_signin_btn_text_focus_dark.9.png
+* google-play-services_lib\res\drawable-xhdpi\common_signin_btn_text_focus_light.9.png
+* google-play-services_lib\res\drawable-xhdpi\common_signin_btn_text_normal_dark.9.png
+* google-play-services_lib\res\drawable-xhdpi\common_signin_btn_text_normal_light.9.png
+* google-play-services_lib\res\drawable-xhdpi\common_signin_btn_text_pressed_dark.9.png
+* google-play-services_lib\res\drawable-xhdpi\common_signin_btn_text_pressed_light.9.png
+* google-play-services_lib\res\drawable-xhdpi\ic_plusone_medium_off_client.png
+* google-play-services_lib\res\drawable-xhdpi\ic_plusone_small_off_client.png
+* google-play-services_lib\res\drawable-xhdpi\ic_plusone_standard_off_client.png
+* google-play-services_lib\res\drawable-xhdpi\ic_plusone_tall_off_client.png
+* google-play-services_lib\res\drawable-xxhdpi\
+* google-play-services_lib\res\drawable-xxhdpi\common_signin_btn_icon_disabled_dark.9.png
+* google-play-services_lib\res\drawable-xxhdpi\common_signin_btn_icon_disabled_focus_dark.9.png
+* google-play-services_lib\res\drawable-xxhdpi\common_signin_btn_icon_disabled_focus_light.9.png
+* google-play-services_lib\res\drawable-xxhdpi\common_signin_btn_icon_disabled_light.9.png
+* google-play-services_lib\res\drawable-xxhdpi\common_signin_btn_icon_focus_dark.9.png
+* google-play-services_lib\res\drawable-xxhdpi\common_signin_btn_icon_focus_light.9.png
+* google-play-services_lib\res\drawable-xxhdpi\common_signin_btn_icon_normal_dark.9.png
+* google-play-services_lib\res\drawable-xxhdpi\common_signin_btn_icon_normal_light.9.png
+* google-play-services_lib\res\drawable-xxhdpi\common_signin_btn_icon_pressed_dark.9.png
+* google-play-services_lib\res\drawable-xxhdpi\common_signin_btn_icon_pressed_light.9.png
+* google-play-services_lib\res\drawable-xxhdpi\common_signin_btn_text_disabled_dark.9.png
+* google-play-services_lib\res\drawable-xxhdpi\common_signin_btn_text_disabled_focus_dark.9.png
+* google-play-services_lib\res\drawable-xxhdpi\common_signin_btn_text_disabled_focus_light.9.png
+* google-play-services_lib\res\drawable-xxhdpi\common_signin_btn_text_disabled_light.9.png
+* google-play-services_lib\res\drawable-xxhdpi\common_signin_btn_text_focus_dark.9.png
+* google-play-services_lib\res\drawable-xxhdpi\common_signin_btn_text_focus_light.9.png
+* google-play-services_lib\res\drawable-xxhdpi\common_signin_btn_text_normal_dark.9.png
+* google-play-services_lib\res\drawable-xxhdpi\common_signin_btn_text_normal_light.9.png
+* google-play-services_lib\res\drawable-xxhdpi\common_signin_btn_text_pressed_dark.9.png
+* google-play-services_lib\res\drawable-xxhdpi\common_signin_btn_text_pressed_light.9.png
+* google-play-services_lib\res\drawable-xxhdpi\ic_plusone_medium_off_client.png
+* google-play-services_lib\res\drawable-xxhdpi\ic_plusone_small_off_client.png
+* google-play-services_lib\res\drawable-xxhdpi\ic_plusone_standard_off_client.png
+* google-play-services_lib\res\drawable-xxhdpi\ic_plusone_tall_off_client.png
+* google-play-services_lib\res\drawable\
+* google-play-services_lib\res\drawable\common_signin_btn_icon_dark.xml
+* google-play-services_lib\res\drawable\common_signin_btn_icon_light.xml
+* google-play-services_lib\res\drawable\common_signin_btn_text_dark.xml
+* google-play-services_lib\res\drawable\common_signin_btn_text_light.xml
+* google-play-services_lib\res\values-af\
+* google-play-services_lib\res\values-af\strings.xml
+* google-play-services_lib\res\values-am\
+* google-play-services_lib\res\values-am\strings.xml
+* google-play-services_lib\res\values-ar\
+* google-play-services_lib\res\values-ar\strings.xml
+* google-play-services_lib\res\values-be\
+* google-play-services_lib\res\values-be\strings.xml
+* google-play-services_lib\res\values-bg\
+* google-play-services_lib\res\values-bg\strings.xml
+* google-play-services_lib\res\values-ca\
+* google-play-services_lib\res\values-ca\strings.xml
+* google-play-services_lib\res\values-cs\
+* google-play-services_lib\res\values-cs\strings.xml
+* google-play-services_lib\res\values-da\
+* google-play-services_lib\res\values-da\strings.xml
+* google-play-services_lib\res\values-de\
+* google-play-services_lib\res\values-de\strings.xml
+* google-play-services_lib\res\values-el\
+* google-play-services_lib\res\values-el\strings.xml
+* google-play-services_lib\res\values-en-rGB\
+* google-play-services_lib\res\values-en-rGB\strings.xml
+* google-play-services_lib\res\values-en-rIN\
+* google-play-services_lib\res\values-en-rIN\strings.xml
+* google-play-services_lib\res\values-es-rUS\
+* google-play-services_lib\res\values-es-rUS\strings.xml
+* google-play-services_lib\res\values-es\
+* google-play-services_lib\res\values-es\strings.xml
+* google-play-services_lib\res\values-et-rEE\
+* google-play-services_lib\res\values-et-rEE\strings.xml
+* google-play-services_lib\res\values-et\
+* google-play-services_lib\res\values-et\strings.xml
+* google-play-services_lib\res\values-fa\
+* google-play-services_lib\res\values-fa\strings.xml
+* google-play-services_lib\res\values-fi\
+* google-play-services_lib\res\values-fi\strings.xml
+* google-play-services_lib\res\values-fr-rCA\
+* google-play-services_lib\res\values-fr-rCA\strings.xml
+* google-play-services_lib\res\values-fr\
+* google-play-services_lib\res\values-fr\strings.xml
+* google-play-services_lib\res\values-hi\
+* google-play-services_lib\res\values-hi\strings.xml
+* google-play-services_lib\res\values-hr\
+* google-play-services_lib\res\values-hr\strings.xml
+* google-play-services_lib\res\values-hu\
+* google-play-services_lib\res\values-hu\strings.xml
+* google-play-services_lib\res\values-hy-rAM\
+* google-play-services_lib\res\values-hy-rAM\strings.xml
+* google-play-services_lib\res\values-in\
+* google-play-services_lib\res\values-in\strings.xml
+* google-play-services_lib\res\values-it\
+* google-play-services_lib\res\values-it\strings.xml
+* google-play-services_lib\res\values-iw\
+* google-play-services_lib\res\values-iw\strings.xml
+* google-play-services_lib\res\values-ja\
+* google-play-services_lib\res\values-ja\strings.xml
+* google-play-services_lib\res\values-ka-rGE\
+* google-play-services_lib\res\values-ka-rGE\strings.xml
+* google-play-services_lib\res\values-km-rKH\
+* google-play-services_lib\res\values-km-rKH\strings.xml
+* google-play-services_lib\res\values-ko\
+* google-play-services_lib\res\values-ko\strings.xml
+* google-play-services_lib\res\values-lo-rLA\
+* google-play-services_lib\res\values-lo-rLA\strings.xml
+* google-play-services_lib\res\values-lt\
+* google-play-services_lib\res\values-lt\strings.xml
+* google-play-services_lib\res\values-lv\
+* google-play-services_lib\res\values-lv\strings.xml
+* google-play-services_lib\res\values-mn-rMN\
+* google-play-services_lib\res\values-mn-rMN\strings.xml
+* google-play-services_lib\res\values-ms-rMY\
+* google-play-services_lib\res\values-ms-rMY\strings.xml
+* google-play-services_lib\res\values-ms\
+* google-play-services_lib\res\values-ms\strings.xml
+* google-play-services_lib\res\values-nb\
+* google-play-services_lib\res\values-nb\strings.xml
+* google-play-services_lib\res\values-nl\
+* google-play-services_lib\res\values-nl\strings.xml
+* google-play-services_lib\res\values-pl\
+* google-play-services_lib\res\values-pl\strings.xml
+* google-play-services_lib\res\values-pt-rBR\
+* google-play-services_lib\res\values-pt-rBR\strings.xml
+* google-play-services_lib\res\values-pt-rPT\
+* google-play-services_lib\res\values-pt-rPT\strings.xml
+* google-play-services_lib\res\values-pt\
+* google-play-services_lib\res\values-pt\strings.xml
+* google-play-services_lib\res\values-ro\
+* google-play-services_lib\res\values-ro\strings.xml
+* google-play-services_lib\res\values-ru\
+* google-play-services_lib\res\values-ru\strings.xml
+* google-play-services_lib\res\values-sk\
+* google-play-services_lib\res\values-sk\strings.xml
+* google-play-services_lib\res\values-sl\
+* google-play-services_lib\res\values-sl\strings.xml
+* google-play-services_lib\res\values-sr\
+* google-play-services_lib\res\values-sr\strings.xml
+* google-play-services_lib\res\values-sv\
+* google-play-services_lib\res\values-sv\strings.xml
+* google-play-services_lib\res\values-sw\
+* google-play-services_lib\res\values-sw\strings.xml
+* google-play-services_lib\res\values-th\
+* google-play-services_lib\res\values-th\strings.xml
+* google-play-services_lib\res\values-tl\
+* google-play-services_lib\res\values-tl\strings.xml
+* google-play-services_lib\res\values-tr\
+* google-play-services_lib\res\values-tr\strings.xml
+* google-play-services_lib\res\values-uk\
+* google-play-services_lib\res\values-uk\strings.xml
+* google-play-services_lib\res\values-vi\
+* google-play-services_lib\res\values-vi\strings.xml
+* google-play-services_lib\res\values-zh-rCN\
+* google-play-services_lib\res\values-zh-rCN\strings.xml
+* google-play-services_lib\res\values-zh-rHK\
+* google-play-services_lib\res\values-zh-rHK\strings.xml
+* google-play-services_lib\res\values-zh-rTW\
+* google-play-services_lib\res\values-zh-rTW\strings.xml
+* google-play-services_lib\res\values-zu\
+* google-play-services_lib\res\values-zu\strings.xml
+* google-play-services_lib\res\values\
+* google-play-services_lib\res\values\ads_attrs.xml
+* google-play-services_lib\res\values\colors.xml
+* google-play-services_lib\res\values\maps_attrs.xml
+* google-play-services_lib\res\values\strings.xml
+* google-play-services_lib\res\values\version.xml
+* google-play-services_lib\src\
+* google-play-services_lib\src\android\
+* google-play-services_lib\src\android\UnusedStub.java
+* license.txt
+* note_search.patch
+* prepare_dropbox_keys.sh
+* proguard-project.txt
+* robotium_tests\
+* robotium_tests\ant.properties
+* robotium_tests\build.xml
+* robotium_tests\gen\
+* robotium_tests\gen\ru\
+* robotium_tests\gen\ru\orangesoftware\
+* robotium_tests\gen\ru\orangesoftware\financisto\
+* robotium_tests\gen\ru\orangesoftware\financisto\tests\
+* robotium_tests\gen\ru\orangesoftware\financisto\tests\BuildConfig.java
+* robotium_tests\gen\ru\orangesoftware\financisto\tests\Manifest.java
+* robotium_tests\gen\ru\orangesoftware\financisto\tests\R.java
+* robotium_tests\proguard-project.txt
+* robotium_tests\project.properties
+* robotium_tests\robotium_tests.iml
+* tests\
+* tests\AndroidManifest.xml
+* tests\ant.properties
+* tests\assets\
+* tests\assets\open_exchange_error_response.json
+* tests\assets\open_exchange_normal_response.json
+* tests\build.xml
+* tests\gen\
+* tests\gen\ru\
+* tests\gen\ru\orangesoftware\
+* tests\gen\ru\orangesoftware\financisto\
+* tests\gen\ru\orangesoftware\financisto\tests\
+* tests\gen\ru\orangesoftware\financisto\tests\BuildConfig.java
+* tests\gen\ru\orangesoftware\financisto\tests\Manifest.java
+* tests\gen\ru\orangesoftware\financisto\tests\R.java
+* tests\proguard-project.txt
+* tests\proguard.cfg
+* tests\project.properties
+* tests\src\
+* tests\src\ru\
+* tests\src\ru\orangesoftware\
+* tests\src\ru\orangesoftware\financisto\
+* tests\src\ru\orangesoftware\financisto\activity\
+* tests\src\ru\orangesoftware\financisto\activity\CurrencySelectorTest.java
+* tests\src\ru\orangesoftware\financisto\activity\MainActivityTest.java
+* tests\src\ru\orangesoftware\financisto\backup\
+* tests\src\ru\orangesoftware\financisto\backup\DatabaseBackupTest.java
+* tests\src\ru\orangesoftware\financisto\blotter\
+* tests\src\ru\orangesoftware\financisto\blotter\WhereFilterTest.java
+* tests\src\ru\orangesoftware\financisto\db\
+* tests\src\ru\orangesoftware\financisto\db\AbstractDbTest.java
+* tests\src\ru\orangesoftware\financisto\db\AccountBlotterTest.java
+* tests\src\ru\orangesoftware\financisto\db\AccountPurgeTest.java
+* tests\src\ru\orangesoftware\financisto\db\AccountTotalTest.java
+* tests\src\ru\orangesoftware\financisto\db\BlotterTest.java
+* tests\src\ru\orangesoftware\financisto\db\CategoriesTest.java
+* tests\src\ru\orangesoftware\financisto\db\DatabaseAdapterTest.java
+* tests\src\ru\orangesoftware\financisto\db\MyDatabaseTest.java
+* tests\src\ru\orangesoftware\financisto\db\PlannerTest.java
+* tests\src\ru\orangesoftware\financisto\db\RunningBalanceTest.java
+* tests\src\ru\orangesoftware\financisto\db\TransactionsTotalCalculatorBenchmark.java
+* tests\src\ru\orangesoftware\financisto\db\TransactionsTotalCalculatorTest.java
+* tests\src\ru\orangesoftware\financisto\export\
+* tests\src\ru\orangesoftware\financisto\export\AbstractExportTest.java
+* tests\src\ru\orangesoftware\financisto\export\AbstractImportExportTest.java
+* tests\src\ru\orangesoftware\financisto\export\CategoryCacheTest.java
+* tests\src\ru\orangesoftware\financisto\export\CsvExportTest.java
+* tests\src\ru\orangesoftware\financisto\export\CsvImportTest.java
+* tests\src\ru\orangesoftware\financisto\export\FlowzrIntegrationTest.java
+* tests\src\ru\orangesoftware\financisto\export\QifBufferedReaderTest.java
+* tests\src\ru\orangesoftware\financisto\export\QifExportTest.java
+* tests\src\ru\orangesoftware\financisto\export\QifImportTest.java
+* tests\src\ru\orangesoftware\financisto\export\QifImportTestCases.java
+* tests\src\ru\orangesoftware\financisto\export\QifParserTest.java
+* tests\src\ru\orangesoftware\financisto\export\QifUtilsTest.java
+* tests\src\ru\orangesoftware\financisto\http\
+* tests\src\ru\orangesoftware\financisto\http\FakeHttpClientWrapper.java
+* tests\src\ru\orangesoftware\financisto\model\
+* tests\src\ru\orangesoftware\financisto\model\BudgetTest.java
+* tests\src\ru\orangesoftware\financisto\model\CategoryTreeNavigatorTest.java
+* tests\src\ru\orangesoftware\financisto\model\CategoryTreeTest.java
+* tests\src\ru\orangesoftware\financisto\model\CurrencyTest.java
+* tests\src\ru\orangesoftware\financisto\model\TransactionTest.java
+* tests\src\ru\orangesoftware\financisto\model\rates\
+* tests\src\ru\orangesoftware\financisto\model\rates\AssertExchangeRate.java
+* tests\src\ru\orangesoftware\financisto\model\rates\ExchangeRateTest.java
+* tests\src\ru\orangesoftware\financisto\model\rates\HistoryExchangeRatesTest.java
+* tests\src\ru\orangesoftware\financisto\model\rates\LatestExchangeRatesTest.java
+* tests\src\ru\orangesoftware\financisto\rates\
+* tests\src\ru\orangesoftware\financisto\rates\AbstractRatesDownloaderTest.java
+* tests\src\ru\orangesoftware\financisto\rates\OpenExchangeRatesDownloaderTest.java
+* tests\src\ru\orangesoftware\financisto\rates\WebserviceXConversionRateDownloaderTest.java
+* tests\src\ru\orangesoftware\financisto\recur\
+* tests\src\ru\orangesoftware\financisto\recur\RecurrencePerformanceTest.java
+* tests\src\ru\orangesoftware\financisto\recur\RecurrenceTest.java
+* tests\src\ru\orangesoftware\financisto\report\
+* tests\src\ru\orangesoftware\financisto\report\AbstractReportTest.java
+* tests\src\ru\orangesoftware\financisto\report\CategoryReportAllTest.java
+* tests\src\ru\orangesoftware\financisto\report\CategoryReportTest.java
+* tests\src\ru\orangesoftware\financisto\report\PeriodReportTest.java
+* tests\src\ru\orangesoftware\financisto\report\SubCategoryReportTest.java
+* tests\src\ru\orangesoftware\financisto\service\
+* tests\src\ru\orangesoftware\financisto\service\AutoBackupSchedulerTest.java
+* tests\src\ru\orangesoftware\financisto\service\RecurrenceComparatorTest.java
+* tests\src\ru\orangesoftware\financisto\service\RecurrenceSchedulerTest.java
+* tests\src\ru\orangesoftware\financisto\test\
+* tests\src\ru\orangesoftware\financisto\test\AccountBuilder.java
+* tests\src\ru\orangesoftware\financisto\test\AttributeBuilder.java
+* tests\src\ru\orangesoftware\financisto\test\CategoryBuilder.java
+* tests\src\ru\orangesoftware\financisto\test\CurrencyBuilder.java
+* tests\src\ru\orangesoftware\financisto\test\DateTime.java
+* tests\src\ru\orangesoftware\financisto\test\RateBuilder.java
+* tests\src\ru\orangesoftware\financisto\test\TransactionBuilder.java
+* tests\src\ru\orangesoftware\financisto\test\TransferBuilder.java
+* tests\src\ru\orangesoftware\financisto\utils\
+* tests\src\ru\orangesoftware\financisto\utils\DateUtilsTest.java
+* tests\src\ru\orangesoftware\financisto\utils\IntegrityCheckTest.java
+* tests\src\ru\orangesoftware\financisto\utils\SplitAdjusterTest.java
+* tests\src\ru\orangesoftware\financisto\utils\TransactionTitleUtilsTest.java
+* tests\tests.iml
+
+Replaced Jars with Dependencies:
+--------------------------------
+The importer recognized the following .jar files as third party
+libraries and replaced them with Gradle dependencies instead. This has
+the advantage that more explicit version information is known, and the
+libraries can be updated automatically. However, it is possible that
+the .jar file in your project was of an older version than the
+dependency we picked, which could render the project not compileable.
+You can disable the jar replacement in the import wizard and try again:
+
+robotium-solo-3.4.1-javadoc.jar => com.jayway.android.robotium:robotium-solo:5.3.1
+robotium-solo-3.4.1.jar => com.jayway.android.robotium:robotium-solo:3.4.1
+android-support-v4.jar => com.android.support:support-v4:19.1.0
+google-http-client-gson-1.17.0-rc.jar => com.google.http-client:google-http-client-gson:1.20.0
+gson-2.2.4.jar => com.google.code.gson:gson:2.2.4
+
+Potentially Missing Dependency:
+-------------------------------
+When we replaced the following .jar files with a Gradle dependency, we
+inferred the dependency version number from the filename. This
+specific version may not actually be available from the repository.
+If you get a build error stating that the dependency is missing, edit
+the version number to for example "+" to pick up the latest version
+instead. (This may require you to update your code if the library APIs
+have changed.)
+
+gson-2.2.4.jar => version 2.2.4 in com.google.code.gson:gson:2.2.4
+robotium-solo-3.4.1.jar => version 3.4.1 in com.jayway.android.robotium:robotium-solo:3.4.1
+
+Replaced Libraries with Dependencies:
+-------------------------------------
+The importer recognized the following library projects as third party
+libraries and replaced them with Gradle dependencies instead. This has
+the advantage that more explicit version information is known, and the
+libraries can be updated automatically. However, it is possible that
+the source files in your project were of an older version than the
+dependency we picked, which could render the project not compileable.
+You can disable the library replacement in the import wizard and try
+again:
+
+google-play-services_lib => [com.google.android.gms:play-services:+]
+
+Moved Files:
+------------
+Android Gradle projects use a different directory structure than ADT
+Eclipse projects. Here's how the projects were restructured:
+
+* AndroidManifest.xml => app\src\main\AndroidManifest.xml
+* assets\ => app\src\main\assets\
+* libs\achartengine-1.0.0.jar => app\libs\achartengine-1.0.0.jar
+* libs\commons-logging-1.1.1.jar => app\libs\commons-logging-1.1.1.jar
+* libs\CWAC-WakefulIntentService.jar => app\libs\CWAC-WakefulIntentService.jar
+* libs\dropbox-android-sdk-1.5.4.jar => app\libs\dropbox-android-sdk-1.5.4.jar
+* libs\google-api-client-1.17.0-rc.jar => app\libs\google-api-client-1.17.0-rc.jar
+* libs\google-api-client-android-1.17.0-rc.jar => app\libs\google-api-client-android-1.17.0-rc.jar
+* libs\google-api-services-drive-v2-rev100-1.17.0-rc.jar => app\libs\google-api-services-drive-v2-rev100-1.17.0-rc.jar
+* libs\google-http-client-1.17.0-rc.jar => app\libs\google-http-client-1.17.0-rc.jar
+* libs\google-http-client-android-1.17.0-rc.jar => app\libs\google-http-client-android-1.17.0-rc.jar
+* libs\google-http-client-jackson2-1.17.0-rc.jar => app\libs\google-http-client-jackson2-1.17.0-rc.jar
+* libs\google-oauth-client-1.17.0-rc.jar => app\libs\google-oauth-client-1.17.0-rc.jar
+* libs\httpclient-4.0.3.jar => app\libs\httpclient-4.0.3.jar
+* libs\httpcore-4.0.1.jar => app\libs\httpcore-4.0.1.jar
+* libs\httpmime-4.0.3.jar => app\libs\httpmime-4.0.3.jar
+* libs\json_simple-1.1.jar => app\libs\json_simple-1.1.jar
+* libs\rfc2445-no-joda.jar => app\libs\rfc2445-no-joda.jar
+* libs\trove-3.0.2-long.jar => app\libs\trove-3.0.2-long.jar
+* res\ => app\src\main\res\
+* robotium_tests\libs\robotium-solo-3.4.1-javadoc.jar => app\libs\robotium-solo-3.4.1-javadoc.jar
+* robotium_tests\libs\robotium-solo-3.4.1.jar => app\libs\robotium-solo-3.4.1.jar
+* robotium_tests\res\ => app\src\androidTest\res
+* robotium_tests\src\ => app\src\androidTest\java\
+* src\ => app\src\main\java\
+* src\greendroid\ => app\src\main\java\
+* src\ru\orangesoftware\financisto\adapter\BlotterListAdapter.java - Shortcut.lnk => app\src\main\resources\ru\orangesoftware\financisto\adapter\BlotterListAdapter.java - Shortcut.lnk
+
+Next Steps:
+-----------
+You can now build the project. The Gradle project needs network
+connectivity to download dependencies.
+
+Bugs:
+-----
+If for some reason your project does not build, and you determine that
+it is due to a bug or limitation of the Eclipse to Gradle importer,
+please file a bug at http://b.android.com with category
+Component-Tools.
+
+(This import summary is for your information only, and can be deleted
+after import once you are satisfied with the results.)

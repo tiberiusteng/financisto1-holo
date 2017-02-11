@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <style name="AppTheme" parent="android:Theme.Holo">
+        <item name="android:buttonStyle">@android:style/Widget.Holo.Light.Button</item>
+        <item name="android:imageButtonStyle">@android:style/Widget.Holo.Light.ImageButton</item>
+    </style>
+    <style name="ButtonBar">
+        <item name="android:background">@android:color/background_light</item>
+    </style>
+</resources>
