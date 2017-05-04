@@ -7,7 +7,7 @@ This codebase is started from an imported copy of an old version of source code
 at launchpad (https://code.launchpad.net/~financisto-dev/financisto/trunk), as 
 an working interim version until proper version 2 comes out.
 
-I haven't modified package name yet, so you'll need to remove play market version 
+I haven't modified package name yet, so you'll need to remove Play store version 
 first, to be able to install this version.
 
 BE SURE TO BACKUP YOUR DATA!
@@ -17,7 +17,7 @@ BE SURE TO BACKUP YOUR DATA!
 * Tweaked text layout, support device text scaling
 * Search memo text
 * Location removed due to huge change in google maps API
-* Backup file compatible with play market version 1.7.1
+* Backup file compatible with Play store version 1.7.1
 * Dropbox sync works, but you need to supply your own appid/key
 
 ![Main screen](https://tiberiusteng.github.io/financisto1-holo/screenshots/main.jpg)
