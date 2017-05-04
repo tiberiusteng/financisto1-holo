@@ -36,7 +36,7 @@
   <string name="parent">上層</string>
   <string name="total">總計:</string>
   <string name="filter">過濾</string>
-  <string name="no_filter">無過濾條件</string>
+  <string name="no_filter">不過濾</string>
   <string name="transfer">移轉</string>
   <string name="confirmation">確認</string>
   <string name="delete_category_dialog">您真的要砍掉這個分類與(如果有)其子分類嗎?</string>

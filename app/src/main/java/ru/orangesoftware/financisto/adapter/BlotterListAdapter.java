@@ -249,7 +249,6 @@ public class BlotterListAdapter extends ResourceCursorAdapter {
     protected void removeRightViewIfNeeded(BlotterViewHolder v) {
         if (v.rightView != null && !isShowRunningBalance()) {
             v.rightView.setVisibility(View.GONE);
-            v.iconView.setPadding(0, topPadding, 0, 0);
         }
     }
 

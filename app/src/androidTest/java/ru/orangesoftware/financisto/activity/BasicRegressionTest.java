@@ -3,7 +3,7 @@ package ru.orangesoftware.financisto.activity;
 import android.test.ActivityInstrumentationTestCase2;
 import android.widget.ImageButton;
 import android.widget.ListView;
-import com.jayway.android.robotium.solo.Solo;
+import com.robotium.solo.Solo;
 import ru.orangesoftware.financisto.R;
 
 public class BasicRegressionTest extends ActivityInstrumentationTestCase2<MainActivity> {
@@ -45,7 +45,7 @@ public class BasicRegressionTest extends ActivityInstrumentationTestCase2<MainAc
     }
 
     private void checkCountInTheList(int count) {
-        ListView currenciesListView = solo.getCurrentListViews().get(0);
+        ListView currenciesListView = solo.getCurrentViews(ListView.class).get(0);
         assertEquals(count, currenciesListView.getAdapter().getCount());
     }
 

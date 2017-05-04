@@ -34,16 +34,20 @@
                     android:layout_height="wrap_content" android:text="1"
                     android:id="@+id/b1" android:minHeight="@dimen/pin_button_height"
                     android:minWidth="@dimen/pin_button_width" android:layout_margin="3dp" android:layout_weight="1"
-                    android:textSize="30sp"/>
+                    android:textSize="30sp"
+                    style="@style/LockScreenButton"
+                    />
             <Button android:layout_width="wrap_content"
                     android:layout_height="wrap_content" android:text="2"
                     android:id="@+id/b2" android:minHeight="@dimen/pin_button_height"
                     android:minWidth="@dimen/pin_button_width" android:layout_margin="3dp" android:layout_weight="1"
+                    style="@style/LockScreenButton"
                     android:textSize="30sp"/>
             <Button android:layout_width="wrap_content"
                     android:layout_height="wrap_content" android:text="3"
                     android:id="@+id/b3" android:minHeight="@dimen/pin_button_height"
                     android:minWidth="@dimen/pin_button_width" android:layout_margin="3dp" android:layout_weight="1"
+                    style="@style/LockScreenButton"
                     android:textSize="30sp"/>
         </TableRow>
         <TableRow android:layout_height="wrap_content"
@@ -51,14 +55,17 @@
             <Button android:layout_width="wrap_content"
                     android:layout_height="wrap_content" android:id="@+id/b4" android:text="4"
                     android:minHeight="@dimen/pin_button_height" android:minWidth="@dimen/pin_button_width"
+                    style="@style/LockScreenButton"
                     android:layout_margin="3dp" android:layout_weight="1" android:textSize="30sp"/>
             <Button android:layout_width="wrap_content"
                     android:layout_height="wrap_content" android:text="5" android:id="@+id/b5"
                     android:minHeight="@dimen/pin_button_height" android:minWidth="@dimen/pin_button_width"
+                    style="@style/LockScreenButton"
                     android:layout_margin="3dp" android:layout_weight="1" android:textSize="30sp"/>
             <Button android:layout_width="wrap_content"
                     android:layout_height="wrap_content" android:text="6" android:id="@+id/b6"
                     android:minHeight="@dimen/pin_button_height" android:minWidth="@dimen/pin_button_width"
+                    style="@style/LockScreenButton"
                     android:layout_margin="3dp" android:layout_weight="1" android:textSize="30sp"/>
         </TableRow>
         <TableRow android:layout_height="wrap_content"
@@ -67,16 +74,19 @@
                     android:layout_height="wrap_content" android:text="7"
                     android:id="@+id/b7" android:minHeight="@dimen/pin_button_height"
                     android:minWidth="@dimen/pin_button_width" android:layout_margin="3dp" android:layout_weight="1"
+                    style="@style/LockScreenButton"
                     android:textSize="30sp"/>
             <Button android:layout_width="wrap_content"
                     android:layout_height="wrap_content" android:text="8"
                     android:id="@+id/b8" android:minHeight="@dimen/pin_button_height"
                     android:minWidth="@dimen/pin_button_width" android:layout_margin="3dp" android:layout_weight="1"
+                    style="@style/LockScreenButton"
                     android:textSize="30sp"/>
             <Button android:layout_width="wrap_content"
                     android:layout_height="wrap_content" android:text="9"
                     android:id="@+id/b9" android:minHeight="@dimen/pin_button_height"
                     android:minWidth="@dimen/pin_button_width" android:layout_margin="3dp" android:layout_weight="1"
+                    style="@style/LockScreenButton"
                     android:textSize="30sp"/>
         </TableRow>
         <TableRow android:layout_height="wrap_content"
@@ -85,15 +95,18 @@
                     android:layout_height="wrap_content" android:text="C" android:id="@+id/bHelp"
                     android:minHeight="@dimen/pin_button_height" android:minWidth="@dimen/pin_button_width"
                     android:layout_margin="3dp" android:textStyle="bold" android:textColor="#f26522"
+                    style="@style/LockScreenButton"
                     android:layout_weight="1" android:textSize="30sp"/>
             <Button android:layout_width="wrap_content"
                     android:layout_height="wrap_content" android:text="0" android:id="@+id/b0"
                     android:minHeight="@dimen/pin_button_height" android:minWidth="@dimen/pin_button_width"
+                    style="@style/LockScreenButton"
                     android:layout_margin="3dp" android:layout_weight="1" android:textSize="30sp"/>
             <Button android:layout_width="wrap_content"
                     android:layout_height="wrap_content" android:text="OK" android:id="@+id/bClear"
                     android:minHeight="@dimen/pin_button_height" android:minWidth="@dimen/pin_button_width"
                     android:layout_margin="3dp" android:textStyle="bold" android:textColor="#39b54a"
+                    style="@style/LockScreenButton"
                     android:layout_weight="1" android:textSize="30sp"/>
         </TableRow>
     </TableLayout>

@@ -194,15 +194,13 @@ public class ScheduledListAdapter extends BaseAdapter {
 			v.bottomView = (TextView)view.findViewById(R.id.bottom);
 			v.rightCenterView = (TextView)view.findViewById(R.id.right_center);
 			v.iconView = (ImageView)view.findViewById(R.id.right_top);
-            removeRightView(view, v);
+            removeRightView(view);
 			view.setTag(v);
 			return v;
 		}
 
-        private static void removeRightView(View view, Holder v) {
+        private static void removeRightView(View view) {
             view.findViewById(R.id.right).setVisibility(View.GONE);
-            int topPadding = v.iconView.getResources().getDimensionPixelSize(R.dimen.transaction_icon_padding);
-            v.iconView.setPadding(0, topPadding, 0, 0);
         }
 
     }

@@ -12,7 +12,11 @@ package ru.orangesoftware.financisto.utils;
 
 import android.app.AlertDialog;
 import android.content.DialogInterface;
+import android.os.Build;
+import android.view.ContextThemeWrapper;
 import android.widget.ListAdapter;
+
+import ru.orangesoftware.financisto.R;
 import ru.orangesoftware.financisto.adapter.EntityEnumAdapter;
 import android.content.Context;
 import android.widget.ArrayAdapter;
@@ -47,16 +51,22 @@ public abstract class EnumUtils {
 
     public static <V, T extends ExecutableEntityEnum<V>> void showPickOneDialog(Context context, int titleId, final T[] items, final V value) {
         ListAdapter adapter = EnumUtils.createEntityEnumAdapter(context, items);
-        AlertDialog dialog = new AlertDialog.Builder(context)
-                .setAdapter(adapter, new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialog, int which) {
-                        dialog.dismiss();
-                        T e = items[which];
-                        e.execute(value);
-                    }
-                })
-                .create();
+		AlertDialog.Builder ab;
+//		if (Build.VERSION.SDK_INT >= 11) {
+//			ab = new AlertDialog.Builder(context, AlertDialog.THEME_HOLO_DARK);
+//		}
+//		else {
+//			ab = new AlertDialog.Builder(context);
+//		}
+        ab = new AlertDialog.Builder(new ContextThemeWrapper(context, R.style.AlertDialog));
+		AlertDialog dialog = ab.setAdapter(adapter, new DialogInterface.OnClickListener() {
+			@Override
+			public void onClick(DialogInterface dialog, int which) {
+				dialog.dismiss();
+				T e = items[which];
+				e.execute(value);
+			}
+		}).create();
         dialog.setTitle(titleId);
         dialog.show();
     }

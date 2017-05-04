@@ -12,9 +12,9 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
 	android:id="@+id/top_layout" android:layout_width="fill_parent"
 	android:layout_height="wrap_content" android:paddingRight="?android:attr/scrollbarSize"
-	android:background="@android:drawable/list_selector_background"
 	android:orientation="horizontal" android:gravity="center_vertical"
-	android:minHeight="@dimen/select_entry_height">
+	android:minHeight="@dimen/select_entry_height"
+	style="@style/SelectableItem">
 	<!-- ?android:attr/listPreferredItemHeight -->
 	<RelativeLayout android:layout_width="wrap_content"
 		android:layout_height="wrap_content" android:layout_marginLeft="8dip"

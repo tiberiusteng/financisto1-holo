@@ -10,7 +10,7 @@
       Denis Solonenko - initial API and implementation
 -->
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-	android:paddingLeft="0dip" android:paddingRight="8dip"
+	android:paddingLeft="0dip" android:paddingRight="10dp"
 	android:layout_height="wrap_content" android:layout_width="fill_parent">
 
 	<ImageView android:id="@+id/icon" android:layout_width="wrap_content"

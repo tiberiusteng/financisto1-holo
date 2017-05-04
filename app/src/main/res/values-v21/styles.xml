@@ -2,6 +2,19 @@
 <resources>
     <!--
     <style name="AppTheme" parent="android:Theme.Material">
+        <item name="android:buttonStyle">@android:style/Widget.Material.Light.Button</item>
+        <item name="android:imageButtonStyle">@android:style/Widget.Material.Light.ImageButton</item>
     </style>
+    <style name="AppDialog" parent="android:Theme.Material.Dialog" />
+    <style name="AlertDialog" parent="android:Theme.Material.Dialog" />
+    <style name="CalculatorDialog" parent="@android:style/Theme.Material.Light.Dialog" />
+
+    <style name="ButtonBar" parent="@android:style/Widget.Material.ButtonBar" />
+
+    <style name="WhiteBackgroundButtonBar" parent="@style/ButtonBar">
+
+    </style>
+
+    <style name="LightButton" parent="@android:style/Widget.Material.Light.Button" />
     -->
 </resources>

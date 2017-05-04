@@ -10,9 +10,9 @@
 -->
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
 	android:layout_height="wrap_content" android:layout_width="fill_parent"
-	style="@style/ButtonBar">
-	<Button android:layout_weight="1" android:id="@+id/bOK" android:text="@string/ok"
+	style="@style/WhiteBackgroundButtonBar">
+	<Button style="@style/LightButton" android:layout_weight="1" android:id="@+id/bOK" android:text="@string/ok"
 		android:layout_height="wrap_content" android:layout_width="0dp"/>
-	<Button android:layout_height="wrap_content" android:layout_weight="1"
+	<Button style="@style/LightButton" android:layout_height="wrap_content" android:layout_weight="1"
 		android:id="@+id/bCancel" android:text="@string/cancel" android:layout_width="0dp"/>
 </LinearLayout>

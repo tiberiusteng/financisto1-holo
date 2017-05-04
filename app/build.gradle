@@ -13,6 +13,7 @@ android {
         applicationId "ru.orangesoftware.financisto"
         minSdkVersion 9
         targetSdkVersion 9
+        multiDexEnabled true
 
         testApplicationId "ru.orangesoftware.financisto.tests"
         testInstrumentationRunner "android.test.InstrumentationTestRunner"
@@ -21,7 +22,7 @@ android {
     buildTypes {
         release {
             minifyEnabled false
-            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.txt'
+            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.txt', 'proguard-google-api-client.txt'
         }
     }
 
@@ -30,28 +31,38 @@ android {
     }
 }
 
+configurations {
+    compile.exclude group: "org.apache.httpcomponents", module: "httpclient"
+}
+
 dependencies {
-    compile 'com.android.support:support-v4:25.1.1'
+    //compile 'com.android.support:support-v4:25.1.1'
+    compile 'com.google.api-client:google-api-client:1.20.0'
+    compile 'com.google.api-client:google-api-client-android:1.20.0'
+    compile 'com.google.apis:google-api-services-drive:v2-rev252-1.20.0'
+    compile 'com.google.http-client:google-http-client:1.20.0'
+    compile 'com.google.http-client:google-http-client-android:1.20.0'
     compile 'com.google.http-client:google-http-client-gson:1.20.0'
-    compile 'com.google.code.gson:gson:2.2.4'
+    compile 'com.google.http-client:google-http-client-jackson2:1.20.0'
+    //compile 'com.google.code.gson:gson:2.4'
     compile 'com.google.android.gms:play-services:10.0.1'
+    compile 'com.android.support:multidex:1.0.1'
     compile files('libs/achartengine-1.2.0.jar')
-    compile files('libs/commons-logging-1.1.1.jar')
+    compile files('libs/commons-logging-1.2.jar')
     compile files('libs/CWAC-WakefulIntentService.jar')
     compile files('libs/dropbox-android-sdk-1.5.4.jar')
-    compile files('libs/google-api-client-1.17.0-rc.jar')
-    compile files('libs/google-api-client-android-1.17.0-rc.jar')
-    compile files('libs/google-api-services-drive-v2-rev100-1.17.0-rc.jar')
-    compile files('libs/google-http-client-1.17.0-rc.jar')
-    compile files('libs/google-http-client-android-1.17.0-rc.jar')
-    compile files('libs/google-http-client-jackson2-1.17.0-rc.jar')
-    compile files('libs/google-oauth-client-1.17.0-rc.jar')
+    //compile files('libs/google-api-client-1.17.0-rc.jar')
+    //compile files('libs/google-api-client-android-1.17.0-rc.jar')
+    //compile files('libs/google-api-services-drive-v2-rev100-1.17.0-rc.jar')
+    //compile files('libs/google-http-client-1.17.0-rc.jar')
+    //compile files('libs/google-http-client-android-1.17.0-rc.jar')
+    //compile files('libs/google-http-client-jackson2-1.17.0-rc.jar')
+    //compile files('libs/google-oauth-client-1.17.0-rc.jar')
     compile files('libs/httpclient-4.0.3.jar')
     compile files('libs/httpcore-4.0.1.jar')
     compile files('libs/httpmime-4.0.3.jar')
     compile files('libs/json_simple-1.1.jar')
     compile files('libs/rfc2445-no-joda.jar')
     compile files('libs/trove-3.0.2-long.jar')
-    androidTestCompile 'com.jayway.android.robotium:robotium-solo:5.3.1'
-    androidTestCompile 'com.jayway.android.robotium:robotium-solo:3.4.1'
+    androidTestCompile 'com.jayway.android.robotium:robotium-solo:5.6.0'
 }

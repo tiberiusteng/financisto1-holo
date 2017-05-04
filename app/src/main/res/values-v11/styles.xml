@@ -4,7 +4,26 @@
         <item name="android:buttonStyle">@android:style/Widget.Holo.Light.Button</item>
         <item name="android:imageButtonStyle">@android:style/Widget.Holo.Light.ImageButton</item>
     </style>
-    <style name="ButtonBar">
+    <style name="AppDialog" parent="@android:style/Theme.Holo.Dialog" />
+    <style name="AlertDialog" parent="@android:style/Theme.Holo.Dialog" />
+    <style name="CalculatorDialog" parent="@android:style/Theme.Holo.Light.Dialog" />
+    <style name="MassOpActionDropdown">
+        <item name="android:background">@null</item>
+    </style>
+    <style name="ButtonBar" parent="@android:style/Holo.ButtonBar" />
+    <style name="SelectableItem">
+        <item name="android:background">?android:attr/selectableItemBackground</item>
+    </style>
+    <style name="MoreButton">
+        <item name="android:src">@drawable/ic_btn_round_more</item>
+    </style>
+    <style name="ImageButtonOnDarkBackground" parent="@android:style/Widget.Holo.ImageButton" />
+    <style name="WhiteBackgroundButtonBar" parent="@style/ButtonBar">
         <item name="android:background">@android:color/background_light</item>
     </style>
+    <style name="LightButton" parent="@android:style/Widget.Holo.Light.Button"></style>
+    <style name="EntityEnumListItemText">
+        <item name="android:textColor">@android:color/primary_text_dark</item>
+    </style>
+    <style name="LockScreenButton" parent="@android:style/Widget.Button" />
 </resources>

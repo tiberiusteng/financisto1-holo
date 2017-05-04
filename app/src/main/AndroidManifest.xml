@@ -13,8 +13,6 @@
     package="ru.orangesoftware.financisto" android:versionName="1.6.8" android:versionCode="91"
     android:installLocation="internalOnly">
 
-    <uses-sdk android:minSdkVersion="7" android:targetSdkVersion="7"/>
-
     <supports-screens
 	    android:smallScreens="true"
 	    android:normalScreens="true"
@@ -47,6 +45,7 @@
 
 
     <application
+		android:name="android.support.multidex.MultiDexApplication"
 		android:theme="@style/AppTheme"
 	    android:icon="@drawable/icon" android:label="@string/app_name"
 			android:hardwareAccelerated="true"
@@ -165,13 +164,13 @@
 
 		<activity android:name=".activity.RecurActivity" android:label="@string/recur"
 			android:icon="@drawable/icon_transfer"
-			android:theme="@android:style/Theme.Dialog" android:configChanges="orientation|keyboardHidden"/>
+			android:theme="@style/AppDialog" android:configChanges="orientation|keyboardHidden"/>
 
 		<activity android:name=".activity.RecurrenceActivity" android:label="@string/recur"		 
-			android:theme="@android:style/Theme.Dialog" android:configChanges="orientation|keyboardHidden"/>
+			android:theme="@style/AppDialog" android:configChanges="orientation|keyboardHidden"/>
 			
 		<activity android:name=".activity.NotificationOptionsActivity" android:label="@string/notification"		 
-			android:theme="@android:style/Theme.Dialog" android:configChanges="orientation|keyboardHidden"/>			
+			android:theme="@style/AppDialog" android:configChanges="orientation|keyboardHidden"/>
 
 		<activity android:name=".activity.ReportsListActivity" android:label="@string/reports"/>
 		
@@ -198,28 +197,28 @@
 		  android:configChanges="orientation|keyboardHidden"/>
 		
 		<activity android:name=".activity.AttributeActivity" android:label="@string/attribute"
-			android:theme="@android:style/Theme.Dialog" android:configChanges="orientation|keyboardHidden"/>
+			android:theme="@style/AppDialog" android:configChanges="orientation|keyboardHidden"/>
 		
 		<activity android:name=".activity.DateFilterActivity" android:label="@string/filter"
-			android:theme="@android:style/Theme.Dialog" android:configChanges="orientation|keyboardHidden"/>
+			android:theme="@style/AppDialog" android:configChanges="orientation|keyboardHidden"/>
 
 		<activity android:name=".activity.NoteFilterActivity" android:label="@string/filter"
-			android:theme="@android:style/Theme.Dialog" android:configChanges="orientation|keyboardHidden"/>
+			android:theme="@style/AppDialog" android:configChanges="orientation|keyboardHidden"/>
 
 		<activity android:name=".activity.BlotterFilterActivity" android:label="@string/filter"
-			android:theme="@android:style/Theme.Dialog" android:configChanges="orientation|keyboardHidden"/>
+			android:theme="@style/AppDialog" android:configChanges="orientation|keyboardHidden"/>
 
 	<activity android:name=".activity.ReportFilterActivity" android:label="@string/filter"
-		  android:theme="@android:style/Theme.Dialog" android:configChanges="orientation|keyboardHidden"/>
+		  android:theme="@style/AppDialog" android:configChanges="orientation|keyboardHidden"/>
 
 		<activity android:name=".activity.CategoryActivity" android:label="@string/category"
 			android:configChanges="orientation|keyboardHidden"/>
 		
 		<activity android:name=".widget.QuickAmountInput"
-			android:label="@string/amount" android:theme="@android:style/Theme.Dialog"/>
+			android:label="@string/amount" android:theme="@style/AppDialog"/>
 		
 		<activity android:name=".widget.CalculatorInput"
-			android:label="@string/calculator" android:theme="@android:style/Theme.Dialog"/>
+			android:label="@string/calculator" android:theme="@style/CalculatorDialog"/>
 		
 		<activity android:name=".activity.BudgetActivity" android:label="@string/budgets"
 			android:configChanges="orientation|keyboardHidden"/>		
@@ -229,12 +228,12 @@
 		<activity android:name=".activity.BudgetListActivity" android:label="@string/budgets"/>		
 		
 		<activity android:name=".activity.ProjectActivity" android:label="@string/project"
-			android:theme="@android:style/Theme.Dialog" android:configChanges="orientation|keyboardHidden"/>
+			android:theme="@style/AppDialog" android:configChanges="orientation|keyboardHidden"/>
 		
 		<activity android:name=".activity.ProjectListActivity" android:label="@string/projects"/>
 		
 	<activity android:name=".activity.PayeeActivity" android:label="@string/payee"
-	    android:theme="@android:style/Theme.Dialog" android:configChanges="orientation|keyboardHidden"/>
+	    android:theme="@style/AppDialog" android:configChanges="orientation|keyboardHidden"/>
 
 	<activity android:name=".activity.PayeeListActivity" android:label="@string/payees"/>
 
@@ -245,7 +244,7 @@
 		<activity android:name=".activity.ScheduledListActivity" android:label="@string/scheduled_transactions"/>		
 
 		<activity android:name=".activity.SelectTemplateActivity" android:label="@string/transaction_templates"		 
-			android:theme="@android:style/Theme.Dialog" android:configChanges="orientation|keyboardHidden"/>
+			android:theme="@style/AppDialog" android:configChanges="orientation|keyboardHidden"/>
 
 		<activity android:name=".activity.CsvExportActivity" android:label="@string/csv_export" />
 	<activity android:name=".activity.CsvImportActivity" android:label="@string/csv_import" />
@@ -268,13 +267,13 @@
 	<activity android:name=".activity.CategorySelectorActivity" android:label="@string/select_category"/>
 
 	<activity android:name=".activity.AccountListTotalsDetailsActivity" android:label="@string/totals"
-		  android:theme="@android:style/Theme.Dialog" android:configChanges="orientation|keyboardHidden"/>
+		  android:theme="@style/AppDialog" android:configChanges="orientation|keyboardHidden"/>
 
 	<activity android:name=".activity.BlotterTotalsDetailsActivity" android:label="@string/totals"
-		  android:theme="@android:style/Theme.Dialog" android:configChanges="orientation|keyboardHidden"/>
+		  android:theme="@style/AppDialog" android:configChanges="orientation|keyboardHidden"/>
 
 	<activity android:name=".activity.BudgetListTotalsDetailsActivity" android:label="@string/totals"
-		  android:theme="@android:style/Theme.Dialog" android:configChanges="orientation|keyboardHidden"/>
+		  android:theme="@style/AppDialog" android:configChanges="orientation|keyboardHidden"/>
 
 	<activity android:name=".activity.PurgeAccountActivity" android:label="@string/delete_old_transactions"/>
 

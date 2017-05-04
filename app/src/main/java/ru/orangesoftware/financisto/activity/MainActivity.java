@@ -24,6 +24,7 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
 import android.util.Log;
+import android.view.ContextThemeWrapper;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.Window;
@@ -279,7 +280,7 @@ public class MainActivity extends TabActivity implements TabHost.OnTabChangeList
             case MENU_ENTITIES:
                 final MenuEntities[] entities = MenuEntities.values();
                 ListAdapter adapter = EnumUtils.createEntityEnumAdapter(this, entities);
-                final AlertDialog d = new AlertDialog.Builder(this)
+                final AlertDialog d = new AlertDialog.Builder(new ContextThemeWrapper(this, R.style.AlertDialog))
                         .setAdapter(adapter, new DialogInterface.OnClickListener() {
                             @Override
                             public void onClick(DialogInterface dialog, int which) {
@@ -369,7 +370,7 @@ public class MainActivity extends TabActivity implements TabHost.OnTabChangeList
     };
 
     public void showErrorPopup(Context context, int message) {
-        new AlertDialog.Builder(context)
+        new AlertDialog.Builder(new ContextThemeWrapper(context, R.style.AlertDialog))
                 .setMessage(message)
                 .setTitle(R.string.error)
                 .setPositiveButton(R.string.ok, null)
@@ -449,7 +450,7 @@ public class MainActivity extends TabActivity implements TabHost.OnTabChangeList
 
     private void doImport() {
         final String[] backupFiles = Backup.listBackups(this);
-        new AlertDialog.Builder(this)
+        new AlertDialog.Builder(new ContextThemeWrapper(this, R.style.AlertDialog))
                 .setTitle(R.string.restore_database)
                 .setPositiveButton(R.string.restore, new DialogInterface.OnClickListener() {
                     @Override
@@ -488,7 +489,7 @@ public class MainActivity extends TabActivity implements TabHost.OnTabChangeList
     public void doImportFromGoogleDrive(final com.google.api.services.drive.model.File[] backupFiles) {
         if (backupFiles != null) {
             String[] backupFilesNames = getBackupFilesTitles(backupFiles);
-            new AlertDialog.Builder(MainActivity.this)
+            new AlertDialog.Builder(new ContextThemeWrapper(this, R.style.AlertDialog))
                     .setTitle(R.string.restore_database)
                     .setPositiveButton(R.string.restore, new DialogInterface.OnClickListener() {
                         @Override
@@ -534,7 +535,7 @@ public class MainActivity extends TabActivity implements TabHost.OnTabChangeList
 
     public void doImportFromDropbox(final String[] backupFiles) {
         if (backupFiles != null) {
-            new AlertDialog.Builder(MainActivity.this)
+            new AlertDialog.Builder(new ContextThemeWrapper(this, R.style.AlertDialog))
                     .setTitle(R.string.restore_database)
                     .setPositiveButton(R.string.restore, new DialogInterface.OnClickListener() {
                         @Override

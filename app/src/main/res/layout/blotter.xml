@@ -24,8 +24,9 @@
               android:background="#FF0000" android:textColor="#FFFFFF" android:padding="3dp"
               android:visibility="gone"/>
     <LinearLayout android:layout_height="wrap_content"
-		android:layout_width="fill_parent" android:background="#FFF"
-		android:paddingTop="2dp">
+		android:layout_width="fill_parent"
+		android:paddingTop="2dp"
+		style="@style/BlotterButtonBar">
 		<ImageButton android:layout_width="wrap_content"
 			android:layout_height="wrap_content" android:id="@+id/bAdd"
 			android:src="@drawable/ic_input_add" />
