@@ -14,6 +14,9 @@ import android.content.Context;
 import android.database.Cursor;
 import android.graphics.Color;
 import android.text.format.DateUtils;
+
+import java.util.Calendar;
+
 import ru.orangesoftware.financisto.R;
 import ru.orangesoftware.financisto.db.DatabaseAdapter;
 import ru.orangesoftware.financisto.db.DatabaseHelper.BlotterColumns;
@@ -82,11 +85,18 @@ public class TransactionsListAdapter extends BlotterListAdapter {
 
         long date = cursor.getLong(BlotterColumns.datetime.ordinal());
         v.bottomView.setText(DateUtils.formatDateTime(context, date,
-                DateUtils.FORMAT_SHOW_DATE|DateUtils.FORMAT_SHOW_TIME|DateUtils.FORMAT_ABBREV_MONTH));
+                DateUtils.FORMAT_SHOW_DATE|DateUtils.FORMAT_SHOW_WEEKDAY|DateUtils.FORMAT_ABBREV_WEEKDAY|DateUtils.FORMAT_SHOW_TIME|DateUtils.FORMAT_ABBREV_MONTH));
         if (date > System.currentTimeMillis()) {
             u.setFutureTextColor(v.bottomView);
         } else {
-            v.bottomView.setTextColor(v.topView.getTextColors().getDefaultColor());
+            Calendar cal = Calendar.getInstance();
+            cal.setTimeInMillis(date);
+            int dayOfWeek = cal.get(Calendar.DAY_OF_WEEK);
+            if (dayOfWeek == Calendar.SUNDAY || dayOfWeek == Calendar.SATURDAY) {
+                v.bottomView.setTextColor(Color.rgb(224, 112, 112));
+            } else {
+                v.bottomView.setTextColor(v.topView.getTextColors().getDefaultColor());
+            }
         }
 
         long balance = cursor.getLong(BlotterColumns.from_account_balance.ordinal());

@@ -42,12 +42,17 @@
 		<TextView android:id="@+id/center" android:text="center"
 			android:singleLine="true" android:layout_width="wrap_content"
 			android:layout_weight="1" android:layout_height="wrap_content"
-			android:textAppearance="?android:attr/textAppearanceMedium" />
-		<TextView android:id="@+id/right_center" android:layout_width="wrap_content"
+			android:textAppearance="@android:style/TextAppearance.Medium" />
+
+		<TextView
+			android:id="@+id/right_center"
+			android:layout_width="wrap_content"
+			android:layout_height="fill_parent"
+			android:gravity="bottom"
+			android:paddingLeft="5dp"
 			android:singleLine="true"
-			android:text="right_center" android:paddingLeft="5dp"
-			android:textAppearance="?android:attr/textAppearanceMedium"
-			android:layout_height="fill_parent" android:gravity="bottom" />
+			android:text="right_center"
+			android:textAppearance="@android:style/TextAppearance.Medium" />
 	</LinearLayout>
 
 	<LinearLayout android:layout_height="wrap_content"
@@ -61,12 +66,14 @@
 			android:layout_height="wrap_content" android:layout_weight="1"
 			android:textAppearance="@android:style/TextAppearance.Small"/>
 
-		<TextView android:id="@+id/right"
-			android:text="right"
-			android:layout_width="wrap_content"
+		<TextView
+			android:id="@+id/right"
 			style="@style/TextAppearance.BalanceAmount"
-			android:singleLine="true" android:layout_height="wrap_content"
-			android:paddingLeft="5dp" />
+			android:layout_width="wrap_content"
+			android:layout_height="wrap_content"
+			android:paddingLeft="5dp"
+			android:singleLine="true"
+			android:text="right" />
 	</LinearLayout>
 
 	<ProgressBar android:id="@+id/progress" android:max="100"

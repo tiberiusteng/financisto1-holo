@@ -12,15 +12,16 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:paddingLeft="0dip" android:paddingRight="5dp" android:id="@+id/layout"
     android:layout_width="fill_parent"
-    android:layout_height="59sp"
+    android:layout_height="match_parent"
     android:minHeight="59sp">
 
-    <TextView android:id="@+id/indicator" android:layout_alignParentLeft="true"
-        android:layout_height="59sp"
-        android:minHeight="59sp"
-        android:layout_width="3dp"
-        android:layout_marginBottom="1dp"
-        android:layout_marginTop="1dp"
+    <View android:id="@+id/indicator" android:layout_alignParentLeft="true"
+        android:layout_height="match_parent"
+        android:layout_width="4sp"
+        android:layout_marginBottom="-1sp"
+        android:layout_marginTop="-1sp"
+        android:layout_alignTop="@id/top"
+        android:layout_alignBottom="@+id/bottom"
         />
 
     <ImageView android:id="@+id/right_top"
@@ -38,7 +39,7 @@
         android:layout_height="wrap_content" android:singleLine="true" android:text="top"
         android:textSize="10sp" android:layout_toRightOf="@id/indicator"
         android:paddingTop="3sp"
-        android:layout_marginLeft="5dp"/>
+        android:layout_marginLeft="3sp"/>
 
     <TextView android:id="@+id/center"
         android:layout_height="wrap_content"
@@ -48,31 +49,55 @@
         android:layout_marginTop="-2sp"
         android:layout_marginBottom="-2sp"
         android:layout_marginRight="2sp"
-        android:singleLine="true" android:layout_alignLeft="@id/top"
+        android:maxLines="1" android:layout_alignLeft="@id/top"
         android:layout_toLeftOf="@+id/right_center"
         android:ellipsize="end"/>
+<!--
+    <TextView android:id="@+id/memo"
+        android:layout_height="wrap_content"
+        android:layout_width="fill_parent" android:text="memo" android:textColor="?android:textColorTertiary"
+        android:textAppearance="?android:attr/textAppearanceSmall"
+        android:layout_below="@id/bottom"
+        android:layout_alignLeft="@id/top"
+        android:layout_marginTop="-2sp"
+        android:layout_marginBottom="-2sp"
+        android:layout_marginLeft="10sp"
+        android:layout_marginRight="2sp"
+        android:paddingBottom="3sp"
+        android:ellipsize="end"/>
 
+    <View android:id="@+id/below_memo"
+        android:layout_below="@id/memo"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        />
+-->
     <TextView android:id="@+id/bottom"
         android:text="bottom"
         android:layout_below="@id/center" android:layout_width="wrap_content"
         android:textAppearance="?android:attr/textAppearanceSmall"
-        android:singleLine="true" android:layout_height="wrap_content"
-        android:layout_alignLeft="@id/center" />
+        android:maxLines="1" android:layout_height="wrap_content"
+        android:layout_alignLeft="@id/center" /><!--android:paddingBottom="3sp"-->
 
-    <TextView android:id="@+id/right_center"
+    <TextView
+        android:id="@+id/right_center"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignBaseline="@+id/center"
+        android:layout_alignBottom="@+id/center"
         android:layout_alignParentRight="true"
-        android:layout_alignBaseline="@id/center"
-        android:layout_width="wrap_content" android:layout_height="wrap_content"
-        android:textAppearance="?android:attr/textAppearanceMedium"
-        android:layout_marginTop="-2sp"
-        android:layout_marginBottom="-2sp"
+        android:maxLines="1"
         android:text="right_center"
-        android:singleLine="true"/>
+        android:textAppearance="?android:attr/textAppearanceMedium" />
 
-    <TextView android:text="right" android:id="@+id/right"
-        android:layout_alignBaseline="@id/bottom" android:layout_width="wrap_content"
-        android:singleLine="true" android:layout_height="wrap_content"
+    <TextView
+        android:id="@+id/right"
         style="@style/TextAppearance.BalanceAmount"
-        android:layout_alignParentRight="true"/>
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignBaseline="@id/bottom"
+        android:layout_alignParentRight="true"
+        android:maxLines="1"
+        android:text="right" />
 
 </RelativeLayout>

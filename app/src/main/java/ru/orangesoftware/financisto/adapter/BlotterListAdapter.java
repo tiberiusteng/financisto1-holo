@@ -194,7 +194,8 @@ public class BlotterListAdapter extends ResourceCursorAdapter {
                 long date = cursor.getLong(BlotterColumns.datetime.ordinal());
                 dt.setTime(date);
                 v.bottomView.setText(DateUtils.formatDateTime(context, dt.getTime(),
-                        DateUtils.FORMAT_SHOW_DATE | DateUtils.FORMAT_SHOW_TIME | DateUtils.FORMAT_ABBREV_MONTH));
+                        DateUtils.FORMAT_SHOW_DATE | DateUtils.FORMAT_ABBREV_WEEKDAY | DateUtils.FORMAT_SHOW_WEEKDAY |
+                        DateUtils.FORMAT_SHOW_TIME | DateUtils.FORMAT_ABBREV_MONTH));
 
                 if (isTemplate == 0 && date > System.currentTimeMillis()) {
                     u.setFutureTextColor(v.bottomView);
@@ -288,7 +289,7 @@ public class BlotterListAdapter extends ResourceCursorAdapter {
     public static class BlotterViewHolder {
 
         public final RelativeLayout layout;
-        public final TextView indicator;
+        public final View indicator;
         public final TextView topView;
         public final TextView centerView;
         public final TextView bottomView;
@@ -299,7 +300,7 @@ public class BlotterListAdapter extends ResourceCursorAdapter {
 
         public BlotterViewHolder(View view) {
             layout = (RelativeLayout) view.findViewById(R.id.layout);
-            indicator = (TextView) view.findViewById(R.id.indicator);
+            indicator = (View) view.findViewById(R.id.indicator);
             topView = (TextView) view.findViewById(R.id.top);
             centerView = (TextView) view.findViewById(R.id.center);
             bottomView = (TextView) view.findViewById(R.id.bottom);
