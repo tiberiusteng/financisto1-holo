@@ -85,7 +85,7 @@ public class Dropbox {
         if (accessToken != null) {
             if (dropboxClient == null) {
                 DbxRequestConfig requestConfig = DbxRequestConfig.newBuilder("financisto")
-                        .withHttpRequestor(OkHttp3Requestor.INSTANCE)
+                        .withHttpRequestor(new OkHttp3Requestor(OkHttp3Requestor.defaultOkHttpClient()))
                         .build();
                 dropboxClient = new DbxClientV2(requestConfig, accessToken);
             }
