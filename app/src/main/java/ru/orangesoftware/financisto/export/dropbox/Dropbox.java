@@ -31,11 +31,6 @@ import java.io.FileInputStream;
 import java.io.InputStream;
 import java.util.*;
 
-/**
- * Created by IntelliJ IDEA.
- * User: denis.solonenko
- * Date: 1/10/12 10:52 PM
- */
 public class Dropbox {
 
     private static final String APP_KEY = "aenijec51r68hsv";
@@ -114,7 +109,7 @@ public class Dropbox {
         }
     }
 
-    public List<String> listFiles() throws Exception {
+    List<String> listFiles() throws Exception {
         if (authSession()) {
             try {
                 List<String> files = new ArrayList<String>();
@@ -154,4 +149,3 @@ public class Dropbox {
         }
     }
 }
-

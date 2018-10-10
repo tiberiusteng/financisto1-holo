@@ -4,7 +4,7 @@
  * are made available under the terms of the GNU Public License v2.0
  * which accompanies this distribution, and is available at
  * http://www.gnu.org/licenses/old-licenses/gpl-2.0.html
- * 
+ *
  * Contributors:
  *     Denis Solonenko - initial API and implementation
  ******************************************************************************/
@@ -25,6 +25,7 @@ import android.widget.ImageButton;
 import android.widget.ListAdapter;
 import android.widget.TextView;
 import android.widget.Toast;
+
 import ru.orangesoftware.financisto.R;
 import ru.orangesoftware.financisto.adapter.BudgetListAdapter;
 import ru.orangesoftware.financisto.blotter.BlotterFilter;
@@ -43,43 +44,35 @@ import ru.orangesoftware.financisto.utils.Utils;
 import java.util.ArrayList;
 
 public class BudgetListActivity extends AbstractListActivity {
-	
+
 	private static final int NEW_BUDGET_REQUEST = 1;
 	private static final int EDIT_BUDGET_REQUEST = 2;
 	private static final int VIEW_BUDGET_REQUEST = 3;
 	private static final int FILTER_BUDGET_REQUEST = 4;
 
 	private ImageButton bFilter;
-	
+
 	private WhereFilter filter = WhereFilter.empty();
 
 	public BudgetListActivity() {
-		super(R.layout.budget_list);		
+		super(R.layout.budget_list);
 	}
-	
+
 	private ArrayList<Budget> budgets;
 	private Handler handler;
-	
+
 	@Override
 	protected void internalOnCreate(Bundle savedInstanceState) {
 		super.internalOnCreate(savedInstanceState);
 
-        TextView totalText = (TextView)findViewById(R.id.total);
-        totalText.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                showTotals();
-            }
-        });
+		TextView totalText = findViewById(R.id.total);
+		totalText.setOnClickListener(view -> showTotals());
 
-		bFilter = (ImageButton)findViewById(R.id.bFilter);
-		bFilter.setOnClickListener(new View.OnClickListener(){
-			@Override
-			public void onClick(View v) {
-				Intent intent = new Intent(BudgetListActivity.this, DateFilterActivity.class);
-				filter.toIntent(intent);
-				startActivityForResult(intent, FILTER_BUDGET_REQUEST);
-			}
+		bFilter = findViewById(R.id.bFilter);
+		bFilter.setOnClickListener(v -> {
+			Intent intent = new Intent(BudgetListActivity.this, DateFilterActivity.class);
+			filter.toIntent(intent);
+			startActivityForResult(intent, FILTER_BUDGET_REQUEST);
 		});
 
 		if (filter.isEmpty()) {
@@ -89,18 +82,18 @@ public class BudgetListActivity extends AbstractListActivity {
 			filter.put(new DateTimeCriteria(PeriodType.THIS_MONTH));
 		}
 
-		budgets = em.getAllBudgets(filter);
+		budgets = db.getAllBudgets(filter);
 		handler = new Handler();
-		
-		applyFilter();	
+
+		applyFilter();
 		calculateTotals();
 	}
 
-    private void showTotals() {
-        Intent intent = new Intent(this, BudgetListTotalsDetailsActivity.class);
-        filter.toIntent(intent);
-        startActivityForResult(intent, -1);
-    }
+	private void showTotals() {
+		Intent intent = new Intent(this, BudgetListTotalsDetailsActivity.class);
+		filter.toIntent(intent);
+		startActivityForResult(intent, -1);
+	}
 
 	private void saveFilter() {
 		SharedPreferences preferences = getPreferences(0);
@@ -110,14 +103,14 @@ public class BudgetListActivity extends AbstractListActivity {
 	}
 
 	private void applyFilter() {
-		bFilter.setImageResource(filter.isEmpty() ? R.drawable.ic_menu_filter_off : R.drawable.ic_menu_filter_on);
+		FilterState.updateFilterColor(this, filter, bFilter);
 	}
 
 	@Override
-	protected void onActivityResult(int requestCode, int resultCode, Intent data) {		
+	protected void onActivityResult(int requestCode, int resultCode, Intent data) {
 		if (requestCode == FILTER_BUDGET_REQUEST) {
 			if (resultCode == RESULT_FIRST_USER) {
-				filter.clear();				
+				filter.clear();
 			} else if (resultCode == RESULT_OK) {
 				String periodType = data.getStringExtra(DateFilterActivity.EXTRA_FILTER_PERIOD_TYPE);
 				PeriodType p = PeriodType.valueOf(periodType);
@@ -132,27 +125,27 @@ public class BudgetListActivity extends AbstractListActivity {
 			saveFilter();
 		}
 		recreateCursor();
-	}		
+	}
 
 	@Override
 	protected ListAdapter createAdapter(Cursor cursor) {
 		return new BudgetListAdapter(this, budgets);
 	}
-	
+
 	@Override
 	protected Cursor createCursor() {
 		return null;
 	}
-	
-    @Override
-    public void recreateCursor() {
-        budgets = em.getAllBudgets(filter);
-        updateAdapter();
-        calculateTotals();
-    }
 
-    private void updateAdapter() {
-		((BudgetListAdapter)adapter).setBudgets(budgets);
+	@Override
+	public void recreateCursor() {
+		budgets = db.getAllBudgets(filter);
+		updateAdapter();
+		calculateTotals();
+	}
+
+	private void updateAdapter() {
+		((BudgetListAdapter) adapter).setBudgets(budgets);
 	}
 
 	private BudgetTotalsCalculationTask totalCalculationTask;
@@ -161,12 +154,12 @@ public class BudgetListActivity extends AbstractListActivity {
 		if (totalCalculationTask != null) {
 			totalCalculationTask.stop();
 			totalCalculationTask.cancel(true);
-		}		
-		TextView totalText = (TextView)findViewById(R.id.total);
+		}
+		TextView totalText = findViewById(R.id.total);
 		totalCalculationTask = new BudgetTotalsCalculationTask(totalText);
-		totalCalculationTask.execute((Void[])null);
+		totalCalculationTask.execute((Void[]) null);
 	}
-	
+
 	@Override
 	protected void addItem() {
 		Intent intent = new Intent(this, BudgetActivity.class);
@@ -175,45 +168,36 @@ public class BudgetListActivity extends AbstractListActivity {
 
 	@Override
 	protected void deleteItem(View v, int position, final long id) {
-		final Budget b = em.load(Budget.class, id);
+		final Budget b = db.load(Budget.class, id);
 		if (b.parentBudgetId > 0) {
 			new AlertDialog.Builder(this)
-			.setMessage(R.string.delete_budget_recurring_select)
-			.setPositiveButton(R.string.delete_budget_one_entry, new OnClickListener(){
-				@Override
-				public void onClick(DialogInterface arg0, int arg1) {
-					em.deleteBudgetOneEntry(id);
-					recreateCursor();
-				}
-			})
-			.setNeutralButton(R.string.delete_budget_all_entries, new OnClickListener(){
-				@Override
-				public void onClick(DialogInterface arg0, int arg1) {
-					em.deleteBudget(b.parentBudgetId);
-					recreateCursor();
-				}
-			})			
-			.setNegativeButton(R.string.cancel, null)
-			.show();			
+					.setMessage(R.string.delete_budget_recurring_select)
+					.setPositiveButton(R.string.delete_budget_one_entry, (arg0, arg1) -> {
+						db.deleteBudgetOneEntry(id);
+						recreateCursor();
+					})
+					.setNeutralButton(R.string.delete_budget_all_entries, (arg0, arg1) -> {
+						db.deleteBudget(b.parentBudgetId);
+						recreateCursor();
+					})
+					.setNegativeButton(R.string.cancel, null)
+					.show();
 		} else {
 			Recur recur = RecurUtils.createFromExtraString(b.recur);
 			new AlertDialog.Builder(this)
-			.setMessage(recur.interval == RecurInterval.NO_RECUR ? R.string.delete_budget_confirm : R.string.delete_budget_recurring_confirm)
-			.setPositiveButton(R.string.yes, new OnClickListener(){
-				@Override
-				public void onClick(DialogInterface arg0, int arg1) {
-					em.deleteBudget(id);
-					recreateCursor();
-				}
-			})
-			.setNegativeButton(R.string.no, null)
-			.show();
+					.setMessage(recur.interval == RecurInterval.NO_RECUR ? R.string.delete_budget_confirm : R.string.delete_budget_recurring_confirm)
+					.setPositiveButton(R.string.yes, (arg0, arg1) -> {
+						db.deleteBudget(id);
+						recreateCursor();
+					})
+					.setNegativeButton(R.string.no, null)
+					.show();
 		}
 	}
 
 	@Override
 	public void editItem(View v, int position, long id) {
-		Budget b = em.load(Budget.class, id);
+		Budget b = db.load(Budget.class, id);
 		Recur recur = b.getRecur();
 		if (recur.interval != RecurInterval.NO_RECUR) {
 			Toast t = Toast.makeText(this, R.string.edit_recurring_budget, Toast.LENGTH_LONG);
@@ -225,25 +209,20 @@ public class BudgetListActivity extends AbstractListActivity {
 	}
 
 	@Override
-	protected String getContextMenuHeaderTitle(int position) {
-		return getString(R.string.budget);
-	}
-
-	@Override
 	protected void viewItem(View v, int position, long id) {
-        Budget b = em.load(Budget.class, id);
+		Budget b = db.load(Budget.class, id);
 		Intent intent = new Intent(this, BudgetBlotterActivity.class);
 		Criteria.eq(BlotterFilter.BUDGET_ID, String.valueOf(id))
-			.toIntent(b.title, intent);
+				.toIntent(b.title, intent);
 		startActivityForResult(intent, VIEW_BUDGET_REQUEST);
-	}	
-	
+	}
+
 	public class BudgetTotalsCalculationTask extends AsyncTask<Void, Total, Total> {
-		
+
 		private volatile boolean isRunning = true;
-		
+
 		private final TextView totalText;
-		
+
 		public BudgetTotalsCalculationTask(TextView totalText) {
 			this.totalText = totalText;
 		}
@@ -251,9 +230,9 @@ public class BudgetListActivity extends AbstractListActivity {
 		@Override
 		protected Total doInBackground(Void... params) {
 			try {
-                BudgetsTotalCalculator c = new BudgetsTotalCalculator(db, budgets);
-                c.updateBudgets(handler);
-                return c.calculateTotalInHomeCurrency();
+				BudgetsTotalCalculator c = new BudgetsTotalCalculator(db, budgets);
+				c.updateBudgets(handler);
+				return c.calculateTotalInHomeCurrency();
 			} catch (Exception ex) {
 				Log.e("BudgetTotals", "Unexpected error", ex);
 				return Total.ZERO;
@@ -264,16 +243,16 @@ public class BudgetListActivity extends AbstractListActivity {
 		@Override
 		protected void onPostExecute(Total result) {
 			if (isRunning) {
-                Utils u = new Utils(BudgetListActivity.this);
-                u.setTotal(totalText, result);
-				((BudgetListAdapter)adapter).notifyDataSetChanged();
+				Utils u = new Utils(BudgetListActivity.this);
+				u.setTotal(totalText, result);
+				((BudgetListAdapter) adapter).notifyDataSetChanged();
 			}
 		}
-		
+
 		public void stop() {
 			isRunning = false;
 		}
-		
+
 	}
 
 }

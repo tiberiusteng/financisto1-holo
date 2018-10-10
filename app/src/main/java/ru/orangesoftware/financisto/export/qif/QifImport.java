@@ -10,14 +10,27 @@ package ru.orangesoftware.financisto.export.qif;
 
 import android.content.Context;
 import android.util.Log;
+
+import java.io.BufferedReader;
+import java.io.FileInputStream;
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+import java.util.concurrent.TimeUnit;
+
 import ru.orangesoftware.financisto.backup.FullDatabaseImport;
 import ru.orangesoftware.financisto.db.DatabaseAdapter;
 import ru.orangesoftware.financisto.export.CategoryCache;
-import ru.orangesoftware.financisto.model.*;
-
-import java.io.*;
-import java.util.*;
-import java.util.concurrent.TimeUnit;
+import ru.orangesoftware.financisto.model.Account;
+import ru.orangesoftware.financisto.model.Category;
+import ru.orangesoftware.financisto.model.Payee;
+import ru.orangesoftware.financisto.model.Project;
+import ru.orangesoftware.financisto.model.Transaction;
 
 import static ru.orangesoftware.financisto.utils.Utils.isEmpty;
 
@@ -46,11 +59,6 @@ public class QifImport extends FullDatabaseImport {
         backupTables.remove("currency");
         backupTables.remove("currency_exchange_rate");
         return backupTables;
-    }
-
-    @Override
-    protected boolean shouldKeepSystemEntries() {
-        return true;
     }
 
     @Override
@@ -91,8 +99,8 @@ public class QifImport extends FullDatabaseImport {
 
     private void insertPayees(Set<String> payees) {
         for (String payee : payees) {
-            long id = dbAdapter.insertPayee(payee);
-            payeeToId.put(payee, id);
+            Payee p = dbAdapter.findOrInsertPayee(payee);
+            payeeToId.put(payee, p.getId());
         }
     }
 
@@ -100,7 +108,7 @@ public class QifImport extends FullDatabaseImport {
         for (String project : projects) {
             Project p = new Project();
             p.title = project;
-            long id = em.saveOrUpdate(p);
+            long id = dbAdapter.saveOrUpdate(p);
             projectToId.put(project, id);
         }
     }
@@ -108,7 +116,7 @@ public class QifImport extends FullDatabaseImport {
     private void insertAccounts(List<QifAccount> accounts) {
         for (QifAccount account : accounts) {
             Account a = account.toAccount(options.currency);
-            em.saveAccount(a);
+            dbAdapter.saveAccount(a);
             account.dbAccount = a;
             accountTitleToAccount.put(account.memo, account);
         }

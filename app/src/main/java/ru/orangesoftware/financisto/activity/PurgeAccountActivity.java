@@ -9,24 +9,31 @@
 package ru.orangesoftware.financisto.activity;
 
 import android.app.AlertDialog;
-import android.app.DatePickerDialog;
 import android.app.Dialog;
 import android.app.ProgressDialog;
 import android.content.Context;
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
-import android.widget.*;
-import ru.orangesoftware.financisto.R;
-import ru.orangesoftware.financisto.backup.DatabaseExport;
-import ru.orangesoftware.financisto.model.Account;
-import ru.orangesoftware.financisto.datetime.DateUtils;
+import android.widget.Button;
+import android.widget.CheckBox;
+import android.widget.LinearLayout;
+import android.widget.TextView;
+import android.widget.Toast;
+
+import com.wdullaer.materialdatetimepicker.date.DatePickerDialog;
 
 import java.text.DateFormat;
 import java.util.Calendar;
+
+import ru.orangesoftware.financisto.R;
+import ru.orangesoftware.financisto.backup.DatabaseExport;
+import ru.orangesoftware.financisto.datetime.DateUtils;
+import ru.orangesoftware.financisto.model.Account;
+
+import static ru.orangesoftware.financisto.activity.UiUtils.applyTheme;
 
 /**
  * Created by IntelliJ IDEA.
@@ -52,26 +59,18 @@ public class PurgeAccountActivity extends AbstractActivity {
 
         df = DateUtils.getLongDateFormat(this);
 
-        layout = (LinearLayout)findViewById(R.id.layout);
+        layout = findViewById(R.id.layout);
         date = Calendar.getInstance();
         date.add(Calendar.YEAR, -1);
         date.add(Calendar.DAY_OF_YEAR, -1);
 
-        Button bOk = (Button)findViewById(R.id.bOK);
-        bOk.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                deleteOldTransactions();
-            }
-        });
+        Button bOk = findViewById(R.id.bOK);
+        bOk.setOnClickListener(view -> deleteOldTransactions());
 
-        Button bCancel = (Button)findViewById(R.id.bCancel);
-        bCancel.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                setResult(RESULT_CANCELED);
-                finish();
-            }
+        Button bCancel = findViewById(R.id.bCancel);
+        bCancel.setOnClickListener(view -> {
+            setResult(RESULT_CANCELED);
+            finish();
         });
 
         loadAccount();
@@ -81,16 +80,11 @@ public class PurgeAccountActivity extends AbstractActivity {
 
     private void deleteOldTransactions() {
         new AlertDialog.Builder(this)
-            .setTitle(R.string.purge_account_confirm_title)
-            .setMessage(getString(R.string.purge_account_confirm_message, new Object[]{account.title, getDateString()}))
-            .setPositiveButton(R.string.ok, new DialogInterface.OnClickListener() {
-                @Override
-                public void onClick(DialogInterface dialogInterface, int i) {
-                    new PurgeAccountTask().execute();
-                }
-            })
-            .setNegativeButton(R.string.cancel, null)
-            .show();
+                .setTitle(R.string.purge_account_confirm_title)
+                .setMessage(getString(R.string.purge_account_confirm_message, new Object[]{account.title, getDateString()}))
+                .setPositiveButton(R.string.ok, (dialogInterface, i) -> new PurgeAccountTask().execute())
+                .setNegativeButton(R.string.cancel, null)
+                .show();
     }
 
     private void loadAccount() {
@@ -108,7 +102,7 @@ public class PurgeAccountActivity extends AbstractActivity {
             return;
         }
 
-        account = em.getAccount(accountId);
+        account = db.getAccount(accountId);
         if (account == null) {
             Toast.makeText(this, "No account found", Toast.LENGTH_SHORT).show();
             finish();
@@ -126,14 +120,17 @@ public class PurgeAccountActivity extends AbstractActivity {
     protected void onClick(View v, int id) {
         switch (id) {
             case R.id.date:
-                DatePickerDialog d = new DatePickerDialog(this, new DatePickerDialog.OnDateSetListener(){
-                    @Override
-                    public void onDateSet(DatePicker arg0, int y, int m, int d) {
-                        date.set(y, m, d);
-                        setDateText();
-                    }
-                }, date.get(Calendar.YEAR), date.get(Calendar.MONTH), date.get(Calendar.DAY_OF_MONTH));
-                d.show();
+                DatePickerDialog dialog = DatePickerDialog.newInstance(
+                        (view, year, monthOfYear, dayOfMonth) -> {
+                            date.set(year, monthOfYear, dayOfMonth);
+                            setDateText();
+                        },
+                        date.get(Calendar.YEAR),
+                        date.get(Calendar.MONTH),
+                        date.get(Calendar.DAY_OF_MONTH)
+                );
+                applyTheme(this, dialog);
+                dialog.show(getFragmentManager(), "DatePickerDialog");
                 break;
             case R.id.backup:
                 databaseBackup.setChecked(!databaseBackup.isChecked());
@@ -151,11 +148,14 @@ public class PurgeAccountActivity extends AbstractActivity {
 
     private class PurgeAccountTask extends AsyncTask<Void, Void, Void> {
 
-        private Context context;
+        private final Context context;
+        private final boolean databaseBackupChecked;
+
         private Dialog d;
 
         private PurgeAccountTask() {
             this.context = PurgeAccountActivity.this;
+            this.databaseBackupChecked = databaseBackup.isChecked();
         }
 
         @Override
@@ -172,7 +172,7 @@ public class PurgeAccountActivity extends AbstractActivity {
 
         @Override
         protected Void doInBackground(Void... voids) {
-            if (databaseBackup.isChecked()) {
+            if (databaseBackupChecked) {
                 DatabaseExport export = new DatabaseExport(context, db.db(), true);
                 try {
                     export.export();

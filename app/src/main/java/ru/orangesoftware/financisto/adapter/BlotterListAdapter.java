@@ -19,24 +19,25 @@ import android.text.format.DateUtils;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.ViewGroup;
-import android.widget.*;
+import android.widget.CheckBox;
+import android.widget.ImageView;
+import android.widget.RelativeLayout;
+import android.widget.ResourceCursorAdapter;
+import android.widget.TextView;
+import java.util.Date;
+import java.util.HashMap;
 import ru.orangesoftware.financisto.R;
 import ru.orangesoftware.financisto.db.DatabaseAdapter;
 import ru.orangesoftware.financisto.db.DatabaseHelper.BlotterColumns;
-import ru.orangesoftware.financisto.db.MyEntityManager;
+import static ru.orangesoftware.financisto.model.Category.isSplit;
 import ru.orangesoftware.financisto.model.CategoryEntity;
 import ru.orangesoftware.financisto.model.Currency;
 import ru.orangesoftware.financisto.model.TransactionStatus;
 import ru.orangesoftware.financisto.recur.Recurrence;
 import ru.orangesoftware.financisto.utils.CurrencyCache;
 import ru.orangesoftware.financisto.utils.MyPreferences;
-import ru.orangesoftware.financisto.utils.Utils;
-
-import java.util.Date;
-import java.util.HashMap;
-
-import static ru.orangesoftware.financisto.model.Category.isSplit;
 import static ru.orangesoftware.financisto.utils.TransactionTitleUtils.generateTransactionTitle;
+import ru.orangesoftware.financisto.utils.Utils;
 
 public class BlotterListAdapter extends ResourceCursorAdapter {
 
@@ -49,7 +50,6 @@ public class BlotterListAdapter extends ResourceCursorAdapter {
     protected final Drawable icBlotterSplit;
     protected final Utils u;
     protected final DatabaseAdapter db;
-    protected final MyEntityManager em;
 
     private final int colors[];
 
@@ -57,7 +57,6 @@ public class BlotterListAdapter extends ResourceCursorAdapter {
     private final HashMap<Long, Boolean> checkedItems = new HashMap<Long, Boolean>();
 
     private boolean showRunningBalance;
-    private int topPadding;
 
     public BlotterListAdapter(Context context, DatabaseAdapter db, Cursor c) {
         this(context, db, R.layout.blotter_list_item, c, false);
@@ -69,16 +68,14 @@ public class BlotterListAdapter extends ResourceCursorAdapter {
 
     public BlotterListAdapter(Context context, DatabaseAdapter db, int layoutId, Cursor c, boolean autoRequery) {
         super(context, layoutId, c, autoRequery);
-        this.icBlotterIncome = context.getResources().getDrawable(R.drawable.ic_blotter_income);
-        this.icBlotterExpense = context.getResources().getDrawable(R.drawable.ic_blotter_expense);
-        this.icBlotterTransfer = context.getResources().getDrawable(R.drawable.ic_blotter_transfer);
-        this.icBlotterSplit = context.getResources().getDrawable(R.drawable.ic_blotter_split);
+        this.icBlotterIncome = context.getResources().getDrawable(R.drawable.ic_action_arrow_left_bottom);
+        this.icBlotterExpense = context.getResources().getDrawable(R.drawable.ic_action_arrow_right_top);
+        this.icBlotterTransfer = context.getResources().getDrawable(R.drawable.ic_action_arrow_top_down);
+        this.icBlotterSplit = context.getResources().getDrawable(R.drawable.ic_action_share);
         this.u = new Utils(context);
         this.colors = initializeColors(context);
         this.showRunningBalance = MyPreferences.isShowRunningBalance(context);
-        this.topPadding = context.getResources().getDimensionPixelSize(R.dimen.transaction_icon_padding);
         this.db = db;
-        this.em = db.em();
     }
 
     private int[] initializeColors(Context context) {
@@ -103,7 +100,7 @@ public class BlotterListAdapter extends ResourceCursorAdapter {
         return view;
     }
 
-    protected void createHolder(View view) {
+    private void createHolder(View view) {
         BlotterViewHolder h = new BlotterViewHolder(view);
         view.setTag(h);
     }
@@ -126,33 +123,31 @@ public class BlotterListAdapter extends ResourceCursorAdapter {
             u.setTransferTitleText(noteView, fromAccountTitle, toAccountTitle);
 
             long fromCurrencyId = cursor.getLong(BlotterColumns.from_account_currency_id.ordinal());
-            Currency fromCurrency = CurrencyCache.getCurrency(em, fromCurrencyId);
+            Currency fromCurrency = CurrencyCache.getCurrency(db, fromCurrencyId);
             long toCurrencyId = cursor.getLong(BlotterColumns.to_account_currency_id.ordinal());
-            Currency toCurrency = CurrencyCache.getCurrency(em, toCurrencyId);
-
-            int dateViewColor = v.topView.getTextColors().getDefaultColor();
+            Currency toCurrency = CurrencyCache.getCurrency(db, toCurrencyId);
 
             long fromAmount = cursor.getLong(BlotterColumns.from_amount.ordinal());
             long toAmount = cursor.getLong(BlotterColumns.to_amount.ordinal());
             long fromBalance = cursor.getLong(BlotterColumns.from_account_balance.ordinal());
             long toBalance = cursor.getLong(BlotterColumns.to_account_balance.ordinal());
             u.setTransferAmountText(v.rightCenterView, fromCurrency, fromAmount, toCurrency, toAmount);
-            v.rightCenterView.setTextColor(dateViewColor);
             if (v.rightView != null) {
                 u.setTransferBalanceText(v.rightView, fromCurrency, fromBalance, toCurrency, toBalance);
             }
             v.iconView.setImageDrawable(icBlotterTransfer);
+            v.iconView.setColorFilter(u.transferColor);
         } else {
             String fromAccountTitle = cursor.getString(BlotterColumns.from_account_title.ordinal());
             v.topView.setText(fromAccountTitle);
             setTransactionTitleText(cursor, noteView);
             sb.setLength(0);
             long fromCurrencyId = cursor.getLong(BlotterColumns.from_account_currency_id.ordinal());
-            Currency fromCurrency = CurrencyCache.getCurrency(em, fromCurrencyId);
+            Currency fromCurrency = CurrencyCache.getCurrency(db, fromCurrencyId);
             long amount = cursor.getLong(BlotterColumns.from_amount.ordinal());
             long originalCurrencyId = cursor.getLong(BlotterColumns.original_currency_id.ordinal());
             if (originalCurrencyId > 0) {
-                Currency originalCurrency = CurrencyCache.getCurrency(em, originalCurrencyId);
+                Currency originalCurrency = CurrencyCache.getCurrency(db, originalCurrencyId);
                 long originalAmount = cursor.getLong(BlotterColumns.original_from_amount.ordinal());
                 u.setAmountText(sb, v.rightCenterView, originalCurrency, originalAmount, fromCurrency, amount, true);
             } else {
@@ -161,18 +156,23 @@ public class BlotterListAdapter extends ResourceCursorAdapter {
             long categoryId = cursor.getLong(BlotterColumns.category_id.ordinal());
             if (isSplit(categoryId)) {
                 v.iconView.setImageDrawable(icBlotterSplit);
+                v.iconView.setColorFilter(u.splitColor);
             } else if (amount == 0) {
                 int categoryType = cursor.getInt(BlotterColumns.category_type.ordinal());
                 if (categoryType == CategoryEntity.TYPE_INCOME) {
                     v.iconView.setImageDrawable(icBlotterIncome);
+                    v.iconView.setColorFilter(u.positiveColor);
                 } else if (categoryType == CategoryEntity.TYPE_EXPENSE) {
                     v.iconView.setImageDrawable(icBlotterExpense);
+                    v.iconView.setColorFilter(u.negativeColor);
                 }
             } else {
                 if (amount > 0) {
                     v.iconView.setImageDrawable(icBlotterIncome);
+                    v.iconView.setColorFilter(u.positiveColor);
                 } else if (amount < 0) {
                     v.iconView.setImageDrawable(icBlotterExpense);
+                    v.iconView.setColorFilter(u.negativeColor);
                 }
             }
             if (v.rightView != null) {
@@ -180,6 +180,7 @@ public class BlotterListAdapter extends ResourceCursorAdapter {
                 v.rightView.setText(Utils.amountToString(fromCurrency, balance, false));
             }
         }
+        setIndicatorColor(v, cursor);
         if (isTemplate == 1) {
             String templateName = cursor.getString(BlotterColumns.template_name.ordinal());
             v.centerView.setText(templateName);
@@ -190,12 +191,10 @@ public class BlotterListAdapter extends ResourceCursorAdapter {
                 v.bottomView.setText(r.toInfoString(context));
                 v.bottomView.setTextColor(v.topView.getTextColors().getDefaultColor());
             } else {
-                setIndicatorColor(v, cursor);
                 long date = cursor.getLong(BlotterColumns.datetime.ordinal());
                 dt.setTime(date);
                 v.bottomView.setText(DateUtils.formatDateTime(context, dt.getTime(),
-                        DateUtils.FORMAT_SHOW_DATE | DateUtils.FORMAT_ABBREV_WEEKDAY | DateUtils.FORMAT_SHOW_WEEKDAY |
-                        DateUtils.FORMAT_SHOW_TIME | DateUtils.FORMAT_ABBREV_MONTH));
+                        DateUtils.FORMAT_SHOW_DATE | DateUtils.FORMAT_SHOW_TIME | DateUtils.FORMAT_ABBREV_MONTH));
 
                 if (isTemplate == 0 && date > System.currentTimeMillis()) {
                     u.setFutureTextColor(v.bottomView);
@@ -206,7 +205,8 @@ public class BlotterListAdapter extends ResourceCursorAdapter {
         }
         removeRightViewIfNeeded(v);
         if (v.checkBox != null) {
-            final long id = cursor.getLong(BlotterColumns._id.ordinal());
+            final long parent = cursor.getLong(BlotterColumns.parent_id.ordinal());
+            final long id = parent > 0 ? parent : cursor.getLong(BlotterColumns._id.ordinal());
             v.checkBox.setOnClickListener(new OnClickListener() {
                 @Override
                 public void onClick(View arg0) {
@@ -247,19 +247,19 @@ public class BlotterListAdapter extends ResourceCursorAdapter {
         return location;
     }
 
-    protected void removeRightViewIfNeeded(BlotterViewHolder v) {
+    void removeRightViewIfNeeded(BlotterViewHolder v) {
         if (v.rightView != null && !isShowRunningBalance()) {
             v.rightView.setVisibility(View.GONE);
         }
     }
 
-    protected void setIndicatorColor(BlotterViewHolder v, Cursor cursor) {
+    void setIndicatorColor(BlotterViewHolder v, Cursor cursor) {
         TransactionStatus status = TransactionStatus.valueOf(cursor.getString(BlotterColumns.status.ordinal()));
         v.indicator.setBackgroundColor(colors[status.ordinal()]);
     }
 
-    public boolean getCheckedState(long id) {
-        return checkedItems.get(id) != null ? !allChecked : allChecked;
+    private boolean getCheckedState(long id) {
+        return checkedItems.get(id) == null == allChecked;
     }
 
     private void updateCheckedState(long id, boolean checked) {
@@ -289,23 +289,23 @@ public class BlotterListAdapter extends ResourceCursorAdapter {
     public static class BlotterViewHolder {
 
         public final RelativeLayout layout;
-        public final View indicator;
+        public final TextView indicator;
         public final TextView topView;
         public final TextView centerView;
         public final TextView bottomView;
-        public final TextView rightView;
         public final TextView rightCenterView;
+        public final TextView rightView;
         public final ImageView iconView;
         public final CheckBox checkBox;
 
         public BlotterViewHolder(View view) {
             layout = (RelativeLayout) view.findViewById(R.id.layout);
-            indicator = (View) view.findViewById(R.id.indicator);
+            indicator = (TextView) view.findViewById(R.id.indicator);
             topView = (TextView) view.findViewById(R.id.top);
             centerView = (TextView) view.findViewById(R.id.center);
             bottomView = (TextView) view.findViewById(R.id.bottom);
-            rightView = (TextView) view.findViewById(R.id.right);
             rightCenterView = (TextView) view.findViewById(R.id.right_center);
+            rightView = (TextView) view.findViewById(R.id.right);
             iconView = (ImageView) view.findViewById(R.id.right_top);
             checkBox = (CheckBox) view.findViewById(R.id.cb);
         }

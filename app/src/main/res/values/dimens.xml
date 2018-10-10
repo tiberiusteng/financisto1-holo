@@ -1,4 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <dimen name="list_item_height">59sp</dimen>
+    <dimen name="action_button_size">51dp</dimen>
+    <dimen name="action_button_margin">1dp</dimen>
+    <dimen name="picker_padding">5dp</dimen>
 </resources>

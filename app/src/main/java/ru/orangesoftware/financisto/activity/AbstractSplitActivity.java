@@ -34,7 +34,7 @@ public abstract class AbstractSplitActivity extends AbstractActivity {
     protected Utils utils;
     protected Transaction split;
 
-    private ProjectSelector projectSelector;
+    protected ProjectSelector<AbstractSplitActivity> projectSelector;
 
     private final int layoutId;
 
@@ -50,19 +50,20 @@ public abstract class AbstractSplitActivity extends AbstractActivity {
         setFeatureDrawableResource(Window.FEATURE_LEFT_ICON, R.drawable.ic_dialog_currency);
 
         fetchData();
-        projectSelector = new ProjectSelector(this, em, x);
-        projectSelector.fetchProjects();
+        // todo.mb: check selector here
+        projectSelector = new ProjectSelector<>(this, db, x);
+        projectSelector.fetchEntities();
 
         utils  = new Utils(this);
         split = Transaction.fromIntentAsSplit(getIntent());
         if (split.fromAccountId > 0) {
-            fromAccount = db.em().getAccount(split.fromAccountId);
+            fromAccount = db.getAccount(split.fromAccountId);
         }
         if (split.originalCurrencyId > 0) {
-            originalCurrency = CurrencyCache.getCurrency(em, split.originalCurrencyId);
+            originalCurrency = CurrencyCache.getCurrency(db, split.originalCurrencyId);
         }
 
-        LinearLayout layout = (LinearLayout)findViewById(R.id.list);
+        LinearLayout layout = findViewById(R.id.list);
 
         createUI(layout);
         createCommonUI(layout);
@@ -77,21 +78,13 @@ public abstract class AbstractSplitActivity extends AbstractActivity {
 
         projectSelector.createNode(layout);
 
-        Button bSave = (Button) findViewById(R.id.bSave);
-		bSave.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View arg0) {
-                saveAndFinish();
-            }
-        });
+        Button bSave = findViewById(R.id.bSave);
+        bSave.setOnClickListener(arg0 -> saveAndFinish());
 
-        Button bCancel = (Button) findViewById(R.id.bCancel);
-		bCancel.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View arg0) {
-                setResult(RESULT_CANCELED);
-                finish();
-            }
+        Button bCancel = findViewById(R.id.bCancel);
+        bCancel.setOnClickListener(arg0 -> {
+            setResult(RESULT_CANCELED);
+            finish();
         });
     }
 
@@ -107,6 +100,11 @@ public abstract class AbstractSplitActivity extends AbstractActivity {
     @Override
     public void onSelectedPos(int id, int selectedPos) {
         projectSelector.onSelectedPos(id, selectedPos);
+    }
+
+    @Override
+    public void onSelectedId(int id, long selectedId) {
+        projectSelector.onSelectedId(id, selectedId);
     }
 
     @Override
@@ -126,12 +124,12 @@ public abstract class AbstractSplitActivity extends AbstractActivity {
 
     protected boolean updateFromUI() {
         split.note = text(noteText);
-        split.projectId = projectSelector.getSelectedProjectId();
+        split.projectId = projectSelector.getSelectedEntityId();
         return true;
     }
 
     protected void updateUI() {
-        projectSelector.selectProject(split.projectId);
+        projectSelector.selectEntity(split.projectId);
         setNote(split.note);
     }
 
@@ -153,4 +151,9 @@ public abstract class AbstractSplitActivity extends AbstractActivity {
         return MyPreferences.isPinProtectedNewTransaction(this);
     }
 
+    @Override
+    protected void onDestroy() {
+        if (projectSelector != null) projectSelector.onDestroy();
+        super.onDestroy();
+    }
 }

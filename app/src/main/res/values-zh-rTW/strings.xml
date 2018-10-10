@@ -752,4 +752,15 @@
     <item>預算</item>
     <item>報表</item>
   </string-array>
+  <string name="pin_protection_use_fingerprint">指紋解鎖</string>
+  <string name="pin_protection_use_fingerprint_summary">用指紋解鎖程式</string>
+  <string name="fingerprint_description">需確認指紋才可繼續</string>
+  <string name="fingerprint_hint">按壓感應器</string>
+  <string name="fingerprint_auth_success">已識別指紋</string>
+  <string name="fingerprint_auth_failed">無法識別指紋，請再試一次</string>
+  <string name="fingerprint_error">錯誤!</string>
+  <string name="fingerprint_unavailable_hardware">沒有指紋感應器</string>
+  <string name="fingerprint_unavailable_enrolled_fingerprints">必須至少登記一個指紋</string>
+  <string name="fingerprint_unavailable_unknown">不支援本裝置</string>
+  <string name="fingerprint_unavailable">無法取用: %s</string>
 </resources>

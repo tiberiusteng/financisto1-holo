@@ -4,7 +4,7 @@
  * are made available under the terms of the GNU Public License v2.0
  * which accompanies this distribution, and is available at
  * http://www.gnu.org/licenses/old-licenses/gpl-2.0.html
- * 
+ *
  * Contributors:
  *     Denis Solonenko - initial API and implementation
  ******************************************************************************/
@@ -15,46 +15,50 @@ import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
 import android.widget.ListAdapter;
-import ru.orangesoftware.financisto.adapter.TransactionsListAdapter;
-import ru.orangesoftware.financisto.blotter.TotalCalculationTask;
-import ru.orangesoftware.financisto.model.*;
-import ru.orangesoftware.financisto.utils.CurrencyCache;
 
 import java.util.Map;
 
-public class BudgetBlotterActivity extends BlotterActivity {
-	
-	private Map<Long, Category> categories;
-	private Map<Long, Project> projects;
-	
-    public BudgetBlotterActivity() {
-		super();
-	}
-        
-	@Override
-	protected void internalOnCreate(Bundle savedInstanceState) {
-		categories = MyEntity.asMap(db.getCategoriesList(true));
-		projects = MyEntity.asMap(em.getActiveProjectsList(true));
-		super.internalOnCreate(savedInstanceState);
-		bFilter.setVisibility(View.GONE);
-	}
-	
-	@Override
-	protected Cursor createCursor() {
-		long budgetId = blotterFilter.getBudgetId();
-		return getBlotterForBudget(budgetId);
-	}
+import ru.orangesoftware.financisto.adapter.TransactionsListAdapter;
+import ru.orangesoftware.financisto.blotter.TotalCalculationTask;
+import ru.orangesoftware.financisto.model.Budget;
+import ru.orangesoftware.financisto.model.Category;
+import ru.orangesoftware.financisto.model.MyEntity;
+import ru.orangesoftware.financisto.model.Project;
+import ru.orangesoftware.financisto.model.Total;
 
-	@Override
-	protected ListAdapter createAdapter(Cursor cursor) {
-		return new TransactionsListAdapter(this, db, cursor);
-	}
-	
-	private Cursor getBlotterForBudget(long budgetId) {
-		Budget b = em.load(Budget.class, budgetId);
-		String where = Budget.createWhere(b, categories, projects);
-		return db.getBlotterWithSplits(where);
-	}
+public class BudgetBlotterActivity extends BlotterActivity {
+
+    private Map<Long, Category> categories;
+    private Map<Long, Project> projects;
+
+    public BudgetBlotterActivity() {
+        super();
+    }
+
+    @Override
+    protected void internalOnCreate(Bundle savedInstanceState) {
+        categories = MyEntity.asMap(db.getCategoriesList(true));
+        projects = MyEntity.asMap(db.getActiveProjectsList(true));
+        super.internalOnCreate(savedInstanceState);
+        bFilter.setVisibility(View.GONE);
+    }
+
+    @Override
+    protected Cursor createCursor() {
+        long budgetId = blotterFilter.getBudgetId();
+        return getBlotterForBudget(budgetId);
+    }
+
+    @Override
+    protected ListAdapter createAdapter(Cursor cursor) {
+        return new TransactionsListAdapter(this, db, cursor);
+    }
+
+    private Cursor getBlotterForBudget(long budgetId) {
+        Budget b = db.load(Budget.class, budgetId);
+        String where = Budget.createWhere(b, categories, projects);
+        return db.getBlotterWithSplits(where);
+    }
 
     @Override
     protected TotalCalculationTask createTotalCalculationTask() {
@@ -65,7 +69,7 @@ public class BudgetBlotterActivity extends BlotterActivity {
                 try {
                     try {
                         long budgetId = blotterFilter.getBudgetId();
-                        Budget b = em.load(Budget.class, budgetId);
+                        Budget b = db.load(Budget.class, budgetId);
                         Total total = new Total(b.getBudgetCurrency());
                         total.balance = db.fetchBudgetBalance(categories, projects, b);
                         return total;

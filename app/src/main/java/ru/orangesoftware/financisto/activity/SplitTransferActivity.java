@@ -1,17 +1,16 @@
 package ru.orangesoftware.financisto.activity;
 
-import android.content.Intent;
 import android.database.Cursor;
 import android.view.View;
 import android.widget.LinearLayout;
 import android.widget.ListAdapter;
 import android.widget.TextView;
 import android.widget.Toast;
+
 import ru.orangesoftware.financisto.R;
 import ru.orangesoftware.financisto.db.DatabaseHelper;
 import ru.orangesoftware.financisto.model.Account;
 import ru.orangesoftware.financisto.utils.TransactionUtils;
-import ru.orangesoftware.financisto.widget.AmountInput;
 import ru.orangesoftware.financisto.widget.RateLayoutView;
 
 /**
@@ -36,17 +35,12 @@ public class SplitTransferActivity extends AbstractSplitActivity {
         accountText = x.addListNode(layout, R.id.account, R.string.account, R.string.select_to_account);
         rateView = new RateLayoutView(this, x, layout);
         rateView.createTransferUI();
-        rateView.setAmountFromChangeListener(new AmountInput.OnAmountChangedListener() {
-            @Override
-            public void onAmountChanged(long oldAmount, long newAmount) {
-                setUnsplitAmount(split.unsplitAmount - newAmount);
-            }
-        });
+        rateView.setAmountFromChangeListener((oldAmount, newAmount) -> setUnsplitAmount(split.unsplitAmount - newAmount));
     }
 
     @Override
     protected void fetchData() {
-        accountCursor = db.em().getAllActiveAccounts();
+        accountCursor = db.getAllActiveAccounts();
         startManagingCursor(accountCursor);
         accountAdapter = TransactionUtils.createAccountAdapter(this, accountCursor);
     }
@@ -74,14 +68,14 @@ public class SplitTransferActivity extends AbstractSplitActivity {
 
     private void selectFromAccount(long accountId) {
         if (accountId > 0) {
-            Account account = em.getAccount(accountId);
+            Account account = db.getAccount(accountId);
             rateView.selectCurrencyFrom(account.currency);
         }
     }
 
     private void selectToAccount(long accountId) {
         if (accountId > 0) {
-            Account account = em.getAccount(accountId);
+            Account account = db.getAccount(accountId);
             rateView.selectCurrencyTo(account.currency);
             accountText.setText(account.title);
             split.toAccountId = accountId;
@@ -107,18 +101,11 @@ public class SplitTransferActivity extends AbstractSplitActivity {
 
     @Override
     public void onSelectedId(int id, long selectedId) {
+        super.onSelectedId(id, selectedId);
         switch(id) {
             case R.id.account:
                 selectToAccount(selectedId);
                 break;
-        }
-    }
-
-    @Override
-    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-        super.onActivityResult(requestCode, resultCode, data);
-        if (resultCode == RESULT_OK) {
-            rateView.onActivityResult(requestCode, data);
         }
     }
 

@@ -9,14 +9,15 @@
 package ru.orangesoftware.financisto.activity;
 
 import android.app.Activity;
-import android.app.DatePickerDialog;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
-import android.widget.DatePicker;
 import android.widget.LinearLayout;
 import android.widget.TextView;
+
+import com.wdullaer.materialdatetimepicker.date.DatePickerDialog;
+
 import ru.orangesoftware.financisto.R;
 import ru.orangesoftware.financisto.model.Currency;
 import ru.orangesoftware.financisto.rates.ExchangeRate;
@@ -29,11 +30,6 @@ import java.util.Calendar;
 
 import static ru.orangesoftware.financisto.utils.Utils.formatRateDate;
 
-/**
- * Created by IntelliJ IDEA.
- * User: denis.solonenko
- * Date: 1/19/12 7:41 PM
- */
 public class ExchangeRateActivity extends AbstractActivity implements RateNodeOwner {
 
     public static final String RATE_DATE = "RATE_DATE";
@@ -60,29 +56,23 @@ public class ExchangeRateActivity extends AbstractActivity implements RateNodeOw
             return;
         }
 
-        Button bOK = (Button)findViewById(R.id.bOK);
-        bOK.setOnClickListener(new View.OnClickListener(){
-            @Override
-            public void onClick(View arg0) {
-                ExchangeRate rate = createRateFromUI();
-                db.replaceRate(rate, originalDate);
-                Intent data = new Intent();
-                setResult(RESULT_OK, data);
-                finish();
-            }
+        Button bOK = findViewById(R.id.bOK);
+        bOK.setOnClickListener(arg0 -> {
+            ExchangeRate rate = createRateFromUI();
+            db.replaceRate(rate, originalDate);
+            Intent data = new Intent();
+            setResult(RESULT_OK, data);
+            finish();
         });
 
-        Button bCancel = (Button)findViewById(R.id.bCancel);
-        bCancel.setOnClickListener(new View.OnClickListener(){
-            @Override
-            public void onClick(View arg0) {
-                setResult(RESULT_CANCELED);
-                finish();
-            }
+        Button bCancel = findViewById(R.id.bCancel);
+        bCancel.setOnClickListener(arg0 -> {
+            setResult(RESULT_CANCELED);
+            finish();
         });
 
         if (validateIntent(intent)) {
-            LinearLayout layout = (LinearLayout) findViewById(R.id.list);
+            LinearLayout layout = findViewById(R.id.list);
             updateUI(layout);
         } else {
             finish();
@@ -109,14 +99,14 @@ public class ExchangeRateActivity extends AbstractActivity implements RateNodeOw
 
     private boolean validateIntent(Intent intent) {
         long fromCurrencyId = intent.getLongExtra(FROM_CURRENCY_ID, -1);
-        fromCurrency = em.get(Currency.class, fromCurrencyId);
+        fromCurrency = db.get(Currency.class, fromCurrencyId);
         if (fromCurrency == null) {
             finish();
             return false;
         }
 
         long toCurrencyId = intent.getLongExtra(TO_CURRENCY_ID, -1);
-        toCurrency = em.get(Currency.class, toCurrencyId);
+        toCurrency = db.get(Currency.class, toCurrencyId);
         if (toCurrency == null) {
             finish();
             return false;
@@ -137,18 +127,6 @@ public class ExchangeRateActivity extends AbstractActivity implements RateNodeOw
     }
 
     @Override
-    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-        super.onActivityResult(requestCode, resultCode, data);
-        if (resultCode == RESULT_OK && requestCode == RateNode.EDIT_RATE) {
-            String amount = data.getStringExtra(AmountInput.EXTRA_AMOUNT);
-            if (amount != null) {
-                rateNode.setRate(Float.parseFloat(amount));
-                rateNode.updateRateInfo();
-            }
-        }
-    }
-
-    @Override
     protected void onClick(View v, int id) {
         switch (id) {
             case R.id.date:
@@ -160,15 +138,17 @@ public class ExchangeRateActivity extends AbstractActivity implements RateNodeOw
     private void editDate() {
         final Calendar c = Calendar.getInstance();
         c.setTimeInMillis(date);
-        DatePickerDialog d = new DatePickerDialog(this, new DatePickerDialog.OnDateSetListener(){
-            @Override
-            public void onDateSet(DatePicker arg0, int y, int m, int d) {
-                c.set(y, m, d);
-                date = c.getTimeInMillis();
-                dateNode.setText(formatRateDate(ExchangeRateActivity.this, date));
-            }
-        }, c.get(Calendar.YEAR), c.get(Calendar.MONTH), c.get(Calendar.DAY_OF_MONTH));
-        d.show();
+        DatePickerDialog datePickerDialog = DatePickerDialog.newInstance(
+                (view, year, monthOfYear, dayOfMonth) -> {
+                    c.set(year, monthOfYear, dayOfMonth);
+                    date = c.getTimeInMillis();
+                    dateNode.setText(formatRateDate(ExchangeRateActivity.this, date));
+                },
+                c.get(Calendar.YEAR),
+                c.get(Calendar.MONTH),
+                c.get(Calendar.DAY_OF_MONTH)
+        );
+        datePickerDialog.show(getFragmentManager(), "DatePickerDialog");
     }
 
     @Override

@@ -11,13 +11,25 @@ package ru.orangesoftware.financisto.activity;
 import android.app.AlertDialog;
 import android.app.ProgressDialog;
 import android.content.Context;
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.database.Cursor;
 import android.os.AsyncTask;
 import android.os.Bundle;
-import android.view.*;
-import android.widget.*;
+import android.view.LayoutInflater;
+import android.view.View;
+import android.view.ViewGroup;
+import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
+import android.widget.BaseAdapter;
+import android.widget.ImageButton;
+import android.widget.ListAdapter;
+import android.widget.Spinner;
+import android.widget.SpinnerAdapter;
+
+import java.text.DecimalFormat;
+import java.util.ArrayList;
+import java.util.List;
+
 import ru.orangesoftware.financisto.R;
 import ru.orangesoftware.financisto.adapter.GenericViewHolder;
 import ru.orangesoftware.financisto.model.Currency;
@@ -26,23 +38,12 @@ import ru.orangesoftware.financisto.rates.ExchangeRateProvider;
 import ru.orangesoftware.financisto.utils.CurrencyCache;
 import ru.orangesoftware.financisto.utils.MyPreferences;
 
-import java.text.DecimalFormat;
-import java.util.ArrayList;
-import java.util.List;
-
 import static ru.orangesoftware.financisto.utils.Utils.formatRateDate;
 
-/**
- * Created by IntelliJ IDEA.
- * User: denis.solonenko
- * Date: 1/18/12 11:10 PM
- */
 public class ExchangeRatesListActivity extends AbstractListActivity {
 
     private static final int ADD_RATE = 1;
     private static final int EDIT_RATE = 1;
-
-    private static final int MENU_DOWNLOAD_ALL = Menu.FIRST;
 
     private final DecimalFormat nf = new DecimalFormat("0.00000");
 
@@ -59,11 +60,11 @@ public class ExchangeRatesListActivity extends AbstractListActivity {
     @Override
     protected void internalOnCreate(Bundle savedInstanceState) {
         super.internalOnCreate(savedInstanceState);
-        currencies = em.getAllCurrenciesList("name");
+        currencies = db.getAllCurrenciesList("name");
 
-        fromCurrencySpinner = (Spinner) findViewById(R.id.spinnerFromCurrency);
+        fromCurrencySpinner = findViewById(R.id.spinnerFromCurrency);
         fromCurrencySpinner.setPromptId(R.string.rate_from_currency);
-        toCurrencySpinner = (Spinner) findViewById(R.id.spinnerToCurrency);
+        toCurrencySpinner = findViewById(R.id.spinnerToCurrency);
         toCurrencySpinner.setPromptId(R.string.rate_to_currency);
 
         if (currencies.size() > 0) {
@@ -97,18 +98,16 @@ public class ExchangeRatesListActivity extends AbstractListActivity {
             });
             fromCurrencySpinner.setSelection(findDefaultCurrency());
 
-            ImageButton bFlip = (ImageButton)findViewById(R.id.bFlip);
-            bFlip.setOnClickListener(new View.OnClickListener(){
-                @Override
-                public void onClick(View arg0) {
-                    flipCurrencies();
-                }
-            });
+            ImageButton bFlip = findViewById(R.id.bFlip);
+            bFlip.setOnClickListener(arg0 -> flipCurrencies());
+
+            ImageButton bRefresh = findViewById(R.id.bRefresh);
+            bRefresh.setOnClickListener(arg0 -> refreshAllRates());
         }
     }
 
     private SpinnerAdapter createCurrencyAdapter(List<Currency> currencies) {
-        ArrayAdapter<Currency> a = new ArrayAdapter<Currency>(this, android.R.layout.simple_spinner_item, currencies){
+        ArrayAdapter<Currency> a = new ArrayAdapter<Currency>(this, android.R.layout.simple_spinner_item, currencies) {
             @Override
             public long getItemId(int position) {
                 return getItem(position).id;
@@ -119,7 +118,7 @@ public class ExchangeRatesListActivity extends AbstractListActivity {
     }
 
     private List<Currency> getCurrenciesButSelected(long id) {
-        List<Currency> list = new ArrayList<Currency>();
+        List<Currency> list = new ArrayList<>();
         for (Currency currency : currencies) {
             if (currency.id != id) {
                 list.add(currency);
@@ -160,9 +159,11 @@ public class ExchangeRatesListActivity extends AbstractListActivity {
     private void updateAdapter() {
         Currency fromCurrency = (Currency) fromCurrencySpinner.getSelectedItem();
         Currency toCurrency = (Currency) toCurrencySpinner.getSelectedItem();
-        List<ExchangeRate> rates = db.findRates(fromCurrency, toCurrency);
-        ListAdapter adapter = new ExchangeRateListAdapter(this, rates);
-        setListAdapter(adapter);
+        if (fromCurrency != null && toCurrency != null) {
+            List<ExchangeRate> rates = db.findRates(fromCurrency, toCurrency);
+            ListAdapter adapter = new ExchangeRateListAdapter(this, rates);
+            setListAdapter(adapter);
+        }
     }
 
     @Override
@@ -221,20 +222,8 @@ public class ExchangeRatesListActivity extends AbstractListActivity {
         startActivityForResult(intent, EDIT_RATE);
     }
 
-    @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-        MenuItem menuItem = menu.add(0, MENU_DOWNLOAD_ALL, 0, R.string.download_all_rates);
-        menuItem.setIcon(R.drawable.ic_menu_refresh);
-        return true;
-    }
-
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        super.onOptionsItemSelected(item);
-        if (item.getItemId() == MENU_DOWNLOAD_ALL) {
-            new RatesDownloadTask(this).execute();
-        }
-        return true;
+    private void refreshAllRates() {
+        new RatesDownloadTask(this).execute();
     }
 
     private class RatesDownloadTask extends AsyncTask<Void, Void, List<ExchangeRate>> {
@@ -264,12 +253,7 @@ public class ExchangeRatesListActivity extends AbstractListActivity {
 
         private void showProgressDialog() {
             String message = context.getString(R.string.downloading_rates, asString(currencies));
-            progressDialog = ProgressDialog.show(context, null, message, true, true, new DialogInterface.OnCancelListener() {
-                @Override
-                public void onCancel(DialogInterface dialogInterface) {
-                    cancel(true);
-                }
-            });
+            progressDialog = ProgressDialog.show(context, null, message, true, true, dialogInterface -> cancel(true));
         }
 
         private String asString(List<Currency> currencies) {
@@ -298,13 +282,13 @@ public class ExchangeRatesListActivity extends AbstractListActivity {
         private void showResult(List<ExchangeRate> result) {
             StringBuilder sb = new StringBuilder();
             for (ExchangeRate rate : result) {
-                Currency fromCurrency = CurrencyCache.getCurrency(em, rate.fromCurrencyId);
-                Currency toCurrency = CurrencyCache.getCurrency(em, rate.toCurrencyId);
+                Currency fromCurrency = CurrencyCache.getCurrency(db, rate.fromCurrencyId);
+                Currency toCurrency = CurrencyCache.getCurrency(db, rate.toCurrencyId);
                 sb.append(fromCurrency.name).append(" -> ").append(toCurrency.name);
                 if (rate.isOk()) {
-                    sb.append(" => ").append(nf.format(rate.rate));
+                    sb.append(" = ").append(nf.format(rate.rate));
                 } else {
-                    sb.append(" => ").append(rate.getErrorMessage());
+                    sb.append(" ! ").append(rate.getErrorMessage());
                 }
                 sb.append(String.format("%n%n"));
             }
@@ -329,7 +313,7 @@ public class ExchangeRatesListActivity extends AbstractListActivity {
 
         private ExchangeRateListAdapter(Context context, List<ExchangeRate> rates) {
             this.context = context;
-            this.inflater = (LayoutInflater)context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+            this.inflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
             this.rates = rates;
         }
 
@@ -355,7 +339,7 @@ public class ExchangeRatesListActivity extends AbstractListActivity {
                 convertView = inflater.inflate(R.layout.generic_list_item, parent, false);
                 v = GenericViewHolder.createAndTag(convertView);
             } else {
-                v = (GenericViewHolder)convertView.getTag();
+                v = (GenericViewHolder) convertView.getTag();
             }
             ExchangeRate rate = getItem(position);
             v.lineView.setText(formatRateDate(context, rate.date));

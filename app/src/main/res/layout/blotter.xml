@@ -1,44 +1,73 @@
-<?xml version="1.0" encoding="utf-8"?>
-<!--
+<?xml version="1.0" encoding="utf-8"?><!--
   Copyright (c) 2010 Denis Solonenko.
   All rights reserved. This program and the accompanying materials
   are made available under the terms of the GNU Public License v2.0
   which accompanies this distribution, and is available at
   http://www.gnu.org/licenses/old-licenses/gpl-2.0.html
-  
+
   Contributors:
       Denis Solonenko - initial API and implementation
 -->
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-	android:layout_height="fill_parent" android:layout_width="fill_parent"
+	android:layout_width="fill_parent"
+	android:layout_height="fill_parent"
 	android:orientation="vertical">
-	<ListView android:id="@android:id/list" android:layout_width="fill_parent"
-		android:layout_weight="1" android:layout_height="wrap_content"
-		android:fastScrollEnabled="true" />
-	<TextView android:id="@id/android:empty" android:layout_width="fill_parent"
-		android:layout_height="wrap_content" android:layout_weight="1"
-		android:gravity="center" android:text="@string/no_transactions" />
-    <TextView android:id="@+id/integrity_error"
-              android:layout_width="fill_parent" android:layout_height="wrap_content"
-              android:gravity="center" android:text="@string/integrity_error"
-              android:background="#FF0000" android:textColor="#FFFFFF" android:padding="3dp"
-              android:visibility="gone"/>
-    <LinearLayout android:layout_height="wrap_content"
+
+	<ListView
+		android:id="@android:id/list"
 		android:layout_width="fill_parent"
-		android:paddingTop="2dp"
-		style="@style/BlotterButtonBar">
-		<ImageButton android:layout_width="wrap_content"
-			android:layout_height="wrap_content" android:id="@+id/bAdd"
-			android:src="@drawable/ic_input_add" />
-        <ImageButton android:layout_width="wrap_content"
-                     android:layout_height="wrap_content" android:id="@+id/bTransfer"
-                     android:src="@drawable/ic_input_transfer" android:visibility="gone"/>
-        <ImageButton android:layout_width="wrap_content"
-                     android:layout_height="wrap_content" android:id="@+id/bTemplate"
-                     android:src="@drawable/ic_input_templates" android:visibility="gone"/>
-		<ImageButton android:layout_width="wrap_content"
-			android:layout_height="wrap_content" android:id="@+id/bFilter"
-			android:src="@drawable/ic_menu_filter_off" />
-        <include layout="@layout/total_text"/>
+		android:layout_height="wrap_content"
+		android:layout_weight="1"
+		android:cacheColorHint="@android:color/transparent"
+		android:fastScrollEnabled="true" />
+
+	<TextView
+		android:id="@id/android:empty"
+		android:layout_width="fill_parent"
+		android:layout_height="wrap_content"
+		android:layout_weight="1"
+		android:gravity="center"
+		android:text="@string/no_transactions" />
+
+	<TextView
+		android:id="@+id/integrity_error"
+		android:layout_width="fill_parent"
+		android:layout_height="wrap_content"
+		android:background="#FF0000"
+		android:gravity="center"
+		android:padding="3dp"
+		android:text="@string/integrity_error"
+		android:textColor="#FFFFFF"
+		android:visibility="gone" />
+
+	<LinearLayout style="@style/BottomBar">
+		<ImageButton
+			android:id="@+id/bAdd"
+			style="@style/BottomBarButton"
+			android:src="@drawable/actionbar_add_big" />
+
+		<ImageButton
+			android:id="@+id/bTransfer"
+			style="@style/BottomBarButton"
+			android:src="@drawable/actionbar_transfer"
+			android:visibility="gone" />
+
+		<ImageButton
+			android:id="@+id/bTemplate"
+			style="@style/BottomBarButton"
+			android:src="@drawable/actionbar_tiles_large"
+			android:visibility="gone" />
+
+		<ImageButton
+			android:id="@+id/bFilter"
+			style="@style/BottomBarButton"
+			android:src="@drawable/actionbar_filter" />
+
+		<ImageButton
+			android:id="@+id/bMenu"
+			style="@style/BottomBarButton"
+			android:src="@drawable/actionbar_dot_menu" />
+
+		<include layout="@layout/total_text" />
 	</LinearLayout>
 </LinearLayout>

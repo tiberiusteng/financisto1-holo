@@ -4,7 +4,7 @@
  * are made available under the terms of the GNU Public License v2.0
  * which accompanies this distribution, and is available at
  * http://www.gnu.org/licenses/old-licenses/gpl-2.0.html
- * 
+ *
  * Contributors:
  *     Denis Solonenko - initial API and implementation
  ******************************************************************************/
@@ -14,42 +14,38 @@ import android.app.AlertDialog;
 import android.content.Intent;
 import android.database.Cursor;
 import android.os.Bundle;
-import android.view.MenuItem;
 import android.view.View;
-import android.widget.AdapterView;
 import android.widget.ImageButton;
 import android.widget.ListAdapter;
+
+import java.util.List;
+
 import ru.orangesoftware.financisto.R;
 import ru.orangesoftware.financisto.adapter.CurrencyListAdapter;
 import ru.orangesoftware.financisto.model.Currency;
 import ru.orangesoftware.financisto.utils.MenuItemInfo;
 
-import java.util.List;
-
 public class CurrencyListActivity extends AbstractListActivity {
-	
+
 	private static final int NEW_CURRENCY_REQUEST = 1;
 	private static final int EDIT_CURRENCY_REQUEST = 2;
-    private static final int MENU_MAKE_DEFAULT = MENU_ADD + 1;
+	private static final int MENU_MAKE_DEFAULT = MENU_ADD + 1;
 
-    public CurrencyListActivity() {
+	public CurrencyListActivity() {
 		super(R.layout.currency_list);
 	}
 
-    @Override
-    protected void internalOnCreate(Bundle savedInstanceState) {
-        super.internalOnCreate(savedInstanceState);
-        ImageButton bRates = (ImageButton) findViewById(R.id.bRates);
-        bRates.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                Intent intent = new Intent(CurrencyListActivity.this, ExchangeRatesListActivity.class);
-                startActivity(intent);
-            }
-        });
-    }
+	@Override
+	protected void internalOnCreate(Bundle savedInstanceState) {
+		super.internalOnCreate(savedInstanceState);
+		ImageButton bRates = findViewById(R.id.bRates);
+		bRates.setOnClickListener(view -> {
+			Intent intent = new Intent(CurrencyListActivity.this, ExchangeRatesListActivity.class);
+			startActivity(intent);
+		});
+	}
 
-    @Override
+	@Override
 	protected List<MenuItemInfo> createContextMenus(long id) {
 		List<MenuItemInfo> menus = super.createContextMenus(id);
 		for (MenuItemInfo m : menus) {
@@ -58,43 +54,39 @@ public class CurrencyListActivity extends AbstractListActivity {
 				break;
 			}
 		}
-        menus.add(new MenuItemInfo(MENU_MAKE_DEFAULT, R.string.currency_make_default));
+		menus.add(new MenuItemInfo(MENU_MAKE_DEFAULT, R.string.currency_make_default));
 		return menus;
 	}
 
-    @Override
-    public boolean onContextItemSelected(MenuItem item) {
-        super.onContextItemSelected(item);
-        switch (item.getItemId()) {
-            case MENU_MAKE_DEFAULT: {
-                AdapterView.AdapterContextMenuInfo mi = (AdapterView.AdapterContextMenuInfo)item.getMenuInfo();
-                makeCurrencyDefault(mi.id);
-                return true;
-            }
-        }
-        return false;
-    }
+	@Override
+	public boolean onPopupItemSelected(int itemId, View view, int position, long id) {
+		if (super.onPopupItemSelected(itemId, view, position, id)) return true;
+		switch (itemId) {
+			case MENU_MAKE_DEFAULT: {
+				makeCurrencyDefault(id);
+				return true;
+			}
+		}
+		return false;
+	}
 
-    private void makeCurrencyDefault(long id) {
-        Currency c = em.get(Currency.class, id);
-        c.isDefault = true;
-        em.saveOrUpdate(c);
-        recreateCursor();
-    }
+	private void makeCurrencyDefault(long id) {
+		Currency c = db.get(Currency.class, id);
+		c.isDefault = true;
+		db.saveOrUpdate(c);
+		recreateCursor();
+	}
 
-    @Override
+	@Override
 	protected void addItem() {
-        new CurrencySelector(this, em, new CurrencySelector.OnCurrencyCreatedListener() {
-            @Override
-            public void onCreated(long currencyId) {
-                if (currencyId == 0) {
-                    Intent intent = new Intent(CurrencyListActivity.this, CurrencyActivity.class);
-                    startActivityForResult(intent, NEW_CURRENCY_REQUEST);
-                } else {
-                    recreateCursor();
-                }
-            }
-        }).show();
+		new CurrencySelector(this, db, currencyId -> {
+			if (currencyId == 0) {
+				Intent intent = new Intent(CurrencyListActivity.this, CurrencyActivity.class);
+				startActivityForResult(intent, NEW_CURRENCY_REQUEST);
+			} else {
+				recreateCursor();
+			}
+		}).show();
 	}
 
 	@Override
@@ -104,9 +96,9 @@ public class CurrencyListActivity extends AbstractListActivity {
 
 	@Override
 	protected Cursor createCursor() {
-		return em.getAllCurrencies("name");
+		return db.getAllCurrencies("name");
 	}
-	
+
 	@Override
 	protected void onActivityResult(int requestCode, int resultCode, Intent data) {
 		super.onActivityResult(requestCode, resultCode, data);
@@ -117,14 +109,14 @@ public class CurrencyListActivity extends AbstractListActivity {
 
 	@Override
 	protected void deleteItem(View v, int position, long id) {
-		if (em.deleteCurrency(id) == 1) {
+		if (db.deleteCurrency(id) == 1) {
 			cursor.requery();
 		} else {
 			new AlertDialog.Builder(this)
-				.setTitle(R.string.delete)
-				.setIcon(android.R.drawable.ic_dialog_alert)
-				.setMessage(R.string.currency_delete_alert)
-				.setNeutralButton(R.string.ok, null).show();
+					.setTitle(R.string.delete)
+					.setIcon(android.R.drawable.ic_dialog_alert)
+					.setMessage(R.string.currency_delete_alert)
+					.setNeutralButton(R.string.ok, null).show();
 		}
 	}
 
@@ -132,17 +124,13 @@ public class CurrencyListActivity extends AbstractListActivity {
 	public void editItem(View v, int position, long id) {
 		Intent intent = new Intent(this, CurrencyActivity.class);
 		intent.putExtra(CurrencyActivity.CURRENCY_ID_EXTRA, id);
-		startActivityForResult(intent, EDIT_CURRENCY_REQUEST);		
-	}	
-	
+		startActivityForResult(intent, EDIT_CURRENCY_REQUEST);
+	}
+
 	@Override
 	protected void viewItem(View v, int position, long id) {
 		editItem(v, position, id);
-	}		
-
-	@Override
-	protected String getContextMenuHeaderTitle(int position) {
-		return getString(R.string.currency);
 	}
+
 }
 

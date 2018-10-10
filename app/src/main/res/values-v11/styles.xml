@@ -3,8 +3,12 @@
     <style name="AppTheme" parent="android:Theme.Holo">
         <item name="android:buttonStyle">@android:style/Widget.Holo.Light.Button</item>
         <item name="android:imageButtonStyle">@android:style/Widget.Holo.Light.ImageButton</item>
+        <item name="android:spinnerDropDownItemStyle">@style/TextViewSpinnerDropDownItem</item>
+        <item name="android:spinnerItemStyle">@style/TextViewSpinnerDropDownItem</item>
     </style>
-    <style name="AppDialog" parent="@android:style/Theme.Holo.Dialog" />
+    <style name="AppDialog" parent="@android:style/Theme.Holo.Dialog">
+        <item name="android:spinnerDropDownItemStyle">@style/TextViewSpinnerDropDownItem</item>
+    </style>
     <style name="AlertDialog" parent="@android:style/Theme.Holo.Dialog" />
     <style name="CalculatorDialog" parent="@android:style/Theme.Holo.Light.Dialog" />
     <style name="MassOpActionDropdown">
@@ -26,4 +30,10 @@
         <item name="android:textColor">@android:color/primary_text_dark</item>
     </style>
     <style name="LockScreenButton" parent="@android:style/Widget.Button" />
+    <style name="TextViewSpinnerDropDownItem" parent="Widget.AppCompat.DropDownItem.Spinner">
+        <item name="android:textColor">@android:color/primary_text_dark</item>
+    </style>
+    <style name="TextViewSpinnerItem" parent="Widget.AppCompat.TextView.SpinnerItem">
+        <item name="android:textColor">@android:color/primary_text_dark</item>
+    </style>
 </resources>

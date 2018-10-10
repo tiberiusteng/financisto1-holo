@@ -4,7 +4,7 @@
  * are made available under the terms of the GNU Public License v2.0
  * which accompanies this distribution, and is available at
  * http://www.gnu.org/licenses/old-licenses/gpl-2.0.html
- * 
+ *
  * Contributors:
  *     Denis Solonenko - initial API and implementation
  ******************************************************************************/
@@ -18,7 +18,7 @@ import android.database.Cursor;
 import android.view.View;
 
 public class AttributeListAdapter extends AbstractGenericListAdapter {
-	
+
 	private final String[] attributeTypes;
 
 	public AttributeListAdapter(DatabaseAdapter db, Context context, Cursor c) {
@@ -29,7 +29,7 @@ public class AttributeListAdapter extends AbstractGenericListAdapter {
 	@Override
 	protected void bindView(GenericViewHolder v, Context context, Cursor cursor) {
 		Attribute a = Attribute.fromCursor(cursor);
-		v.lineView.setText(a.name);
+		v.lineView.setText(a.title);
 		v.numberView.setText(attributeTypes[a.type-1]);
 		String defaultValue = a.getDefaultValue();
 		if (defaultValue != null) {

@@ -36,7 +36,7 @@ public class QifImportActivity extends AbstractImportActivity implements Activit
         db.open();
 
         Spinner currencySpinner = (Spinner)findViewById(R.id.spinnerCurrency);
-        Cursor currencyCursor = db.em().getAllCurrencies("name");
+        Cursor currencyCursor = db.getAllCurrencies("name");
         startManagingCursor(currencyCursor);
         SimpleCursorAdapter currencyAdapter = new SimpleCursorAdapter(this, android.R.layout.simple_spinner_item, currencyCursor,
                 new String[]{"e_name"}, new int[]{android.R.id.text1});
@@ -98,19 +98,19 @@ public class QifImportActivity extends AbstractImportActivity implements Activit
     }
 
     @Override
-	protected void savePreferences() {
-		SharedPreferences.Editor editor = getPreferences(MODE_PRIVATE).edit();
+    protected void savePreferences() {
+        SharedPreferences.Editor editor = getPreferences(MODE_PRIVATE).edit();
         Spinner dateFormats = (Spinner) findViewById(R.id.spinnerDateFormats);
         Spinner currencySpinner = (Spinner)findViewById(R.id.spinnerCurrency);
         editor.putInt(QIF_IMPORT_DATE_FORMAT, dateFormats.getSelectedItemPosition());
         editor.putString(QIF_IMPORT_FILENAME, edFilename.getText().toString());
         editor.putLong(QIF_IMPORT_CURRENCY, currencySpinner.getSelectedItemId());
-		editor.commit();
-	}
+        editor.apply();
+    }
 
     @Override
     protected void restorePreferences() {
-		SharedPreferences preferences = getPreferences(MODE_PRIVATE);
+        SharedPreferences preferences = getPreferences(MODE_PRIVATE);
         Spinner dateFormats = (Spinner) findViewById(R.id.spinnerDateFormats);
         dateFormats.setSelection(preferences.getInt(QIF_IMPORT_DATE_FORMAT, 0));
         edFilename = (EditText) findViewById(R.id.edFilename);
@@ -124,6 +124,6 @@ public class QifImportActivity extends AbstractImportActivity implements Activit
                 break;
             }
         }
-	}
+    }
 
 }

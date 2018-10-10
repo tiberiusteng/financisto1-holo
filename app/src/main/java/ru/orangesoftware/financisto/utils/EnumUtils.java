@@ -11,19 +11,15 @@
 package ru.orangesoftware.financisto.utils;
 
 import android.app.AlertDialog;
-import android.content.DialogInterface;
-import android.os.Build;
-import android.view.ContextThemeWrapper;
-import android.widget.ListAdapter;
-
-import ru.orangesoftware.financisto.R;
-import ru.orangesoftware.financisto.adapter.EntityEnumAdapter;
 import android.content.Context;
 import android.widget.ArrayAdapter;
+import android.widget.ListAdapter;
+
+import ru.orangesoftware.financisto.adapter.EntityEnumAdapter;
 
 public abstract class EnumUtils {
 
-	public static String[] getLocalizedValues(Context context, LocalizableEnum...values) {
+	public static String[] getLocalizedValues(Context context, LocalizableEnum[] values) {
 		int count = values.length;
 		String[] items = new String[count];
 		for (int i = 0; i<count; i++) {
@@ -33,45 +29,36 @@ public abstract class EnumUtils {
 		return items;
 	}
 	
-	public static ArrayAdapter<String> createDropDownAdapter(Context context, LocalizableEnum...values) {
+	public static ArrayAdapter<String> createDropDownAdapter(Context context, LocalizableEnum[] values) {
 		String[] items = getLocalizedValues(context, values);
-		return new ArrayAdapter<String>(context, android.R.layout.simple_spinner_dropdown_item, items);		
+		return new ArrayAdapter<>(context, android.R.layout.simple_spinner_dropdown_item, items);
 	}
 	
-	public static <T extends EntityEnum> EntityEnumAdapter<T> createEntityEnumAdapter(Context context, T...values) {
-		return new EntityEnumAdapter<T>(context, values);		
+	public static <T extends EntityEnum> EntityEnumAdapter<T> createEntityEnumAdapter(Context context, T[] values) {
+		return new EntityEnumAdapter<>(context, values, true);
 	}
 
-	public static ArrayAdapter<String> createSpinnerAdapter(Context context, LocalizableEnum...values) {
+	public static ArrayAdapter<String> createSpinnerAdapter(Context context, LocalizableEnum[] values) {
 		String[] items = getLocalizedValues(context, values);
-		ArrayAdapter<String> adapter = new ArrayAdapter<String>(context, android.R.layout.simple_spinner_item, items);
+		ArrayAdapter<String> adapter = new ArrayAdapter<>(context, android.R.layout.simple_spinner_item, items);
 		adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
 		return adapter;
 	}
 
-    public static <V, T extends ExecutableEntityEnum<V>> void showPickOneDialog(Context context, int titleId, final T[] items, final V value) {
+    public static <V, T extends ExecutableEntityEnum<? super V>> void showPickOneDialog(Context context, int titleId, final T[] items, final V value) {
         ListAdapter adapter = EnumUtils.createEntityEnumAdapter(context, items);
-		AlertDialog.Builder ab;
-//		if (Build.VERSION.SDK_INT >= 11) {
-//			ab = new AlertDialog.Builder(context, AlertDialog.THEME_HOLO_DARK);
-//		}
-//		else {
-//			ab = new AlertDialog.Builder(context);
-//		}
-        ab = new AlertDialog.Builder(new ContextThemeWrapper(context, R.style.AlertDialog));
-		AlertDialog dialog = ab.setAdapter(adapter, new DialogInterface.OnClickListener() {
-			@Override
-			public void onClick(DialogInterface dialog, int which) {
-				dialog.dismiss();
-				T e = items[which];
-				e.execute(value);
-			}
-		}).create();
+        AlertDialog dialog = new AlertDialog.Builder(context)
+                .setAdapter(adapter, (dialog1, which) -> {
+                    dialog1.dismiss();
+                    T e = items[which];
+                    e.execute(value);
+                })
+                .create();
         dialog.setTitle(titleId);
         dialog.show();
     }
 
-    public static String[] asStringArray(Enum... values) {
+    public static String[] asStringArray(Enum[] values) {
         int count = values.length;
         String[] a = new String[count];
         for (int i=0; i<count; i++) {
@@ -79,5 +66,14 @@ public abstract class EnumUtils {
         }
         return a;
     }
+
+	public static <E extends Enum> E selectEnum(Class<E> enumType, String enumValue, E defaultValue) {
+		if (enumValue == null) return defaultValue;
+		E[] constants = enumType.getEnumConstants();
+		for (E e : constants) {
+			if (enumValue.equals(e.name())) return e;
+		}
+		return defaultValue;
+	}
 
 }

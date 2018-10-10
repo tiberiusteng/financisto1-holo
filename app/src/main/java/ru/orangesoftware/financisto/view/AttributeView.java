@@ -4,20 +4,14 @@
  * are made available under the terms of the GNU Public License v2.0
  * which accompanies this distribution, and is available at
  * http://www.gnu.org/licenses/old-licenses/gpl-2.0.html
- * 
+ *
  * Contributors:
  *     Denis Solonenko - initial API and implementation
  ******************************************************************************/
 package ru.orangesoftware.financisto.view;
 
-import ru.orangesoftware.financisto.R;
-import ru.orangesoftware.financisto.model.Attribute;
-import ru.orangesoftware.financisto.model.TransactionAttribute;
-import ru.orangesoftware.financisto.view.NodeInflater.Builder;
-import ru.orangesoftware.financisto.view.NodeInflater.CheckBoxBuilder;
 import android.app.AlertDialog;
 import android.content.Context;
-import android.content.DialogInterface;
 import android.text.InputType;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -28,6 +22,12 @@ import android.widget.EditText;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
+import ru.orangesoftware.financisto.R;
+import ru.orangesoftware.financisto.model.Attribute;
+import ru.orangesoftware.financisto.model.TransactionAttribute;
+import ru.orangesoftware.financisto.view.NodeInflater.Builder;
+import ru.orangesoftware.financisto.view.NodeInflater.CheckBoxBuilder;
+
 public abstract class AttributeView implements OnClickListener {
 	public final Attribute attribute;
 
@@ -37,7 +37,7 @@ public abstract class AttributeView implements OnClickListener {
 	public AttributeView(Context context, Attribute attribute) {
 		this.context = context;
 		this.attribute = attribute;
-		LayoutInflater layoutInflater = (LayoutInflater)context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+		LayoutInflater layoutInflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
 		this.inflater = new NodeInflater(layoutInflater);
 	}
 
@@ -45,9 +45,9 @@ public abstract class AttributeView implements OnClickListener {
 	public void onClick(View view) {
 		// do nothing by default
 	}
-		
+
 	public abstract View inflateView(LinearLayout layout, String value);
-	
+
 	public abstract String value();
 
 	public TransactionAttribute newTransactionAttribute() {
@@ -62,7 +62,7 @@ public abstract class AttributeView implements OnClickListener {
 class TextAttributeView extends AttributeView {
 
 	private EditText editText;
-	
+
 	public TextAttributeView(Context context, Attribute attribute) {
 		super(context, attribute);
 	}
@@ -74,20 +74,20 @@ class TextAttributeView extends AttributeView {
 		if (value != null) {
 			editText.setText(value);
 		}
-		return inflater.new EditBuilder(layout, editText).withLabel(attribute.name).create();
+		return inflater.new EditBuilder(layout, editText).withLabel(attribute.title).create();
 	}
 
 	@Override
 	public String value() {
 		return editText.getText().toString();
 	}
-	
+
 }
 
 class NumberAttributeView extends AttributeView {
 
 	private EditText editText;
-	
+
 	public NumberAttributeView(Context context, Attribute attribute) {
 		super(context, attribute);
 	}
@@ -100,7 +100,7 @@ class NumberAttributeView extends AttributeView {
 		if (value != null) {
 			editText.setText(value);
 		}
-		return inflater.new EditBuilder(layout, editText).withLabel(attribute.name).create();
+		return inflater.new EditBuilder(layout, editText).withLabel(attribute.title).create();
 	}
 
 	@Override
@@ -111,7 +111,7 @@ class NumberAttributeView extends AttributeView {
 }
 
 class ListAttributeView extends AttributeView {
-	
+
 	private final String[] items;
 	private int selectedIndex = -1;
 
@@ -126,45 +126,42 @@ class ListAttributeView extends AttributeView {
 		b.withId(R.id.click_attribute, this);
 		if (value != null) {
 			b.withData(value);
-			for (int i=0; i<items.length; i++) {
+			for (int i = 0; i < items.length; i++) {
 				if (items[i].equalsIgnoreCase(value)) {
 					selectedIndex = i;
 					break;
 				}
 			}
 		}
-		return b.withLabel(attribute.name).create();
+		return b.withLabel(attribute.title).create();
 	}
 
 	@Override
 	public void onClick(final View view) {
-		ArrayAdapter<String> adapter = new ArrayAdapter<String>(context, android.R.layout.select_dialog_singlechoice, items);
+		ArrayAdapter<String> adapter = new ArrayAdapter<>(context, android.R.layout.select_dialog_singlechoice, items);
 		new AlertDialog.Builder(context)
-			.setSingleChoiceItems(adapter, selectedIndex, new DialogInterface.OnClickListener(){
-				@Override
-				public void onClick(DialogInterface dialog, int which) {
+				.setSingleChoiceItems(adapter, selectedIndex, (dialog, which) -> {
 					dialog.dismiss();
 					selectedIndex = which;
-					TextView text = (TextView)view.findViewById(R.id.data);
+					TextView text = view.findViewById(R.id.data);
 					text.setText(items[which]);
-				}
-			})
-			.setTitle(attribute.name)
-			.show();
+				})
+				.setTitle(attribute.title)
+				.show();
 
 	}
-	
+
 	@Override
 	public String value() {
 		return selectedIndex == -1 ? null : items[selectedIndex];
 	}
-	
+
 }
 
 class CheckBoxAttributeView extends AttributeView {
 
-	private boolean checked = false; 
-	
+	private boolean checked = false;
+
 	public CheckBoxAttributeView(Context context, Attribute attribute) {
 		super(context, attribute);
 	}
@@ -175,19 +172,19 @@ class CheckBoxAttributeView extends AttributeView {
 		checked = Boolean.valueOf(value);
 		b.withCheckbox(checked);
 		b.withId(R.id.click_attribute, this);
-		b.withLabel(attribute.name);
+		b.withLabel(attribute.title);
 		if (attribute.listValues != null) {
 			b.withData(attribute.listValues.replace(';', '/'));
 		} else {
 			b.withData(R.string.checkbox_values);
 		}
-		return b.withLabel(attribute.name).create();
+		return b.withLabel(attribute.title).create();
 	}
-	
+
 	@Override
 	public void onClick(View view) {
 		checked = !checked;
-		CheckBox b = (CheckBox)view.findViewById(R.id.checkbox);		
+		CheckBox b = view.findViewById(R.id.checkbox);
 		b.setChecked(checked);
 	}
 

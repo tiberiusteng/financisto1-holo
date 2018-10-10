@@ -10,58 +10,30 @@
  ******************************************************************************/
 package ru.orangesoftware.financisto.model;
 
-import ru.orangesoftware.financisto.utils.Utils;
-
-import javax.persistence.Column;
-import javax.persistence.Id;
-import javax.persistence.Transient;
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import javax.persistence.Column;
+import javax.persistence.Id;
+import javax.persistence.Transient;
+
+import ru.orangesoftware.financisto.utils.Utils;
+
+import static ru.orangesoftware.orb.EntityManager.DEF_ID_COL;
+import static ru.orangesoftware.orb.EntityManager.DEF_TITLE_COL;
+
 public class MyEntity implements MultiChoiceItem {
 
 	@Id
-	@Column(name = "_id")
+	@Column(name = DEF_ID_COL)
 	public long id = -1;
 
-	@Column(name = "title")
+	@Column(name = DEF_TITLE_COL)
 	public String title;
 
-	@Column(name = "updated_on")
-	public long updatedOn = System.currentTimeMillis();
-	 
-	@Column(name = "remote_key")
-	public String remoteKey ;	
-	
 	@Transient
 	public boolean checked;
-
-	@Override
-	public long getId() {
-		return id;
-	}
-
-	@Override
-	public String getTitle() {
-		return title;
-	}
-
-	@Override
-	public boolean isChecked() {
-		return checked;
-	}
-
-	@Override
-	public void setChecked(boolean checked) {
-		this.checked = checked;
-	}
-	
-	@Override
-	public String toString() {
-		return title;
-	}
 
 	public static long[] splitIds(String s) {
 		if (Utils.isEmpty(s)) {
@@ -75,9 +47,9 @@ public class MyEntity implements MultiChoiceItem {
 		}
 		return ids;
 	}
-	
+
 	public static <T extends MyEntity> Map<Long, T> asMap(List<T> list) {
-		HashMap<Long, T> map = new HashMap<Long, T>();
+		HashMap<Long, T> map = new HashMap<>();
 		for (T e : list) {
 			map.put(e.id, e);
 		}
@@ -96,13 +68,38 @@ public class MyEntity implements MultiChoiceItem {
 		return -1;
 	}
 
-	public static <T extends MyEntity> T find(ArrayList<T> entities, long id) {
+	public static <T extends MyEntity> T find(List<T> entities, long id) {
 		for (T e : entities) {
 			if (e.id == id) {
 				return e;
 			}
 		}
 		return null;
+	}
+	
+	@Override
+	public long getId() {
+		return id;
+	}
+
+	@Override
+	public String getTitle() {
+		return title;
+	}
+	
+	@Override
+	public boolean isChecked() {
+		return checked;
+	}
+
+	@Override
+	public void setChecked(boolean checked) {
+		this.checked = checked;
+	}
+
+	@Override
+	public String toString() {
+		return title;
 	}
 
     @Override

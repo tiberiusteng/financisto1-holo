@@ -36,8 +36,8 @@ import static ru.orangesoftware.financisto.db.DatabaseHelper.V_BLOTTER_FOR_ACCOU
 public class TransactionsTotalCalculator {
 
     public static final String[] BALANCE_PROJECTION = {
-        "from_account_currency_id",
-        "SUM(from_amount)"};
+            "from_account_currency_id",
+            "SUM(from_amount)"};
 
     public static final String BALANCE_GROUPBY = "from_account_currency_id";
 
@@ -64,23 +64,20 @@ public class TransactionsTotalCalculator {
         if (filter.getAccountId() == -1) {
             filter = excludeAccountsNotIncludedInTotalsAndSplits(filter);
         }
-        Cursor c = db.db().query(V_BLOTTER_FOR_ACCOUNT_WITH_SPLITS, BALANCE_PROJECTION,
+        try (Cursor c = db.db().query(V_BLOTTER_FOR_ACCOUNT_WITH_SPLITS, BALANCE_PROJECTION,
                 filter.getSelection(), filter.getSelectionArgs(),
-                BALANCE_GROUPBY, null, null);
-        try {
+                BALANCE_GROUPBY, null, null)) {
             int count = c.getCount();
             List<Total> totals = new ArrayList<Total>(count);
             while (c.moveToNext()) {
                 long currencyId = c.getLong(0);
                 long balance = c.getLong(1);
-                Currency currency = CurrencyCache.getCurrency(db.em(), currencyId);
+                Currency currency = CurrencyCache.getCurrency(db, currencyId);
                 Total total = new Total(currency);
                 total.balance = balance;
                 totals.add(total);
             }
             return totals.toArray(new Total[totals.size()]);
-        } finally {
-            c.close();
         }
     }
 
@@ -90,7 +87,7 @@ public class TransactionsTotalCalculator {
     }
 
     public Total getBlotterBalanceInHomeCurrency() {
-        Currency homeCurrency = db.em().getHomeCurrency();
+        Currency homeCurrency = db.getHomeCurrency();
         return getBlotterBalance(homeCurrency);
     }
 
@@ -130,18 +127,17 @@ public class TransactionsTotalCalculator {
     }
 
     private static long calculateTotalFromCursor(DatabaseAdapter db, Cursor c, Currency toCurrency) throws UnableToCalculateRateException {
-        MyEntityManager em = db.em();
         ExchangeRateProvider rates = db.getHistoryRates();
         BigDecimal balance = BigDecimal.ZERO;
         while (c.moveToNext()) {
-            balance = balance.add(getAmountFromCursor(em, c, toCurrency, rates, 0));
+            balance = balance.add(getAmountFromCursor(db, c, toCurrency, rates, 0));
         }
         return balance.longValue();
     }
 
     public static Total calculateTotalFromListInHomeCurrency(DatabaseAdapter db, List<TransactionInfo> list) {
         try {
-            Currency toCurrency = db.em().getHomeCurrency();
+            Currency toCurrency = db.getHomeCurrency();
             long[] balance = calculateTotalFromList(db, list, toCurrency);
             return Total.asIncomeExpense(toCurrency, balance[0], balance[1]);
         } catch (UnableToCalculateRateException e) {
@@ -150,12 +146,11 @@ public class TransactionsTotalCalculator {
     }
 
     public static long[] calculateTotalFromList(DatabaseAdapter db, List<TransactionInfo> list, Currency toCurrency) throws UnableToCalculateRateException {
-        MyEntityManager em = db.em();
         ExchangeRateProvider rates = db.getHistoryRates();
         BigDecimal income = BigDecimal.ZERO;
         BigDecimal expenses = BigDecimal.ZERO;
         for (TransactionInfo t : list) {
-            BigDecimal amount = getAmountFromTransaction(em, t, toCurrency, rates);
+            BigDecimal amount = getAmountFromTransaction(db, t, toCurrency, rates);
             if (amount.signum() > 0) {
                 income = income.add(amount);
             } else {

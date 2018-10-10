@@ -4,7 +4,7 @@
  * are made available under the terms of the GNU Public License v2.0
  * which accompanies this distribution, and is available at
  * http://www.gnu.org/licenses/old-licenses/gpl-2.0.html
- * 
+ *
  * Contributors:
  *     Denis Solonenko - initial API and implementation
  ******************************************************************************/
@@ -12,9 +12,9 @@ package ru.orangesoftware.financisto.backup;
 
 import android.content.ContentValues;
 import android.content.Context;
-import com.google.api.client.http.GenericUrl;
-import com.google.api.client.http.HttpResponse;
-import com.google.api.services.drive.Drive;
+import android.util.Log;
+import com.dropbox.core.util.IOUtil;
+import com.google.android.gms.drive.DriveContents;
 import ru.orangesoftware.financisto.db.Database;
 import ru.orangesoftware.financisto.db.DatabaseAdapter;
 import ru.orangesoftware.financisto.db.DatabaseSchemaEvolution;
@@ -25,10 +25,14 @@ import java.io.*;
 import java.util.zip.GZIPInputStream;
 
 import static ru.orangesoftware.financisto.backup.Backup.RESTORE_SCRIPTS;
+import static ru.orangesoftware.financisto.backup.Backup.tableHasOrder;
+import static ru.orangesoftware.financisto.db.DatabaseHelper.ATTRIBUTES_TABLE;
+import static ru.orangesoftware.financisto.db.DatabaseHelper.LOCATIONS_TABLE;
+import static ru.orangesoftware.orb.EntityManager.DEF_SORT_COL;
 
 public class DatabaseImport extends FullDatabaseImport {
 
-	private final DatabaseSchemaEvolution schemaEvolution;
+    private final DatabaseSchemaEvolution schemaEvolution;
     private final InputStream backupStream;
 
     public static DatabaseImport createFromFileBackup(Context context, DatabaseAdapter dbAdapter, String backupFile) throws FileNotFoundException {
@@ -38,12 +42,11 @@ public class DatabaseImport extends FullDatabaseImport {
         return new DatabaseImport(context, dbAdapter, inputStream);
     }
 
-    public static DatabaseImport createFromGoogleDriveBackup(Context context, DatabaseAdapter dbAdapter, Drive drive, com.google.api.services.drive.model.File file)
+    public static DatabaseImport createFromGoogleDriveBackup(Context context, DatabaseAdapter db, DriveContents driveFileContents)
             throws IOException {
-        HttpResponse response = drive.getRequestFactory().buildGetRequest(new GenericUrl(file.getDownloadUrl())).execute();
-        InputStream inputStream = response.getContent();
+        InputStream inputStream = driveFileContents.getInputStream();
         InputStream in = new GZIPInputStream(inputStream);
-        return new DatabaseImport(context, dbAdapter, in);
+        return new DatabaseImport(context, db, in);
     }
 
     public static DatabaseImport createFromDropboxBackup(Context context, DatabaseAdapter dbAdapter, Dropbox dropbox, String backupFile)
@@ -57,7 +60,7 @@ public class DatabaseImport extends FullDatabaseImport {
         super(context, dbAdapter);
         this.schemaEvolution = new DatabaseSchemaEvolution(context, Database.DATABASE_NAME, null, Database.DATABASE_VERSION);
         this.backupStream = backupStream;
-	}
+    }
 
     @Override
     protected void restoreDatabase() throws IOException {
@@ -68,7 +71,7 @@ public class DatabaseImport extends FullDatabaseImport {
             recoverDatabase(br);
             runRestoreAlterscripts();
         } finally {
-            br.close();
+            IOUtil.closeInput(br);
         }
     }
 
@@ -89,18 +92,29 @@ public class DatabaseImport extends FullDatabaseImport {
         ContentValues values = new ContentValues();
         String line;
         String tableName = null;
+        long rowNum = 0;
         while ((line = br.readLine()) != null) {
             if (line.startsWith("$")) {
                 if ("$$".equals(line)) {
                     if (tableName != null && values.size() > 0) {
-                        db.insert(tableName, null, values);
+                        if (shouldRestoreTable(tableName)) {
+                            cleanupValues(tableName, values);
+                            if (values.size() > 0) {
+                                // if old dump format - then just adding sequential default order
+                                if (tableHasOrder(tableName) && !values.containsKey(DEF_SORT_COL)) {
+                                    values.put(DEF_SORT_COL, ++rowNum);
+                                }
+                                db.insert(tableName, null, values);
+                            }
+                        }
                         tableName = null;
                         insideEntity = false;
+
                     }
                 } else {
                     int i = line.indexOf(":");
                     if (i > 0) {
-                        tableName = line.substring(i+1);
+                        tableName = line.substring(i + 1);
                         insideEntity = true;
                         values.clear();
                     }
@@ -110,18 +124,56 @@ public class DatabaseImport extends FullDatabaseImport {
                     int i = line.indexOf(":");
                     if (i > 0) {
                         String columnName = line.substring(0, i);
-                        String value = line.substring(i+1);
+                        String value = line.substring(i + 1);
                         values.put(columnName, value);
                     }
                 }
             }
         }
-	}
+    }
 
-	private void runRestoreAlterscripts() throws IOException {
-		for (String script : RESTORE_SCRIPTS) {
-			schemaEvolution.runAlterScript(db, script);
-		}
-	}
+    private void runRestoreAlterscripts() throws IOException {
+        for (String script : RESTORE_SCRIPTS) {
+            schemaEvolution.runAlterScript(db, script);
+        }
+    }
+
+    private boolean shouldRestoreTable(String tableName) {
+        return true;
+    }
+
+    private void cleanupValues(String tableName, ContentValues values) {
+        // remove system entities
+        Integer id = values.getAsInteger("_id");
+        if (id != null && id <= 0) {
+            Log.w("Financisto", "Removing system entity: " + values);
+            values.clear();
+            return;
+        }
+        // fix columns
+        values.remove("updated_on");
+        values.remove("remote_key");
+        if (LOCATIONS_TABLE.equals(tableName)) {
+            if (values.containsKey("name")) {
+                values.put("title", values.getAsString("name"));
+            }
+        } else if (ATTRIBUTES_TABLE.equals(tableName)) {
+            if (values.containsKey("name")) {
+                values.put("title", values.getAsString("name"));
+                values.remove("name");
+            }
+        }
+
+        /*
+        if ("account".equals(tableName)) {
+            values.remove("sort_order");
+            String type = values.getAsString("type");
+            if ("PAYPAL".equals(type)) {
+                values.put("type", AccountType.ELECTRONIC.name());
+                values.put("card_issuer", ElectronicPaymentType.PAYPAL.name());
+            }
+        }
+        */
+    }
 
 }

@@ -1,14 +1,16 @@
 package ru.orangesoftware.financisto.widget;
 
 import android.app.Activity;
-import android.content.Intent;
 import android.view.View;
+import android.view.WindowManager;
 import android.widget.LinearLayout;
 import android.widget.TextView;
+
 import ru.orangesoftware.financisto.R;
 import ru.orangesoftware.financisto.activity.AbstractActivity;
 import ru.orangesoftware.financisto.activity.ActivityLayout;
 import ru.orangesoftware.financisto.model.Currency;
+import ru.orangesoftware.financisto.utils.MyPreferences;
 
 import static ru.orangesoftware.financisto.activity.AbstractActivity.setVisibility;
 
@@ -54,13 +56,13 @@ public class RateLayoutView implements RateNodeOwner {
 
     private void createUI(int fromAmountTitleId, int toAmountTitleId) {
         //amount from
-        amountInputFrom = new AmountInput(activity);
+        amountInputFrom = AmountInput_.build(activity);
         amountInputFrom.setOwner(activity);
         amountInputFrom.setExpense();
         amountFromTitleId = fromAmountTitleId;
         amountInputFromNode = x.addEditNode(layout, fromAmountTitleId, amountInputFrom);
         //amount to & rate
-        amountInputTo = new AmountInput(activity);
+        amountInputTo = AmountInput_.build(activity);
         amountInputTo.setOwner(activity);
         amountInputTo.setIncome();
         amountToTitleId = toAmountTitleId;
@@ -70,6 +72,11 @@ public class RateLayoutView implements RateNodeOwner {
         setVisibility(amountInputToNode, View.GONE);
         rateNode = new RateNode(this, x, layout);
         setVisibility(rateNode.rateInfoNode, View.GONE);
+
+        if (MyPreferences.isSetFocusOnAmountField(activity)) {
+            amountInputFrom.requestFocusFromTouch();
+            activity.getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_VISIBLE);
+        }
     }
 
     public void createTransferUI() {
@@ -108,7 +115,7 @@ public class RateLayoutView implements RateNodeOwner {
     }
 
     private void updateTitle(View node, int titleId, Currency currency) {
-        TextView title = (TextView) node.findViewById(R.id.label);
+        TextView title = node.findViewById(R.id.label);
         if (currency != null && currency.id > 0) {
             title.setText(activity.getString(titleId)+" ("+currency.name+")");
         } else {
@@ -151,24 +158,6 @@ public class RateLayoutView implements RateNodeOwner {
 
     private boolean isDifferentCurrencies() {
         return currencyFrom != null && currencyTo != null && currencyFrom.id != currencyTo.id;
-    }
-
-    public void onActivityResult(int requestCode, Intent data) {
-        if (amountInputFrom.processActivityResult(requestCode, data)) {
-            calculateRate();
-            return;
-        }
-        if (amountInputTo.processActivityResult(requestCode, data)) {
-            calculateRate();
-            return;
-        }
-        if (requestCode == RateNode.EDIT_RATE) {
-            String amount = data.getStringExtra(AmountInput.EXTRA_AMOUNT);
-            if (amount != null) {
-                rateNode.setRate(Float.parseFloat(amount));
-                updateToAmountFromRate();
-            }
-        }
     }
 
     private final AmountInput.OnAmountChangedListener onAmountFromChangedListener = new AmountInput.OnAmountChangedListener(){
@@ -240,7 +229,6 @@ public class RateLayoutView implements RateNodeOwner {
     public void openFromAmountCalculator() {
         amountInputFrom.openCalculator();
     }
-
 
     @Override
     public void onBeforeRateDownload() {

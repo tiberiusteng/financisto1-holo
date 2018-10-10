@@ -2,20 +2,34 @@ package ru.orangesoftware.financisto.export.csv;
 
 import android.database.sqlite.SQLiteDatabase;
 import android.util.Log;
-import ru.orangesoftware.financisto.db.DatabaseAdapter;
-import ru.orangesoftware.financisto.db.MyEntityManager;
-import ru.orangesoftware.financisto.export.CategoryCache;
-import ru.orangesoftware.financisto.export.CategoryInfo;
-import ru.orangesoftware.financisto.export.ProgressListener;
-import ru.orangesoftware.financisto.model.*;
-import ru.orangesoftware.financisto.model.Currency;
-import ru.orangesoftware.financisto.utils.Utils;
 
 import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
-import java.util.*;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.HashSet;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+
+import ru.orangesoftware.financisto.R;
+import ru.orangesoftware.financisto.db.DatabaseAdapter;
+import ru.orangesoftware.financisto.export.CategoryCache;
+import ru.orangesoftware.financisto.export.CategoryInfo;
+import ru.orangesoftware.financisto.export.ImportExportException;
+import ru.orangesoftware.financisto.export.ProgressListener;
+import ru.orangesoftware.financisto.model.Account;
+import ru.orangesoftware.financisto.model.Category;
+import ru.orangesoftware.financisto.model.Currency;
+import ru.orangesoftware.financisto.model.MyEntity;
+import ru.orangesoftware.financisto.model.Payee;
+import ru.orangesoftware.financisto.model.Project;
+import ru.orangesoftware.financisto.model.Transaction;
+import ru.orangesoftware.financisto.model.TransactionAttribute;
+import ru.orangesoftware.financisto.utils.Utils;
 
 public class CsvImport {
 
@@ -29,7 +43,7 @@ public class CsvImport {
     public CsvImport(DatabaseAdapter db, CsvImportOptions options) {
         this.db = db;
         this.options = options;
-        this.account = db.em().getAccount(options.selectedAccountId);
+        this.account = db.getAccount(options.selectedAccountId);
         this.decimalSeparator = options.currency.decimalSeparator.charAt(1);
         this.groupSeparator = options.currency.groupSeparator.charAt(1);
     }
@@ -38,36 +52,35 @@ public class CsvImport {
         long t0 = System.currentTimeMillis();
         List<CsvTransaction> transactions = parseTransactions();
         long t1 = System.currentTimeMillis();
-        Log.i("Financisto", "Parsing transactions ="+(t1-t0)+"ms");
+        Log.i("Financisto", "Parsing transactions =" + (t1 - t0) + "ms");
         Map<String, Category> categories = collectAndInsertCategories(transactions);
         long t2 = System.currentTimeMillis();
-        Log.i("Financisto", "Collecting categories ="+(t2-t1)+"ms");
+        Log.i("Financisto", "Collecting categories =" + (t2 - t1) + "ms");
         Map<String, Project> projects = collectAndInsertProjects(transactions);
         long t3 = System.currentTimeMillis();
-        Log.i("Financisto", "Collecting projects ="+(t3-t2)+"ms");
+        Log.i("Financisto", "Collecting projects =" + (t3 - t2) + "ms");
         Map<String, Payee> payees = collectAndInsertPayees(transactions);
         long t4 = System.currentTimeMillis();
-        Log.i("Financisto", "Collecting payees ="+(t4-t3)+"ms");
+        Log.i("Financisto", "Collecting payees =" + (t4 - t3) + "ms");
         Map<String, Currency> currencies = collectAndInsertCurrencies(transactions);
         long t5 = System.currentTimeMillis();
-        Log.i("Financisto", "Collecting currencies ="+(t5-t4)+"ms");
+        Log.i("Financisto", "Collecting currencies =" + (t5 - t4) + "ms");
         importTransactions(transactions, currencies, categories, projects, payees);
         long t6 = System.currentTimeMillis();
-        Log.i("Financisto", "Inserting transactions ="+(t6-t5)+"ms");
-        Log.i("Financisto", "Overall csv import ="+((t6-t0)/1000)+"s");
+        Log.i("Financisto", "Inserting transactions =" + (t6 - t5) + "ms");
+        Log.i("Financisto", "Overall csv import =" + ((t6 - t0) / 1000) + "s");
         return options.filename + " imported!";
     }
 
     public Map<String, Project> collectAndInsertProjects(List<CsvTransaction> transactions) {
-        MyEntityManager em = db.em();
-        Map<String, Project> map = em.getAllProjectsByTitleMap(false);
+        Map<String, Project> map = db.getAllProjectsByTitleMap(false);
         for (CsvTransaction transaction : transactions) {
             String project = transaction.project;
             if (isNewProject(map, project)) {
                 Project p = new Project();
                 p.title = project;
                 p.isActive = true;
-                em.saveOrUpdate(p);
+                db.saveOrUpdate(p);
                 map.put(project, p);
             }
         }
@@ -79,14 +92,13 @@ public class CsvImport {
     }
 
     public Map<String, Payee> collectAndInsertPayees(List<CsvTransaction> transactions) {
-        MyEntityManager em = db.em();
-        Map<String, Payee> map = em.getAllPayeeByTitleMap();
+        Map<String, Payee> map = db.getAllPayeeByTitleMap();
         for (CsvTransaction transaction : transactions) {
             String payee = transaction.payee;
             if (isNewEntity(map, payee)) {
                 Payee p = new Payee();
                 p.title = payee;
-                em.saveOrUpdate(p);
+                db.saveOrUpdate(p);
                 map.put(payee, p);
             }
         }
@@ -106,8 +118,7 @@ public class CsvImport {
     }
 
     private Map<String, Currency> collectAndInsertCurrencies(List<CsvTransaction> transactions) {
-        MyEntityManager em = db.em();
-        Map<String, Currency> map = em.getAllCurrenciesByTtitleMap();
+        Map<String, Currency> map = db.getAllCurrenciesByTtitleMap();
         for (CsvTransaction transaction : transactions) {
             String currency = transaction.originalCurrency;
             if (isNewEntity(map, currency)) {
@@ -118,7 +129,7 @@ public class CsvImport {
                 c.decimalSeparator = Currency.EMPTY.decimalSeparator;
                 c.groupSeparator = Currency.EMPTY.groupSeparator;
                 c.isDefault = false;
-                em.saveOrUpdate(c);
+                db.saveOrUpdate(c);
                 map.put(currency, c);
             }
         }
@@ -140,13 +151,13 @@ public class CsvImport {
                 Transaction t = transaction.createTransaction(currencies, categories, projects, payees);
                 db.insertOrUpdateInTransaction(t, emptyAttributes);
                 if (++count % 100 == 0) {
-                    Log.i("Financisto", "Inserted "+count+" out of "+totalCount);
+                    Log.i("Financisto", "Inserted " + count + " out of " + totalCount);
                     if (progressListener != null) {
-                        progressListener.onProgress((int)(100f*count/totalCount));
+                        progressListener.onProgress((int) (100f * count / totalCount));
                     }
                 }
             }
-            Log.i("Financisto", "Total transactions inserted: "+count);
+            Log.i("Financisto", "Total transactions inserted: " + count);
             database.setTransactionSuccessful();
         } finally {
             database.endTransaction();
@@ -180,9 +191,9 @@ public class CsvImport {
                                 String fieldValue = line.get(i);
                                 if (!fieldValue.equals("")) {
                                     if (transactionField.equals("date")) {
-                                        transaction.date = options.dateFormat.parse(fieldValue).getTime();
+                                        transaction.date = options.dateFormat.parse(fieldValue);
                                     } else if (transactionField.equals("time")) {
-                                        transaction.time = format.parse(fieldValue).getTime();
+                                        transaction.time = format.parse(fieldValue);
                                     } else if (transactionField.equals("amount")) {
                                         Double fromAmountDouble = parseAmount(fieldValue);
                                         transaction.fromAmount = fromAmountDouble.longValue();
@@ -203,7 +214,7 @@ public class CsvImport {
                                         transaction.project = fieldValue;
                                     } else if (transactionField.equals("currency")) {
                                         if (!account.currency.name.equals(fieldValue)) {
-                                            throw new Exception("Wrong currency "+fieldValue);
+                                            throw new ImportExportException(R.string.import_wrong_currency_2, null, fieldValue);
                                         }
                                         transaction.currency = fieldValue;
                                     }
@@ -215,7 +226,7 @@ public class CsvImport {
                             }
                         }
                     }
-                    transaction.time += deltaTime++;
+                    transaction.delta = deltaTime++;
                     transactions.add(transaction);
                 } else {
                     // first line of csv-file is table headline
@@ -225,6 +236,10 @@ public class CsvImport {
             }
             return transactions;
         } catch (FileNotFoundException e) {
+            if (csvFilename.contains(":")){
+                throw new ImportExportException(R.string.import_file_not_found_2, null,
+                        csvFilename.substring(0, csvFilename.indexOf(":")+1));
+            }
             throw new Exception("Import file not found");
         }
     }
@@ -246,7 +261,7 @@ public class CsvImport {
         for (CsvTransaction transaction : transactions) {
             String category = transaction.category;
             if (Utils.isNotEmpty(transaction.categoryParent)) {
-                category = transaction.categoryParent+CategoryInfo.SEPARATOR+category;
+                category = transaction.categoryParent + CategoryInfo.SEPARATOR + category;
             }
             if (Utils.isNotEmpty(category)) {
                 categories.add(new CategoryInfo(category, false));
@@ -258,7 +273,7 @@ public class CsvImport {
     }
 
     //Workaround function which is needed for reimport of CsvExport files
-    public String myTrim(String s) {
+    private String myTrim(String s) {
         if (Character.isLetter(s.charAt(0))) {
             return s;
         } else {
@@ -267,7 +282,7 @@ public class CsvImport {
 
     }
 
-    public void setProgressListener(ProgressListener progressListener) {
+    void setProgressListener(ProgressListener progressListener) {
         this.progressListener = progressListener;
     }
 }

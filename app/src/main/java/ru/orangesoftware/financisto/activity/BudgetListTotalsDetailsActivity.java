@@ -17,16 +17,11 @@ import ru.orangesoftware.financisto.model.Total;
 
 import java.util.List;
 
-/**
- * Created by IntelliJ IDEA.
- * User: denis.solonenko
- * Date: 3/15/12 16:40 PM
- */
 public class BudgetListTotalsDetailsActivity extends AbstractTotalsDetailsActivity  {
 
     private WhereFilter filter = WhereFilter.empty();
     private BudgetsTotalCalculator calculator;
-    
+
     public BudgetListTotalsDetailsActivity() {
         super(R.string.budget_total_in_currency);
     }
@@ -41,7 +36,7 @@ public class BudgetListTotalsDetailsActivity extends AbstractTotalsDetailsActivi
 
     @Override
     protected void prepareInBackground() {
-        List<Budget> budgets = em.getAllBudgets(filter);
+        List<Budget> budgets = db.getAllBudgets(filter);
         calculator = new BudgetsTotalCalculator(db, budgets);
         calculator.updateBudgets(null);
     }

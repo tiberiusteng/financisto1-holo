@@ -10,7 +10,7 @@
 	android:orientation="vertical">
 	<ListView android:id="@android:id/list" android:layout_width="fill_parent"
 		android:layout_weight="1" android:layout_height="wrap_content"
-        android:choiceMode="singleChoice">
+		android:choiceMode="singleChoice">
 	</ListView>
 	<TextView android:id="@id/android:empty" android:layout_width="fill_parent"
 		android:layout_height="wrap_content" android:layout_weight="1"
@@ -18,15 +18,15 @@
 	<LinearLayout android:layout_height="wrap_content"
 		android:layout_width="fill_parent" android:background="#FFF"
 		android:paddingTop="2dp">
-        <Button android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:text="@string/back"
-                android:id="@+id/bBack"/>
-        <Button android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:text="@string/select"
-                android:id="@+id/bSelect"/>
+		<Button android:layout_width="wrap_content"
+			android:layout_height="wrap_content"
+			android:layout_weight="1"
+			android:text="@string/back"
+			android:id="@+id/bBack"/>
+		<Button android:layout_width="wrap_content"
+			android:layout_height="wrap_content"
+			android:layout_weight="1"
+			android:text="@string/select"
+			android:id="@+id/bSelect"/>
 	</LinearLayout>
 </LinearLayout>

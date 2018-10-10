@@ -4,7 +4,7 @@
  * are made available under the terms of the GNU Public License v2.0
  * which accompanies this distribution, and is available at
  * http://www.gnu.org/licenses/old-licenses/gpl-2.0.html
- * 
+ *
  * Contributors:
  *     Denis Solonenko - initial API and implementation
  ******************************************************************************/
@@ -24,11 +24,11 @@ import android.database.Cursor;
 import android.widget.ListAdapter;
 
 public class AttributeListActivity extends AbstractListActivity {
-	
+
 	public AttributeListActivity() {
 		super(R.layout.attributes_list);
 	}
-	
+
 	@Override
 	protected List<MenuItemInfo> createContextMenus(long id) {
 		List<MenuItemInfo> menus = super.createContextMenus(id);
@@ -56,7 +56,7 @@ public class AttributeListActivity extends AbstractListActivity {
 	protected Cursor createCursor() {
 		return db.getAllAttributes();
 	}
-	
+
 	@Override
 	protected void onActivityResult(int requestCode, int resultCode, Intent data) {
 		super.onActivityResult(requestCode, resultCode, data);
@@ -68,34 +68,30 @@ public class AttributeListActivity extends AbstractListActivity {
 	@Override
 	protected void deleteItem(View v, int position, final long id) {
 		new AlertDialog.Builder(this)
-			.setTitle(R.string.delete)
-			.setIcon(android.R.drawable.ic_dialog_alert)
-			.setMessage(R.string.attribute_delete_alert)			
-			.setPositiveButton(R.string.delete, new DialogInterface.OnClickListener(){
-				@Override
-				public void onClick(DialogInterface arg0, int arg1) {
-					db.deleteAttribute(id);
-					cursor.requery();
-				}				
-			})
-			.setNegativeButton(R.string.cancel, null)
-			.show();		
+				.setTitle(R.string.delete)
+				.setIcon(android.R.drawable.ic_dialog_alert)
+				.setMessage(R.string.attribute_delete_alert)
+				.setPositiveButton(R.string.delete, new DialogInterface.OnClickListener(){
+					@Override
+					public void onClick(DialogInterface arg0, int arg1) {
+						db.deleteAttribute(id);
+						cursor.requery();
+					}
+				})
+				.setNegativeButton(R.string.cancel, null)
+				.show();
 	}
 
 	@Override
 	public void editItem(View v, int position, long id) {
 		Intent intent = new Intent(this, AttributeActivity.class);
 		intent.putExtra(AttributeColumns.ID, id);
-		startActivityForResult(intent, 2);		
-	}	
-	
+		startActivityForResult(intent, 2);
+	}
+
 	@Override
 	protected void viewItem(View v, int position, long id) {
 		editItem(v, position, id);
-	}		
-
-	@Override
-	protected String getContextMenuHeaderTitle(int position) {
-		return getString(R.string.attribute);
 	}
+
 }

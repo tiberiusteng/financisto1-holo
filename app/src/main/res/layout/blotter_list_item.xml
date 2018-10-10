@@ -15,7 +15,7 @@
     android:layout_height="match_parent"
     ><!--android:minHeight="59sp"-->
 
-    <View android:id="@+id/indicator" android:layout_alignParentLeft="true"
+    <TextView android:id="@+id/indicator" android:layout_alignParentLeft="true"
         android:layout_height="match_parent"
         android:layout_width="4sp"
         android:layout_alignTop="@id/top"
@@ -25,11 +25,12 @@
         android:layout_marginTop="-1sp"-->
 
     <ImageView android:id="@+id/right_top"
-        android:layout_width="15sp"
-        android:layout_height="15sp"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignBottom="@+id/top"
         android:layout_alignParentRight="true"
         android:layout_alignParentTop="true"
-        android:paddingTop="3dp"
+        android:layout_alignTop="@+id/top"
         android:adjustViewBounds="false"
         android:scaleType="fitEnd"
         android:src="@drawable/ic_blotter_income"/>
@@ -37,9 +38,9 @@
     <TextView android:id="@+id/top"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content" android:singleLine="true" android:text="top"
-        android:textAppearance="@style/ListSecondary" android:layout_toRightOf="@id/indicator"
         android:paddingTop="1sp"
-        android:layout_marginLeft="3sp"/>
+        android:textAppearance="@style/ListSecondary" android:layout_toRightOf="@id/indicator"
+        android:layout_marginLeft="3sp"/><!--android:paddingTop="1sp"-->
 
     <TextView android:id="@+id/center"
         android:layout_height="wrap_content"

@@ -4,13 +4,14 @@
  * are made available under the terms of the GNU Public License v2.0
  * which accompanies this distribution, and is available at
  * http://www.gnu.org/licenses/old-licenses/gpl-2.0.html
- * 
+ *
  * Contributors:
  *     Denis Solonenko - initial API and implementation
  ******************************************************************************/
 package ru.orangesoftware.financisto.activity;
 
 import android.app.ListActivity;
+import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.graphics.Color;
@@ -18,108 +19,101 @@ import android.os.AsyncTask;
 import android.os.Bundle;
 import android.text.format.DateUtils;
 import android.view.View;
-import android.view.View.OnClickListener;
 import android.view.Window;
-import android.view.animation.*;
+import android.view.animation.AlphaAnimation;
+import android.view.animation.Animation;
+import android.view.animation.AnimationSet;
+import android.view.animation.LayoutAnimationController;
+import android.view.animation.TranslateAnimation;
 import android.widget.ImageButton;
 import android.widget.ListView;
 import android.widget.TextView;
+
 import org.achartengine.ChartFactory;
 import org.achartengine.model.CategorySeries;
 import org.achartengine.renderer.DefaultRenderer;
 import org.achartengine.renderer.SimpleSeriesRenderer;
+
+import java.math.BigDecimal;
+
 import ru.orangesoftware.financisto.R;
 import ru.orangesoftware.financisto.adapter.ReportAdapter;
-import ru.orangesoftware.financisto.filter.WhereFilter;
-import ru.orangesoftware.financisto.filter.Criteria;
 import ru.orangesoftware.financisto.db.DatabaseAdapter;
 import ru.orangesoftware.financisto.db.DatabaseHelper.ReportColumns;
+import ru.orangesoftware.financisto.filter.Criteria;
+import ru.orangesoftware.financisto.filter.WhereFilter;
 import ru.orangesoftware.financisto.graph.GraphUnit;
 import ru.orangesoftware.financisto.model.Total;
 import ru.orangesoftware.financisto.report.IncomeExpense;
 import ru.orangesoftware.financisto.report.PeriodReport;
 import ru.orangesoftware.financisto.report.Report;
 import ru.orangesoftware.financisto.report.ReportData;
+import ru.orangesoftware.financisto.utils.MyPreferences;
 import ru.orangesoftware.financisto.utils.PinProtection;
 import ru.orangesoftware.financisto.utils.Utils;
-
-import java.math.BigDecimal;
-
-import static ru.orangesoftware.financisto.utils.AndroidUtils.isGreenDroidSupported;
 
 public class ReportActivity extends ListActivity implements RefreshSupportedActivity {
 
     protected static final int FILTER_REQUEST = 1;
 
     public static final String FILTER_INCOME_EXPENSE = "FILTER_INCOME_EXPENSE";
-    
-	private DatabaseAdapter db;
-	private ImageButton bFilter;
+
+    private DatabaseAdapter db;
+    private ImageButton bFilter;
     private ImageButton bToggle;
     private Report currentReport;
     private ReportAsyncTask reportTask;
-	
-	private WhereFilter filter = WhereFilter.empty();
+
+    private WhereFilter filter = WhereFilter.empty();
     private boolean saveFilter = false;
-    
+
     private IncomeExpense incomeExpenseState = IncomeExpense.BOTH;
-	
-	@Override
-	protected void onCreate(Bundle savedInstanceState) {
-		super.onCreate(savedInstanceState);
+
+    @Override
+    protected void attachBaseContext(Context base) {
+        super.attachBaseContext(MyPreferences.switchLocale(base));
+    }
+
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
         requestWindowFeature(Window.FEATURE_INDETERMINATE_PROGRESS);
-		setContentView(R.layout.report);
+        setContentView(R.layout.report);
 
         db = new DatabaseAdapter(this);
-		db.open();
+        db.open();
 
-		bFilter = (ImageButton)findViewById(R.id.bFilter);
-		bFilter.setOnClickListener(new OnClickListener(){
-			@Override
-			public void onClick(View v) {
-				Intent intent = new Intent(ReportActivity.this, ReportFilterActivity.class);
-				filter.toIntent(intent);
-				startActivityForResult(intent, FILTER_REQUEST);
-			}
-		});
+        bFilter = findViewById(R.id.bFilter);
 
-        bToggle = (ImageButton)findViewById(R.id.bToggle);
-        bToggle.setOnClickListener(new OnClickListener(){
-            @Override
-            public void onClick(View v) {
-                toggleIncomeExpense();
-            }
+        bFilter.setOnClickListener(v -> {
+            Intent intent = new Intent(ReportActivity.this, ReportFilterActivity.class);
+            filter.toIntent(intent);
+            startActivityForResult(intent, FILTER_REQUEST);
         });
 
-        ImageButton bPieChart = (ImageButton) findViewById(R.id.bPieChart);
-        if (isGreenDroidSupported()) {
-            bPieChart.setOnClickListener(new OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    showPieChart();
-                }
-            });
-        } else {
-            bPieChart.setVisibility(View.GONE);
-        }
+        bToggle = findViewById(R.id.bToggle);
+        bToggle.setOnClickListener(v -> toggleIncomeExpense());
 
-		Intent intent = getIntent();
-		if (intent != null) {
-            currentReport = ReportsListActivity.createReport(this, db.em(), intent.getExtras());
-			filter = WhereFilter.fromIntent(intent);
+        ImageButton bPieChart = findViewById(R.id.bPieChart);
+        bPieChart.setOnClickListener(v -> showPieChart());
+
+        Intent intent = getIntent();
+        if (intent != null) {
+            currentReport = ReportsListActivity.createReport(this, db, intent.getExtras());
+            filter = WhereFilter.fromIntent(intent);
             if (intent.hasExtra(FILTER_INCOME_EXPENSE)) {
                 incomeExpenseState = IncomeExpense.valueOf(intent.getStringExtra(FILTER_INCOME_EXPENSE));
             }
             if (filter.isEmpty()) {
-                loadFilter();
+                loadPrefsFilter();
             }
-			selectReport();
-		}
+            selectReport();
+        }
 
         applyFilter();
         applyIncomeExpense();
         showOrRemoveTotals();
-	}
+    }
 
     private SharedPreferences getPreferencesForReport() {
         return getSharedPreferences("ReportActivity_"+currentReport.reportType.name()+"_DEFAULT", 0);
@@ -146,16 +140,16 @@ public class ReportActivity extends ListActivity implements RefreshSupportedActi
     }
 
     @Override
-	protected void onPause() {
-		super.onPause();
-		PinProtection.lock(this);
-	}
+    protected void onPause() {
+        super.onPause();
+        PinProtection.lock(this);
+    }
 
-	@Override
-	protected void onResume() {
-		super.onResume();
-		PinProtection.unlock(this);
-	}
+    @Override
+    protected void onResume() {
+        super.onResume();
+        PinProtection.unlock(this);
+    }
 
     private void showOrRemoveTotals() {
         if (!currentReport.shouldDisplayTotal()) {
@@ -171,8 +165,8 @@ public class ReportActivity extends ListActivity implements RefreshSupportedActi
         set.addAnimation(animation);
 
         animation = new TranslateAnimation(
-            Animation.RELATIVE_TO_SELF, 0.0f,Animation.RELATIVE_TO_SELF, 0.0f,
-            Animation.RELATIVE_TO_SELF, -1.0f, Animation.RELATIVE_TO_SELF, 0.0f
+                Animation.RELATIVE_TO_SELF, 0.0f,Animation.RELATIVE_TO_SELF, 0.0f,
+                Animation.RELATIVE_TO_SELF, -1.0f, Animation.RELATIVE_TO_SELF, 0.0f
         );
         animation.setDuration(100);
         set.addAnimation(animation);
@@ -183,18 +177,18 @@ public class ReportActivity extends ListActivity implements RefreshSupportedActi
     }
 
     @Override
-	protected void onListItemClick(ListView l, View v, int position, long id) {
-		if (currentReport != null) {
-			Intent intent = currentReport.createActivityIntent(this, db, WhereFilter.copyOf(filter), id);
-			startActivity(intent);
-		}
-	}
+    protected void onListItemClick(ListView l, View v, int position, long id) {
+        if (currentReport != null) {
+            Intent intent = currentReport.createActivityIntent(this, db, WhereFilter.copyOf(filter), id);
+            startActivity(intent);
+        }
+    }
 
-	private void selectReport() {
+    private void selectReport() {
         cancelCurrentReportTask();
         reportTask = new ReportAsyncTask(currentReport, incomeExpenseState);
         reportTask.execute();
-	}
+    }
 
     private void cancelCurrentReportTask() {
         if (reportTask != null) {
@@ -203,7 +197,7 @@ public class ReportActivity extends ListActivity implements RefreshSupportedActi
     }
 
     private void applyFilter() {
-        TextView tv = (TextView)findViewById(R.id.period);
+        TextView tv = findViewById(R.id.period);
         if (currentReport instanceof PeriodReport) {
             disableFilter();
             tv.setVisibility(View.GONE);
@@ -222,44 +216,44 @@ public class ReportActivity extends ListActivity implements RefreshSupportedActi
 
     protected void disableFilter() {
         bFilter.setEnabled(false);
-        bFilter.setImageResource(R.drawable.ic_menu_filter_off);
+        //bFilter.setImageResource(R.drawable.ic_menu_filter_off);
     }
 
     protected void enableFilter() {
         bFilter.setEnabled(true);
-        bFilter.setImageResource(filter.isEmpty() ? R.drawable.ic_menu_filter_off : R.drawable.ic_menu_filter_on);
+        FilterState.updateFilterColor(this, filter, bFilter);
     }
 
     @Override
-	protected void onDestroy() {
+    protected void onDestroy() {
         cancelCurrentReportTask();
-		db.close();
-		super.onDestroy();
-	}
+        db.close();
+        super.onDestroy();
+    }
 
-	@Override
-	public void recreateCursor() {
-		selectReport();
-	}
+    @Override
+    public void recreateCursor() {
+        selectReport();
+    }
 
     @Override
     public void integrityCheck() {
     }
 
     @Override
-	protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-		if (requestCode == FILTER_REQUEST) {
-			if (resultCode == RESULT_FIRST_USER) {
-				filter.clear();
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        if (requestCode == FILTER_REQUEST) {
+            if (resultCode == RESULT_FIRST_USER) {
+                filter.clear();
                 saveFilter();
                 selectReport();
-			} else if (resultCode == RESULT_OK) {
+            } else if (resultCode == RESULT_OK) {
                 filter = WhereFilter.fromIntent(data);
                 saveFilter();
                 selectReport();
-			}
-		}
-	}
+            }
+        }
+    }
 
     private void saveFilter() {
         if (saveFilter) {
@@ -267,12 +261,12 @@ public class ReportActivity extends ListActivity implements RefreshSupportedActi
             filter.toSharedPreferences(preferences);
             SharedPreferences.Editor editor = preferences.edit();
             editor.putString(FILTER_INCOME_EXPENSE, incomeExpenseState.name());
-            editor.commit();
+            editor.apply();
         }
         applyFilter();
     }
 
-    private void loadFilter() {
+    private void loadPrefsFilter() {
         SharedPreferences preferences = getPreferencesForReport();
         filter = WhereFilter.fromSharedPreferences(preferences);
         incomeExpenseState = IncomeExpense.valueOf(preferences.getString(FILTER_INCOME_EXPENSE, IncomeExpense.BOTH.name()));
@@ -281,7 +275,7 @@ public class ReportActivity extends ListActivity implements RefreshSupportedActi
 
     private void displayTotal(Total total) {
         if (currentReport.shouldDisplayTotal()) {
-            TextView totalText = (TextView)findViewById(R.id.total);
+            TextView totalText = findViewById(R.id.total);
             Utils u = new Utils(this);
             u.setTotal(totalText, total);
         }
@@ -379,5 +373,5 @@ public class ReportActivity extends ListActivity implements RefreshSupportedActi
         }
 
     }
-    
+
 }

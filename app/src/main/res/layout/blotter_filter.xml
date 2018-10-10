@@ -14,7 +14,7 @@
 	<ScrollView android:layout_height="wrap_content"
 		android:layout_weight="1" android:layout_width="fill_parent">
 		<LinearLayout android:layout_height="wrap_content" android:id="@+id/layout"
-			android:layout_weight="1" android:layout_width="fill_parent" 
+			android:layout_weight="1" android:layout_width="fill_parent"
 			android:orientation="vertical"/>
 	</ScrollView>
 	<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
@@ -23,7 +23,7 @@
 		<Button android:layout_weight="1" android:id="@+id/bOK" android:text="@string/ok"
 			android:layout_height="wrap_content" android:layout_width="0dp"/>
 		<ImageButton android:layout_height="wrap_content" android:id="@+id/bNoFilter"
-			android:text="@string/no_filter" android:src="@drawable/ic_menu_filter_clear"
+			android:text="@string/no_filter" android:src="@drawable/actionbar_filter_cancel"
 			android:layout_width="wrap_content"/>
 		<Button android:layout_height="wrap_content" android:layout_weight="1"
 			android:id="@+id/bCancel" android:text="@string/cancel" android:layout_width="0dp"/>

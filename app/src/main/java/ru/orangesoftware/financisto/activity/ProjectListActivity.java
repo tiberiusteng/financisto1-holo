@@ -4,7 +4,7 @@
  * are made available under the terms of the GNU Public License v2.0
  * which accompanies this distribution, and is available at
  * http://www.gnu.org/licenses/old-licenses/gpl-2.0.html
- * 
+ *
  * Contributors:
  *     Denis Solonenko - initial API and implementation
  ******************************************************************************/
@@ -16,22 +16,10 @@ import ru.orangesoftware.financisto.blotter.BlotterFilter;
 import ru.orangesoftware.financisto.filter.Criteria;
 import ru.orangesoftware.financisto.model.Project;
 
-import java.util.ArrayList;
-
 public class ProjectListActivity extends MyEntityListActivity<Project> {
 
     public ProjectListActivity() {
-        super(Project.class);
-    }
-
-    @Override
-    protected ArrayList<Project> loadEntities() {
-        return em.getAllProjectsList(false);
-    }
-
-    @Override
-    protected String getContextMenuHeaderTitle(int position) {
-        return getString(R.string.project);
+        super(Project.class, R.string.no_projects);
     }
 
     @Override
@@ -46,7 +34,7 @@ public class ProjectListActivity extends MyEntityListActivity<Project> {
 
     @Override
     protected void deleteItem(View v, int position, long id) {
-        em.deleteProject(id);
+        db.deleteProject(id);
         recreateCursor();
     }
 

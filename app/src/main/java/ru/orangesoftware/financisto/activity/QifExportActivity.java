@@ -4,7 +4,7 @@
  * are made available under the terms of the GNU Public License v2.0
  * which accompanies this distribution, and is available at
  * http://www.gnu.org/licenses/old-licenses/gpl-2.0.html
- * 
+ *
  * Contributors:
  *     Denis Solonenko - initial API and implementation
  ******************************************************************************/
@@ -55,7 +55,7 @@ public class QifExportActivity extends AbstractExportActivity implements Activit
         db = new DatabaseAdapter(this);
         db.open();
 
-        accounts = db.em().getAllAccountsList();
+        accounts = db.getAllAccountsList();
 
         bAccounts = (Button)findViewById(R.id.bAccounts);
         bAccounts.setOnClickListener(new View.OnClickListener() {
@@ -145,8 +145,8 @@ public class QifExportActivity extends AbstractExportActivity implements Activit
         return ids;
     }
 
-	protected void savePreferences() {
-		SharedPreferences.Editor editor = getPreferences(MODE_PRIVATE).edit();
+    protected void savePreferences() {
+        SharedPreferences.Editor editor = getPreferences(MODE_PRIVATE).edit();
 
         currencyPreferences.savePreferences(this, editor);
 
@@ -156,12 +156,12 @@ public class QifExportActivity extends AbstractExportActivity implements Activit
         }
 
         Spinner dateFormats = (Spinner)findViewById(R.id.spinnerDateFormats);
-		editor.putInt(QIF_EXPORT_DATE_FORMAT, dateFormats.getSelectedItemPosition());
+        editor.putInt(QIF_EXPORT_DATE_FORMAT, dateFormats.getSelectedItemPosition());
         CheckBox uploadToDropbox = (CheckBox)findViewById(R.id.checkboxUploadToDropbox);
         editor.putBoolean(QIF_EXPORT_UPLOAD_TO_DROPBOX, uploadToDropbox.isChecked());
 
-		editor.commit();
-	}
+        editor.apply();
+    }
 
     private String joinSelectedAccounts(long[] selectedIds) {
         StringBuilder sb = new StringBuilder();
@@ -173,7 +173,7 @@ public class QifExportActivity extends AbstractExportActivity implements Activit
     }
 
     protected void restorePreferences() {
-		SharedPreferences preferences = getPreferences(MODE_PRIVATE);
+        SharedPreferences preferences = getPreferences(MODE_PRIVATE);
 
         currencyPreferences.restorePreferences(this, preferences);
 
@@ -186,7 +186,7 @@ public class QifExportActivity extends AbstractExportActivity implements Activit
 
         CheckBox uploadToDropbox = (CheckBox)findViewById(R.id.checkboxUploadToDropbox);
         uploadToDropbox.setChecked(preferences.getBoolean(QIF_EXPORT_UPLOAD_TO_DROPBOX, false));
-	}
+    }
 
     private void parseSelectedAccounts(String selectedIds) {
         try {

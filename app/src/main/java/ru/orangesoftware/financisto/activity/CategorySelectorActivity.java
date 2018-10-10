@@ -18,16 +18,14 @@ import ru.orangesoftware.financisto.model.CategoryTreeNavigator;
 import ru.orangesoftware.financisto.utils.MenuItemInfo;
 import ru.orangesoftware.financisto.utils.MyPreferences;
 
-import java.util.*;
+import java.util.Collections;
+import java.util.List;
+import java.util.Map;
 
-/**
- * Created by IntelliJ IDEA.
- * User: denis.solonenko
- * Date: 3/14/12 10:40 PM
- */
 public class CategorySelectorActivity extends AbstractListActivity {
 
     public static final String SELECTED_CATEGORY_ID = "SELECTED_CATEGORY_ID";
+    public static final String EXCLUDED_SUB_TREE_ID = "EXCLUDED_SUB_TREE_ID";
     public static final String INCLUDE_SPLIT_CATEGORY = "INCLUDE_SPLIT_CATEGORY";
 
     private int incomeColor;
@@ -49,28 +47,24 @@ public class CategorySelectorActivity extends AbstractListActivity {
         this.incomeColor = resources.getColor(R.color.category_type_income);
         this.expenseColor = resources.getColor(R.color.category_type_expense);
 
-        navigator = new CategoryTreeNavigator(db);
+        long excTreeId = -1;
+        if (getIntent() != null) {
+            excTreeId = getIntent().getLongExtra(EXCLUDED_SUB_TREE_ID, -1);
+        }
+        navigator = new CategoryTreeNavigator(db, excTreeId);
         if (MyPreferences.isSeparateIncomeExpense(this)) {
             navigator.separateIncomeAndExpense();
         }
         attributes = db.getAllAttributesMap();
 
-        bBack = (Button)findViewById(R.id.bBack);
-        bBack.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                if (navigator.goBack()) {
-                    recreateAdapter();
-                }
+        bBack = findViewById(R.id.bBack);
+        bBack.setOnClickListener(view -> {
+            if (navigator.goBack()) {
+                recreateAdapter();
             }
         });
-        Button bSelect = (Button)findViewById(R.id.bSelect);
-        bSelect.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                confirmSelection();
-            }
-        });
+        Button bSelect = findViewById(R.id.bSelect);
+        bSelect.setOnClickListener(view -> confirmSelection());
         
         Intent intent = getIntent();
         if (intent != null) {
@@ -78,8 +72,7 @@ public class CategorySelectorActivity extends AbstractListActivity {
             if (includeSplit) {
                 navigator.addSplitCategoryToTheTop();
             }
-            long selectedCategoryId = intent.getLongExtra(SELECTED_CATEGORY_ID, 0);
-            navigator.selectCategory(selectedCategoryId);
+            navigator.selectCategory(intent.getLongExtra(SELECTED_CATEGORY_ID, 0));
         }
         
     }
@@ -126,11 +119,12 @@ public class CategorySelectorActivity extends AbstractListActivity {
         }
     }
 
-    public static boolean pickCategory(Activity activity, long selectedCategoryId, boolean includeSplitCategory) {
-        if (MyPreferences.isUseHierarchicalCategorySelector(activity)) {
+    public static boolean pickCategory(Activity activity, boolean forceHierSelector, long selectedId, long excludingTreeId, boolean includeSplit) {
+        if (forceHierSelector || MyPreferences.isUseHierarchicalCategorySelector(activity)) {
             Intent intent = new Intent(activity, CategorySelectorActivity.class);
-            intent.putExtra(CategorySelectorActivity.SELECTED_CATEGORY_ID, selectedCategoryId);
-            intent.putExtra(CategorySelectorActivity.INCLUDE_SPLIT_CATEGORY, includeSplitCategory);
+            intent.putExtra(CategorySelectorActivity.SELECTED_CATEGORY_ID, selectedId);
+            intent.putExtra(CategorySelectorActivity.EXCLUDED_SUB_TREE_ID, excludingTreeId);
+            intent.putExtra(CategorySelectorActivity.INCLUDE_SPLIT_CATEGORY, includeSplit);
             activity.startActivityForResult(intent, R.id.category_pick);
             return true;
         }

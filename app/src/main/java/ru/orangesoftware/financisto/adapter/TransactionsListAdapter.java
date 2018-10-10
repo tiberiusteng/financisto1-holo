@@ -4,7 +4,7 @@
  * are made available under the terms of the GNU Public License v2.0
  * which accompanies this distribution, and is available at
  * http://www.gnu.org/licenses/old-licenses/gpl-2.0.html
- * 
+ *
  * Contributors:
  *     Denis Solonenko - initial API and implementation
  ******************************************************************************/
@@ -27,10 +27,10 @@ import ru.orangesoftware.financisto.utils.Utils;
 import static ru.orangesoftware.financisto.utils.TransactionTitleUtils.generateTransactionTitle;
 
 public class TransactionsListAdapter extends BlotterListAdapter {
-	
-	public TransactionsListAdapter(Context context, DatabaseAdapter db, Cursor c) {
-		super(context, db, c);
-	}
+
+    public TransactionsListAdapter(Context context, DatabaseAdapter db, Cursor c) {
+        super(context, db, c);
+    }
 
     @Override
     protected void bindView(BlotterViewHolder v, Context context, Cursor cursor) {
@@ -68,10 +68,10 @@ public class TransactionsListAdapter extends BlotterListAdapter {
         sb.setLength(0);
 
         long currencyId = cursor.getLong(BlotterColumns.from_account_currency_id.ordinal());
-        Currency c = CurrencyCache.getCurrency(em, currencyId);
+        Currency c = CurrencyCache.getCurrency(db, currencyId);
         long originalCurrencyId = cursor.getLong(BlotterColumns.original_currency_id.ordinal());
         if (originalCurrencyId > 0) {
-            Currency originalCurrency = CurrencyCache.getCurrency(em, originalCurrencyId);
+            Currency originalCurrency = CurrencyCache.getCurrency(db, originalCurrencyId);
             long originalAmount = cursor.getLong(BlotterColumns.original_from_amount.ordinal());
             u.setAmountText(sb, v.rightCenterView, originalCurrency, originalAmount, c, fromAmount, true);
         } else {
@@ -79,8 +79,10 @@ public class TransactionsListAdapter extends BlotterListAdapter {
         }
         if (fromAmount > 0) {
             v.iconView.setImageDrawable(icBlotterIncome);
+            v.iconView.setColorFilter(u.positiveColor);
         } else if (fromAmount < 0) {
             v.iconView.setImageDrawable(icBlotterExpense);
+            v.iconView.setColorFilter(u.negativeColor);
         }
 
         long date = cursor.getLong(BlotterColumns.datetime.ordinal());
