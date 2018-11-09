@@ -78,7 +78,7 @@
         android:layout_below="@id/center" android:layout_width="wrap_content"
         android:textAppearance="@style/ListSecondary"
         android:maxLines="1" android:layout_height="wrap_content"
-        android:paddingBottom="1sp"
+        android:paddingBottom="2sp"
         android:layout_alignLeft="@id/center" /><!--android:paddingBottom="3sp"-->
 
     <TextView
