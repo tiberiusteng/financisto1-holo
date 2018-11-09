@@ -13,10 +13,12 @@ import android.app.PendingIntent;
 import android.content.Context;
 import android.content.Intent;
 import android.util.Log;
-import ru.orangesoftware.financisto.utils.MyPreferences;
 
 import java.util.Calendar;
 import java.util.Date;
+
+import ru.orangesoftware.financisto.activity.ScheduledAlarmReceiver;
+import ru.orangesoftware.financisto.utils.MyPreferences;
 
 /**
  * Created by IntelliJ IDEA.
@@ -37,14 +39,14 @@ public class DailyAutoBackupScheduler {
             new DailyAutoBackupScheduler(hh, mm, System.currentTimeMillis()).scheduleBackup(context);
         }
     }
-    
-    public DailyAutoBackupScheduler(int hh, int mm, long now) {
+
+    DailyAutoBackupScheduler(int hh, int mm, long now) {
         this.hh = hh;
         this.mm = mm;
         this.now = now;
     }
 
-    public void scheduleBackup(Context context) {
+    private void scheduleBackup(Context context) {
         AlarmManager service = (AlarmManager)context.getSystemService(Context.ALARM_SERVICE);
         PendingIntent pendingIntent = createPendingIntent(context);
         Date scheduledTime = getScheduledTime();
@@ -54,10 +56,11 @@ public class DailyAutoBackupScheduler {
 
     private PendingIntent createPendingIntent(Context context) {
         Intent intent = new Intent("ru.orangesoftware.financisto.SCHEDULED_BACKUP");
+        intent.setClass(context, ScheduledAlarmReceiver.class);
         return PendingIntent.getBroadcast(context, -100, intent, PendingIntent.FLAG_CANCEL_CURRENT);
     }
 
-    public Date getScheduledTime() {
+    Date getScheduledTime() {
         Calendar c = Calendar.getInstance();
         c.setTimeInMillis(now);
         c.set(Calendar.HOUR_OF_DAY, hh);

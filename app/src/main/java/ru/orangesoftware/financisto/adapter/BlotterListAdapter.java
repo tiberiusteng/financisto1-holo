@@ -24,6 +24,8 @@ import android.widget.ImageView;
 import android.widget.RelativeLayout;
 import android.widget.ResourceCursorAdapter;
 import android.widget.TextView;
+
+import java.util.Calendar;
 import java.util.Date;
 import java.util.HashMap;
 import ru.orangesoftware.financisto.R;
@@ -194,12 +196,19 @@ public class BlotterListAdapter extends ResourceCursorAdapter {
                 long date = cursor.getLong(BlotterColumns.datetime.ordinal());
                 dt.setTime(date);
                 v.bottomView.setText(DateUtils.formatDateTime(context, dt.getTime(),
-                        DateUtils.FORMAT_SHOW_DATE | DateUtils.FORMAT_SHOW_TIME | DateUtils.FORMAT_ABBREV_MONTH));
+                        DateUtils.FORMAT_SHOW_DATE|DateUtils.FORMAT_SHOW_WEEKDAY|DateUtils.FORMAT_ABBREV_WEEKDAY|DateUtils.FORMAT_SHOW_TIME|DateUtils.FORMAT_ABBREV_MONTH));
 
                 if (isTemplate == 0 && date > System.currentTimeMillis()) {
                     u.setFutureTextColor(v.bottomView);
                 } else {
-                    v.bottomView.setTextColor(v.topView.getTextColors().getDefaultColor());
+                    Calendar cal = Calendar.getInstance();
+                    cal.setTimeInMillis(date);
+                    int dayOfWeek = cal.get(Calendar.DAY_OF_WEEK);
+                    if (dayOfWeek == Calendar.SUNDAY || dayOfWeek == Calendar.SATURDAY) {
+                        v.bottomView.setTextColor(Color.rgb(224, 112, 112));
+                    } else {
+                        v.bottomView.setTextColor(v.topView.getTextColors().getDefaultColor());
+                    }
                 }
             }
         }

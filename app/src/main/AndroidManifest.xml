@@ -86,12 +86,11 @@
 
 		<receiver android:name=".activity.ScheduledAlarmReceiver">
 		    <intent-filter>
-			<action android:name="ru.orangesoftware.financisto.SCHEDULED_ALARM" />
-		<action android:name="ru.orangesoftware.financisto.SCHEDULED_BACKUP" />
-		<action android:name="ru.orangesoftware.financisto.SCHEDULED_SYNC" />
-			<action android:name="android.intent.action.BOOT_COMPLETED" />
+				<action android:name=".SCHEDULED_ALARM" />
+				<action android:name=".SCHEDULED_BACKUP" />
+				<action android:name="android.intent.action.BOOT_COMPLETED" />
 		    </intent-filter>
-		</receiver>		
+		</receiver>
 
 		<receiver android:name=".activity.PackageReplaceReceiver">
 			<intent-filter>
@@ -100,14 +99,14 @@
 			</intent-filter>
 		</receiver>		
 
-		<service android:name=".service.FinancistoService">
+		<service android:name=".service.FinancistoService"
+			android:permission="android.permission.BIND_JOB_SERVICE">
 	    <intent-filter>
-		<action android:name="ru.orangesoftware.financisto.SCHEDULE_ONE" />
-		<action android:name="ru.orangesoftware.financisto.SCHEDULE_ALL" />
-		<action android:name="ru.orangesoftware.financisto.ACTION_SCHEDULE_AUTO_BACKUP" />
-		<action android:name="ru.orangesoftware.financisto.ACTION_AUTO_BACKUP" />
-		<action android:name="ru.orangesoftware.financisto.ACTION_SCHEDULE_AUTO_SYNC" />
-		<action android:name="ru.orangesoftware.financisto.ACTION_AUTO_SYNC" />				       
+			<action android:name=".SCHEDULE_ONE" />
+			<action android:name=".SCHEDULE_ALL" />
+			<action android:name=".ACTION_SCHEDULE_AUTO_BACKUP" />
+			<action android:name=".ACTION_AUTO_BACKUP" />
+			<action android:name=".NEW_TRANSACTION_SMS" />
 	    </intent-filter>
 		</service>
 
