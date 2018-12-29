@@ -16,6 +16,7 @@ import android.os.Build;
 import android.os.Bundle;
 import android.os.Vibrator;
 import android.support.v4.content.ContextCompat;
+import android.view.HapticFeedbackConstants;
 import android.view.View;
 import android.view.Window;
 import android.widget.Button;
@@ -97,7 +98,7 @@ public class CalculatorInput extends DialogFragment {
     public void onButtonClick(View v) {
         Button b = (Button) v;
         char c = b.getText().charAt(0);
-        onButtonClick(c);
+        onButtonClick(c, v);
     }
 
     @Click(R.id.bOK)
@@ -122,9 +123,9 @@ public class CalculatorInput extends DialogFragment {
         }
     }
 
-    private void onButtonClick(char c) {
-        if (vibrator != null && MyPreferences.isPinHapticFeedbackEnabled(getActivity())) {
-            vibrator.vibrate(20);
+    private void onButtonClick(char c, View v) {
+        if (MyPreferences.isPinHapticFeedbackEnabled(getActivity())) {
+            v.performHapticFeedback(HapticFeedbackConstants.KEYBOARD_TAP);
         }
         switch (c) {
             case 'C':

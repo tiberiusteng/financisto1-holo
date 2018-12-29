@@ -17,6 +17,7 @@ import android.os.Vibrator;
 import ru.orangesoftware.financisto.R;
 import ru.orangesoftware.financisto.utils.Base64Coder;
 import android.content.Context;
+import android.view.HapticFeedbackConstants;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.View.OnClickListener;
@@ -86,9 +87,9 @@ public class PinView implements OnClickListener {
 	public void onClick(View v) {
 		Button b = (Button)v;
 		char c = b.getText().charAt(0);
-        if (vibrator != null && MyPreferences.isPinHapticFeedbackEnabled(context)) {
-            vibrator.vibrate(20);
-        }
+		if (vibrator != null && MyPreferences.isPinHapticFeedbackEnabled(context)) {
+			v.performHapticFeedback(HapticFeedbackConstants.KEYBOARD_TAP);
+		}
 		switch (c) {
 		case 'O':
 			nextStep();
