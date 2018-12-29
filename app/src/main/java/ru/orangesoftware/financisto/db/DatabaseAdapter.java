@@ -231,6 +231,7 @@ public class DatabaseAdapter extends MyEntityManager {
             transaction.isTemplate = isTemplate;
             transaction.dateTime = now;
             transaction.remoteKey = null;
+            transaction.status = TransactionStatus.UR;
             if (isTemplate == 0) {
                 transaction.recurrence = null;
                 transaction.notificationOptions = null;
