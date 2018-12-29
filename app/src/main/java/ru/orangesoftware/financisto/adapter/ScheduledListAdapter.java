@@ -24,13 +24,13 @@ import android.widget.TextView;
 import ru.orangesoftware.financisto.R;
 import ru.orangesoftware.financisto.model.Currency;
 import ru.orangesoftware.financisto.model.TransactionInfo;
+import ru.orangesoftware.financisto.utils.MyPreferences;
+import ru.orangesoftware.financisto.utils.TransactionTitleUtils;
 import ru.orangesoftware.financisto.utils.Utils;
 
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
-
-import static ru.orangesoftware.financisto.utils.TransactionTitleUtils.generateTransactionTitle;
 
 public class ScheduledListAdapter extends BaseAdapter {
 	
@@ -45,7 +45,8 @@ public class ScheduledListAdapter extends BaseAdapter {
 
 	private final Context context;
 	private final LayoutInflater inflater;
-	
+
+	private final TransactionTitleUtils transactionTitleUtils;
 	private Date now = new Date();
 	private List<TransactionInfo> transactions;
 
@@ -59,6 +60,7 @@ public class ScheduledListAdapter extends BaseAdapter {
 		this.icBlotterTransfer = context.getResources().getDrawable(R.drawable.ic_blotter_transfer);
 		this.u = new Utils(context);
 		this.transactions = transactions;
+		this.transactionTitleUtils = new TransactionTitleUtils(context, MyPreferences.isColorizeBlotterItem(context));
 	}
 
 	public void setTransactions(ArrayList<TransactionInfo> transactions) {
@@ -140,7 +142,7 @@ public class ScheduledListAdapter extends BaseAdapter {
 				category = t.category.title;
 			}
             String payee = t.payee != null ? t.payee.title : null;
-            String text = generateTransactionTitle(sb, payee, note, location, t.category.id, category);
+            CharSequence text = transactionTitleUtils.generateTransactionTitle(false, payee, note, location, t.category.id, category);
             noteView.setText(text);
 			noteView.setTextColor(Color.WHITE);
 			

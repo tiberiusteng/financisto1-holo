@@ -624,6 +624,9 @@
     <string name="show_running_balance">Show running balance</string>
     <string name="show_running_balance_summary">Show account running balance in the blotter (requires restart)</string>
 
+    <string name="colorize_blotter_item">Colorize transaction fields</string>
+    <string name="colorize_blotter_item_summary">Use color to distinguish transaction category, payee and note</string>
+
     <string name="new_currency">New currency…</string>
     <string name="lock_time">Lock time</string>
     <string name="lock_time_summary">Time to keep main screen active before locking it off</string>

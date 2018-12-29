@@ -38,7 +38,8 @@ import ru.orangesoftware.financisto.model.TransactionStatus;
 import ru.orangesoftware.financisto.recur.Recurrence;
 import ru.orangesoftware.financisto.utils.CurrencyCache;
 import ru.orangesoftware.financisto.utils.MyPreferences;
-import static ru.orangesoftware.financisto.utils.TransactionTitleUtils.generateTransactionTitle;
+
+import ru.orangesoftware.financisto.utils.TransactionTitleUtils;
 import ru.orangesoftware.financisto.utils.Utils;
 
 public class BlotterListAdapter extends ResourceCursorAdapter {
@@ -52,7 +53,7 @@ public class BlotterListAdapter extends ResourceCursorAdapter {
     protected final Drawable icBlotterSplit;
     protected final Utils u;
     protected final DatabaseAdapter db;
-
+    protected final TransactionTitleUtils transactionTitleUtils;
     private final int colors[];
 
     private boolean allChecked = true;
@@ -77,6 +78,7 @@ public class BlotterListAdapter extends ResourceCursorAdapter {
         this.u = new Utils(context);
         this.colors = initializeColors(context);
         this.showRunningBalance = MyPreferences.isShowRunningBalance(context);
+        this.transactionTitleUtils = new TransactionTitleUtils(context, MyPreferences.isColorizeBlotterItem(context));
         this.db = db;
     }
 
@@ -235,7 +237,7 @@ public class BlotterListAdapter extends ResourceCursorAdapter {
         String location = getLocationTitle(cursor, locationId);
         long categoryId = cursor.getLong(BlotterColumns.category_id.ordinal());
         String category = getCategoryTitle(cursor, categoryId);
-        String text = generateTransactionTitle(sb, payee, note, location, categoryId, category);
+        CharSequence text = transactionTitleUtils.generateTransactionTitle(false, payee, note, location, categoryId, category);
         noteView.setText(text);
         noteView.setTextColor(Color.WHITE);
     }

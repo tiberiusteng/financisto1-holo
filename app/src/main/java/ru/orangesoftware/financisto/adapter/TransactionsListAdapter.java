@@ -11,6 +11,7 @@
 package ru.orangesoftware.financisto.adapter;
 
 import android.content.Context;
+import android.content.res.Resources;
 import android.database.Cursor;
 import android.graphics.Color;
 import android.text.format.DateUtils;
@@ -23,8 +24,6 @@ import ru.orangesoftware.financisto.db.DatabaseHelper.BlotterColumns;
 import ru.orangesoftware.financisto.model.Currency;
 import ru.orangesoftware.financisto.utils.CurrencyCache;
 import ru.orangesoftware.financisto.utils.Utils;
-
-import static ru.orangesoftware.financisto.utils.TransactionTitleUtils.generateTransactionTitle;
 
 public class TransactionsListAdapter extends BlotterListAdapter {
 
@@ -63,7 +62,7 @@ public class TransactionsListAdapter extends BlotterListAdapter {
         if (categoryId != 0) {
             category = cursor.getString(BlotterColumns.category_title.ordinal());
         }
-        String text = generateTransactionTitle(sb, payee, note, location, categoryId, category);
+        CharSequence text = transactionTitleUtils.generateTransactionTitle(toAccountId > 0, payee, note, location, categoryId, category);
         v.centerView.setText(text);
         sb.setLength(0);
 

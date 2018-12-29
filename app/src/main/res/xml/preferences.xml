@@ -73,6 +73,11 @@
                 android:key="show_running_balance"
                 android:summary="@string/show_running_balance_summary"
                 android:title="@string/show_running_balance" />
+            <CheckBoxPreference
+                android:defaultValue="false"
+                android:key="colorize_blotter_item"
+                android:summary="@string/colorize_blotter_item_summary"
+                android:title="@string/colorize_blotter_item" />
         </PreferenceScreen>
         <PreferenceScreen
             android:summary="@string/transaction_screen_summary"

@@ -418,6 +418,11 @@ public class MyPreferences {
 		return sharedPreferences.getBoolean("show_running_balance", true);
 	}
 
+	public static boolean isColorizeBlotterItem(Context context) {
+		SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(context);
+		return sharedPreferences.getBoolean("colorize_blotter_item", false);
+	}
+
 	private static final String DEFAULT = "default";
 
 	public static Context switchLocale(Context context) {

@@ -553,6 +553,8 @@
   <string name="day_of_month">日期</string>
   <string name="show_running_balance">逐筆顯示餘額</string>
   <string name="show_running_balance_summary">每筆交易都顯示交易後的餘額 (需要重新啟動)</string>
+  <string name="colorize_blotter_item">彩色標記交易欄位</string>
+  <string name="colorize_blotter_item_summary">以顏色區分交易類別、受款人與註記</string>
   <string name="new_currency">新幣值 ...</string>
   <string name="lock_time">鎖定時間</string>
   <string name="lock_time_summary">主畫面在自動鎖定前的顯示時間</string>
