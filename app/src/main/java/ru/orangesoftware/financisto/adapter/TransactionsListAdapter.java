@@ -27,8 +27,15 @@ import ru.orangesoftware.financisto.utils.Utils;
 
 public class TransactionsListAdapter extends BlotterListAdapter {
 
+    private int dateColor;
+    private int dateWeekendColor;
+
     public TransactionsListAdapter(Context context, DatabaseAdapter db, Cursor c) {
         super(context, db, c);
+        Resources r = context.getResources();
+
+        this.dateColor = r.getColor(R.color.transaction_date);
+        this.dateWeekendColor = r.getColor(R.color.transaction_date_weekend);
     }
 
     @Override
@@ -94,9 +101,9 @@ public class TransactionsListAdapter extends BlotterListAdapter {
             cal.setTimeInMillis(date);
             int dayOfWeek = cal.get(Calendar.DAY_OF_WEEK);
             if (dayOfWeek == Calendar.SUNDAY || dayOfWeek == Calendar.SATURDAY) {
-                v.bottomView.setTextColor(Color.rgb(224, 112, 112));
+                v.bottomView.setTextColor(dateWeekendColor);
             } else {
-                v.bottomView.setTextColor(v.topView.getTextColors().getDefaultColor());
+                v.bottomView.setTextColor(dateColor);
             }
         }
 

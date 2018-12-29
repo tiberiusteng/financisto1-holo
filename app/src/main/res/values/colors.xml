@@ -26,4 +26,6 @@
     <color name="transaction_note">@android:color/secondary_text_dark</color>
     <color name="transaction_payee">@android:color/holo_blue_light</color>
     <color name="transaction_location">@android:color/holo_green_light</color>
+    <color name="transaction_date">#999</color>
+    <color name="transaction_date_weekend">#c66</color>
 </resources>
