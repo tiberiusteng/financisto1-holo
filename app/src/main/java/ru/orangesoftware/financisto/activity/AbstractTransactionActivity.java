@@ -11,6 +11,7 @@
 package ru.orangesoftware.financisto.activity;
 
 import android.Manifest;
+import android.app.AlertDialog;
 import android.content.Intent;
 import android.database.Cursor;
 import android.os.Bundle;
@@ -22,8 +23,10 @@ import android.widget.*;
 import com.mlsdev.rximagepicker.RxImageConverters;
 import com.mlsdev.rximagepicker.RxImagePicker;
 import com.mlsdev.rximagepicker.Sources;
-import com.wdullaer.materialdatetimepicker.date.DatePickerDialog;
-import com.wdullaer.materialdatetimepicker.time.TimePickerDialog;
+import android.app.DatePickerDialog;
+import android.app.DatePickerDialog.OnDateSetListener;
+import android.app.TimePickerDialog;
+import android.app.TimePickerDialog.OnTimeSetListener;
 import greendroid.widget.QuickActionGrid;
 import greendroid.widget.QuickActionWidget;
 import ru.orangesoftware.financisto.R;
@@ -191,7 +194,8 @@ public abstract class AbstractTransactionActivity extends AbstractActivity imple
 		dateText = findViewById(R.id.date);
 		dateText.setText(df.format(date));
 		dateText.setOnClickListener(arg0 -> {
-			DatePickerDialog dialog = DatePickerDialog.newInstance(
+			DatePickerDialog dialog = new DatePickerDialog(AbstractTransactionActivity.this,
+					AlertDialog.THEME_DEVICE_DEFAULT_DARK,
 					(view, year, monthOfYear, dayOfMonth) -> {
 						dateTime.set(year, monthOfYear, dayOfMonth);
 						dateText.setText(df.format(dateTime.getTime()));
@@ -200,24 +204,23 @@ public abstract class AbstractTransactionActivity extends AbstractActivity imple
 					dateTime.get(Calendar.MONTH),
 					dateTime.get(Calendar.DAY_OF_MONTH)
 			);
-			applyTheme(this, dialog);
-			dialog.show(getFragmentManager(), "DatePickerDialog");
+			dialog.show();
 		});
 
 		timeText = findViewById(R.id.time);
 		timeText.setText(tf.format(date));
 		timeText.setOnClickListener(arg0 -> {
 			boolean is24Format = DateUtils.is24HourFormat(AbstractTransactionActivity.this);
-			TimePickerDialog dialog = TimePickerDialog.newInstance(
-					(view, hourOfDay, minute, second) -> {
+			TimePickerDialog dialog = new TimePickerDialog(AbstractTransactionActivity.this,
+					AlertDialog.THEME_DEVICE_DEFAULT_DARK,
+					(picker, hourOfDay, minute) -> {
 						dateTime.set(Calendar.HOUR_OF_DAY, hourOfDay);
 						dateTime.set(Calendar.MINUTE, minute);
 						timeText.setText(tf.format(dateTime.getTime()));
 					},
 					dateTime.get(Calendar.HOUR_OF_DAY), dateTime.get(Calendar.MINUTE), is24Format
 			);
-			applyTheme(this, dialog);
-			dialog.show(getFragmentManager(), "TimePickerDialog");
+			dialog.show();
 		});
 
 		internalOnCreate();
