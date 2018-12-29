@@ -553,6 +553,9 @@ public abstract class AbstractTransactionActivity extends AbstractActivity imple
 		projectSelector.onActivityResult(requestCode, resultCode, data);
 		categorySelector.onActivityResult(requestCode, resultCode, data);
 		locationSelector.onActivityResult(requestCode, resultCode, data);
+		if (isShowPayee) {
+			payeeSelector.onActivityResult(requestCode, resultCode, data);
+		}
 		if (resultCode == RESULT_OK) {
 			switch (requestCode) {
 				case RECURRENCE_REQUEST:
