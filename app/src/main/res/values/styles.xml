@@ -123,7 +123,10 @@
 		<item name="android:background">@color/holo_gray_bright</item>
 		<item name="android:layout_width">@dimen/action_button_size</item>
 		<item name="android:layout_height">@dimen/action_button_size</item>
-		<item name="android:layout_margin">@dimen/action_button_margin</item>
+		<item name="android:layout_marginTop">@dimen/action_button_margin</item>
+		<item name="android:layout_marginBottom">@dimen/action_button_margin</item>
+		<item name="android:layout_marginLeft">@dimen/action_button_margin</item>
+		<item name="android:layout_marginRight">0sp</item>
 	</style>
 	<style name="BlotterButtonBar">
 		<item name="android:background">#FFF</item>
