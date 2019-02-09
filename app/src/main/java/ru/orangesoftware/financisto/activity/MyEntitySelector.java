@@ -291,6 +291,10 @@ public abstract class MyEntitySelector<T extends MyEntity, A extends AbstractAct
         return node == null || node.getVisibility() == View.GONE ? 0 : selectedEntityId;
     }
 
+    public boolean isShow() {
+        return isShow;
+    }
+
     public boolean isMultiSelect() {
         return multiSelect;
     }
