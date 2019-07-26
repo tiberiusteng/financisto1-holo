@@ -163,19 +163,10 @@ public class RateLayoutView implements RateNodeOwner {
     private final AmountInput.OnAmountChangedListener onAmountFromChangedListener = new AmountInput.OnAmountChangedListener(){
         @Override
         public void onAmountChanged(long oldAmount, long newAmount) {
-            double r = rateNode.getRate();
-            if (r > 0) {
-                long amountFrom = amountInputFrom.getAmount();
-                long amountTo = Math.round(r*amountFrom);
-                amountInputTo.setOnAmountChangedListener(null);
-                amountInputTo.setAmount(amountTo);
-                amountInputTo.setOnAmountChangedListener(onAmountToChangedListener);
-            } else {
-                long amountFrom = amountInputFrom.getAmount();
-                long amountTo = amountInputTo.getAmount();
-                if (amountFrom > 0) {
-                    rateNode.setRate(1.0f * amountTo / amountFrom);
-                }
+            long amountFrom = amountInputFrom.getAmount();
+            long amountTo = amountInputTo.getAmount();
+            if (amountFrom > 0) {
+                rateNode.setRate(1.0f * amountTo / amountFrom);
             }
             if (amountInputFrom.isIncomeExpenseEnabled()) {
                 if (amountInputFrom.isExpense()) {
