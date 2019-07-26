@@ -252,10 +252,12 @@ public class TransactionActivity extends AbstractTransactionActivity {
 
     protected void switchIncomeExpenseButton(Category category) {
         if (!isUpdateBalanceMode) {
-            if (category.isIncome()) {
-                rateView.setIncome();
-            } else {
-                rateView.setExpense();
+            if (rateView.getFromAmount() == 0) {
+                if (category.isIncome()) {
+                    rateView.setIncome();
+                } else {
+                    rateView.setExpense();
+                }
             }
         }
     }
