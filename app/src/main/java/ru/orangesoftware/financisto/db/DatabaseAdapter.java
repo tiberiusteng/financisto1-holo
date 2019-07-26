@@ -28,6 +28,7 @@ import ru.orangesoftware.financisto.model.*;
 import ru.orangesoftware.financisto.model.Currency;
 import ru.orangesoftware.financisto.rates.*;
 import ru.orangesoftware.financisto.utils.ArrUtils;
+import ru.orangesoftware.financisto.utils.MyPreferences;
 import ru.orangesoftware.financisto.utils.StringUtil;
 
 import java.math.BigDecimal;
@@ -231,7 +232,9 @@ public class DatabaseAdapter extends MyEntityManager {
             transaction.isTemplate = isTemplate;
             transaction.dateTime = now;
             transaction.remoteKey = null;
-            transaction.status = TransactionStatus.UR;
+            if (MyPreferences.isResetCopiedTransactionStatus(context)) {
+                transaction.status = TransactionStatus.UR;
+            }
             if (isTemplate == 0) {
                 transaction.recurrence = null;
                 transaction.notificationOptions = null;

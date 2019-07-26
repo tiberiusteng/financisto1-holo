@@ -78,6 +78,11 @@
                 android:key="colorize_blotter_item"
                 android:summary="@string/colorize_blotter_item_summary"
                 android:title="@string/colorize_blotter_item" />
+            <CheckBoxPreference
+                android:defaultValue="false"
+                android:key="reset_copied_transaction_status"
+                android:summary="@string/reset_copied_transaction_status_summary"
+                android:title="@string/reset_copied_transaction_status" />
         </PreferenceScreen>
         <PreferenceScreen
             android:summary="@string/transaction_screen_summary"

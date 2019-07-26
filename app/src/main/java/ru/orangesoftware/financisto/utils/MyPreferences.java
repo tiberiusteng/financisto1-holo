@@ -423,6 +423,11 @@ public class MyPreferences {
 		return sharedPreferences.getBoolean("colorize_blotter_item", false);
 	}
 
+	public static boolean isResetCopiedTransactionStatus(Context context) {
+		SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(context);
+		return sharedPreferences.getBoolean("reset_copied_transaction_status", false);
+	}
+
 	private static final String DEFAULT = "default";
 
 	public static Context switchLocale(Context context) {
