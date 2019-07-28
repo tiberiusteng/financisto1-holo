@@ -16,6 +16,7 @@ public interface BlotterFilter {
 
 	String FROM_ACCOUNT_ID = BlotterColumns.from_account_id.name();
 	String FROM_ACCOUNT_CURRENCY_ID = BlotterColumns.from_account_currency_id.name();
+	String ORIGINAL_CURRENCY_ID = BlotterColumns.original_currency_id.name();
 	String CATEGORY_ID = BlotterColumns.category_id.name();
 	String CATEGORY_LEFT = BlotterColumns.category_left.name();
 	String CATEGORY_NAME = BlotterColumns.category_title.name();

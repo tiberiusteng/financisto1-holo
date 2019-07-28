@@ -122,6 +122,11 @@ public class Criteria {
     }
 
     public static Criteria fromStringExtra(String extra) {
+        final String[] p = extra.split(";");
+        if (p.length == 2) {
+            return new OrCriteria(fromStringExtra(p[0]), fromStringExtra(p[1]));
+        }
+
         final String[] a = extra.split(",");
         final String col = a[0];
         if (BlotterFilter.DATETIME.equals(col)) {
@@ -194,7 +199,9 @@ public class Criteria {
 
         @Override
         public String toStringExtra() {
-            throw new UnsupportedOperationException();
+            StringBuilder sb = new StringBuilder();
+            sb.append(a.toStringExtra()).append(";").append(b.toStringExtra());
+            return sb.toString();
         }
     }
 

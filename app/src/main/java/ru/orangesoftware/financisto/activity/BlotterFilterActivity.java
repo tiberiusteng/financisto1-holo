@@ -300,7 +300,10 @@ public class BlotterFilterActivity extends FilterAbstractActivity {
 				updateAccountFromFilter();
 				break;
 			case R.id.currency:
-				filter.put(Criteria.eq(BlotterFilter.FROM_ACCOUNT_CURRENCY_ID, String.valueOf(selectedId)));
+				filter.put(Criteria.or(
+						Criteria.eq(BlotterFilter.FROM_ACCOUNT_CURRENCY_ID, String.valueOf(selectedId)),
+						Criteria.eq(BlotterFilter.ORIGINAL_CURRENCY_ID, String.valueOf(selectedId))
+				));
 				updateCurrencyFromFilter();
 				break;
 			case R.id.location:
