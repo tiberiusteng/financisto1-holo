@@ -877,8 +877,9 @@
     <string name="google_drive_permission_required">Please authorize Financisto to access your Google Drive then try again…</string>
     <string name="google_drive_loading_files">Loading files from Google Drive…</string>
     <string name="google_drive_account_required">Please specify your Google Drive account in the Preferences then try again…</string>
-    <string name="google_drive_signed_in_as">Signed in as %s.</string>
-    <string name="google_drive_authorized">Authorized Google Drive backup folder access.</string>
+    <string name="google_drive_signed_in_as">Signed in as %s</string>
+    <string name="google_drive_signed_out">Signed out Google Drive</string>
+    <string name="google_drive_authorized">Authorized Google Drive backup folder access</string>
     <string name="google_drive_backup_success">Backup success on Google Drive: %s</string>
     <string name="google_drive_restore_in_progress">Restoring database from Google Drive…</string>
     <string name="google_drive_connection_resolved">Connection resolved. Please try the last operation again…</string>

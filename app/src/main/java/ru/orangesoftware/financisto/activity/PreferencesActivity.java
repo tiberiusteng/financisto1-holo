@@ -59,9 +59,13 @@ public class PreferencesActivity extends PreferenceActivity {
 
     private static final int SELECT_DATABASE_FOLDER = 100;
     private static final int CHOOSE_ACCOUNT = 101;
-    private static final int REQUEST_AUTHORIZATION = 1;
+    private static final int REQUEST_AUTHORIZATION = 102;
 
     Preference pOpenExchangeRatesAppId;
+
+    Preference pGoogleDriveSignIn;
+    Preference pGoogleDriveSignOut;
+    Preference pGoogleDriveBackupFolder;
 
     @Override
     protected void attachBaseContext(Context base) {
@@ -121,16 +125,28 @@ public class PreferencesActivity extends PreferenceActivity {
                 return ExchangeRateProviderFactory.openexchangerates.name().equals(provider);
             }
         });
-        Preference pDriveAccount = preferenceScreen.findPreference("google_drive_backup_account");
-        pDriveAccount.setOnPreferenceClickListener(arg0 -> {
+
+        pGoogleDriveSignIn = preferenceScreen.findPreference("google_drive_backup_account");
+        pGoogleDriveSignIn.setOnPreferenceClickListener(arg0 -> {
             chooseAccount();
             return true;
         });
-        Preference pSignOutGoogleAccount = preferenceScreen.findPreference("google_drive_sign_out");
-        pSignOutGoogleAccount.setOnPreferenceClickListener(arg0 -> {
+        pGoogleDriveSignOut = preferenceScreen.findPreference("google_drive_sign_out");
+        pGoogleDriveSignOut.setOnPreferenceClickListener(arg0 -> {
             signOutGoogleAccount();
             return true;
         });
+        pGoogleDriveBackupFolder = preferenceScreen.findPreference("google_drive_backup_folder");
+        pGoogleDriveBackupFolder.setOnPreferenceChangeListener((Preference preference, Object newValue) -> {
+            new GoogleDriveAuthorizeFolderTask(this,
+                    (String) newValue,
+                    REQUEST_AUTHORIZATION).execute();
+            return true;
+        });
+
+        GoogleSignInAccount googleDriveAccount = GoogleSignIn.getLastSignedInAccount(this);
+        updateGoogleDriveSignIn(googleDriveAccount);
+
         Preference useFingerprint = preferenceScreen.findPreference("pin_protection_use_fingerprint");
         if (fingerprintUnavailable(this)) {
             useFingerprint.setSummary(getString(R.string.fingerprint_unavailable, reasonWhyFingerprintUnavailable(this)));
@@ -140,6 +156,20 @@ public class PreferencesActivity extends PreferenceActivity {
         setCurrentDatabaseBackupFolder();
         enableOpenExchangeApp();
         selectAccount();
+    }
+
+    private void updateGoogleDriveSignIn(GoogleSignInAccount account) {
+        if (account == null) {
+            pGoogleDriveSignIn.setEnabled(true);
+            pGoogleDriveSignIn.setSummary(R.string.google_drive_backup_account_summary);
+            pGoogleDriveSignOut.setEnabled(false);
+        }
+        else {
+            pGoogleDriveSignIn.setEnabled(false);
+            pGoogleDriveSignIn.setSummary(getString(R.string.google_drive_signed_in_as,
+                    account.getEmail()));
+            pGoogleDriveSignOut.setEnabled(true);
+        }
     }
 
     private void chooseAccount() {
@@ -159,7 +189,10 @@ public class PreferencesActivity extends PreferenceActivity {
 
         GoogleSignInClient googleSignInClient = GoogleSignIn.getClient(this, gso);
         googleSignInClient.signOut().addOnCompleteListener(this, task -> {
-            Toast.makeText(this, "Signed out", Toast.LENGTH_LONG).show();
+            Toast.makeText(this, R.string.google_drive_signed_out, Toast.LENGTH_LONG).show();
+            pGoogleDriveSignOut.setEnabled(false);
+            pGoogleDriveSignIn.setEnabled(true);
+            pGoogleDriveSignIn.setSummary(R.string.google_drive_backup_account_summary);
         });
 
     }
@@ -216,11 +249,16 @@ public class PreferencesActivity extends PreferenceActivity {
                     MyPreferences.setDatabaseBackupFolder(this, databaseBackupFolder);
                     setCurrentDatabaseBackupFolder();
                     break;
+
                 case CHOOSE_ACCOUNT:
                     GoogleSignInAccount account = GoogleSignIn.getSignedInAccountFromIntent(data).getResult();
-                    new GoogleDriveAuthorizeFolderTask(this).execute();
-                    Toast.makeText(this, getString(R.string.google_drive_signed_in_as,
-                            account.getDisplayName()), Toast.LENGTH_LONG).show();
+                    new GoogleDriveAuthorizeFolderTask(this,
+                            MyPreferences.getGoogleDriveBackupFolder(this),
+                            REQUEST_AUTHORIZATION).execute();
+                    String signedInAs = getString(R.string.google_drive_signed_in_as,
+                            account.getEmail());
+                    Toast.makeText(this, signedInAs, Toast.LENGTH_LONG).show();
+                    updateGoogleDriveSignIn(account);
                     break;
 
                 case REQUEST_AUTHORIZATION:

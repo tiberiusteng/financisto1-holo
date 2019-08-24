@@ -24,6 +24,7 @@ import java.util.Collections;
 import java.util.List;
 
 import ru.orangesoftware.financisto.R;
+import ru.orangesoftware.financisto.export.Export;
 import ru.orangesoftware.financisto.export.ImportExportException;
 import ru.orangesoftware.financisto.utils.MyPreferences;
 
@@ -32,7 +33,6 @@ public class GoogleDriveRESTClient {
     private Drive googleDriveService;
 
     private static final String TAG = "GoogleDriveRESTClient";
-    private static final String BACKUP_MIME_TYPE = "application/x.financisto+gzip";
 
     public GoogleDriveRESTClient(Context context) {
         this.context = context.getApplicationContext();
@@ -51,8 +51,8 @@ public class GoogleDriveRESTClient {
                         .build();
     }
 
-    private String getDriveFolderName() throws ImportExportException {
-        String folder = MyPreferences.getBackupFolder(context);
+    private String getBackupFolderName() throws ImportExportException {
+        String folder = MyPreferences.getGoogleDriveBackupFolder(context);
         // check the backup folder registered on preferences
         if (folder == null || folder.equals("")) {
             throw new ImportExportException(R.string.gdocs_folder_not_configured);
@@ -60,9 +60,8 @@ public class GoogleDriveRESTClient {
         return folder;
     }
 
-    public String getBackupFolderID() throws Exception {
-        String folderName = getDriveFolderName();
-        String folderID;
+    public String getFolderID(String folderName, boolean createIfNotExist) throws Exception {
+        String folderID = null;
 
         FileList result = googleDriveService.files().list()
                 .setQ("mimeType = '" + DriveFolder.MIME_TYPE + "' and name = '" + folderName + "' ")
@@ -70,8 +69,8 @@ public class GoogleDriveRESTClient {
                 .execute();
         if (result.getFiles().size() > 0) {
             folderID = result.getFiles().get(0).getId();
-            Log.i(TAG, "Got backup folder ID =" + folderID);
-        } else {
+            Log.i(TAG, String.format("Got folder '%s' ID: '%s'", folderName, folderID));
+        } else if (createIfNotExist) {
             // Backup folder not exist yet, create it
             File metadata = new File()
                     .setParents(Collections.singletonList("root"))
@@ -83,20 +82,29 @@ public class GoogleDriveRESTClient {
                 throw new IOException("Null result when requesting file creation.");
             }
             folderID = googleFile.getId();
-            Log.i(TAG, "Created new backup folder ID =" + folderID);
+            Log.i(TAG, String.format("Created new folder '%s', ID: '%s'", folderName, folderID));
         }
 
         return folderID;
+
+    }
+
+    public String getBackupFolderID(boolean createIfNotExist) throws Exception {
+        return getFolderID(getBackupFolderName(), createIfNotExist);
     }
 
     public List<GoogleDriveFileInfo> listFiles() throws Exception {
-        String folderID = getBackupFolderID();
+        String folderID = getBackupFolderID(false);
+        if (folderID == null) {
+            throw new ImportExportException(R.string.gdocs_folder_not_configured);
+        }
+
         ArrayList<GoogleDriveFileInfo> result = new ArrayList<>();
 
         List<File> fileList = googleDriveService.files().list()
-                .setQ("'" + folderID + "' in parents and mimeType ='" + BACKUP_MIME_TYPE + "'")
+                .setQ("'" + folderID + "' in parents and mimeType ='" + Export.BACKUP_MIME_TYPE + "'")
                 .setSpaces("drive")
-                .setFields("files(id,name,size,createdTime,modifiedTime,starred)")
+                .setFields("files(id,name,createdTime)")
                 .execute().getFiles();
 
         for (File f : fileList) {
@@ -107,14 +115,17 @@ public class GoogleDriveRESTClient {
     }
 
     public void uploadFile(java.io.File file) throws Exception {
-        String folderID = getBackupFolderID();
+        String folderID = getBackupFolderID(false);
+        if (folderID == null) {
+            throw new ImportExportException(R.string.gdocs_folder_not_configured);
+        }
 
         File fileMetadata = new File()
                 .setParents(Collections.singletonList(folderID))
-                .setMimeType(BACKUP_MIME_TYPE)
+                .setMimeType(Export.BACKUP_MIME_TYPE)
                 .setName(file.getName());
 
-        FileContent mediaContent = new FileContent(BACKUP_MIME_TYPE, file);
+        FileContent mediaContent = new FileContent(Export.BACKUP_MIME_TYPE, file);
 
         File uploadedFile = googleDriveService.files().create(fileMetadata, mediaContent)
                 .setFields("id")

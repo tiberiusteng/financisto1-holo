@@ -339,7 +339,7 @@
             android:title="@string/google_drive_sign_out" />
         <EditTextPreference
             android:defaultValue="financisto"
-            android:key="backup_folder"
+            android:key="google_drive_backup_folder"
             android:summary="@string/backup_folder_summary"
             android:title="@string/backup_folder" />
         <CheckBoxPreference

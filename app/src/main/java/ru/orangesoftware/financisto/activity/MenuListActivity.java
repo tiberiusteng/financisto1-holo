@@ -16,13 +16,9 @@ import android.app.ListActivity;
 import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.Intent;
-import android.content.IntentSender;
 import android.view.View;
 import android.widget.ListView;
 import android.widget.Toast;
-import com.google.android.gms.common.ConnectionResult;
-import com.google.android.gms.common.GooglePlayServicesUtil;
-import com.google.android.gms.common.api.Status;
 
 import org.androidannotations.annotations.AfterViews;
 import org.androidannotations.annotations.Bean;

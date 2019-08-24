@@ -265,9 +265,9 @@ public class MyPreferences {
 	/**
 	 * Get google docs backup folder registered on preferences
 	 */
-	public static String getBackupFolder(Context context) {
+	public static String getGoogleDriveBackupFolder(Context context) {
 		SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(context);
-		return sharedPreferences.getString("backup_folder", null);
+		return sharedPreferences.getString("google_drive_backup_folder", null);
 	}
 
 	/**
