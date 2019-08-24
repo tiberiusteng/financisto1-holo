@@ -149,7 +149,7 @@ public enum MenuListItem implements SummaryEntityEnum {
                 Intent intent = new Intent(Intent.ACTION_SEND);
                 Uri backupFileUri = FileProvider.getUriForFile(activity, BuildConfig.APPLICATION_ID, file);
                 intent.putExtra(Intent.EXTRA_STREAM, backupFileUri);
-                intent.setType("text/plain");
+                intent.setType("application/x.financisto+gzip");
                 activity.startActivity(Intent.createChooser(intent, activity.getString(R.string.backup_database_to_title)));
             });
             t.execute((String[]) null);

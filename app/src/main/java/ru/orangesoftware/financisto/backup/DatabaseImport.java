@@ -19,6 +19,8 @@ import ru.orangesoftware.financisto.db.Database;
 import ru.orangesoftware.financisto.db.DatabaseAdapter;
 import ru.orangesoftware.financisto.db.DatabaseSchemaEvolution;
 import ru.orangesoftware.financisto.export.Export;
+import ru.orangesoftware.financisto.export.drive.GoogleDriveFileInfo;
+import ru.orangesoftware.financisto.export.drive.GoogleDriveRESTClient;
 import ru.orangesoftware.financisto.export.dropbox.Dropbox;
 
 import java.io.*;
@@ -42,9 +44,9 @@ public class DatabaseImport extends FullDatabaseImport {
         return new DatabaseImport(context, dbAdapter, inputStream);
     }
 
-    public static DatabaseImport createFromGoogleDriveBackup(Context context, DatabaseAdapter db, DriveContents driveFileContents)
-            throws IOException {
-        InputStream inputStream = driveFileContents.getInputStream();
+    public static DatabaseImport createFromGoogleDriveBackup(Context context, DatabaseAdapter db, GoogleDriveRESTClient googleDriveRESTClient, GoogleDriveFileInfo backupFile)
+            throws Exception {
+        InputStream inputStream = googleDriveRESTClient.getFileAsStream(backupFile.id);
         InputStream in = new GZIPInputStream(inputStream);
         return new DatabaseImport(context, db, in);
     }

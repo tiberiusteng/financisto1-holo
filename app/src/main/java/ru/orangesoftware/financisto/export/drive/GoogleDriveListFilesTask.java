@@ -1,16 +1,10 @@
-/*
- * Copyright (c) 2014 Denis Solonenko.
- * All rights reserved. This program and the accompanying materials
- * are made available under the terms of the GNU Public License v2.0
- * which accompanies this distribution, and is available at
- * http://www.gnu.org/licenses/old-licenses/gpl-2.0.html
- */
-
-package ru.orangesoftware.financisto.export.dropbox;
+package ru.orangesoftware.financisto.export.drive;
 
 import android.app.Activity;
 import android.app.ProgressDialog;
 import android.content.Context;
+
+import java.util.List;
 
 import ru.orangesoftware.financisto.R;
 import ru.orangesoftware.financisto.bus.GreenRobotBus_;
@@ -19,23 +13,15 @@ import ru.orangesoftware.financisto.export.ImportExportAsyncTask;
 import ru.orangesoftware.financisto.export.ImportExportAsyncTaskListener;
 import ru.orangesoftware.financisto.export.ImportExportException;
 
-import java.util.List;
+public class GoogleDriveListFilesTask extends ImportExportAsyncTask {
 
-/**
- * Created with IntelliJ IDEA.
- * User: dsolonenko
- * Date: 1/20/14
- * Time: 11:58 PM
- */
-public class DropboxListFilesTask extends ImportExportAsyncTask {
-
-    public DropboxListFilesTask(final Activity context, ProgressDialog dialog) {
+    public GoogleDriveListFilesTask(final Activity context, ProgressDialog dialog) {
         super(context, dialog);
         setShowResultMessage(false);
         setListener(new ImportExportAsyncTaskListener() {
             @Override
             public void onCompleted(Object result) {
-                GreenRobotBus_.getInstance_(context).post(new DropboxFileList((String[]) result));
+                GreenRobotBus_.getInstance_(context).post(new GoogleDriveFileList((GoogleDriveFileInfo[]) result));
             }
         });
     }
@@ -43,11 +29,11 @@ public class DropboxListFilesTask extends ImportExportAsyncTask {
     @Override
     protected Object work(Context context, DatabaseAdapter db, String... params) throws Exception {
         try {
-            Dropbox dropbox = new Dropbox(context);
-            List<String> files = dropbox.listFiles();
-            return files.toArray(new String[files.size()]);
+            GoogleDriveRESTClient client = new GoogleDriveRESTClient(context);
+            List<GoogleDriveFileInfo> files = client.listFiles();
+            return files.toArray(new GoogleDriveFileInfo[files.size()]);
         } catch (Exception e) {
-            throw new ImportExportException(R.string.dropbox_error);
+            throw new ImportExportException(R.string.google_drive_list_files_failed);
         }
     }
 

@@ -333,11 +333,10 @@
             android:key="google_drive_backup_account"
             android:summary="@string/google_drive_backup_account_summary"
             android:title="@string/google_drive_backup_account" />
-        <CheckBoxPreference
-            android:defaultValue="false"
-            android:key="google_drive_backup_full_readonly"
-            android:summary="@string/google_drive_backup_full_readonly_summary"
-            android:title="@string/google_drive_backup_full_readonly" />
+        <Preference
+            android:key="google_drive_sign_out"
+            android:summary="@string/google_drive_sign_out_summary"
+            android:title="@string/google_drive_sign_out" />
         <EditTextPreference
             android:defaultValue="financisto"
             android:key="backup_folder"

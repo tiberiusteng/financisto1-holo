@@ -18,6 +18,8 @@ import android.os.AsyncTask;
 import android.util.Log;
 import android.widget.Toast;
 
+import com.google.api.client.googleapis.extensions.android.gms.auth.UserRecoverableAuthIOException;
+
 import ru.orangesoftware.financisto.R;
 import ru.orangesoftware.financisto.bus.GreenRobotBus_;
 import ru.orangesoftware.financisto.bus.RefreshCurrentTab;
@@ -32,6 +34,7 @@ public abstract class ImportExportAsyncTask extends AsyncTask<String, String, Ob
     protected final Activity context;
     protected final ProgressDialog dialog;
     private boolean showResultMessage = true;
+    private final int REQUEST_AUTHORIZATION = 1;
 
     private ImportExportAsyncTaskListener listener;
 
@@ -83,7 +86,7 @@ public abstract class ImportExportAsyncTask extends AsyncTask<String, String, Ob
         }
     }
 
-    private void doForceUploadToGoogleDrive(Context context, String backupFileName) throws Exception {
+    protected void doForceUploadToGoogleDrive(Context context, String backupFileName) throws Exception {
         publishProgress(context.getString(R.string.google_drive_uploading_file));
         uploadBackupFileToGoogleDrive(context, backupFileName);
     }
@@ -117,6 +120,10 @@ public abstract class ImportExportAsyncTask extends AsyncTask<String, String, Ob
                     .setPositiveButton(R.string.ok, null)
                     .show();
             return;
+        }
+
+        if (result instanceof UserRecoverableAuthIOException) {
+            context.startActivityForResult(((UserRecoverableAuthIOException)result).getIntent(), REQUEST_AUTHORIZATION);
         }
 
         if (result instanceof Exception)

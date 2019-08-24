@@ -13,24 +13,37 @@ package ru.orangesoftware.financisto.activity;
 import android.Manifest;
 import android.accounts.Account;
 import android.accounts.AccountManager;
+import android.app.Activity;
 import android.content.ActivityNotFoundException;
 import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
 import android.content.Intent.ShortcutIconResource;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.preference.Preference;
 import android.preference.Preference.OnPreferenceChangeListener;
 import android.preference.PreferenceActivity;
 import android.preference.PreferenceScreen;
+import android.support.annotation.NonNull;
 import android.util.Log;
 import android.widget.Toast;
 
+import com.google.android.gms.auth.api.signin.GoogleSignIn;
+import com.google.android.gms.auth.api.signin.GoogleSignInAccount;
+import com.google.android.gms.auth.api.signin.GoogleSignInClient;
+import com.google.android.gms.auth.api.signin.GoogleSignInOptions;
 import com.google.android.gms.common.AccountPicker;
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.Task;
+import com.google.api.client.googleapis.extensions.android.gms.auth.UserRecoverableAuthIOException;
+import com.google.api.services.drive.DriveScopes;
 
 import ru.orangesoftware.financisto.R;
 import ru.orangesoftware.financisto.dialog.FolderBrowser;
 import ru.orangesoftware.financisto.export.Export;
+import ru.orangesoftware.financisto.export.drive.GoogleDriveAuthorizeFolderTask;
+import ru.orangesoftware.financisto.export.drive.GoogleDriveRESTClient;
 import ru.orangesoftware.financisto.export.dropbox.Dropbox;
 import ru.orangesoftware.financisto.rates.ExchangeRateProviderFactory;
 import ru.orangesoftware.financisto.utils.MyPreferences;
@@ -46,6 +59,7 @@ public class PreferencesActivity extends PreferenceActivity {
 
     private static final int SELECT_DATABASE_FOLDER = 100;
     private static final int CHOOSE_ACCOUNT = 101;
+    private static final int REQUEST_AUTHORIZATION = 1;
 
     Preference pOpenExchangeRatesAppId;
 
@@ -112,6 +126,11 @@ public class PreferencesActivity extends PreferenceActivity {
             chooseAccount();
             return true;
         });
+        Preference pSignOutGoogleAccount = preferenceScreen.findPreference("google_drive_sign_out");
+        pSignOutGoogleAccount.setOnPreferenceClickListener(arg0 -> {
+            signOutGoogleAccount();
+            return true;
+        });
         Preference useFingerprint = preferenceScreen.findPreference("pin_protection_use_fingerprint");
         if (fingerprintUnavailable(this)) {
             useFingerprint.setSummary(getString(R.string.fingerprint_unavailable, reasonWhyFingerprintUnavailable(this)));
@@ -124,17 +143,25 @@ public class PreferencesActivity extends PreferenceActivity {
     }
 
     private void chooseAccount() {
-        try {
-            if (isRequestingPermissions(this, GET_ACCOUNTS, "android.permission.USE_CREDENTIALS")) {
-                return;
-            }
-            Account selectedAccount = getSelectedAccount();
-            Intent intent = AccountPicker.newChooseAccountIntent(selectedAccount, null,
-                    new String[]{"com.google"}, true, null, null, null, null);
-            startActivityForResult(intent, CHOOSE_ACCOUNT);
-        } catch (ActivityNotFoundException e) {
-            Toast.makeText(this, R.string.google_drive_account_select_error, Toast.LENGTH_LONG).show();
-        }
+        GoogleSignInOptions gso = new GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
+                .requestEmail()
+                .build();
+
+        GoogleSignInClient googleSignInClient = GoogleSignIn.getClient(this, gso);
+
+        Intent signInIntent = googleSignInClient.getSignInIntent();
+        startActivityForResult(signInIntent, CHOOSE_ACCOUNT);
+    }
+
+    private void signOutGoogleAccount() {
+        GoogleSignInOptions gso = new GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
+                .build();
+
+        GoogleSignInClient googleSignInClient = GoogleSignIn.getClient(this, gso);
+        googleSignInClient.signOut().addOnCompleteListener(this, task -> {
+            Toast.makeText(this, "Signed out", Toast.LENGTH_LONG).show();
+        });
+
     }
 
     private Account getSelectedAccount() {
@@ -190,15 +217,14 @@ public class PreferencesActivity extends PreferenceActivity {
                     setCurrentDatabaseBackupFolder();
                     break;
                 case CHOOSE_ACCOUNT:
-                    if (data != null) {
-                        Bundle b = data.getExtras();
-                        String accountName = b.getString(AccountManager.KEY_ACCOUNT_NAME);
-                        Log.d("Preferences", "Selected account: " + accountName);
-                        if (accountName != null && accountName.length() > 0) {
-                            MyPreferences.setGoogleDriveAccount(this, accountName);
-                            selectAccount();
-                        }
-                    }
+                    GoogleSignInAccount account = GoogleSignIn.getSignedInAccountFromIntent(data).getResult();
+                    new GoogleDriveAuthorizeFolderTask(this).execute();
+                    Toast.makeText(this, getString(R.string.google_drive_signed_in_as,
+                            account.getDisplayName()), Toast.LENGTH_LONG).show();
+                    break;
+
+                case REQUEST_AUTHORIZATION:
+                    Toast.makeText(this, R.string.google_drive_authorized, Toast.LENGTH_LONG).show();
                     break;
             }
         }
