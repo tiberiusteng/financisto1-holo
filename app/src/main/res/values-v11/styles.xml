@@ -5,6 +5,7 @@
         <item name="android:imageButtonStyle">@android:style/Widget.Holo.Light.ImageButton</item>
         <item name="android:spinnerDropDownItemStyle">@style/TextViewSpinnerDropDownItem</item>
         <item name="android:spinnerItemStyle">@style/TextViewSpinnerDropDownItem</item>
+        <item name="android:windowBackground">@android:color/black</item>
     </style>
     <style name="AppDialog" parent="@android:style/Theme.Holo.Dialog">
         <item name="android:spinnerDropDownItemStyle">@style/TextViewSpinnerDropDownItem</item>

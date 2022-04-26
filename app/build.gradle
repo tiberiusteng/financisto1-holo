@@ -1,24 +1,18 @@
 repositories {
     google()
-    jcenter()
-    maven { url "http://repo.commonsware.com.s3.amazonaws.com" }
+    mavenCentral()
     maven { url 'https://jitpack.io' }
 }
 
 apply plugin: 'com.android.application'
 
 android {
-    compileSdkVersion 27
-
-    dexOptions {
-        maxProcessCount 4 // this is the default value
-        javaMaxHeapSize "2g"
-    }
+    compileSdkVersion 29
 
     defaultConfig {
         applicationId "ru.orangesoftware.financisto"
-        minSdkVersion 19
-        targetSdkVersion 27
+        minSdkVersion 21
+        targetSdkVersion 29
         multiDexEnabled true
 
         testApplicationId "ru.orangesoftware.financisto.tests"
@@ -26,7 +20,7 @@ android {
 
         javaCompileOptions {
             annotationProcessorOptions {
-                arguments = ["androidManifestFile": "app/src/main/AndroidManifest.xml"]
+                arguments = ["androidManifestFile": "$projectDir/src/main/AndroidManifest.xml".toString()]
             }
         }
     }
@@ -40,6 +34,7 @@ android {
 
     packagingOptions {
         pickFirst 'META-INF/LICENSE'
+        exclude 'META-INF/DEPENDENCIES'
     }
     compileOptions {
         sourceCompatibility JavaVersion.VERSION_1_8
@@ -48,7 +43,7 @@ android {
 }
 
 final SUPPORT_LIB_VER = '27.0.2'
-def AAVersion = '4.4.0'
+def AAVersion = '4.8.0'
 
 configurations.all {
     resolutionStrategy {
@@ -73,7 +68,7 @@ dependencies {
     implementation 'com.google.http-client:google-http-client-android:1.20.0'
     implementation 'com.google.http-client:google-http-client-gson:1.20.0'
     implementation 'com.google.http-client:google-http-client-jackson2:1.20.0'
-    implementation 'com.dropbox.core:dropbox-core-sdk:3.0.7'
+    implementation 'com.dropbox.core:dropbox-core-sdk:5.2.0'
     implementation 'com.squareup.okhttp3:okhttp:3.11.0'
     //implementation 'com.google.code.gson:gson:2.4'
     implementation "com.google.android.gms:play-services-base:11.0.2"
@@ -87,7 +82,7 @@ dependencies {
 
     implementation 'com.android.support:support-v4:27.0.2'
     implementation 'com.android.support:appcompat-v7:27.0.2'
-    implementation 'com.android.support:multidex:1.0.2'
+    implementation 'com.android.support:multidex:1.0.3'
     implementation 'com.android.support:recyclerview-v7:27.0.2'
     implementation 'com.github.bumptech.glide:glide:3.7.0'
     implementation('com.mlsdev.rximagepicker:library:2.0.2') {
@@ -98,7 +93,7 @@ dependencies {
     implementation 'com.mtramin:rxfingerprint:2.2.1'
     implementation 'io.reactivex.rxjava2:rxjava:2.1.7'
     implementation files('libs/achartengine-1.2.0.jar')
-    implementation files('libs/commons-logging-1.2.jar')
+    //implementation files('libs/commons-logging-1.2.jar')
     implementation files('libs/CWAC-WakefulIntentService.jar')
     //implementation files('libs/google-api-client-1.17.0-rc.jar')
     //implementation files('libs/google-api-client-android-1.17.0-rc.jar')
@@ -107,8 +102,8 @@ dependencies {
     //implementation files('libs/google-http-client-android-1.17.0-rc.jar')
     //implementation files('libs/google-http-client-jackson2-1.17.0-rc.jar')
     //implementation files('libs/google-oauth-client-1.17.0-rc.jar')
-    implementation files('libs/httpclient-4.0.3.jar')
-    implementation files('libs/httpcore-4.0.1.jar')
+    //implementation files('libs/httpclient-4.0.3.jar')
+    //implementation files('libs/httpcore-4.0.1.jar')
     implementation files('libs/httpmime-4.0.3.jar')
     implementation files('libs/json_simple-1.1.jar')
     implementation files('libs/rfc2445-no-joda.jar')
