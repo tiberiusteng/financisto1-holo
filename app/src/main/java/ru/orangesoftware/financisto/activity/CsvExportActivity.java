@@ -23,6 +23,7 @@ public class CsvExportActivity extends AbstractExportActivity {
 	public static final String CSV_EXPORT_INCLUDE_HEADER = "CSV_EXPORT_INCLUDE_HEADER";
     public static final String CSV_EXPORT_SPLITS = "CSV_EXPORT_SPLITS";
     public static final String CSV_EXPORT_UPLOAD_TO_DROPBOX = "CSV_EXPORT_UPLOAD_TO_DROPBOX";
+    public static final String CSV_EXPORT_UPLOAD_TO_GDRIVE = "CSV_EXPORT_UPLOAD_TO_GDRIVE";
 
     private final CurrencyExportPreferences currencyPreferences = new CurrencyExportPreferences("csv");
 
@@ -30,6 +31,7 @@ public class CsvExportActivity extends AbstractExportActivity {
     private CheckBox includeHeader;
     private CheckBox exportSplits;
     private CheckBox uploadToDropbox;
+    private CheckBox uploadToGDrive;
 
     public CsvExportActivity() {
         super(R.layout.csv_export);
@@ -42,6 +44,7 @@ public class CsvExportActivity extends AbstractExportActivity {
         exportSplits = new CheckBox(this); //(CheckBox)findViewById(R.id.checkboxExportSplits);
         includeHeader = (CheckBox)findViewById(R.id.checkboxIncludeHeader);
         uploadToDropbox = (CheckBox)findViewById(R.id.checkboxUploadToDropbox);
+        uploadToGDrive = (CheckBox)findViewById(R.id.checkboxUploadToGDrive);
     }
 
     @Override
@@ -51,6 +54,7 @@ public class CsvExportActivity extends AbstractExportActivity {
         data.putExtra(CSV_EXPORT_INCLUDE_HEADER, includeHeader.isChecked());
         data.putExtra(CSV_EXPORT_SPLITS, exportSplits.isChecked());
         data.putExtra(CSV_EXPORT_UPLOAD_TO_DROPBOX, uploadToDropbox.isChecked());
+        data.putExtra(CSV_EXPORT_UPLOAD_TO_GDRIVE, uploadToGDrive.isChecked());
     }
 
 	protected void savePreferences() {
@@ -60,6 +64,7 @@ public class CsvExportActivity extends AbstractExportActivity {
 		editor.putBoolean(CSV_EXPORT_INCLUDE_HEADER, includeHeader.isChecked());
         editor.putBoolean(CSV_EXPORT_SPLITS, exportSplits.isChecked());
         editor.putBoolean(CSV_EXPORT_UPLOAD_TO_DROPBOX, uploadToDropbox.isChecked());
+        editor.putBoolean(CSV_EXPORT_UPLOAD_TO_GDRIVE, uploadToGDrive.isChecked());
 		editor.commit();
 	}
 
@@ -70,6 +75,7 @@ public class CsvExportActivity extends AbstractExportActivity {
 		includeHeader.setChecked(prefs.getBoolean(CSV_EXPORT_INCLUDE_HEADER, true));
         exportSplits.setChecked(prefs.getBoolean(CSV_EXPORT_SPLITS, false));
         uploadToDropbox.setChecked(prefs.getBoolean(CSV_EXPORT_UPLOAD_TO_DROPBOX, false));
+        uploadToGDrive.setChecked(prefs.getBoolean(CSV_EXPORT_UPLOAD_TO_GDRIVE, false));
 	}
 
 }

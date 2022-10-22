@@ -22,6 +22,9 @@ public class CsvExportTask extends ImportExportAsyncTask {
 		if (options.uploadToDropbox) {
 			doUploadToDropbox(context, backupFileName);
 		}
+		if (options.uploadToGDrive) {
+			doForceUploadToGoogleDrive(context, backupFileName);
+		}
 		return backupFileName;
 	}
 

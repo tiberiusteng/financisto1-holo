@@ -769,6 +769,7 @@
     <string name="total_rate">Rate: %0.5f</string>
     <string name="home_currency">Home currency</string>
     <string name="upload_to_dropbox">Upload to\nDropbox</string>
+    <string name="upload_to_gdrive">Upload to\nGoogle Drive</string>
     <string name="not_available">N/A</string>
     <string name="rate_not_available_on_date_error" formatted="false">No exchange rate specified on %s to calculate between %s and %s</string>
     <string name="rate_not_available_error" formatted="false">No exchange rate specified between %s and %s</string>

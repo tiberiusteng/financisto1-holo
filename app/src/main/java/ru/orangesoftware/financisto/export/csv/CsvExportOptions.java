@@ -29,11 +29,12 @@ public class CsvExportOptions {
     public final boolean includeHeader;
     public final boolean exportSplits;
     public final boolean uploadToDropbox;
+    public final boolean uploadToGDrive;
     public final WhereFilter filter;
     public final boolean writeUtfBom;
 
     public CsvExportOptions(Currency currency, char fieldSeparator, boolean includeHeader,
-                            boolean exportSplits, boolean uploadToDropbox,
+                            boolean exportSplits, boolean uploadToDropbox, boolean uploadToGDrive,
                             WhereFilter filter, boolean writeUtfBom) {
         this.filter = filter;
         this.amountFormat = CurrencyCache.createCurrencyFormat(currency);
@@ -41,6 +42,7 @@ public class CsvExportOptions {
         this.includeHeader = includeHeader;
         this.exportSplits = exportSplits;
         this.uploadToDropbox = uploadToDropbox;
+        this.uploadToGDrive = uploadToGDrive;
         this.writeUtfBom = writeUtfBom;
     }
 
@@ -51,7 +53,8 @@ public class CsvExportOptions {
         boolean includeHeader = data.getBooleanExtra(CsvExportActivity.CSV_EXPORT_INCLUDE_HEADER, true);
         boolean exportSplits = data.getBooleanExtra(CsvExportActivity.CSV_EXPORT_SPLITS, false);
         boolean uploadToDropbox = data.getBooleanExtra(CsvExportActivity.CSV_EXPORT_UPLOAD_TO_DROPBOX, false);
-        return new CsvExportOptions(currency, fieldSeparator, includeHeader, exportSplits, uploadToDropbox, filter, true);
+        boolean uploadToGDrive = data.getBooleanExtra(CsvExportActivity.CSV_EXPORT_UPLOAD_TO_GDRIVE, false);
+        return new CsvExportOptions(currency, fieldSeparator, includeHeader, exportSplits, uploadToDropbox, uploadToGDrive, filter, true);
     }
 
 }
