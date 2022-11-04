@@ -15,6 +15,8 @@ import com.dropbox.core.DbxException;
 import com.dropbox.core.DbxRequestConfig;
 import com.dropbox.core.android.Auth;
 import com.dropbox.core.http.OkHttp3Requestor;
+import com.dropbox.core.json.JsonReadException;
+import com.dropbox.core.oauth.DbxCredential;
 import com.dropbox.core.util.IOUtil;
 import com.dropbox.core.v2.DbxClientV2;
 import com.dropbox.core.v2.files.FileMetadata;
@@ -29,7 +31,11 @@ import ru.orangesoftware.financisto.utils.MyPreferences;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.InputStream;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.List;
 
 public class Dropbox {
 
@@ -46,15 +52,17 @@ public class Dropbox {
 
     public void startAuth() {
         startedAuth = true;
-        Auth.startOAuth2Authentication(context, APP_KEY);
+        Auth.startOAuth2PKCE(context, APP_KEY, getDbxRequestConfig(),
+                Arrays.asList("files.metadata.read", "files.content.read", "files.content.write"));
     }
 
     public void completeAuth() {
         try {
-            String authToken = Auth.getOAuth2Token();
-            if (startedAuth && authToken != null) {
+            DbxCredential dbxCredential = Auth.getDbxCredential();
+            if (startedAuth && dbxCredential != null) {
                 try {
-                    MyPreferences.storeDropboxKeys(context, authToken);
+                    Log.d("Financisto", dbxCredential.toString());
+                    MyPreferences.storeDropboxKeys(context, dbxCredential.toString());
                 } catch (IllegalStateException e) {
                     Log.i("Financisto", "Error authenticating Dropbox", e);
                 }
@@ -75,16 +83,22 @@ public class Dropbox {
         }
     }
 
+    private DbxRequestConfig getDbxRequestConfig() {
+        return DbxRequestConfig.newBuilder("financisto").build();
+    }
+
     private boolean authSession() {
-        String accessToken = MyPreferences.getDropboxAuthToken(context);
-        if (accessToken != null) {
-            if (dropboxClient == null) {
-                DbxRequestConfig requestConfig = DbxRequestConfig.newBuilder("financisto")
-                        .withHttpRequestor(new OkHttp3Requestor(OkHttp3Requestor.defaultOkHttpClient()))
-                        .build();
-                dropboxClient = new DbxClientV2(requestConfig, accessToken);
+        String serializedCredential = MyPreferences.getDropboxAuthToken(context);
+        if (serializedCredential != null) {
+            try {
+                if (dropboxClient == null) {
+                    DbxCredential dbxCredential = DbxCredential.Reader.readFully(serializedCredential);
+                    dropboxClient = new DbxClientV2(getDbxRequestConfig(), dbxCredential);
+                }
+                return true;
+            } catch (JsonReadException e) {
+                return false;
             }
-            return true;
         }
         return false;
     }
