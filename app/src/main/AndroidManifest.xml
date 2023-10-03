@@ -10,7 +10,7 @@
       Denis Solonenko - initial API and implementation
 -->
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    package="ru.orangesoftware.financisto" android:versionName="2023-10-03" android:versionCode="93"
+    package="ru.orangesoftware.financisto" android:versionName="2023-10-04" android:versionCode="94"
     android:installLocation="internalOnly">
 
     <supports-screens

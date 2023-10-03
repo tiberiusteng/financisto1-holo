@@ -14,6 +14,7 @@ import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.ProgressDialog;
 import android.content.Context;
+import android.net.Uri;
 import android.os.AsyncTask;
 import android.util.Log;
 import android.widget.Toast;
@@ -29,7 +30,7 @@ import ru.orangesoftware.financisto.utils.MyPreferences;
 import static ru.orangesoftware.financisto.export.Export.uploadBackupFileToDropbox;
 import static ru.orangesoftware.financisto.export.Export.uploadBackupFileToGoogleDrive;
 
-public abstract class ImportExportAsyncTask extends AsyncTask<String, String, Object> {
+public abstract class ImportExportAsyncTask extends AsyncTask<Uri, String, Object> {
 
     protected final Activity context;
     protected final ProgressDialog dialog;
@@ -52,7 +53,7 @@ public abstract class ImportExportAsyncTask extends AsyncTask<String, String, Ob
     }
 
     @Override
-    protected Object doInBackground(String... params) {
+    protected Object doInBackground(Uri... params) {
         DatabaseAdapter db = new DatabaseAdapter(context);
         db.open();
         try {
@@ -65,30 +66,30 @@ public abstract class ImportExportAsyncTask extends AsyncTask<String, String, Ob
         }
     }
 
-    protected abstract Object work(Context context, DatabaseAdapter db, String... params) throws Exception;
+    protected abstract Object work(Context context, DatabaseAdapter db, Uri... params) throws Exception;
 
     protected abstract String getSuccessMessage(Object result);
 
-    protected void doUploadToDropbox(Context context, String backupFileName) throws Exception {
+    protected void doUploadToDropbox(Context context, Uri backupFileUri) throws Exception {
         if (MyPreferences.isDropboxUploadBackups(context)) {
-            doForceUploadToDropbox(context, backupFileName);
+            doForceUploadToDropbox(context, backupFileUri);
         }
     }
 
-    protected void doForceUploadToDropbox(Context context, String backupFileName) throws Exception {
+    protected void doForceUploadToDropbox(Context context, Uri backupFileUri) throws Exception {
         publishProgress(context.getString(R.string.dropbox_uploading_file));
-        uploadBackupFileToDropbox(context, backupFileName);
+        uploadBackupFileToDropbox(context, backupFileUri);
     }
 
-    void doUploadToGoogleDrive(Context context, String backupFileName) throws Exception {
+    void doUploadToGoogleDrive(Context context, Uri backupFileUri) throws Exception {
         if (MyPreferences.isGoogleDriveUploadBackups(context)) {
-            doForceUploadToGoogleDrive(context, backupFileName);
+            doForceUploadToGoogleDrive(context, backupFileUri);
         }
     }
 
-    protected void doForceUploadToGoogleDrive(Context context, String backupFileName) throws Exception {
+    protected void doForceUploadToGoogleDrive(Context context, Uri backupFileUri) throws Exception {
         publishProgress(context.getString(R.string.google_drive_uploading_file));
-        uploadBackupFileToGoogleDrive(context, backupFileName);
+        uploadBackupFileToGoogleDrive(context, backupFileUri);
     }
 
 

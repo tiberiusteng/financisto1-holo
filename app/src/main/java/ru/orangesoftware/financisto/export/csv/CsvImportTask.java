@@ -11,6 +11,7 @@ package ru.orangesoftware.financisto.export.csv;
 import android.app.Activity;
 import android.app.ProgressDialog;
 import android.content.Context;
+import android.net.Uri;
 import android.util.Log;
 
 import ru.orangesoftware.financisto.R;
@@ -34,7 +35,7 @@ public class CsvImportTask extends ImportExportAsyncTask {
     }
 
     @Override
-    protected Object work(Context context, DatabaseAdapter db, String... params) throws Exception {
+    protected Object work(Context context, DatabaseAdapter db, Uri... params) throws Exception {
         try {
             CsvImport csvimport = new CsvImport(db, options);
             csvimport.setProgressListener(new ProgressListener() {

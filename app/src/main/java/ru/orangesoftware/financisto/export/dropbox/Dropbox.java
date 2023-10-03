@@ -9,6 +9,7 @@
 package ru.orangesoftware.financisto.export.dropbox;
 
 import android.content.Context;
+import android.net.Uri;
 import android.util.Log;
 
 import com.dropbox.core.DbxException;
@@ -103,12 +104,12 @@ public class Dropbox {
         return false;
     }
 
-    public FileMetadata uploadFile(File file) throws Exception {
+    public FileMetadata uploadFile(Uri uri) throws Exception {
         if (authSession()) {
             try {
-                InputStream is = new FileInputStream(file);
+                InputStream is = context.getContentResolver().openInputStream(uri);
                 try {
-                    FileMetadata fileMetadata = dropboxClient.files().uploadBuilder("/" + file.getName()).withMode(WriteMode.ADD).uploadAndFinish(is);
+                    FileMetadata fileMetadata = dropboxClient.files().uploadBuilder("/" + uri.getLastPathSegment()).withMode(WriteMode.ADD).uploadAndFinish(is);
                     Log.i("Financisto", "Dropbox: The uploaded file's rev is: " + fileMetadata.getRev());
                     return fileMetadata;
                 } finally {

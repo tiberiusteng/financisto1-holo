@@ -11,6 +11,7 @@ package ru.orangesoftware.financisto.export.qif;
 import android.app.Activity;
 import android.app.ProgressDialog;
 import android.content.Context;
+import android.net.Uri;
 import android.os.Handler;
 import android.util.Log;
 
@@ -36,7 +37,7 @@ public class QifImportTask extends ImportExportAsyncTask {
     }
 
     @Override
-    protected Object work(Context context, DatabaseAdapter db, String... params) throws Exception {
+    protected Object work(Context context, DatabaseAdapter db, Uri... params) throws Exception {
         try {
             QifImport qifImport = new QifImport(context, db, options);
             qifImport.importDatabase();

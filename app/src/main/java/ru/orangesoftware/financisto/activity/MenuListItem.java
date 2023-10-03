@@ -8,19 +8,16 @@ import android.app.ProgressDialog;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.AsyncTask;
-import android.support.v4.content.FileProvider;
+import android.provider.DocumentsContract;
 import android.widget.ListAdapter;
 import android.widget.Toast;
-import java.io.File;
-import ru.orangesoftware.financisto.BuildConfig;
+
 import ru.orangesoftware.financisto.R;
 import static ru.orangesoftware.financisto.activity.RequestPermission.isRequestingPermission;
 import static ru.orangesoftware.financisto.activity.RequestPermission.isRequestingPermissions;
-import ru.orangesoftware.financisto.backup.Backup;
 import ru.orangesoftware.financisto.bus.GreenRobotBus_;
 import ru.orangesoftware.financisto.db.DatabaseAdapter;
 import ru.orangesoftware.financisto.export.BackupExportTask;
-import ru.orangesoftware.financisto.export.BackupImportTask;
 import ru.orangesoftware.financisto.export.Export;
 import ru.orangesoftware.financisto.export.csv.CsvExportOptions;
 import ru.orangesoftware.financisto.export.csv.CsvExportTask;
@@ -80,22 +77,11 @@ public enum MenuListItem implements SummaryEntityEnum {
             if (isRequestingPermission(activity, Manifest.permission.WRITE_EXTERNAL_STORAGE)) {
                 return;
             }
-            final String[] backupFiles = Backup.listBackups(activity);
-            final String[] selectedBackupFile = new String[1];
-            new AlertDialog.Builder(activity)
-                    .setTitle(R.string.restore_database)
-                    .setPositiveButton(R.string.restore, (dialog, which) -> {
-                        if (selectedBackupFile[0] != null) {
-                            ProgressDialog d = ProgressDialog.show(activity, null, activity.getString(R.string.restore_database_inprogress), true);
-                            new BackupImportTask(activity, d).execute(selectedBackupFile);
-                        }
-                    })
-                    .setSingleChoiceItems(backupFiles, -1, (dialog, which) -> {
-                        if (backupFiles != null && which >= 0 && which < backupFiles.length) {
-                            selectedBackupFile[0] = backupFiles[which];
-                        }
-                    })
-                    .show();
+            Intent intent = new Intent(Intent.ACTION_OPEN_DOCUMENT);
+            intent.addCategory(Intent.CATEGORY_OPENABLE);
+            intent.setType("*/*");
+            intent.putExtra(DocumentsContract.EXTRA_INITIAL_URI, Export.getBackupFolder(activity));
+            activity.startActivityForResult(intent, ACTIVITY_RESTORE_DATABASE);
         }
     },
     GOOGLE_DRIVE_BACKUP(R.string.backup_database_online_google_drive, R.string.backup_database_online_google_drive_summary, R.drawable.actionbar_google_drive) {
@@ -144,15 +130,13 @@ public enum MenuListItem implements SummaryEntityEnum {
             final BackupExportTask t = new BackupExportTask(activity, d, false);
             t.setShowResultMessage(false);
             t.setListener(result -> {
-                String backupFileName = t.backupFileName;
-                File file = Export.getBackupFile(activity, backupFileName);
+                Uri backupFileUri = t.backupFileUri;
                 Intent intent = new Intent(Intent.ACTION_SEND);
-                Uri backupFileUri = FileProvider.getUriForFile(activity, BuildConfig.APPLICATION_ID, file);
                 intent.putExtra(Intent.EXTRA_STREAM, backupFileUri);
                 intent.setType(Export.BACKUP_MIME_TYPE);
                 activity.startActivity(Intent.createChooser(intent, activity.getString(R.string.backup_database_to_title)));
             });
-            t.execute((String[]) null);
+            t.execute((Uri[]) null);
         }
     },
     MENU_IMPORT_EXPORT(R.string.import_export, R.string.import_export_summary, R.drawable.actionbar_export) {
@@ -245,6 +229,7 @@ public enum MenuListItem implements SummaryEntityEnum {
     public static final int ACTIVITY_CSV_IMPORT = 4;
     public static final int ACTIVITY_QIF_IMPORT = 5;
     public static final int ACTIVITY_CHANGE_PREFERENCES = 6;
+    public static final int ACTIVITY_RESTORE_DATABASE = 7;
 
     public abstract void call(Activity activity);
 

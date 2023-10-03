@@ -13,19 +13,17 @@ package ru.orangesoftware.financisto.activity;
 import android.Manifest;
 import android.accounts.Account;
 import android.accounts.AccountManager;
-import android.app.Activity;
-import android.content.ActivityNotFoundException;
 import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
 import android.content.Intent.ShortcutIconResource;
-import android.os.AsyncTask;
+import android.net.Uri;
 import android.os.Bundle;
 import android.preference.Preference;
 import android.preference.Preference.OnPreferenceChangeListener;
 import android.preference.PreferenceActivity;
 import android.preference.PreferenceScreen;
-import android.support.annotation.NonNull;
+import android.provider.DocumentsContract;
 import android.util.Log;
 import android.widget.Toast;
 
@@ -33,25 +31,16 @@ import com.google.android.gms.auth.api.signin.GoogleSignIn;
 import com.google.android.gms.auth.api.signin.GoogleSignInAccount;
 import com.google.android.gms.auth.api.signin.GoogleSignInClient;
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions;
-import com.google.android.gms.common.AccountPicker;
-import com.google.android.gms.tasks.OnCompleteListener;
-import com.google.android.gms.tasks.Task;
-import com.google.api.client.googleapis.extensions.android.gms.auth.UserRecoverableAuthIOException;
-import com.google.api.services.drive.DriveScopes;
 
 import ru.orangesoftware.financisto.R;
-import ru.orangesoftware.financisto.dialog.FolderBrowser;
 import ru.orangesoftware.financisto.export.Export;
 import ru.orangesoftware.financisto.export.drive.GoogleDriveAuthorizeFolderTask;
-import ru.orangesoftware.financisto.export.drive.GoogleDriveRESTClient;
 import ru.orangesoftware.financisto.export.dropbox.Dropbox;
 import ru.orangesoftware.financisto.rates.ExchangeRateProviderFactory;
 import ru.orangesoftware.financisto.utils.MyPreferences;
 import ru.orangesoftware.financisto.utils.PinProtection;
 
-import static android.Manifest.permission.GET_ACCOUNTS;
 import static ru.orangesoftware.financisto.activity.RequestPermission.isRequestingPermission;
-import static ru.orangesoftware.financisto.activity.RequestPermission.isRequestingPermissions;
 import static ru.orangesoftware.financisto.utils.FingerprintUtils.fingerprintUnavailable;
 import static ru.orangesoftware.financisto.utils.FingerprintUtils.reasonWhyFingerprintUnavailable;
 
@@ -220,8 +209,8 @@ public class PreferencesActivity extends PreferenceActivity {
     }
 
     private void selectDatabaseBackupFolder() {
-        Intent intent = new Intent(this, FolderBrowser.class);
-        intent.putExtra(FolderBrowser.PATH, getDatabaseBackupFolder());
+        Intent intent = new Intent(Intent.ACTION_OPEN_DOCUMENT_TREE);
+        intent.putExtra(DocumentsContract.EXTRA_INITIAL_URI, getDatabaseBackupFolder());
         startActivityForResult(intent, SELECT_DATABASE_FOLDER);
     }
 
@@ -230,12 +219,12 @@ public class PreferencesActivity extends PreferenceActivity {
     }
 
     private String getDatabaseBackupFolder() {
-        return Export.getBackupFolder(this).getAbsolutePath();
+        return Export.getBackupFolder(this);
     }
 
     private void setCurrentDatabaseBackupFolder() {
         Preference pDatabaseBackupFolder = getPreferenceScreen().findPreference("database_backup_folder");
-        String summary = getString(R.string.database_backup_folder_summary, getDatabaseBackupFolder());
+        String summary = getString(R.string.database_backup_folder_summary, Uri.parse(getDatabaseBackupFolder()).getLastPathSegment());
         pDatabaseBackupFolder.setSummary(summary);
     }
 
@@ -245,9 +234,17 @@ public class PreferencesActivity extends PreferenceActivity {
         if (resultCode == RESULT_OK) {
             switch (requestCode) {
                 case SELECT_DATABASE_FOLDER:
-                    String databaseBackupFolder = data.getStringExtra(FolderBrowser.PATH);
-                    MyPreferences.setDatabaseBackupFolder(this, databaseBackupFolder);
-                    setCurrentDatabaseBackupFolder();
+                    if (data != null) {
+                        Uri backupFolderUri = data.getData();
+                        Log.i("Financisto", "backup folder uri: " + backupFolderUri.toString());
+                        getContentResolver().takePersistableUriPermission(backupFolderUri,
+                                Intent.FLAG_GRANT_READ_URI_PERMISSION | Intent.FLAG_GRANT_WRITE_URI_PERMISSION);
+                        MyPreferences.setDatabaseBackupFolder(this, backupFolderUri.toString());
+                        setCurrentDatabaseBackupFolder();
+                    }
+                    else {
+                        Log.e("Financisto", "select database folder data is null");
+                    }
                     break;
 
                 case CHOOSE_ACCOUNT:

@@ -13,13 +13,13 @@ package ru.orangesoftware.financisto.export;
 import android.Manifest;
 import android.content.Context;
 import android.content.pm.PackageManager.NameNotFoundException;
-import android.os.Environment;
+import android.net.Uri;
+import android.provider.DocumentsContract;
+import android.util.Log;
 
 import java.io.BufferedOutputStream;
 import java.io.BufferedWriter;
 import java.io.ByteArrayOutputStream;
-import java.io.File;
-import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.io.OutputStreamWriter;
@@ -46,14 +46,19 @@ public abstract class Export {
         this.useGzip = useGzip;
     }
 
-    public String export() throws Exception {
+    public Uri export() throws Exception {
         if (!RequestPermission.checkPermission(context, Manifest.permission.WRITE_EXTERNAL_STORAGE)) {
             throw new ImportExportException(R.string.request_permissions_storage_not_granted);
         }
-        File path = getBackupFolder(context);
-        String fileName = generateFilename();
-        File file = new File(path, fileName);
-        FileOutputStream outputStream = new FileOutputStream(file);
+        Uri backupFolderUri = Uri.parse(getBackupFolder(context));
+        String backupFolderId = DocumentsContract.getTreeDocumentId(backupFolderUri);
+        Log.i("Financisto", "backupPathId: " + backupFolderId);
+        Uri dirUri = DocumentsContract.buildDocumentUriUsingTree(backupFolderUri, backupFolderId);
+        Log.i("Financisto", "dirUri: " + dirUri.toString());
+        Uri backupFileUri = DocumentsContract.createDocument(context.getContentResolver(),
+                dirUri, Export.BACKUP_MIME_TYPE, generateFilename());
+        Log.i("Financisto", "backupFileUri: " + backupFileUri.toString());
+        OutputStream outputStream = context.getContentResolver().openOutputStream(backupFileUri);
         try {
             if (useGzip) {
                 export(new GZIPOutputStream(outputStream));
@@ -64,7 +69,7 @@ public abstract class Export {
             outputStream.flush();
             outputStream.close();
         }
-        return fileName;
+        return backupFileUri;
     }
 
     protected void export(OutputStream outputStream) throws Exception {
@@ -100,34 +105,20 @@ public abstract class Export {
 
     protected abstract String getExtension();
 
-    public static File getBackupFolder(Context context) {
-        String path = MyPreferences.getDatabaseBackupFolder(context);
-        File file = new File(path);
-        file.mkdirs();
-        if (file.isDirectory() && file.canWrite()) {
-            return file;
-        }
-        file = context.getExternalFilesDir(Export.BACKUP_DIRECTORY_NAME).getAbsoluteFile();
-        file.mkdirs();
-        return file;
+    public static String getBackupFolder(Context context) {
+        String backupFolderUri = MyPreferences.getDatabaseBackupFolder(context);
+        Log.i("Financisto", "getBackupFolder: " + backupFolderUri);
+        return backupFolderUri;
     }
 
-    public static File getBackupFile(Context context, String backupFileName) {
-        File path = getBackupFolder(context);
-        return new File(path, backupFileName);
-    }
-
-    public static void uploadBackupFileToDropbox(Context context, String backupFileName) throws Exception {
-        File file = getBackupFile(context, backupFileName);
+    public static void uploadBackupFileToDropbox(Context context, Uri backupFileUri) throws Exception {
         Dropbox dropbox = new Dropbox(context);
-        dropbox.uploadFile(file);
+        dropbox.uploadFile(backupFileUri);
     }
 
-    public static void uploadBackupFileToGoogleDrive(Context context, String backupFileName) throws Exception {
-        File file = getBackupFile(context, backupFileName);
-
+    public static void uploadBackupFileToGoogleDrive(Context context, Uri backupFileUri) throws Exception {
         GoogleDriveRESTClient googleDriveRESTClient = new GoogleDriveRESTClient(context);
-        googleDriveRESTClient.uploadFile(file);
+        googleDriveRESTClient.uploadFile(backupFileUri);
     }
 
 }

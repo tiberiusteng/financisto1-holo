@@ -16,6 +16,7 @@ import android.app.PendingIntent;
 import static android.app.PendingIntent.FLAG_CANCEL_CURRENT;
 import android.content.Context;
 import android.content.Intent;
+import android.net.Uri;
 import android.support.annotation.NonNull;
 import android.support.v4.app.JobIntentService;
 import android.support.v4.app.NotificationCompat;
@@ -142,11 +143,11 @@ public class FinancistoService extends JobIntentService {
                 long t0 = System.currentTimeMillis();
                 Log.e(TAG, "Auto-backup started at " + new Date());
                 DatabaseExport export = new DatabaseExport(this, db.db(), true);
-                String fileName = export.export();
+                Uri backupFileUri = export.export();
                 boolean successful = true;
                 if (MyPreferences.isDropboxUploadAutoBackups(this)) {
                     try {
-                        Export.uploadBackupFileToDropbox(this, fileName);
+                        Export.uploadBackupFileToDropbox(this, backupFileUri);
                     } catch (Exception e) {
                         Log.e(TAG, "Unable to upload auto-backup to Dropbox", e);
                         MyPreferences.notifyAutobackupFailed(this, e);
@@ -155,7 +156,7 @@ public class FinancistoService extends JobIntentService {
                 }
                 if (MyPreferences.isGoogleDriveUploadAutoBackups(this)) {
                     try {
-                        Export.uploadBackupFileToGoogleDrive(this, fileName);
+                        Export.uploadBackupFileToGoogleDrive(this, backupFileUri);
                     } catch (Exception e) {
                         Log.e(TAG, "Unable to upload auto-backup to Google Drive", e);
                         MyPreferences.notifyAutobackupFailed(this, e);

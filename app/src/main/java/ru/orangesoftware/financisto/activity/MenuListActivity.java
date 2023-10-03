@@ -16,6 +16,8 @@ import android.app.ListActivity;
 import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.Intent;
+import android.net.Uri;
+import android.util.Log;
 import android.view.View;
 import android.widget.ListView;
 import android.widget.Toast;
@@ -29,6 +31,7 @@ import org.greenrobot.eventbus.ThreadMode;
 import ru.orangesoftware.financisto.R;
 import ru.orangesoftware.financisto.adapter.SummaryEntityListAdapter;
 import ru.orangesoftware.financisto.bus.GreenRobotBus;
+import ru.orangesoftware.financisto.export.BackupImportTask;
 import ru.orangesoftware.financisto.export.csv.CsvExportOptions;
 import ru.orangesoftware.financisto.export.csv.CsvImportOptions;
 import ru.orangesoftware.financisto.export.dropbox.DropboxFileList;
@@ -68,6 +71,16 @@ public class MenuListActivity extends ListActivity {
     @Override
     protected void onListItemClick(ListView l, View v, int position, long id) {
         MenuListItem.values()[position].call(this);
+    }
+
+    @OnActivityResult(MenuListItem.ACTIVITY_RESTORE_DATABASE)
+    public void onRestoreDatabase(int resultCode, Intent data) {
+        if (resultCode == RESULT_OK && data != null) {
+            Uri backupFileUri = data.getData();
+            Log.i("Financisto", "ACTIVITY_RESTORE_DATABASE uri: " + backupFileUri.toString());
+            ProgressDialog d = ProgressDialog.show(this, null, getString(R.string.restore_database_inprogress), true);
+            new BackupImportTask(this, d).execute(backupFileUri);
+        }
     }
 
     @OnActivityResult(MenuListItem.ACTIVITY_CSV_EXPORT)

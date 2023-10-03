@@ -3,6 +3,7 @@ package ru.orangesoftware.financisto.export.drive;
 import android.app.Activity;
 import android.app.ProgressDialog;
 import android.content.Context;
+import android.net.Uri;
 
 import ru.orangesoftware.financisto.R;
 import ru.orangesoftware.financisto.backup.DatabaseImport;
@@ -18,7 +19,7 @@ public class GoogleDriveRestoreTask extends ImportExportAsyncTask {
     }
 
     @Override
-    protected Object work(Context context, DatabaseAdapter db, String... params) throws Exception {
+    protected Object work(Context context, DatabaseAdapter db, Uri... params) throws Exception {
         GoogleDriveRESTClient googleDriveRESTClient = new GoogleDriveRESTClient(context);
         DatabaseImport.createFromGoogleDriveBackup(context, db, googleDriveRESTClient, backupFile).importDatabase();
         return true;

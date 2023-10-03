@@ -1,6 +1,7 @@
 package ru.orangesoftware.financisto.export.drive;
 
 import android.content.Context;
+import android.net.Uri;
 import android.util.Log;
 
 import com.google.android.gms.auth.api.signin.GoogleSignIn;
@@ -8,7 +9,7 @@ import com.google.android.gms.auth.api.signin.GoogleSignInAccount;
 import com.google.android.gms.drive.DriveFolder;
 import com.google.api.client.extensions.android.http.AndroidHttp;
 import com.google.api.client.googleapis.extensions.android.gms.auth.GoogleAccountCredential;
-import com.google.api.client.http.FileContent;
+import com.google.api.client.http.InputStreamContent;
 import com.google.api.client.json.gson.GsonFactory;
 import com.google.api.services.drive.DriveScopes;
 import com.google.api.services.drive.Drive;
@@ -114,7 +115,7 @@ public class GoogleDriveRESTClient {
         return result;
     }
 
-    public void uploadFile(java.io.File file) throws Exception {
+    public void uploadFile(Uri uri) throws Exception {
         String folderID = getBackupFolderID(false);
         if (folderID == null) {
             throw new ImportExportException(R.string.gdocs_folder_not_configured);
@@ -123,9 +124,10 @@ public class GoogleDriveRESTClient {
         File fileMetadata = new File()
                 .setParents(Collections.singletonList(folderID))
                 .setMimeType(Export.BACKUP_MIME_TYPE)
-                .setName(file.getName());
+                .setName(uri.getLastPathSegment());
 
-        FileContent mediaContent = new FileContent(Export.BACKUP_MIME_TYPE, file);
+        InputStreamContent mediaContent = new InputStreamContent(Export.BACKUP_MIME_TYPE,
+                context.getContentResolver().openInputStream(uri));
 
         File uploadedFile = googleDriveService.files().create(fileMetadata, mediaContent)
                 .setFields("id")

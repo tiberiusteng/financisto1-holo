@@ -3,6 +3,7 @@ package ru.orangesoftware.financisto.export.drive;
 import android.app.Activity;
 import android.app.ProgressDialog;
 import android.content.Context;
+import android.net.Uri;
 
 import java.util.List;
 
@@ -27,7 +28,7 @@ public class GoogleDriveListFilesTask extends ImportExportAsyncTask {
     }
 
     @Override
-    protected Object work(Context context, DatabaseAdapter db, String... params) throws Exception {
+    protected Object work(Context context, DatabaseAdapter db, Uri... params) throws Exception {
         try {
             GoogleDriveRESTClient client = new GoogleDriveRESTClient(context);
             List<GoogleDriveFileInfo> files = client.listFiles();

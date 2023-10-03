@@ -12,13 +12,12 @@ package ru.orangesoftware.financisto.backup;
 
 import android.content.ContentValues;
 import android.content.Context;
+import android.net.Uri;
 import android.util.Log;
 import com.dropbox.core.util.IOUtil;
-import com.google.android.gms.drive.DriveContents;
 import ru.orangesoftware.financisto.db.Database;
 import ru.orangesoftware.financisto.db.DatabaseAdapter;
 import ru.orangesoftware.financisto.db.DatabaseSchemaEvolution;
-import ru.orangesoftware.financisto.export.Export;
 import ru.orangesoftware.financisto.export.drive.GoogleDriveFileInfo;
 import ru.orangesoftware.financisto.export.drive.GoogleDriveRESTClient;
 import ru.orangesoftware.financisto.export.dropbox.Dropbox;
@@ -37,10 +36,8 @@ public class DatabaseImport extends FullDatabaseImport {
     private final DatabaseSchemaEvolution schemaEvolution;
     private final InputStream backupStream;
 
-    public static DatabaseImport createFromFileBackup(Context context, DatabaseAdapter dbAdapter, String backupFile) throws FileNotFoundException {
-        File backupPath = Export.getBackupFolder(context);
-        File file = new File(backupPath, backupFile);
-        FileInputStream inputStream = new FileInputStream(file);
+    public static DatabaseImport createFromFileBackup(Context context, DatabaseAdapter dbAdapter, Uri backupFileUri) throws FileNotFoundException {
+        InputStream inputStream = context.getContentResolver().openInputStream(backupFileUri);
         return new DatabaseImport(context, dbAdapter, inputStream);
     }
 

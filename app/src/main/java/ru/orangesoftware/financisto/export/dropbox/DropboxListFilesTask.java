@@ -11,6 +11,7 @@ package ru.orangesoftware.financisto.export.dropbox;
 import android.app.Activity;
 import android.app.ProgressDialog;
 import android.content.Context;
+import android.net.Uri;
 
 import ru.orangesoftware.financisto.R;
 import ru.orangesoftware.financisto.bus.GreenRobotBus_;
@@ -41,7 +42,7 @@ public class DropboxListFilesTask extends ImportExportAsyncTask {
     }
 
     @Override
-    protected Object work(Context context, DatabaseAdapter db, String... params) throws Exception {
+    protected Object work(Context context, DatabaseAdapter db, Uri... params) throws Exception {
         try {
             Dropbox dropbox = new Dropbox(context);
             List<String> files = dropbox.listFiles();

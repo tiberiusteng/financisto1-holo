@@ -10,15 +10,6 @@
  ******************************************************************************/
 package ru.orangesoftware.financisto.backup;
 
-import android.content.Context;
-import ru.orangesoftware.financisto.export.Export;
-
-
-import java.io.File;
-import java.util.Arrays;
-
-import ru.orangesoftware.financisto.export.Export;
-
 import static ru.orangesoftware.financisto.db.DatabaseHelper.ACCOUNT_TABLE;
 import static ru.orangesoftware.financisto.db.DatabaseHelper.ATTRIBUTES_TABLE;
 import static ru.orangesoftware.financisto.db.DatabaseHelper.BUDGET_TABLE;
@@ -57,17 +48,6 @@ public final class Backup {
 	};
 
 	private Backup() {
-	}
-
-	public static String[] listBackups(Context context) {
-		File backupPath = Export.getBackupFolder(context);
-		String[] files = backupPath.list((dir, filename) -> filename.endsWith(".backup"));
-		if (files != null) {
-			Arrays.sort(files, (s1, s2) -> s2.compareTo(s1));
-			return files;
-		} else {
-			return new String[0];
-		}
 	}
 
 	public static boolean tableHasSystemIds(String tableName) {
