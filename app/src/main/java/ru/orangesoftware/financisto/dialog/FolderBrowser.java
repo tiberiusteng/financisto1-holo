@@ -141,7 +141,7 @@ public class FolderBrowser extends ListActivity {
 
     private void upOneLevel(File current) {
         File parent = current.getParentFile();
-        if (parent != null) {
+        if (parent != null && isWritableDirectory(parent)) {
             files.add(new OnLevelUp(parent));
         }
     }

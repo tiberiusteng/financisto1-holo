@@ -235,12 +235,13 @@ public class Utils {
 
     public void setTransferAmountText(TextView textView, Currency fromCurrency, long fromAmount, Currency toCurrency, long toAmount) {
         textView.setText(getTransferAmountText(fromCurrency, fromAmount, toCurrency, toAmount));
+        textView.setTextColor(zeroColor);
     }
 
     public String getTransferAmountText(Currency fromCurrency, long fromAmount, Currency toCurrency, long toAmount) {
         sb.setLength(0);
         if (sameCurrency(fromCurrency, toCurrency)) {
-            Utils.amountToString(sb, fromCurrency, fromAmount);
+            Utils.amountToString(sb, toCurrency, toAmount);
         } else {
             Utils.amountToString(sb, fromCurrency, Math.abs(fromAmount)).append(TRANSFER_DELIMITER);
             Utils.amountToString(sb, toCurrency, toAmount);

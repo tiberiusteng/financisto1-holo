@@ -35,7 +35,7 @@ import ru.orangesoftware.financisto.utils.MyPreferences;
 
 public abstract class Export {
 
-    public static final File DEFAULT_EXPORT_PATH = Environment.getExternalStoragePublicDirectory("financisto");
+    public static final String BACKUP_DIRECTORY_NAME = "backups";
     public static final String BACKUP_MIME_TYPE = "application/x.financisto+gzip";
 
     private final Context context;
@@ -107,7 +107,7 @@ public abstract class Export {
         if (file.isDirectory() && file.canWrite()) {
             return file;
         }
-        file = Export.DEFAULT_EXPORT_PATH;
+        file = context.getExternalFilesDir(Export.BACKUP_DIRECTORY_NAME).getAbsoluteFile();
         file.mkdirs();
         return file;
     }
