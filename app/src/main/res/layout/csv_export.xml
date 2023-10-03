@@ -56,14 +56,14 @@
                     <CheckBox android:id="@+id/checkboxUploadToDropbox" android:checked="false"/>
                 </TableRow>
                 <TableRow>
-                    <android.support.v4.widget.Space/>
-                    <android.support.v4.widget.Space/>
+                    <androidx.legacy.widget.Space/>
+                    <androidx.legacy.widget.Space/>
                     <TextView android:layout_marginLeft="3dp"
                         android:text="@string/upload_to_gdrive"/>
                 </TableRow>
                 <TableRow>
-                    <android.support.v4.widget.Space/>
-                    <android.support.v4.widget.Space/>
+                    <androidx.legacy.widget.Space/>
+                    <androidx.legacy.widget.Space/>
                     <CheckBox android:id="@+id/checkboxUploadToGDrive" android:checked="false"/>
                 </TableRow>
                 <include layout="@layout/list_divider"/>

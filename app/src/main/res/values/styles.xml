@@ -10,12 +10,12 @@
       Denis Solonenko - initial API and implementation
 -->
 <resources>
-	<style name="AppTheme" parent="android:Theme" />
-	<style name="AppDialog" parent="android:Theme.Dialog" />
-	<style name="AlertDialog" parent="android:Theme.Dialog" />
-	<style name="CalculatorDialog" parent="android:Theme.Dialog" />
+	<style name="AppTheme" parent="android:Theme.Material" />
+	<style name="AppDialog" parent="android:Theme.Material.Dialog" />
+	<style name="AlertDialog" parent="android:Theme.Material.Dialog" />
+	<style name="CalculatorDialog" parent="android:Theme.Material.Dialog" />
 
-	<style name="CupcakeDialog" parent="android:Theme.Dialog">
+	<style name="CupcakeDialog" parent="android:Theme.Material.Dialog">
     	<item name="android:windowAnimationStyle">@null</item>
     </style>
 	<style name="EditDivider">
