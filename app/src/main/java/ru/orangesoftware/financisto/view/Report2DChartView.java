@@ -319,14 +319,16 @@ public class Report2DChartView extends View {
 			amountX = amountBounds.height()+(padding+xSpace-amountBounds.height())/2;
 		}
 
-		// rotate the canvas on center of the text to draw
-		canvas.rotate(-90, amountX, amountY);
-				
-		// draw the rotated text
-		canvas.drawText(amount, amountX, amountY, amountPaint);
-
-		// undo the rotate
-		canvas.restore();
+		canvas.save();
+		try {
+			// rotate the canvas on center of the text to draw
+			canvas.rotate(-90, amountX, amountY);
+			// draw the rotated text
+			canvas.drawText(amount, amountX, amountY, amountPaint);
+		} finally {
+			// undo the rotate
+			canvas.restore();
+		}
     }
     
     /**
