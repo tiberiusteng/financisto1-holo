@@ -19,6 +19,9 @@ import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
+import android.window.OnBackInvokedDispatcher;
+
+import androidx.core.os.BuildCompat;
 
 import com.mtramin.rxfingerprint.RxFingerprint;
 
@@ -42,6 +45,7 @@ public class PinActivity extends Activity implements PinView.PinListener {
     }
 
     @Override
+    @BuildCompat.PrereleaseSdkCheck
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         String pin = MyPreferences.getPin(this);
@@ -52,6 +56,14 @@ public class PinActivity extends Activity implements PinView.PinListener {
             askForFingerprint();
         } else {
             usePinLock();
+        }
+
+        if (BuildCompat.isAtLeastT()) {
+            getOnBackInvokedDispatcher().registerOnBackInvokedCallback(
+                    OnBackInvokedDispatcher.PRIORITY_DEFAULT,
+                    () -> {
+                        moveTaskToBack(true);
+                    });
         }
     }
 
@@ -124,8 +136,14 @@ public class PinActivity extends Activity implements PinView.PinListener {
     }
 
     @Override
+    @BuildCompat.PrereleaseSdkCheck
     public void onBackPressed() {
-        moveTaskToBack(true);
+        if (BuildCompat.isAtLeastT()) {
+            super.onBackPressed();
+        }
+        else {
+            moveTaskToBack(true);
+        }
     }
 
 }

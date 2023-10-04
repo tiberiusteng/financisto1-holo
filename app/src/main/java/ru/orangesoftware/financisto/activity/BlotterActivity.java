@@ -30,6 +30,8 @@ import android.widget.ListAdapter;
 import android.widget.PopupMenu;
 import android.widget.TextView;
 import android.widget.Toast;
+import android.window.OnBackInvokedCallback;
+import android.window.OnBackInvokedDispatcher;
 
 import java.util.List;
 
@@ -53,6 +55,8 @@ import ru.orangesoftware.financisto.utils.MyPreferences;
 import ru.orangesoftware.financisto.view.NodeInflater;
 
 import static ru.orangesoftware.financisto.utils.MyPreferences.isQuickMenuEnabledForTransaction;
+
+import androidx.core.os.BuildCompat;
 
 public class BlotterActivity extends AbstractListActivity {
 
@@ -87,6 +91,8 @@ public class BlotterActivity extends AbstractListActivity {
     protected boolean isAccountBlotter = false;
     protected boolean showAllBlotterButtons = true;
 
+    protected OnBackInvokedCallback backCallback;
+
     public BlotterActivity(int layoutId) {
         super(layoutId);
     }
@@ -120,14 +126,25 @@ public class BlotterActivity extends AbstractListActivity {
     }
 
     @Override
+    @BuildCompat.PrereleaseSdkCheck
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         LayoutInflater layoutInflater = (LayoutInflater) getSystemService(Context.LAYOUT_INFLATER_SERVICE);
         inflater = new NodeInflater(layoutInflater);
         integrityCheck();
+
+        if (BuildCompat.isAtLeastT()) {
+            backCallback = () -> {
+                FrameLayout searchLayout = findViewById(R.id.search_text_frame);
+                if (searchLayout != null && searchLayout.getVisibility() == View.VISIBLE) {
+                    searchLayout.setVisibility(View.GONE);
+                }
+            };
+        }
     }
 
     @Override
+    @BuildCompat.PrereleaseSdkCheck
     protected void internalOnCreate(Bundle savedInstanceState) {
         super.internalOnCreate(savedInstanceState);
 
@@ -187,12 +204,19 @@ public class BlotterActivity extends AbstractListActivity {
             if (searchLayout.getVisibility() == View.VISIBLE) {
                 imm.hideSoftInputFromWindow(searchLayout.getWindowToken(), 0);
                 searchLayout.setVisibility(View.GONE);
+                if (BuildCompat.isAtLeastT()) {
+                    getOnBackInvokedDispatcher().unregisterOnBackInvokedCallback(backCallback);
+                }
                 return;
             }
 
             searchLayout.setVisibility(View.VISIBLE);
             searchText.requestFocusFromTouch();
             imm.showSoftInput(searchText, InputMethodManager.SHOW_IMPLICIT);
+            if (BuildCompat.isAtLeastT()) {
+                getOnBackInvokedDispatcher().registerOnBackInvokedCallback(
+                        OnBackInvokedDispatcher.PRIORITY_DEFAULT, backCallback);
+            }
 
             searchText.addTextChangedListener(new TextWatcher() {
                 @Override
@@ -591,13 +615,19 @@ public class BlotterActivity extends AbstractListActivity {
     }
 
     @Override
+    @BuildCompat.PrereleaseSdkCheck
     public void onBackPressed()
     {
-        FrameLayout searchLayout = findViewById(R.id.search_text_frame);
-        if (searchLayout != null && searchLayout.getVisibility() == View.VISIBLE) {
-            searchLayout.setVisibility(View.GONE);
-        } else {
+        if (BuildCompat.isAtLeastT()) {
             super.onBackPressed();
+        }
+        else {
+            FrameLayout searchLayout = findViewById(R.id.search_text_frame);
+            if (searchLayout != null && searchLayout.getVisibility() == View.VISIBLE) {
+                searchLayout.setVisibility(View.GONE);
+            } else {
+                super.onBackPressed();
+            }
         }
     }
 }

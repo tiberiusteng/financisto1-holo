@@ -10,7 +10,9 @@
       Denis Solonenko - initial API and implementation
 -->
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    package="ru.orangesoftware.financisto" android:versionName="2023-10-04" android:versionCode="94"
+	xmlns:tools="http://schemas.android.com/tools"
+	package="ru.orangesoftware.financisto"
+	android:versionName="2023-10-04" android:versionCode="94"
     android:installLocation="internalOnly">
 
     <supports-screens
@@ -37,7 +39,6 @@
     <uses-permission android:name="android.permission.VIBRATE"/>
     <uses-permission android:name="android.permission.WAKE_LOCK"/>
     <uses-permission android:name="com.android.launcher.permission.INSTALL_SHORTCUT"/>
-    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE"/>
     <uses-permission android:name="android.permission.GET_ACCOUNTS"/>
     <uses-permission android:name="android.permission.USE_CREDENTIALS"/>
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE"/>
@@ -55,12 +56,14 @@
 		android:hardwareAccelerated="true"
 		android:allowBackup="true"
 		android:fullBackupContent="true"
-		android:description="@string/app_description">
+		android:description="@string/app_description"
+		android:enableOnBackInvokedCallback="true"
+		tools:targetApi="tiramisu">
 		
 		<uses-library android:name="com.google.android.maps" android:required="false" />
 	<meta-data android:name="com.google.android.gms.version" android:value="@integer/google_play_services_version" />
 		
-		<receiver android:name=".activity.AccountWidget" android:label="@string/widget_2x1" >
+		<receiver android:name=".activity.AccountWidget" android:label="@string/widget_2x1" android:exported="true">
 		    <intent-filter>
 			<action android:name="android.appwidget.action.APPWIDGET_UPDATE" />
 		<action android:name="ru.orangesoftware.financisto.UPDATE_WIDGET" />
@@ -68,7 +71,7 @@
 		    <meta-data android:name="android.appwidget.provider" android:resource="@xml/widget_2x1" />
 		</receiver>
 
-	<receiver android:name=".activity.AccountWidget3x1" android:label="@string/widget_3x1" >
+	<receiver android:name=".activity.AccountWidget3x1" android:label="@string/widget_3x1" android:exported="true">
 	    <intent-filter>
 		<action android:name="android.appwidget.action.APPWIDGET_UPDATE" />
 		<action android:name="ru.orangesoftware.financisto.UPDATE_WIDGET" />
@@ -76,7 +79,7 @@
 	    <meta-data android:name="android.appwidget.provider" android:resource="@xml/widget_3x1" />
 	</receiver>
 
-	<receiver android:name=".activity.AccountWidget4x1" android:label="@string/widget_4x1" >
+	<receiver android:name=".activity.AccountWidget4x1" android:label="@string/widget_4x1" android:exported="true">
 	    <intent-filter>
 		<action android:name="android.appwidget.action.APPWIDGET_UPDATE" />
 		<action android:name="ru.orangesoftware.financisto.UPDATE_WIDGET" />
@@ -84,7 +87,7 @@
 	    <meta-data android:name="android.appwidget.provider" android:resource="@xml/widget_4x1" />
 	</receiver>
 
-		<receiver android:name=".activity.ScheduledAlarmReceiver">
+		<receiver android:name=".activity.ScheduledAlarmReceiver" android:exported="true">
 		    <intent-filter>
 				<action android:name=".SCHEDULED_ALARM" />
 				<action android:name=".SCHEDULED_BACKUP" />
@@ -92,14 +95,14 @@
 		    </intent-filter>
 		</receiver>
 
-		<receiver android:name=".activity.PackageReplaceReceiver">
+		<receiver android:name=".activity.PackageReplaceReceiver" android:exported="true">
 			<intent-filter>
 			    <action android:name="android.intent.action.PACKAGE_REPLACED" />
 			    <data android:scheme="package" android:path="ru.orangesoftware.financisto" />
 			</intent-filter>
 		</receiver>		
 
-		<service android:name=".service.FinancistoService"
+		<service android:name=".service.FinancistoService" android:exported="true"
 			android:permission="android.permission.BIND_JOB_SERVICE">
 	    <intent-filter>
 			<action android:name=".SCHEDULE_ONE" />
@@ -110,7 +113,7 @@
 	    </intent-filter>
 		</service>
 
-		<activity android:name=".activity.MainActivity" android:label="@string/app_name"
+		<activity android:name=".activity.MainActivity" android:label="@string/app_name" android:exported="true"
 			android:configChanges="orientation|keyboardHidden"  
 			android:taskAffinity=".MainActivity">
 			<intent-filter>
@@ -119,7 +122,7 @@
 			</intent-filter>
 		</activity>
 		
-		<activity android:icon="@drawable/icon_transaction"
+		<activity android:icon="@drawable/icon_transaction" android:exported="true"
 			android:name=".activity.TransactionActivity" android:label="@string/transaction"
 			android:configChanges="orientation|keyboardHidden" 
 			android:windowSoftInputMode="stateAlwaysHidden|adjustResize"
@@ -131,7 +134,7 @@
 			</intent-filter>
 		</activity>
 		
-		<activity android:icon="@drawable/icon_transfer"
+		<activity android:icon="@drawable/icon_transfer" android:exported="true"
 			android:name=".activity.TransferActivity" android:label="@string/transfer"
 			android:configChanges="orientation|keyboardHidden"
 			android:windowSoftInputMode="stateAlwaysHidden|adjustResize" 
@@ -282,7 +285,7 @@
 		android:label="@string/permissions"
 		android:theme="@style/Theme.AppCompat" />
 
-	<activity
+	<activity android:exported="true"
 		android:name="com.dropbox.core.android.AuthActivity"
 		android:configChanges="orientation|keyboard"
 		android:launchMode="singleTask" >
@@ -301,7 +304,6 @@
 	<provider
 		android:name="androidx.core.content.FileProvider"
 		android:authorities="ru.orangesoftware.financisto"
-		android:exported="false"
 		android:grantUriPermissions="true">
 		<meta-data
 			android:name="android.support.FILE_PROVIDER_PATHS"
