@@ -47,9 +47,6 @@ public abstract class Export {
     }
 
     public Uri export() throws Exception {
-        if (!RequestPermission.checkPermission(context, Manifest.permission.WRITE_EXTERNAL_STORAGE)) {
-            throw new ImportExportException(R.string.request_permissions_storage_not_granted);
-        }
         Uri backupFolderUri = Uri.parse(getBackupFolder(context));
         String backupFolderId = DocumentsContract.getTreeDocumentId(backupFolderUri);
         Log.i("Financisto", "backupPathId: " + backupFolderId);

@@ -85,9 +85,6 @@ public class PreferencesActivity extends PreferenceActivity {
         });
         Preference pDatabaseBackupFolder = preferenceScreen.findPreference("database_backup_folder");
         pDatabaseBackupFolder.setOnPreferenceClickListener(arg0 -> {
-            if (isRequestingPermission(this, Manifest.permission.WRITE_EXTERNAL_STORAGE)) {
-                return false;
-            }
             selectDatabaseBackupFolder();
             return true;
         });

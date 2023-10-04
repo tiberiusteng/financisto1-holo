@@ -64,9 +64,6 @@ public enum MenuListItem implements SummaryEntityEnum {
     MENU_BACKUP(R.string.backup_database, R.string.backup_database_summary, R.drawable.actionbar_db_backup) {
         @Override
         public void call(Activity activity) {
-            if (isRequestingPermission(activity, Manifest.permission.WRITE_EXTERNAL_STORAGE)) {
-                return;
-            }
             ProgressDialog d = ProgressDialog.show(activity, null, activity.getString(R.string.backup_database_inprogress), true);
             new BackupExportTask(activity, d, true).execute();
         }
@@ -74,9 +71,6 @@ public enum MenuListItem implements SummaryEntityEnum {
     MENU_RESTORE(R.string.restore_database, R.string.restore_database_summary, R.drawable.actionbar_db_restore) {
         @Override
         public void call(final Activity activity) {
-            if (isRequestingPermission(activity, Manifest.permission.WRITE_EXTERNAL_STORAGE)) {
-                return;
-            }
             Intent intent = new Intent(Intent.ACTION_OPEN_DOCUMENT);
             intent.addCategory(Intent.CATEGORY_OPENABLE);
             intent.setType("*/*");
@@ -87,45 +81,30 @@ public enum MenuListItem implements SummaryEntityEnum {
     GOOGLE_DRIVE_BACKUP(R.string.backup_database_online_google_drive, R.string.backup_database_online_google_drive_summary, R.drawable.actionbar_google_drive) {
         @Override
         public void call(Activity activity) {
-            if (isRequestingPermission(activity, Manifest.permission.WRITE_EXTERNAL_STORAGE)) {
-                return;
-            }
             GreenRobotBus_.getInstance_(activity).post(new MenuListActivity.StartDriveBackup());
         }
     },
     GOOGLE_DRIVE_RESTORE(R.string.restore_database_online_google_drive, R.string.restore_database_online_google_drive_summary, R.drawable.actionbar_google_drive) {
         @Override
         public void call(Activity activity) {
-            if (isRequestingPermission(activity, Manifest.permission.WRITE_EXTERNAL_STORAGE)) {
-                return;
-            }
             GreenRobotBus_.getInstance_(activity).post(new MenuListActivity.StartDriveRestore());
         }
     },
     DROPBOX_BACKUP(R.string.backup_database_online_dropbox, R.string.backup_database_online_dropbox_summary, R.drawable.actionbar_dropbox) {
         @Override
         public void call(Activity activity) {
-            if (isRequestingPermission(activity, Manifest.permission.WRITE_EXTERNAL_STORAGE)) {
-                return;
-            }
             GreenRobotBus_.getInstance_(activity).post(new MenuListActivity.StartDropboxBackup());
         }
     },
     DROPBOX_RESTORE(R.string.restore_database_online_dropbox, R.string.restore_database_online_dropbox_summary, R.drawable.actionbar_dropbox) {
         @Override
         public void call(Activity activity) {
-            if (isRequestingPermission(activity, Manifest.permission.WRITE_EXTERNAL_STORAGE)) {
-                return;
-            }
             GreenRobotBus_.getInstance_(activity).post(new MenuListActivity.StartDropboxRestore());
         }
     },
     MENU_BACKUP_TO(R.string.backup_database_to, R.string.backup_database_to_summary, R.drawable.actionbar_share) {
         @Override
         public void call(final Activity activity) {
-            if (isRequestingPermission(activity, Manifest.permission.WRITE_EXTERNAL_STORAGE)) {
-                return;
-            }
             ProgressDialog d = ProgressDialog.show(activity, null, activity.getString(R.string.backup_database_inprogress), true);
             final BackupExportTask t = new BackupExportTask(activity, d, false);
             t.setShowResultMessage(false);
@@ -142,9 +121,6 @@ public enum MenuListItem implements SummaryEntityEnum {
     MENU_IMPORT_EXPORT(R.string.import_export, R.string.import_export_summary, R.drawable.actionbar_export) {
         @Override
         public void call(Activity activity) {
-            if (isRequestingPermission(activity, Manifest.permission.WRITE_EXTERNAL_STORAGE)) {
-                return;
-            }
             showPickOneDialog(activity, R.string.import_export, ImportExportEntities.values(), activity);
         }
     },
