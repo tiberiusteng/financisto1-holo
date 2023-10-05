@@ -12,6 +12,7 @@ package ru.orangesoftware.financisto.activity;
 
 import android.content.Intent;
 import android.text.TextUtils;
+import android.util.Log;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
@@ -23,12 +24,14 @@ import ru.orangesoftware.financisto.filter.WhereFilter;
 import ru.orangesoftware.financisto.model.*;
 import ru.orangesoftware.financisto.utils.ArrUtils;
 
+import java.util.Arrays;
 import java.util.LinkedList;
 import java.util.List;
 
 import static ru.orangesoftware.financisto.activity.CategorySelector.SelectorType.FILTER;
 import static ru.orangesoftware.financisto.blotter.BlotterFilter.*;
 import static ru.orangesoftware.financisto.filter.WhereFilter.Operation.BTW;
+import static ru.orangesoftware.financisto.filter.WhereFilter.Operation.EQ;
 import static ru.orangesoftware.financisto.filter.WhereFilter.Operation.IN;
 
 public abstract class FilterAbstractActivity extends AbstractActivity implements CategorySelector.CategorySelectorListener {
@@ -187,9 +190,10 @@ public abstract class FilterAbstractActivity extends AbstractActivity implements
 		Criteria c = filter.get(CATEGORY_LEFT);
 		if (c != null) {
 			if (c.operation != BTW) throw new UnsupportedOperationException(c.operation.name());
-			
+
 			List<String> checkedLeftIds = getLeftCategoryNodesFromFilter(c);
 			List<Long> catIds = db.getCategoryIdsByLeftIds(checkedLeftIds);
+
 			categorySelector.updateCheckedEntities(catIds);
 			categorySelector.fillCategoryInUI();
 		}
@@ -238,8 +242,15 @@ public abstract class FilterAbstractActivity extends AbstractActivity implements
 	@Override
 	public void onCategorySelected(Category cat, boolean selectLast) {
 		clearCategory();
+		filter.remove(CATEGORY_ID);
 		if (categorySelector.isMultiSelect()) {
-			filter.put(Criteria.btw(CATEGORY_LEFT, categorySelector.getCheckedCategoryLeafs()));
+			String categories[] = categorySelector.getCheckedCategoryLeafs();
+			if (categories.length > 0) {
+				filter.put(Criteria.btw(CATEGORY_LEFT, categories));
+			}
+			else {
+				filter.put(Criteria.eq(CATEGORY_ID, "0"));
+			}
 		} else {
 			if (cat.id > 0) {
 				filter.put(Criteria.btw(CATEGORY_LEFT, String.valueOf(cat.left), String.valueOf(cat.right)));
