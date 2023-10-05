@@ -49,6 +49,7 @@ public class BudgetListAdapter extends BaseAdapter {
 
 	@Override
 	public int getCount() {
+		if (budgets == null) return 0;
 		return budgets.size();
 	}
 

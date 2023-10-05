@@ -1,27 +1,24 @@
-/*******************************************************************************
- * Copyright (c) 2010 Denis Solonenko.
- * All rights reserved. This program and the accompanying materials
- * are made available under the terms of the GNU Public License v2.0
- * which accompanies this distribution, and is available at
- * http://www.gnu.org/licenses/old-licenses/gpl-2.0.html
- * <p/>
- * Contributors:
- * Denis Solonenko - initial API and implementation
- ******************************************************************************/
 package ru.orangesoftware.financisto.activity;
+
+import static ru.orangesoftware.financisto.utils.MyPreferences.isQuickMenuEnabledForAccount;
 
 import android.app.AlertDialog;
 import android.content.Context;
 import android.content.Intent;
 import android.database.Cursor;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.MenuInflater;
 import android.view.View;
+import android.view.ViewGroup;
 import android.widget.ImageButton;
 import android.widget.ListAdapter;
 import android.widget.PopupMenu;
 import android.widget.TextView;
+
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -45,24 +42,23 @@ import ru.orangesoftware.financisto.utils.MenuItemInfo;
 import ru.orangesoftware.financisto.utils.MyPreferences;
 import ru.orangesoftware.financisto.view.NodeInflater;
 
-import static ru.orangesoftware.financisto.utils.MyPreferences.isQuickMenuEnabledForAccount;
-
-public class AccountListActivity extends AbstractListActivity {
+public class AccountListFragment extends AbstractListFragment {
 
     private static final int NEW_ACCOUNT_REQUEST = 1;
 
+    public static final int EDIT_ACCOUNT_REQUEST = 2;
     private static final int VIEW_ACCOUNT_REQUEST = 3;
     private static final int PURGE_ACCOUNT_REQUEST = 4;
 
     private QuickActionWidget accountActionGrid;
 
-    public AccountListActivity() {
+    public AccountListFragment() {
         super(R.layout.account_list);
     }
 
     @Override
-    protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
+    public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
+        super.onViewCreated(view, savedInstanceState);
         setupUi();
         setupMenuButton();
         calculateTotals();
@@ -70,7 +66,7 @@ public class AccountListActivity extends AbstractListActivity {
     }
 
     private void setupUi() {
-        findViewById(R.id.integrity_error).setOnClickListener(v -> v.setVisibility(View.GONE));
+        getView().findViewById(R.id.integrity_error).setOnClickListener(v -> v.setVisibility(View.GONE));
         getListView().setOnItemLongClickListener((parent, view, position, id) -> {
             selectedId = id;
             prepareAccountActionGrid();
@@ -80,11 +76,11 @@ public class AccountListActivity extends AbstractListActivity {
     }
 
     private void setupMenuButton() {
-        final ImageButton bMenu = findViewById(R.id.bMenu);
-        if (MyPreferences.isShowMenuButtonOnAccountsScreen(this)) {
+        final ImageButton bMenu = getView().findViewById(R.id.bMenu);
+        if (MyPreferences.isShowMenuButtonOnAccountsScreen(getContext())) {
             bMenu.setOnClickListener(v -> {
-                PopupMenu popupMenu = new PopupMenu(AccountListActivity.this, bMenu);
-                MenuInflater inflater = getMenuInflater();
+                PopupMenu popupMenu = new PopupMenu(getActivity(), bMenu);
+                MenuInflater inflater = getActivity().getMenuInflater();
                 inflater.inflate(R.menu.account_list_menu, popupMenu.getMenu());
                 popupMenu.setOnMenuItemClickListener(item -> {
                     handlePopupMenu(item.getItemId());
@@ -100,30 +96,30 @@ public class AccountListActivity extends AbstractListActivity {
     private void handlePopupMenu(int id) {
         switch (id) {
             case R.id.backup:
-                MenuListItem.MENU_BACKUP.call(this);
+                MenuListItem.MENU_BACKUP.call(getActivity());
                 break;
             case R.id.go_to_menu:
-                GreenRobotBus_.getInstance_(this).post(new SwitchToMenuTabEvent());
+                GreenRobotBus_.getInstance_(getActivity()).post(new SwitchToMenuTabEvent());
                 break;
         }
     }
 
     protected void prepareAccountActionGrid() {
         Account a = db.getAccount(selectedId);
-        accountActionGrid = new QuickActionGrid(this);
-        accountActionGrid.addQuickAction(new MyQuickAction(this, R.drawable.ic_action_info, R.string.info));
-        accountActionGrid.addQuickAction(new MyQuickAction(this, R.drawable.ic_action_list, R.string.blotter));
-        accountActionGrid.addQuickAction(new MyQuickAction(this, R.drawable.ic_action_edit, R.string.edit));
-        accountActionGrid.addQuickAction(new MyQuickAction(this, R.drawable.ic_action_add, R.string.transaction));
-        accountActionGrid.addQuickAction(new MyQuickAction(this, R.drawable.ic_action_transfer, R.string.transfer));
-        accountActionGrid.addQuickAction(new MyQuickAction(this, R.drawable.ic_action_tick, R.string.balance));
-        accountActionGrid.addQuickAction(new MyQuickAction(this, R.drawable.ic_action_flash, R.string.delete_old_transactions));
+        accountActionGrid = new QuickActionGrid(getContext());
+        accountActionGrid.addQuickAction(new MyQuickAction(getContext(), R.drawable.ic_action_info, R.string.info));
+        accountActionGrid.addQuickAction(new MyQuickAction(getContext(), R.drawable.ic_action_list, R.string.blotter));
+        accountActionGrid.addQuickAction(new MyQuickAction(getContext(), R.drawable.ic_action_edit, R.string.edit));
+        accountActionGrid.addQuickAction(new MyQuickAction(getContext(), R.drawable.ic_action_add, R.string.transaction));
+        accountActionGrid.addQuickAction(new MyQuickAction(getContext(), R.drawable.ic_action_transfer, R.string.transfer));
+        accountActionGrid.addQuickAction(new MyQuickAction(getContext(), R.drawable.ic_action_tick, R.string.balance));
+        accountActionGrid.addQuickAction(new MyQuickAction(getContext(), R.drawable.ic_action_flash, R.string.delete_old_transactions));
         if (a.isActive) {
-            accountActionGrid.addQuickAction(new MyQuickAction(this, R.drawable.ic_action_lock_closed, R.string.close_account));
+            accountActionGrid.addQuickAction(new MyQuickAction(getContext(), R.drawable.ic_action_lock_closed, R.string.close_account));
         } else {
-            accountActionGrid.addQuickAction(new MyQuickAction(this, R.drawable.ic_action_lock_open, R.string.reopen_account));
+            accountActionGrid.addQuickAction(new MyQuickAction(getContext(), R.drawable.ic_action_lock_open, R.string.reopen_account));
         }
-        accountActionGrid.addQuickAction(new MyQuickAction(this, R.drawable.ic_action_trash, R.string.delete_account));
+        accountActionGrid.addQuickAction(new MyQuickAction(getContext(), R.drawable.ic_action_trash, R.string.delete_account));
         accountActionGrid.setOnQuickActionClickListener(accountActionListener);
     }
 
@@ -163,7 +159,7 @@ public class AccountListActivity extends AbstractListActivity {
     };
 
     private void addTransaction(long accountId, Class<? extends AbstractTransactionActivity> clazz) {
-        Intent intent = new Intent(this, clazz);
+        Intent intent = new Intent(getContext(), clazz);
         intent.putExtra(TransactionActivity.ACCOUNT_ID_EXTRA, accountId);
         startActivityForResult(intent, VIEW_ACCOUNT_REQUEST);
     }
@@ -174,21 +170,21 @@ public class AccountListActivity extends AbstractListActivity {
         calculateTotals();
     }
 
-    private AccountTotalsCalculationTask totalCalculationTask;
+    private AccountListActivity.AccountTotalsCalculationTask totalCalculationTask;
 
     private void calculateTotals() {
         if (totalCalculationTask != null) {
             totalCalculationTask.stop();
             totalCalculationTask.cancel(true);
         }
-        TextView totalText = findViewById(R.id.total);
+        TextView totalText = getView().findViewById(R.id.total);
         totalText.setOnClickListener(view -> showTotals());
-        totalCalculationTask = new AccountTotalsCalculationTask(this, db, totalText);
+        totalCalculationTask = new AccountListActivity.AccountTotalsCalculationTask(getContext(), db, totalText);
         totalCalculationTask.execute();
     }
 
     private void showTotals() {
-        Intent intent = new Intent(this, AccountListTotalsDetailsActivity.class);
+        Intent intent = new Intent(getContext(), AccountListTotalsDetailsActivity.class);
         startActivityForResult(intent, -1);
     }
 
@@ -215,16 +211,24 @@ public class AccountListActivity extends AbstractListActivity {
 
     @Override
     protected ListAdapter createAdapter(Cursor cursor) {
-        return new AccountListAdapter2(this, cursor);
+        long t1 = System.currentTimeMillis();
+        ListAdapter a = new AccountListAdapter2(getContext(), cursor);
+        Log.d(this.getTag(), "createAdapter: " + (System.currentTimeMillis() - t1) + " ms");
+        return a;
     }
 
     @Override
     protected Cursor createCursor() {
-        if (MyPreferences.isHideClosedAccounts(this)) {
-            return db.getAllActiveAccounts();
+        Cursor c;
+        long t1 = System.currentTimeMillis();
+        if (MyPreferences.isHideClosedAccounts(getContext())) {
+            c = db.getAllActiveAccounts();
         } else {
-            return db.getAllAccounts();
+            c = db.getAllAccounts();
         }
+        c.getCount();
+        Log.d(this.getTag(), "createCursor: " + (System.currentTimeMillis() - t1) + " ms");
+        return c;
     }
 
     protected List<MenuItemInfo> createContextMenus(long id) {
@@ -240,7 +244,7 @@ public class AccountListActivity extends AbstractListActivity {
     private boolean updateAccountBalance(long id) {
         Account a = db.getAccount(id);
         if (a != null) {
-            Intent intent = new Intent(this, TransactionActivity.class);
+            Intent intent = new Intent(getContext(), TransactionActivity.class);
             intent.putExtra(TransactionActivity.ACCOUNT_ID_EXTRA, a.id);
             intent.putExtra(TransactionActivity.CURRENT_BALANCE_EXTRA, a.totalAmount);
             startActivityForResult(intent, 0);
@@ -251,13 +255,13 @@ public class AccountListActivity extends AbstractListActivity {
 
     @Override
     protected void addItem() {
-        Intent intent = new Intent(AccountListActivity.this, AccountActivity.class);
+        Intent intent = new Intent(getContext(), AccountActivity.class);
         startActivityForResult(intent, NEW_ACCOUNT_REQUEST);
     }
 
     @Override
     protected void deleteItem(View v, int position, final long id) {
-        new AlertDialog.Builder(this)
+        new AlertDialog.Builder(getContext())
                 .setMessage(R.string.delete_account_confirm)
                 .setPositiveButton(R.string.yes, (arg0, arg1) -> {
                     db.deleteAccount(id);
@@ -273,24 +277,23 @@ public class AccountListActivity extends AbstractListActivity {
     }
 
     private void editAccount(long id) {
-        Intent intent = new Intent(AccountListActivity.this, AccountActivity.class);
+        Intent intent = new Intent(getContext(), AccountActivity.class);
         intent.putExtra(AccountActivity.ACCOUNT_ID_EXTRA, id);
-        startActivityForResult(intent, AccountActivity.EDIT_ACCOUNT_REQUEST);
+        startActivityForResult(intent, EDIT_ACCOUNT_REQUEST);
     }
 
     private long selectedId = -1;
 
     private void showAccountInfo(long id) {
-        LayoutInflater layoutInflater = (LayoutInflater) getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-        NodeInflater inflater = new NodeInflater(layoutInflater);
-        AccountInfoDialog accountInfoDialog = new AccountInfoDialog(this, id, db, inflater);
+        NodeInflater nodeInflater = new NodeInflater(inflater);
+        AccountInfoDialog accountInfoDialog = new AccountInfoDialog(getContext(), id, db, nodeInflater);
         accountInfoDialog.show();
     }
 
 
     @Override
     protected void onItemClick(View v, int position, long id) {
-        if (isQuickMenuEnabledForAccount(this)) {
+        if (isQuickMenuEnabledForAccount(getContext())) {
             selectedId = id;
             prepareAccountActionGrid();
             accountActionGrid.show(v);
@@ -307,7 +310,7 @@ public class AccountListActivity extends AbstractListActivity {
     private void showAccountTransactions(long id) {
         Account account = db.getAccount(id);
         if (account != null) {
-            Intent intent = new Intent(AccountListActivity.this, BlotterActivity.class);
+            Intent intent = new Intent(getContext(), BlotterActivity.class);
             Criteria.eq(BlotterFilter.FROM_ACCOUNT_ID, String.valueOf(id))
                     .toIntent(account.title, intent);
             intent.putExtra(BlotterFilterActivity.IS_ACCOUNT_FILTER, true);
@@ -316,7 +319,7 @@ public class AccountListActivity extends AbstractListActivity {
     }
 
     @Override
-    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+    public void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
         if (requestCode == VIEW_ACCOUNT_REQUEST || requestCode == PURGE_ACCOUNT_REQUEST) {
             recreateCursor();
@@ -324,7 +327,7 @@ public class AccountListActivity extends AbstractListActivity {
     }
 
     private void purgeAccount() {
-        Intent intent = new Intent(this, PurgeAccountActivity.class);
+        Intent intent = new Intent(getContext(), PurgeAccountActivity.class);
         intent.putExtra(PurgeAccountActivity.ACCOUNT_ID, selectedId);
         startActivityForResult(intent, PURGE_ACCOUNT_REQUEST);
     }
@@ -332,7 +335,7 @@ public class AccountListActivity extends AbstractListActivity {
     private void closeOrOpenAccount() {
         Account a = db.getAccount(selectedId);
         if (a.isActive) {
-            new AlertDialog.Builder(this)
+            new AlertDialog.Builder(getContext())
                     .setMessage(R.string.close_account_confirm)
                     .setPositiveButton(R.string.yes, (arg0, arg1) -> flipAccountActive(a))
                     .setNegativeButton(R.string.no, null)
@@ -349,7 +352,7 @@ public class AccountListActivity extends AbstractListActivity {
     }
 
     private void deleteAccount() {
-        new AlertDialog.Builder(this)
+        new AlertDialog.Builder(getContext())
                 .setMessage(R.string.delete_account_confirm)
                 .setPositiveButton(R.string.yes, (arg0, arg1) -> {
                     db.deleteAccount(selectedId);
@@ -361,7 +364,6 @@ public class AccountListActivity extends AbstractListActivity {
 
     @Override
     public void integrityCheck() {
-        new IntegrityCheckTask(this).execute(new IntegrityCheckAutobackup(this, TimeUnit.DAYS.toMillis(7)));
+        new IntegrityCheckTask(getActivity()).execute(new IntegrityCheckAutobackup(getContext(), TimeUnit.DAYS.toMillis(7)));
     }
-
 }

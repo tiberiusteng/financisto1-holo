@@ -121,6 +121,7 @@
 
 	<style name="BottomBarButton">
 		<item name="android:background">@color/holo_gray_bright</item>
+		<item name="android:textColor">@android:color/primary_text_light</item>
 		<item name="android:layout_width">@dimen/action_button_size</item>
 		<item name="android:layout_height">@dimen/action_button_size</item>
 		<item name="android:layout_marginTop">@dimen/action_button_margin</item>
@@ -142,7 +143,10 @@
 		<item name="android:background">@android:drawable/bottom_bar</item> 
 	</style>
 	<style name="ImageButtonOnDarkBackground" parent="@android:style/Widget.ImageButton" />
-	<style name="WhiteBackgroundButtonBar" parent="@style/ButtonBar" />
+	<style name="WhiteBackgroundButtonBar" parent="@style/ButtonBar">
+		<item name="android:layout_width">fill_parent</item>
+		<item name="android:layout_height">wrap_content</item>
+	</style>
 	<style name="ProgressBarBudget" parent="@android:style/Widget.ProgressBar.Horizontal">
         <item name="android:progressDrawable">@drawable/progress_horizontal_budget</item>
         <item name="android:minHeight">12dip</item>

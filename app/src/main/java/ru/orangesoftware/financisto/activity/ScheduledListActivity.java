@@ -90,7 +90,7 @@ public class ScheduledListActivity extends BlotterActivity {
 	}
 
     @Override
-    protected void afterDeletingTransaction(long id) {
+    public void afterDeletingTransaction(long id) {
         super.afterDeletingTransaction(id);
         scheduler.cancelPendingIntentForSchedule(this, id);
     }

@@ -45,7 +45,8 @@ public class CategorySelector<A extends AbstractActivity> {
     private long selectedCategoryId = 0;
     private CategorySelectorListener listener;
     private boolean showSplitCategory = true;
-    private boolean multiSelect, useMultiChoicePlainSelector;
+    private boolean multiSelect;
+    private boolean useMultiChoicePlainSelector;
     private final long excludingSubTreeId;
     private List<Category> categories = Collections.emptyList();
     private int emptyResId;
@@ -74,7 +75,12 @@ public class CategorySelector<A extends AbstractActivity> {
         this.multiSelect = true;
         this.categories = db.getCategoriesList(false);
         this.doNotShowSplitCategory();
-        
+    }
+
+    public void initMultiSelectWithNoCategory() {
+        this.multiSelect = true;
+        this.categories = db.getCategoriesList(true);
+        this.doNotShowSplitCategory();
     }
 
     public void setUseMultiChoicePlainSelector() {

@@ -19,7 +19,6 @@ import ru.orangesoftware.financisto.R;
 import ru.orangesoftware.financisto.activity.AccountActivity;
 import ru.orangesoftware.financisto.activity.AccountListActivity;
 import ru.orangesoftware.financisto.db.DatabaseAdapter;
-import ru.orangesoftware.financisto.db.MyEntityManager;
 import ru.orangesoftware.financisto.model.*;
 import ru.orangesoftware.financisto.utils.Utils;
 import ru.orangesoftware.financisto.view.NodeInflater;
@@ -28,27 +27,27 @@ import static ru.orangesoftware.financisto.utils.Utils.isNotEmpty;
 
 public class AccountInfoDialog {
 
-    private final AccountListActivity parentActivity;
+    private final Context context;
     private final long accountId;
     private final DatabaseAdapter db;
     private final NodeInflater inflater;
     private final LayoutInflater layoutInflater;
     private final Utils u;
 
-    public AccountInfoDialog(AccountListActivity parentActivity, long accountId,
+    public AccountInfoDialog(Context context, long accountId,
                              DatabaseAdapter db, NodeInflater inflater) {
-        this.parentActivity = parentActivity;
+        this.context = context;
         this.accountId = accountId;
         this.db = db;
         this.inflater = inflater;
-        this.layoutInflater = (LayoutInflater) parentActivity.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-        this.u = new Utils(parentActivity);
+        this.layoutInflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+        this.u = new Utils(context);
     }
 
     public void show() {
         Account a = db.getAccount(accountId);
         if (a == null) {
-            Toast t = Toast.makeText(parentActivity, R.string.no_account, Toast.LENGTH_LONG);
+            Toast t = Toast.makeText(context, R.string.no_account, Toast.LENGTH_LONG);
             t.show();
             return;
         }
@@ -104,7 +103,7 @@ public class AccountInfoDialog {
     }
 
     private void showDialog(final View v, View titleView) {
-        final Dialog d = new AlertDialog.Builder(parentActivity)
+        final Dialog d = new AlertDialog.Builder(context)
                 .setCustomTitle(titleView)
                 .setView(v)
                 .create();
@@ -115,9 +114,9 @@ public class AccountInfoDialog {
             @Override
             public void onClick(View arg0) {
                 d.dismiss();
-                Intent intent = new Intent(parentActivity, AccountActivity.class);
+                Intent intent = new Intent(context, AccountActivity.class);
                 intent.putExtra(AccountActivity.ACCOUNT_ID_EXTRA, accountId);
-                parentActivity.startActivityForResult(intent, AccountListActivity.EDIT_ACCOUNT_REQUEST);
+                context.startActivity(intent);
             }
         });
 

@@ -1,10 +1,10 @@
 package ru.orangesoftware.financisto.activity;
 
-import android.Manifest;
 import static android.Manifest.permission.RECEIVE_SMS;
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.ProgressDialog;
+import android.content.Context;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.AsyncTask;
@@ -13,7 +13,6 @@ import android.widget.ListAdapter;
 import android.widget.Toast;
 
 import ru.orangesoftware.financisto.R;
-import static ru.orangesoftware.financisto.activity.RequestPermission.isRequestingPermission;
 import static ru.orangesoftware.financisto.activity.RequestPermission.isRequestingPermissions;
 import ru.orangesoftware.financisto.bus.GreenRobotBus_;
 import ru.orangesoftware.financisto.db.DatabaseAdapter;
@@ -207,7 +206,7 @@ public enum MenuListItem implements SummaryEntityEnum {
     public static final int ACTIVITY_CHANGE_PREFERENCES = 6;
     public static final int ACTIVITY_RESTORE_DATABASE = 7;
 
-    public abstract void call(Activity activity);
+    public abstract void call(Activity context);
 
     private enum MenuEntities implements EntityEnum {
 

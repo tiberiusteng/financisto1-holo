@@ -62,10 +62,10 @@ public class TransactionInfoDialog {
         this.u = new Utils(context);
     }
 
-    public void show(BlotterActivity blotterActivity, long transactionId) {
+    public void show(Context context, BlotterOperations.BlotterOperationsCallback callback, long transactionId) {
         TransactionInfo ti = db.getTransactionInfo(transactionId);
         if (ti == null) {
-            Toast t = Toast.makeText(blotterActivity, R.string.no_transaction_found, Toast.LENGTH_LONG);
+            Toast t = Toast.makeText(context, R.string.no_transaction_found, Toast.LENGTH_LONG);
             t.show();
             return;
         }
@@ -79,7 +79,7 @@ public class TransactionInfoDialog {
         createMainInfoNodes(ti, layout);
         createAdditionalInfoNodes(ti, layout);
 
-        showDialog(blotterActivity, transactionId, v, titleView);
+        showDialog(context, callback, transactionId, v, titleView);
     }
 
     private void createMainInfoNodes(TransactionInfo ti, LinearLayout layout) {
@@ -206,8 +206,8 @@ public class TransactionInfoDialog {
         return titleView;
     }
 
-    private void showDialog(final BlotterActivity blotterActivity, final long transactionId, final View v, View titleView) {
-        final Dialog d = new AlertDialog.Builder(blotterActivity)
+    private void showDialog(final Context context, final BlotterOperations.BlotterOperationsCallback callback, final long transactionId, final View v, View titleView) {
+        final Dialog d = new AlertDialog.Builder(context)
                 .setCustomTitle(titleView)
                 .setView(v)
                 .create();
@@ -216,7 +216,7 @@ public class TransactionInfoDialog {
         Button bEdit = v.findViewById(R.id.bEdit);
         bEdit.setOnClickListener(arg0 -> {
             d.dismiss();
-            new BlotterOperations(blotterActivity, db, transactionId).editTransaction();
+            new BlotterOperations(context, callback, db, transactionId).editTransaction();
         });
 
         Button bClose = v.findViewById(R.id.bClose);

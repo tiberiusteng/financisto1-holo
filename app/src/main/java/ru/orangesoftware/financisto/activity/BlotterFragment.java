@@ -1,15 +1,8 @@
-/*******************************************************************************
- * Copyright (c) 2010 Denis Solonenko.
- * All rights reserved. This program and the accompanying materials
- * are made available under the terms of the GNU Public License v2.0
- * which accompanies this distribution, and is available at
- * http://www.gnu.org/licenses/old-licenses/gpl-2.0.html
- *
- * Contributors:
- *     Denis Solonenko - initial API and implementation
- *     Abdsandryk - menu option to call Credit Card Bill functionality
- ******************************************************************************/
 package ru.orangesoftware.financisto.activity;
+
+import static android.app.Activity.RESULT_FIRST_USER;
+import static android.app.Activity.RESULT_OK;
+import static ru.orangesoftware.financisto.utils.MyPreferences.isQuickMenuEnabledForTransaction;
 
 import android.app.AlertDialog;
 import android.content.Context;
@@ -19,9 +12,11 @@ import android.database.Cursor;
 import android.os.Bundle;
 import android.text.Editable;
 import android.text.TextWatcher;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.MenuInflater;
 import android.view.View;
+import android.view.ViewGroup;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.EditText;
 import android.widget.FrameLayout;
@@ -32,6 +27,10 @@ import android.widget.TextView;
 import android.widget.Toast;
 import android.window.OnBackInvokedCallback;
 import android.window.OnBackInvokedDispatcher;
+
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+import androidx.core.os.BuildCompat;
 
 import java.util.List;
 
@@ -44,6 +43,7 @@ import ru.orangesoftware.financisto.blotter.AccountTotalCalculationTask;
 import ru.orangesoftware.financisto.blotter.BlotterFilter;
 import ru.orangesoftware.financisto.blotter.BlotterTotalCalculationTask;
 import ru.orangesoftware.financisto.blotter.TotalCalculationTask;
+import ru.orangesoftware.financisto.db.DatabaseAdapter;
 import ru.orangesoftware.financisto.dialog.TransactionInfoDialog;
 import ru.orangesoftware.financisto.filter.WhereFilter;
 import ru.orangesoftware.financisto.model.Account;
@@ -54,12 +54,7 @@ import ru.orangesoftware.financisto.utils.MenuItemInfo;
 import ru.orangesoftware.financisto.utils.MyPreferences;
 import ru.orangesoftware.financisto.view.NodeInflater;
 
-import static ru.orangesoftware.financisto.utils.MyPreferences.isQuickMenuEnabledForTransaction;
-
-import androidx.core.os.BuildCompat;
-
-public class BlotterActivity extends AbstractListActivity implements BlotterOperations.BlotterOperationsCallback {
-
+public class BlotterFragment extends AbstractListFragment implements BlotterOperations.BlotterOperationsCallback {
     public static final String SAVE_FILTER = "saveFilter";
     public static final String EXTRA_FILTER_ACCOUNTS = "filterAccounts";
 
@@ -93,11 +88,11 @@ public class BlotterActivity extends AbstractListActivity implements BlotterOper
 
     protected OnBackInvokedCallback backCallback;
 
-    public BlotterActivity(int layoutId) {
+    public BlotterFragment(int layoutId) {
         super(layoutId);
     }
 
-    public BlotterActivity() {
+    public BlotterFragment() {
         super(R.layout.blotter);
     }
 
@@ -113,9 +108,9 @@ public class BlotterActivity extends AbstractListActivity implements BlotterOper
     protected TotalCalculationTask createTotalCalculationTask() {
         WhereFilter filter = WhereFilter.copyOf(blotterFilter);
         if (filter.getAccountId() > 0) {
-            return new AccountTotalCalculationTask(this, db, filter, totalText);
+            return new AccountTotalCalculationTask(getContext(), db, filter, totalText);
         } else {
-            return new BlotterTotalCalculationTask(this, db, filter, totalText);
+            return new BlotterTotalCalculationTask(getContext(), db, filter, totalText);
         }
     }
 
@@ -127,77 +122,83 @@ public class BlotterActivity extends AbstractListActivity implements BlotterOper
 
     @Override
     @BuildCompat.PrereleaseSdkCheck
-    protected void onCreate(Bundle savedInstanceState) {
+    public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        LayoutInflater layoutInflater = (LayoutInflater) getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+    }
+
+    @Override
+    public View onCreateView(@NonNull LayoutInflater layoutInflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
+        View view = super.onCreateView(layoutInflater, container, savedInstanceState);
         inflater = new NodeInflater(layoutInflater);
+        return view;
+    }
+
+    @Override
+    @BuildCompat.PrereleaseSdkCheck
+    public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
+        super.onViewCreated(view, savedInstanceState);
+
         integrityCheck();
 
         if (BuildCompat.isAtLeastT()) {
             backCallback = () -> {
-                FrameLayout searchLayout = findViewById(R.id.search_text_frame);
+                FrameLayout searchLayout = view.findViewById(R.id.search_text_frame);
                 if (searchLayout != null && searchLayout.getVisibility() == View.VISIBLE) {
                     searchLayout.setVisibility(View.GONE);
                 }
             };
         }
-    }
 
-    @Override
-    @BuildCompat.PrereleaseSdkCheck
-    protected void internalOnCreate(Bundle savedInstanceState) {
-        super.internalOnCreate(savedInstanceState);
-
-        showAllBlotterButtons = !MyPreferences.isCollapseBlotterButtons(this);
+        showAllBlotterButtons = !MyPreferences.isCollapseBlotterButtons(getContext());
 
         if (showAllBlotterButtons) {
-            bTransfer = findViewById(R.id.bTransfer);
+            bTransfer = view.findViewById(R.id.bTransfer);
             bTransfer.setVisibility(View.VISIBLE);
             bTransfer.setOnClickListener(arg0 -> addItem(NEW_TRANSFER_REQUEST, TransferActivity.class));
 
-            bTemplate = findViewById(R.id.bTemplate);
+            bTemplate = view.findViewById(R.id.bTemplate);
             bTemplate.setVisibility(View.VISIBLE);
             bTemplate.setOnClickListener(v -> createFromTemplate());
         }
 
-        bFilter = findViewById(R.id.bFilter);
+        bFilter = view.findViewById(R.id.bFilter);
         bFilter.setOnClickListener(v -> {
-            Intent intent = new Intent(BlotterActivity.this, BlotterFilterActivity.class);
+            Intent intent = new Intent(getContext(), BlotterFilterActivity.class);
             blotterFilter.toIntent(intent);
             intent.putExtra(BlotterFilterActivity.IS_ACCOUNT_FILTER, isAccountBlotter && blotterFilter.getAccountId() > 0);
             startActivityForResult(intent, FILTER_REQUEST);
         });
 
-        totalText = findViewById(R.id.total);
-        totalText.setOnClickListener(view -> showTotals());
+        totalText = view.findViewById(R.id.total);
+        totalText.setOnClickListener(v -> showTotals());
 
-        Intent intent = getIntent();
-        if (intent != null) {
-            blotterFilter = WhereFilter.fromIntent(intent);
-            saveFilter = intent.getBooleanExtra(SAVE_FILTER, false);
-            isAccountBlotter = intent.getBooleanExtra(BlotterFilterActivity.IS_ACCOUNT_FILTER, false);
+        Bundle args = getArguments();
+        if (args != null) {
+            blotterFilter = WhereFilter.fromBundle(args);
+            saveFilter = args.getBoolean(SAVE_FILTER, false);
+            isAccountBlotter = args.getBoolean(BlotterFilterActivity.IS_ACCOUNT_FILTER, false);
         }
         if (savedInstanceState != null) {
             blotterFilter = WhereFilter.fromBundle(savedInstanceState);
         }
         if (saveFilter && blotterFilter.isEmpty()) {
-            blotterFilter = WhereFilter.fromSharedPreferences(getPreferences(0));
+            blotterFilter = WhereFilter.fromSharedPreferences(getContext().getSharedPreferences(this.getClass().getName(), 0));
         }
 
-        bSearch = findViewById(R.id.bSearch);
+        bSearch = view.findViewById(R.id.bSearch);
         bSearch.setOnClickListener(method -> {
-            EditText searchText = findViewById(R.id.search_text);
-            FrameLayout searchLayout = findViewById(R.id.search_text_frame);
-            ImageButton searchTextClearButton = findViewById(R.id.search_text_clear);
-            InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
+            EditText searchText = view.findViewById(R.id.search_text);
+            FrameLayout searchLayout = view.findViewById(R.id.search_text_frame);
+            ImageButton searchTextClearButton = view.findViewById(R.id.search_text_clear);
+            InputMethodManager imm = (InputMethodManager) getContext().getSystemService(Context.INPUT_METHOD_SERVICE);
 
-            searchText.setOnFocusChangeListener((view, b) -> {
-                if (!view.hasFocus()) {
+            searchText.setOnFocusChangeListener((v, b) -> {
+                if (!v.hasFocus()) {
                     imm.hideSoftInputFromWindow(searchLayout.getWindowToken(), 0);
                 }
             });
 
-            searchTextClearButton.setOnClickListener(view -> {
+            searchTextClearButton.setOnClickListener(v -> {
                 searchText.setText("");
             });
 
@@ -205,7 +206,7 @@ public class BlotterActivity extends AbstractListActivity implements BlotterOper
                 imm.hideSoftInputFromWindow(searchLayout.getWindowToken(), 0);
                 searchLayout.setVisibility(View.GONE);
                 if (BuildCompat.isAtLeastT()) {
-                    getOnBackInvokedDispatcher().unregisterOnBackInvokedCallback(backCallback);
+                    view.findOnBackInvokedDispatcher().unregisterOnBackInvokedCallback(backCallback);
                 }
                 return;
             }
@@ -214,7 +215,7 @@ public class BlotterActivity extends AbstractListActivity implements BlotterOper
             searchText.requestFocusFromTouch();
             imm.showSoftInput(searchText, InputMethodManager.SHOW_IMPLICIT);
             if (BuildCompat.isAtLeastT()) {
-                getOnBackInvokedDispatcher().registerOnBackInvokedCallback(
+                view.findOnBackInvokedDispatcher().registerOnBackInvokedCallback(
                         OnBackInvokedDispatcher.PRIORITY_DEFAULT, backCallback);
             }
 
@@ -227,7 +228,7 @@ public class BlotterActivity extends AbstractListActivity implements BlotterOper
 
                 @Override
                 public void afterTextChanged(Editable editable) {
-                    ImageButton clearButton = findViewById(R.id.search_text_clear);
+                    ImageButton clearButton = view.findViewById(R.id.search_text_clear);
                     String text = editable.toString();
                     blotterFilter.remove(BlotterFilter.NOTE);
 
@@ -261,10 +262,10 @@ public class BlotterActivity extends AbstractListActivity implements BlotterOper
     }
 
     private void applyPopupMenu() {
-        bMenu = findViewById(R.id.bMenu);
+        bMenu = getView().findViewById(R.id.bMenu);
         if (isAccountBlotter) {
             bMenu.setOnClickListener(v -> {
-                PopupMenu popupMenu = new PopupMenu(BlotterActivity.this, bMenu);
+                PopupMenu popupMenu = new PopupMenu(getContext(), bMenu);
                 long accountId = blotterFilter.getAccountId();
                 if (accountId != -1) {
                     // get account type
@@ -272,11 +273,11 @@ public class BlotterActivity extends AbstractListActivity implements BlotterOper
                     AccountType type = AccountType.valueOf(account.type);
                     if (type.isCreditCard) {
                         // Show menu for Credit Cards - bill
-                        MenuInflater inflater = getMenuInflater();
+                        MenuInflater inflater = getActivity().getMenuInflater();
                         inflater.inflate(R.menu.ccard_blotter_menu, popupMenu.getMenu());
                     } else {
                         // Show menu for other accounts - monthly view
-                        MenuInflater inflater = getMenuInflater();
+                        MenuInflater inflater = getActivity().getMenuInflater();
                         inflater.inflate(R.menu.blotter_menu, popupMenu.getMenu());
                     }
                     popupMenu.setOnMenuItemClickListener(item -> {
@@ -295,7 +296,7 @@ public class BlotterActivity extends AbstractListActivity implements BlotterOper
 
         long accountId = blotterFilter.getAccountId();
 
-        Intent intent = new Intent(this, MonthlyViewActivity.class);
+        Intent intent = new Intent(getContext(), MonthlyViewActivity.class);
         intent.putExtra(MonthlyViewActivity.ACCOUNT_EXTRA, accountId);
 
         switch (id) {
@@ -316,7 +317,7 @@ public class BlotterActivity extends AbstractListActivity implements BlotterOper
                         startActivityForResult(intent, BILL_PREVIEW_REQUEST);
                     } else {
                         // display message: need payment and closing day
-                        AlertDialog.Builder dlgAlert = new AlertDialog.Builder(this);
+                        AlertDialog.Builder dlgAlert = new AlertDialog.Builder(getContext());
                         dlgAlert.setMessage(R.string.statement_error);
                         dlgAlert.setTitle(R.string.ccard_statement);
                         dlgAlert.setPositiveButton(R.string.ok, null);
@@ -328,19 +329,19 @@ public class BlotterActivity extends AbstractListActivity implements BlotterOper
     }
 
     private void showTotals() {
-        Intent intent = new Intent(this, BlotterTotalsDetailsActivity.class);
+        Intent intent = new Intent(getContext(), BlotterTotalsDetailsActivity.class);
         blotterFilter.toIntent(intent);
         startActivityForResult(intent, -1);
     }
 
     protected void prepareTransactionActionGrid() {
-        transactionActionGrid = new QuickActionGrid(this);
-        transactionActionGrid.addQuickAction(new MyQuickAction(this, R.drawable.ic_action_info, R.string.info));
-        transactionActionGrid.addQuickAction(new MyQuickAction(this, R.drawable.ic_action_edit, R.string.edit));
-        transactionActionGrid.addQuickAction(new MyQuickAction(this, R.drawable.ic_action_trash, R.string.delete));
-        transactionActionGrid.addQuickAction(new MyQuickAction(this, R.drawable.ic_action_copy, R.string.duplicate));
-        transactionActionGrid.addQuickAction(new MyQuickAction(this, R.drawable.ic_action_tick, R.string.clear));
-        transactionActionGrid.addQuickAction(new MyQuickAction(this, R.drawable.ic_action_double_tick, R.string.reconcile));
+        transactionActionGrid = new QuickActionGrid(getContext());
+        transactionActionGrid.addQuickAction(new MyQuickAction(getContext(), R.drawable.ic_action_info, R.string.info));
+        transactionActionGrid.addQuickAction(new MyQuickAction(getContext(), R.drawable.ic_action_edit, R.string.edit));
+        transactionActionGrid.addQuickAction(new MyQuickAction(getContext(), R.drawable.ic_action_trash, R.string.delete));
+        transactionActionGrid.addQuickAction(new MyQuickAction(getContext(), R.drawable.ic_action_copy, R.string.duplicate));
+        transactionActionGrid.addQuickAction(new MyQuickAction(getContext(), R.drawable.ic_action_tick, R.string.clear));
+        transactionActionGrid.addQuickAction(new MyQuickAction(getContext(), R.drawable.ic_action_double_tick, R.string.reconcile));
         transactionActionGrid.setOnQuickActionClickListener(transactionActionListener);
     }
 
@@ -371,11 +372,11 @@ public class BlotterActivity extends AbstractListActivity implements BlotterOper
     };
 
     private void prepareAddButtonActionGrid() {
-        addButtonActionGrid = new QuickActionGrid(this);
-        addButtonActionGrid.addQuickAction(new MyQuickAction(this, R.drawable.actionbar_add_big, R.string.transaction));
-        addButtonActionGrid.addQuickAction(new MyQuickAction(this, R.drawable.ic_action_transfer, R.string.transfer));
+        addButtonActionGrid = new QuickActionGrid(getContext());
+        addButtonActionGrid.addQuickAction(new MyQuickAction(getContext(), R.drawable.actionbar_add_big, R.string.transaction));
+        addButtonActionGrid.addQuickAction(new MyQuickAction(getContext(), R.drawable.ic_action_transfer, R.string.transfer));
         if (addTemplateToAddButton()) {
-            addButtonActionGrid.addQuickAction(new MyQuickAction(this, R.drawable.actionbar_tiles_large, R.string.template));
+            addButtonActionGrid.addQuickAction(new MyQuickAction(getContext(), R.drawable.actionbar_tiles_large, R.string.template));
         } else {
             addButtonActionGrid.setNumColumns(2);
         }
@@ -401,23 +402,23 @@ public class BlotterActivity extends AbstractListActivity implements BlotterOper
     };
 
     private void clearTransaction(long selectedId) {
-        new BlotterOperations(this, this, db, selectedId).clearTransaction();
+        new BlotterOperations(getContext(), this, db, selectedId).clearTransaction();
         recreateCursor();
     }
 
     private void reconcileTransaction(long selectedId) {
-        new BlotterOperations(this, this, db, selectedId).reconcileTransaction();
+        new BlotterOperations(getContext(), this, db, selectedId).reconcileTransaction();
         recreateCursor();
     }
 
     @Override
-    protected void onSaveInstanceState(Bundle outState) {
+    public void onSaveInstanceState(Bundle outState) {
         super.onSaveInstanceState(outState);
         blotterFilter.toBundle(outState);
     }
 
     protected void createFromTemplate() {
-        Intent intent = new Intent(this, SelectTemplateActivity.class);
+        Intent intent = new Intent(getContext(), SelectTemplateActivity.class);
         startActivityForResult(intent, NEW_TRANSACTION_FROM_TEMPLATE_REQUEST);
     }
 
@@ -441,8 +442,8 @@ public class BlotterActivity extends AbstractListActivity implements BlotterOper
                     duplicateTransaction(id, 1);
                     return true;
                 case MENU_SAVE_AS_TEMPLATE:
-                    new BlotterOperations(this, this, db, id).duplicateAsTemplate();
-                    Toast.makeText(this, R.string.save_as_template_success, Toast.LENGTH_SHORT).show();
+                    new BlotterOperations(getContext(), this, db, id).duplicateAsTemplate();
+                    Toast.makeText(getContext(), R.string.save_as_template_success, Toast.LENGTH_SHORT).show();
                     return true;
             }
         }
@@ -450,16 +451,16 @@ public class BlotterActivity extends AbstractListActivity implements BlotterOper
     }
 
     private long duplicateTransaction(long id, int multiplier) {
-        long newId = new BlotterOperations(this, this, db, id).duplicateTransaction(multiplier);
+        long newId = new BlotterOperations(getContext(), this, db, id).duplicateTransaction(multiplier);
         String toastText;
         if (multiplier > 1) {
             toastText = getString(R.string.duplicate_success_with_multiplier, multiplier);
         } else {
             toastText = getString(R.string.duplicate_success);
         }
-        Toast.makeText(this, toastText, Toast.LENGTH_LONG).show();
+        Toast.makeText(getContext(), toastText, Toast.LENGTH_LONG).show();
         recreateCursor();
-        AccountWidget.updateWidgets(BlotterActivity.this);
+        AccountWidget.updateWidgets(getContext());
         return newId;
     }
 
@@ -473,7 +474,7 @@ public class BlotterActivity extends AbstractListActivity implements BlotterOper
     }
 
     protected void addItem(int requestId, Class<? extends AbstractTransactionActivity> clazz) {
-        Intent intent = new Intent(BlotterActivity.this, clazz);
+        Intent intent = new Intent(getContext(), clazz);
         long accountId = blotterFilter.getAccountId();
         if (accountId != -1) {
             intent.putExtra(TransactionActivity.ACCOUNT_ID_EXTRA, accountId);
@@ -485,23 +486,34 @@ public class BlotterActivity extends AbstractListActivity implements BlotterOper
     @Override
     protected Cursor createCursor() {
         Cursor c;
+        long t1 = System.currentTimeMillis();
+        if (db == null) {
+            db = new DatabaseAdapter(getActivity());
+            db.open();
+        }
         long accountId = blotterFilter.getAccountId();
         if (accountId != -1) {
             c = db.getBlotterForAccount(blotterFilter);
         } else {
             c = db.getBlotter(blotterFilter);
         }
+        c.getCount();
+        Log.d(this.getTag(), "createCursor: " + (System.currentTimeMillis() - t1) + " ms");
         return c;
     }
 
     @Override
     protected ListAdapter createAdapter(Cursor cursor) {
+        ListAdapter a;
+        long t1 = System.currentTimeMillis();
         long accountId = blotterFilter.getAccountId();
         if (accountId != -1) {
-            return new TransactionsListAdapter(this, db, cursor);
+            a = new TransactionsListAdapter(getContext(), db, cursor);
         } else {
-            return new BlotterListAdapter(this, db, cursor);
+            a = new BlotterListAdapter(getContext(), db, cursor);
         }
+        Log.d(this.getTag(), "createAdapter: " + (System.currentTimeMillis() - t1) + " ms");
+        return a;
     }
 
     @Override
@@ -510,12 +522,12 @@ public class BlotterActivity extends AbstractListActivity implements BlotterOper
     }
 
     private void deleteTransaction(long id) {
-        new BlotterOperations(this, this, db, id).deleteTransaction();
+        new BlotterOperations(getContext(), this, db, id).deleteTransaction();
     }
 
     public void afterDeletingTransaction(long id) {
         recreateCursor();
-        AccountWidget.updateWidgets(this);
+        AccountWidget.updateWidgets(getContext());
     }
 
     @Override
@@ -524,11 +536,13 @@ public class BlotterActivity extends AbstractListActivity implements BlotterOper
     }
 
     private void editTransaction(long id) {
-        new BlotterOperations(this, this, db, id).editTransaction();
+        new BlotterOperations(getContext(), this, db, id).editTransaction();
     }
 
     @Override
-    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+    public void onActivityResult(int requestCode, int resultCode, Intent data) {
+        Log.d(getTag(), "onActivityResult requestCode=" + requestCode + " resultCode=" + resultCode);
+
         if (requestCode == FILTER_REQUEST) {
             if (resultCode == RESULT_FIRST_USER) {
                 blotterFilter.clear();
@@ -539,13 +553,13 @@ public class BlotterActivity extends AbstractListActivity implements BlotterOper
                 saveFilter();
             }
             applyFilter();
-            recreateCursor();
         } else if (resultCode == RESULT_OK && requestCode == NEW_TRANSACTION_FROM_TEMPLATE_REQUEST) {
             createTransactionFromTemplate(data);
         }
         if (resultCode == RESULT_OK || resultCode == RESULT_FIRST_USER) {
-            calculateTotals();
+            Log.d(getTag(), "RESULT_OK || RESULT_FIRST_USER");
         }
+        recreateCursor();
     }
 
     private void createTransactionFromTemplate(Intent data) {
@@ -556,13 +570,13 @@ public class BlotterActivity extends AbstractListActivity implements BlotterOper
             long id = duplicateTransaction(templateId, multiplier);
             Transaction t = db.getTransaction(id);
             if (t.fromAmount == 0 || edit) {
-                new BlotterOperations(this, this, db, id).asNewFromTemplate().editTransaction();
+                new BlotterOperations(getContext(), this, db, id).asNewFromTemplate().editTransaction();
             }
         }
     }
 
     private void saveFilter() {
-        SharedPreferences preferences = getPreferences(0);
+        SharedPreferences preferences = getContext().getSharedPreferences(this.getClass().getName(), 0);
         blotterFilter.toSharedPreferences(preferences);
     }
 
@@ -577,13 +591,13 @@ public class BlotterActivity extends AbstractListActivity implements BlotterOper
         }
         String title = blotterFilter.getTitle();
         if (title != null) {
-            setTitle(getString(R.string.blotter) + " : " + title);
+            getActivity().setTitle(getString(R.string.blotter) + " : " + title);
         }
         updateFilterImage();
     }
 
     protected void updateFilterImage() {
-        FilterState.updateFilterColor(this, blotterFilter, bFilter);
+        FilterState.updateFilterColor(getContext(), blotterFilter, bFilter);
     }
 
     private NodeInflater inflater;
@@ -591,7 +605,7 @@ public class BlotterActivity extends AbstractListActivity implements BlotterOper
 
     @Override
     protected void onItemClick(View v, int position, long id) {
-        if (isQuickMenuEnabledForTransaction(this)) {
+        if (isQuickMenuEnabledForTransaction(getContext())) {
             selectedId = id;
             transactionActionGrid.show(v);
         } else {
@@ -605,29 +619,24 @@ public class BlotterActivity extends AbstractListActivity implements BlotterOper
     }
 
     private void showTransactionInfo(long id) {
-        TransactionInfoDialog transactionInfoView = new TransactionInfoDialog(this, db, inflater);
-        transactionInfoView.show(this,this, id);
+        TransactionInfoDialog transactionInfoView = new TransactionInfoDialog(getContext(), db, inflater);
+        transactionInfoView.show(getContext(), this, id);
     }
 
     @Override
     public void integrityCheck() {
-        new IntegrityCheckTask(this).execute(new IntegrityCheckRunningBalance(this, db));
+        new IntegrityCheckTask(getActivity()).execute(new IntegrityCheckRunningBalance(getContext(), db));
     }
 
-    @Override
     @BuildCompat.PrereleaseSdkCheck
-    public void onBackPressed()
+    public boolean onBackPressed()
     {
-        if (BuildCompat.isAtLeastT()) {
-            super.onBackPressed();
-        }
-        else {
-            FrameLayout searchLayout = findViewById(R.id.search_text_frame);
-            if (searchLayout != null && searchLayout.getVisibility() == View.VISIBLE) {
-                searchLayout.setVisibility(View.GONE);
-            } else {
-                super.onBackPressed();
-            }
+        FrameLayout searchLayout = getView().findViewById(R.id.search_text_frame);
+        if (searchLayout != null && searchLayout.getVisibility() == View.VISIBLE) {
+            searchLayout.setVisibility(View.GONE);
+            return true;
+        } else {
+            return false;
         }
     }
 }

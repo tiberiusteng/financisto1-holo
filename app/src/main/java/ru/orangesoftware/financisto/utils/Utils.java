@@ -40,23 +40,25 @@ public class Utils {
 
     private static final int zeroColor = Resources.getSystem().getColor(android.R.color.secondary_text_dark);
 
-    private final Context context;
+    private Context context = null;
     private final StringBuilder sb = new StringBuilder();
 
-    public final int positiveColor;
-    public final int negativeColor;
-    public final int transferColor;
-    public final int futureColor;
-    public final int splitColor;
+    public int positiveColor = 0;
+    public int negativeColor = 0;
+    public int transferColor = 0;
+    public int futureColor = 0;
+    public int splitColor = 0;
 
     public Utils(Context context) {
-        Resources r = context.getResources();
-        this.positiveColor = r.getColor(R.color.positive_amount);
-        this.negativeColor = r.getColor(R.color.negative_amount);
-        this.transferColor = r.getColor(R.color.transfer_color);
-        this.futureColor = r.getColor(R.color.future_color);
-        this.splitColor = r.getColor(R.color.split_color);
-        this.context = context;
+        if (context != null) {
+            Resources r = context.getResources();
+            this.positiveColor = r.getColor(R.color.positive_amount);
+            this.negativeColor = r.getColor(R.color.negative_amount);
+            this.transferColor = r.getColor(R.color.transfer_color);
+            this.futureColor = r.getColor(R.color.future_color);
+            this.splitColor = r.getColor(R.color.split_color);
+            this.context = context;
+        }
     }
 
     public static String formatRateDate(Context context, long date) {

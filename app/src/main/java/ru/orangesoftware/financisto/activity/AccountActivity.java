@@ -49,6 +49,7 @@ public class AccountActivity extends AbstractActivity {
 	public static final String ACCOUNT_ID_EXTRA = "accountId";
 
 	private static final int NEW_CURRENCY_REQUEST = 1;
+	public static final int EDIT_ACCOUNT_REQUEST = 2;
 
 	private AmountInput amountInput;
 	private AmountInput limitInput;

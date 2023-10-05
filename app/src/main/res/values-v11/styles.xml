@@ -37,4 +37,8 @@
     <style name="TextViewSpinnerItem" parent="Widget.AppCompat.TextView.SpinnerItem">
         <item name="android:textColor">@android:color/primary_text_dark</item>
     </style>
+
+    <style name="AppThemeCompat" parent="@style/Theme.AppCompat">
+        <item name="android:windowBackground">@android:color/black</item>
+    </style>
 </resources>

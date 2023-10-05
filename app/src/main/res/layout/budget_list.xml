@@ -17,15 +17,13 @@
 	<TextView android:id="@id/android:empty" android:layout_width="fill_parent"
 		android:layout_height="wrap_content" android:layout_weight="1"
 		android:gravity="center" android:text="@string/no_budgets" />
-	<LinearLayout android:layout_height="wrap_content"
-		android:layout_width="fill_parent" android:background="#FFF"
-		android:paddingTop="2dp">
-		<ImageButton android:layout_width="wrap_content"
-			android:layout_height="wrap_content" android:id="@+id/bAdd"
-			android:src="@drawable/ic_input_add" />
-		<ImageButton android:layout_width="wrap_content"
-			android:layout_height="wrap_content" android:id="@+id/bFilter"
-			android:src="@drawable/ic_menu_filter_off" />
+	<LinearLayout style="@style/BottomBar">
+		<ImageButton android:id="@+id/bAdd"
+			style="@style/BottomBarButton"
+			android:src="@drawable/actionbar_add_big" />
+		<ImageButton android:id="@+id/bFilter"
+			style="@style/BottomBarButton"
+			android:src="@drawable/actionbar_filter" />
         <include layout="@layout/total_text"/>
 	</LinearLayout>
 </LinearLayout>
