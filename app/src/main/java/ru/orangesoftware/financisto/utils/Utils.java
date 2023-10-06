@@ -294,6 +294,7 @@ public class Utils {
     }
 
     private void setAmountTextWithTwoAmounts(TextView textView, Currency c, long amount1, long amount2) {
+        if (context == null) return;
         SpannableStringBuilder sb = new SpannableStringBuilder();
         sb.append(Utils.amountToString(c, amount1, false));
         int x = sb.length();

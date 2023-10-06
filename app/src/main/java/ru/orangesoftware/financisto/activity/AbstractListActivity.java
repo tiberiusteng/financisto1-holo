@@ -10,8 +10,12 @@
  ******************************************************************************/
 package ru.orangesoftware.financisto.activity;
 
+import android.annotation.SuppressLint;
 import android.app.ListActivity;
+import android.app.LoaderManager;
 import android.content.Context;
+import android.content.CursorLoader;
+import android.content.Loader;
 import android.content.Intent;
 import android.database.Cursor;
 import android.os.Bundle;
@@ -26,6 +30,8 @@ import android.widget.ListAdapter;
 import android.widget.ListView;
 import android.widget.PopupMenu;
 
+import androidx.annotation.NonNull;
+
 import java.util.LinkedList;
 import java.util.List;
 
@@ -35,7 +41,9 @@ import ru.orangesoftware.financisto.utils.MenuItemInfo;
 import ru.orangesoftware.financisto.utils.MyPreferences;
 import ru.orangesoftware.financisto.utils.PinProtection;
 
-public abstract class AbstractListActivity extends ListActivity implements RefreshSupportedActivity {
+public abstract class AbstractListActivity extends ListActivity
+		implements RefreshSupportedActivity, LoaderManager.LoaderCallbacks<Cursor>
+{
 
 	protected static final int MENU_VIEW = Menu.FIRST + 1;
 	protected static final int MENU_EDIT = Menu.FIRST + 2;
@@ -45,10 +53,11 @@ public abstract class AbstractListActivity extends ListActivity implements Refre
 	private final int contentId;
 
 	protected LayoutInflater inflater;
-	protected Cursor cursor;
 	protected ListAdapter adapter;
 	protected DatabaseAdapter db;
 	protected ImageButton bAdd;
+
+	protected Parcelable listViewState;
 
 	protected boolean enablePin = true;
 
@@ -75,12 +84,8 @@ public abstract class AbstractListActivity extends ListActivity implements Refre
 		this.inflater = (LayoutInflater) getSystemService(Context.LAYOUT_INFLATER_SERVICE);
 		internalOnCreate(savedInstanceState);
 
-		cursor = createCursor();
-		if (cursor != null) {
-			startManagingCursor(cursor);
-		}
+		getLoaderManager().initLoader(0, null, this);
 
-		recreateAdapter();
 		getListView().setOnItemLongClickListener((parent, view, position, id) -> {
 			PopupMenu popupMenu = new PopupMenu(AbstractListActivity.this, view);
 			Menu menu = popupMenu.getMenu();
@@ -98,8 +103,7 @@ public abstract class AbstractListActivity extends ListActivity implements Refre
 	}
 
 	protected void recreateAdapter() {
-		adapter = createAdapter(cursor);
-		setListAdapter(adapter);
+		recreateCursor();
 	}
 
 	protected abstract Cursor createCursor();
@@ -174,21 +178,9 @@ public abstract class AbstractListActivity extends ListActivity implements Refre
 	protected abstract void viewItem(View v, int position, long id);
 
 	public void recreateCursor() {
-		Log.i("AbstractListActivity", "Recreating cursor");
-		Parcelable state = getListView().onSaveInstanceState();
-		try {
-			if (cursor != null) {
-				stopManagingCursor(cursor);
-				cursor.close();
-			}
-			cursor = createCursor();
-			if (cursor != null) {
-				startManagingCursor(cursor);
-				recreateAdapter();
-			}
-		} finally {
-			getListView().onRestoreInstanceState(state);
-		}
+		Log.i(getClass().getSimpleName(), "Recreating cursor");
+		listViewState = getListView().onSaveInstanceState();
+		getLoaderManager().restartLoader(0, null, this);
 	}
 
 	@Override
@@ -202,4 +194,35 @@ public abstract class AbstractListActivity extends ListActivity implements Refre
 		}
 	}
 
+	// LoaderManager.LoaderCallbacks<Cursor>
+
+	@SuppressLint("StaticFieldLeak")
+	@Override
+	public Loader<Cursor> onCreateLoader(int id, Bundle args) {
+		return new CursorLoader(this) {
+			@Override
+			public Cursor loadInBackground() {
+				return createCursor();
+			}
+		};
+	}
+
+	@Override
+	public void onLoadFinished(@NonNull Loader<Cursor> loader, Cursor data) {
+		adapter = createAdapter(data);
+		long t1 = System.currentTimeMillis();
+		setListAdapter(adapter);
+		long t2 = System.currentTimeMillis();
+		Log.d(this.getClass().getCanonicalName(), "setListAdapter: " + (t2 - t1));
+
+		if (listViewState != null) {
+			getListView().onRestoreInstanceState(listViewState);
+			Log.d(this.getClass().getCanonicalName(), "getListView().onRestoreInstanceState: " + (System.currentTimeMillis() - t2));
+			listViewState = null;
+		}
+	}
+
+	@Override
+	public void onLoaderReset(@NonNull Loader<Cursor> loader) {
+	}
 }

@@ -237,7 +237,7 @@ public class BudgetListFragment extends AbstractListFragment {
 
         @Override
         protected void onPostExecute(Total result) {
-            if (isRunning) {
+            if (isRunning && adapter != null) {
                 Utils u = new Utils(getActivity());
                 u.setTotal(totalText, result);
                 ((BudgetListAdapter) adapter).notifyDataSetChanged();

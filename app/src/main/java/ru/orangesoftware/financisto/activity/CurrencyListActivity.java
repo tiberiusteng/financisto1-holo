@@ -103,14 +103,14 @@ public class CurrencyListActivity extends AbstractListActivity {
 	protected void onActivityResult(int requestCode, int resultCode, Intent data) {
 		super.onActivityResult(requestCode, resultCode, data);
 		if (resultCode == RESULT_OK) {
-			cursor.requery();
+			recreateCursor();
 		}
 	}
 
 	@Override
 	protected void deleteItem(View v, int position, long id) {
 		if (db.deleteCurrency(id) == 1) {
-			cursor.requery();
+			recreateCursor();
 		} else {
 			new AlertDialog.Builder(this)
 					.setTitle(R.string.delete)

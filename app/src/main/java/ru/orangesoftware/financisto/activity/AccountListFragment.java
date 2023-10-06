@@ -227,7 +227,7 @@ public class AccountListFragment extends AbstractListFragment {
             c = db.getAllAccounts();
         }
         c.getCount();
-        Log.d(this.getTag(), "createCursor: " + (System.currentTimeMillis() - t1) + " ms");
+        Log.d(getClass().getSimpleName(), "createCursor: " + (System.currentTimeMillis() - t1) + " ms");
         return c;
     }
 

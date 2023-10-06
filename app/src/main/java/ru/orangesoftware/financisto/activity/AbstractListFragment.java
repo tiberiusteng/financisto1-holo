@@ -59,8 +59,6 @@ abstract public class AbstractListFragment extends ListFragment
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container,
                              @Nullable Bundle savedInstanceState)
     {
-        super.onCreateView(inflater, container, savedInstanceState);
-
         db = new DatabaseAdapter(getActivity());
         db.open();
 

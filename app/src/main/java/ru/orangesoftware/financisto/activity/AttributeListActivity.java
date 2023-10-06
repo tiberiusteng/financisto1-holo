@@ -61,7 +61,7 @@ public class AttributeListActivity extends AbstractListActivity {
 	protected void onActivityResult(int requestCode, int resultCode, Intent data) {
 		super.onActivityResult(requestCode, resultCode, data);
 		if (resultCode == RESULT_OK) {
-			cursor.requery();
+			recreateCursor();
 		}
 	}
 
@@ -75,7 +75,7 @@ public class AttributeListActivity extends AbstractListActivity {
 					@Override
 					public void onClick(DialogInterface arg0, int arg1) {
 						db.deleteAttribute(id);
-						cursor.requery();
+						recreateCursor();
 					}
 				})
 				.setNegativeButton(R.string.cancel, null)
