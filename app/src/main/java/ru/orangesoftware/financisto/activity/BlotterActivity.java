@@ -78,7 +78,6 @@ public class BlotterActivity extends AbstractListActivity implements BlotterOper
     protected ImageButton bTransfer;
     protected ImageButton bTemplate;
     protected ImageButton bSearch;
-    protected ImageButton bMenu;
 
     protected QuickActionGrid transactionActionGrid;
     protected QuickActionGrid addButtonActionGrid;
@@ -254,42 +253,42 @@ public class BlotterActivity extends AbstractListActivity implements BlotterOper
         });
 
         applyFilter();
-        applyPopupMenu();
+//        applyPopupMenu();
         calculateTotals();
         prepareTransactionActionGrid();
         prepareAddButtonActionGrid();
     }
 
-    private void applyPopupMenu() {
-        bMenu = findViewById(R.id.bMenu);
-        if (isAccountBlotter) {
-            bMenu.setOnClickListener(v -> {
-                PopupMenu popupMenu = new PopupMenu(BlotterActivity.this, bMenu);
-                long accountId = blotterFilter.getAccountId();
-                if (accountId != -1) {
-                    // get account type
-                    Account account = db.getAccount(accountId);
-                    AccountType type = AccountType.valueOf(account.type);
-                    if (type.isCreditCard) {
-                        // Show menu for Credit Cards - bill
-                        MenuInflater inflater = getMenuInflater();
-                        inflater.inflate(R.menu.ccard_blotter_menu, popupMenu.getMenu());
-                    } else {
-                        // Show menu for other accounts - monthly view
-                        MenuInflater inflater = getMenuInflater();
-                        inflater.inflate(R.menu.blotter_menu, popupMenu.getMenu());
-                    }
-                    popupMenu.setOnMenuItemClickListener(item -> {
-                        onPopupMenuSelected(item.getItemId());
-                        return true;
-                    });
-                    popupMenu.show();
-                }
-            });
-        } else {
-            bMenu.setVisibility(View.GONE);
-        }
-    }
+//    private void applyPopupMenu() {
+//        bMenu = findViewById(R.id.bMenu);
+//        if (isAccountBlotter) {
+//            bMenu.setOnClickListener(v -> {
+//                PopupMenu popupMenu = new PopupMenu(BlotterActivity.this, bMenu);
+//                long accountId = blotterFilter.getAccountId();
+//                if (accountId != -1) {
+//                    // get account type
+//                    Account account = db.getAccount(accountId);
+//                    AccountType type = AccountType.valueOf(account.type);
+//                    if (type.isCreditCard) {
+//                        // Show menu for Credit Cards - bill
+//                        MenuInflater inflater = getMenuInflater();
+//                        inflater.inflate(R.menu.ccard_blotter_menu, popupMenu.getMenu());
+//                    } else {
+//                        // Show menu for other accounts - monthly view
+//                        MenuInflater inflater = getMenuInflater();
+//                        inflater.inflate(R.menu.blotter_menu, popupMenu.getMenu());
+//                    }
+//                    popupMenu.setOnMenuItemClickListener(item -> {
+//                        onPopupMenuSelected(item.getItemId());
+//                        return true;
+//                    });
+//                    popupMenu.show();
+//                }
+//            });
+//        } else {
+//            bMenu.setVisibility(View.GONE);
+//        }
+//    }
 
     public void onPopupMenuSelected(int id) {
 

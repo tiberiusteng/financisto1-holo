@@ -22,7 +22,7 @@
 		android:fastScrollEnabled="true" />
 
 	<TextView
-		android:id="@id/android:empty"
+		android:id="@android:id/empty"
 		android:layout_width="fill_parent"
 		android:layout_height="wrap_content"
 		android:layout_weight="1"
@@ -93,10 +93,12 @@
 			style="@style/BottomBarButton"
 			android:src="@drawable/actionbar_filter" />
 
+		<!--
 		<ImageButton
 			android:id="@+id/bMenu"
 			style="@style/BottomBarButton"
 			android:src="@drawable/actionbar_dot_menu" />
+		-->
 
 		<include layout="@layout/total_text" />
 	</LinearLayout>

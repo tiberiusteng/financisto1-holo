@@ -124,6 +124,25 @@ public enum PeriodType implements LocalizableEnum {
             return new Period(PeriodType.THIS_AND_LAST_MONTH, lastMonth.start, thisMonth.end);
         }
     },
+    THIS_AND_LAST_YEAR(R.string.period_this_and_last_year, true, false) {
+        @Override
+        public Period calculatePeriod(long refTime) {
+            Calendar c = Calendar.getInstance();
+            c.setTimeInMillis(refTime);
+            c.add(Calendar.YEAR, -1);
+            c.set(Calendar.DAY_OF_YEAR, 1);
+            long start = DateUtils.startOfDay(c).getTimeInMillis();
+
+            c = Calendar.getInstance();
+            c.setTimeInMillis(refTime);
+            c.add(Calendar.YEAR, 1);
+            c.set(Calendar.DAY_OF_YEAR, 1);
+            c.add(Calendar.DAY_OF_YEAR, -1);
+            long end = DateUtils.endOfDay(c).getTimeInMillis();
+
+            return new Period(PeriodType.THIS_AND_LAST_YEAR, start, end);
+        }
+    },
     TOMORROW(R.string.period_tomorrow, false, true) {
         @Override
         public Period calculatePeriod(long refTime) {
