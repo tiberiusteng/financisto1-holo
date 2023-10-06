@@ -138,7 +138,7 @@ public class MenuListFragment extends ListFragment {
 
     @Subscribe(threadMode = ThreadMode.MAIN)
     public void doGoogleDriveRestore(MenuListActivity.StartDriveRestore e) {
-        ProgressDialog d = ProgressDialog.show(getContext(), null, this.getString(R.string.dropbox_loading_files), true);
+        ProgressDialog d = ProgressDialog.show(getContext(), null, this.getString(R.string.google_drive_loading_files), true);
         new GoogleDriveListFilesTask(getActivity(), d).execute();
     }
 

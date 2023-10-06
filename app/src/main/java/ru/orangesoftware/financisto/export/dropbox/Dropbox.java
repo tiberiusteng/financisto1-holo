@@ -109,7 +109,11 @@ public class Dropbox {
             try {
                 InputStream is = context.getContentResolver().openInputStream(uri);
                 try {
-                    FileMetadata fileMetadata = dropboxClient.files().uploadBuilder("/" + uri.getLastPathSegment()).withMode(WriteMode.ADD).uploadAndFinish(is);
+                    String fileName = uri.getLastPathSegment();
+                    FileMetadata fileMetadata = dropboxClient.files()
+                            .uploadBuilder("/" + fileName.substring(fileName.lastIndexOf("/") + 1))
+                            .withMode(WriteMode.ADD)
+                            .uploadAndFinish(is);
                     Log.i("Financisto", "Dropbox: The uploaded file's rev is: " + fileMetadata.getRev());
                     return fileMetadata;
                 } finally {

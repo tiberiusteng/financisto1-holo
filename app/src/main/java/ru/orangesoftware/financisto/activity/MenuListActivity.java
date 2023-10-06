@@ -153,7 +153,7 @@ public class MenuListActivity extends ListActivity {
 
     @Subscribe(threadMode = ThreadMode.MAIN)
     public void doGoogleDriveRestore(StartDriveRestore e) {
-        ProgressDialog d = ProgressDialog.show(this, null, this.getString(R.string.dropbox_loading_files), true);
+        ProgressDialog d = ProgressDialog.show(this, null, this.getString(R.string.google_drive_loading_files), true);
         new GoogleDriveListFilesTask(this, d).execute();
     }
 

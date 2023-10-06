@@ -121,10 +121,12 @@ public class GoogleDriveRESTClient {
             throw new ImportExportException(R.string.gdocs_folder_not_configured);
         }
 
+        String fileName = uri.getLastPathSegment();
+
         File fileMetadata = new File()
                 .setParents(Collections.singletonList(folderID))
                 .setMimeType(Export.BACKUP_MIME_TYPE)
-                .setName(uri.getLastPathSegment());
+                .setName(fileName.substring(fileName.lastIndexOf("/")+1));
 
         InputStreamContent mediaContent = new InputStreamContent(Export.BACKUP_MIME_TYPE,
                 context.getContentResolver().openInputStream(uri));
