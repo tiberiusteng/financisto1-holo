@@ -226,12 +226,13 @@
 
 		<activity android:name=".activity.CategoryActivity" android:label="@string/category"
 			android:configChanges="orientation|keyboardHidden"/>
-		
+
+		<!--
 		<activity android:name=".widget.QuickAmountInput"
 			android:label="@string/amount" android:theme="@style/AppDialog"/>
 		
 		<activity android:name=".widget.CalculatorInput"
-			android:label="@string/calculator" android:theme="@style/CalculatorDialog"/>
+			android:label="@string/calculator" android:theme="@style/CalculatorDialog"/> -->
 		
 		<activity android:name=".activity.BudgetActivity" android:label="@string/budgets"
 			android:configChanges="orientation|keyboardHidden"/>		

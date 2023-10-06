@@ -821,6 +821,7 @@
 
     <string name="period_this_and_last_week">This and last week</string>
     <string name="period_this_and_last_month">This and last month</string>
+    <string name="period_this_and_last_year">This and last year</string>
     <string name="period_custom">Custom</string>
 
     <string name="original_amount">Original Amount</string>

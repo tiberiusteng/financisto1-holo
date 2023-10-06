@@ -4,6 +4,13 @@ repositories {
     maven { url 'https://jitpack.io' }
 }
 
+configurations {
+    all {
+        exclude group: 'commons-logging', module: 'commons-logging'
+        exclude group: 'org.apache.httpcomponents', module: 'httpclient'
+    }
+}
+
 apply plugin: 'com.android.application'
 
 android {
@@ -38,8 +45,8 @@ android {
     }
 
     compileOptions {
-        sourceCompatibility JavaVersion.VERSION_1_8
-        targetCompatibility JavaVersion.VERSION_1_8
+        sourceCompatibility JavaVersion.VERSION_11
+        targetCompatibility JavaVersion.VERSION_11
     }
 }
 
@@ -53,22 +60,18 @@ configurations.all {
     }
 }
 
-configurations {
-    compile.exclude group: "org.apache.httpcomponents", module: "httpclient"
-}
-
 dependencies {
     annotationProcessor "org.androidannotations:androidannotations:$AAVersion"
     implementation "org.androidannotations:androidannotations-api:$AAVersion"
 
     //implementation 'com.android.support:support-v4:25.1.1'
-    implementation 'com.google.api-client:google-api-client:1.20.0'
-    implementation 'com.google.api-client:google-api-client-android:1.20.0'
+    implementation 'com.google.api-client:google-api-client:1.26.0'
+    implementation 'com.google.api-client:google-api-client-android:1.26.0'
     implementation 'com.google.apis:google-api-services-drive:v2-rev252-1.20.0'
-    implementation 'com.google.http-client:google-http-client:1.20.0'
-    implementation 'com.google.http-client:google-http-client-android:1.20.0'
-    implementation 'com.google.http-client:google-http-client-gson:1.20.0'
-    implementation 'com.google.http-client:google-http-client-jackson2:1.20.0'
+    implementation 'com.google.http-client:google-http-client:1.26.0'
+    implementation 'com.google.http-client:google-http-client-android:1.26.0'
+    implementation 'com.google.http-client:google-http-client-gson:1.26.0'
+    implementation 'com.google.http-client:google-http-client-jackson2:1.26.0'
     implementation 'com.dropbox.core:dropbox-core-sdk:5.2.0'
     implementation 'com.squareup.okhttp3:okhttp:3.11.0'
     //implementation 'com.google.code.gson:gson:2.4'
@@ -103,7 +106,6 @@ dependencies {
     implementation 'com.mtramin:rxfingerprint:2.2.1'
     implementation 'io.reactivex.rxjava2:rxjava:2.1.7'
     implementation files('libs/achartengine-1.2.0.jar')
-    //implementation files('libs/commons-logging-1.2.jar')
     implementation files('libs/CWAC-WakefulIntentService.jar')
     //implementation files('libs/google-api-client-1.17.0-rc.jar')
     //implementation files('libs/google-api-client-android-1.17.0-rc.jar')
@@ -112,7 +114,6 @@ dependencies {
     //implementation files('libs/google-http-client-android-1.17.0-rc.jar')
     //implementation files('libs/google-http-client-jackson2-1.17.0-rc.jar')
     //implementation files('libs/google-oauth-client-1.17.0-rc.jar')
-    //implementation files('libs/httpclient-4.0.3.jar')
     //implementation files('libs/httpcore-4.0.1.jar')
     implementation files('libs/httpmime-4.0.3.jar')
     implementation files('libs/json_simple-1.1.jar')

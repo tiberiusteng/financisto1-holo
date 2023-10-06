@@ -23,11 +23,12 @@
 		android:singleLine="true" android:text="0.00 $" android:layout_marginBottom="9dip"/>
 
 	<TextView android:id="@+id/label" android:layout_width="wrap_content"
-		android:layout_height="wrap_content" android:layout_toRightOf="@+id/divider"
+		android:layout_height="wrap_content"
 		android:layout_alignParentBottom="true" android:layout_marginBottom="8dip"
 		android:layout_marginTop="-10dip" android:singleLine="true"
 		android:ellipsize="marquee" android:textAppearance="?android:attr/textAppearanceSmall"		
 		android:visibility="invisible" android:layout_marginLeft="5dip"/>
+	<!-- android:layout_toRightOf="@+id/divider" -->
 
 	<TextView android:id="@+id/number" android:layout_width="wrap_content"
 		android:layout_height="wrap_content" android:layout_marginLeft="5dp"
@@ -37,12 +38,13 @@
 		android:ellipsize="marquee" android:textAppearance="?android:attr/textAppearanceSmall"/>
 
 	<TextView android:id="@+id/line1" android:layout_width="wrap_content"
-		android:layout_height="wrap_content" android:layout_toRightOf="@+id/divider"
+		android:layout_height="wrap_content"
 		android:layout_alignParentTop="true" android:layout_above="@id/label"
 		android:layout_alignWithParentIfMissing="true"
 		android:textAppearance="?android:attr/textAppearanceLarge"
 		android:singleLine="true" android:gravity="center_vertical"
 		android:text="line1" android:layout_marginLeft="11dp"
 		android:ellipsize="marquee" android:layout_toLeftOf="@id/icon"/>
+	<!-- android:layout_toRightOf="@+id/divider" -->
 
 </RelativeLayout>

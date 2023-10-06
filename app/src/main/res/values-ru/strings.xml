@@ -229,13 +229,11 @@
   <string name="gdocs_folder_not_found">Папка резервной копии на Google Drive не найдена.</string>
   <string name="gdocs_credentials_not_configured">Пожалуйста, укажите логин и пароль аккаунта Google в Настройках.</string>
   <string name="gdocs_folder_not_configured">Укажите папку резервной копии Google Drive.</string>
-  <string name="gdocs_login_failed">Логин или пароль аккаунта Google указаны неверно.</string>
   <string name="gdocs_backup_failed">Ошибка при отправке файла резервной копии в Google Drive. Попробуйте ещё раз.</string>
   <string name="gdocs_restore_failed">Ошибка при получении файла резервной копии. Попробуйте ещё раз.</string>
   <string name="gdocs_folder_error">Ошибка доступа к папке в Google Drive.</string>
   <string name="gdocs_service_error">Системная ошибка Google Drive.</string>
   <string name="gdocs_io_error">Ошибка связи с Google Drive.</string>
-  <string name="package_info_error">Не удалось получить информацию о пакете Financisto.</string>
   <string name="success">Успешно!</string>
   <string name="fail">Неудачно..</string>
   <string name="duplicate">Дублировать</string>
@@ -388,8 +386,6 @@
   <string name="month_x_nov">Ноябрь</string>
   <string name="month_x_dec">Декабрь</string>
   <string name="other">Другие</string>
-  <string name="send_error_reports">Посылать отчёты об ошибках</string>
-  <string name="send_error_reports_summary">Посылать анонимные отчёты об ошибках на orangesoftware.ru (требует перезапуска)</string>
   <string name="template_name">Название шаблона</string>
   <string name="transaction_templates">Шаблоны</string>
   <string name="transaction_template">Транзакция (Шаблон)</string>
@@ -695,19 +691,6 @@
   <string name="show_currency">Показать валюту</string>
   <string name="show_currency_summary">Показать выбор валюты при вводе новой транзакции</string>
   <string name="reconcile">Выверено</string>
-  <string name="flowzr_sync">Flowzr синхронизация</string>
-  <string name="flowzr_sync_error">Ошибка синхронизации</string>
-  <string name="flowzr_sync_error_no_network">Сеть не доступна</string>
-  <string name="flowzr_sync_inprogress">Синхронизация данных ...</string>
-  <string name="buy_subscription">Купить подписку</string>
-  <string name="visit_flowzr">Посетить Flowzr</string>
-  <string name="account_required">Требуется учетная запись.</string>
-  <string name="flowzr_sync_success">Успешно синхронизированно</string>
-  <string name="flowzr_choose_account">Выберите учетную запись для использования на Flowzr.com</string>
-  <string name="sync_from_zero">Полная синхронизация</string>
-  <string name="flowzr_account_setup">Учетная запись добавлена, пожалуйса перезапустите синхронизацию.</string>
-  <string name="flowzr_subscription_required">Требуется подписка.</string>
-  <string name="flowzr_terms_of_use">&lt;b&gt;Платная подписка&lt;/b&gt; необходима для пользования сервисом синхонизации Flowzr. Подписку можно бесплатно отменить в течении &lt;b&gt;14 дней&lt;/b&gt; пробного периода. Flowzr является сторонним сервисом, не связанным с Financisto. Используя этот сервис Вы соглашаетесь с Flowzr &lt;a href="http://www.flowzr.com/static/en/mobile/privacypolicy.html"&gt;Политикой безопасности&lt;/a&gt; и &lt;a href="http://www.flowzr.com/static/en/mobile/tos.html"&gt;Правилами пользования&lt;/a&gt;.</string>
   <string-array name="attribute_types">
   <item>Текст</item>
     <item>Число</item>

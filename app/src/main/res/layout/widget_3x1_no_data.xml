@@ -17,7 +17,7 @@
         <ImageView android:id="@+id/account_icon"
                    android:layout_width="wrap_content" android:layout_height="fill_parent"
                    android:src="@drawable/wallet_open" android:layout_marginRight="3dp"
-                   android:layout_toRightOf="@+id/financisto_icon"/>
+                   /> <!-- android:layout_toRightOf="@+id/financisto_icon" -->
 
         <TextView android:id="@+id/line1" android:layout_width="wrap_content"
                   android:layout_height="wrap_content" android:layout_toRightOf="@id/account_icon"
