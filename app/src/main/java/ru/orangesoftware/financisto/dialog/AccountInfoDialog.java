@@ -17,7 +17,6 @@ import android.view.View.OnClickListener;
 import android.widget.*;
 import ru.orangesoftware.financisto.R;
 import ru.orangesoftware.financisto.activity.AccountActivity;
-import ru.orangesoftware.financisto.activity.AccountListActivity;
 import ru.orangesoftware.financisto.db.DatabaseAdapter;
 import ru.orangesoftware.financisto.model.*;
 import ru.orangesoftware.financisto.utils.Utils;

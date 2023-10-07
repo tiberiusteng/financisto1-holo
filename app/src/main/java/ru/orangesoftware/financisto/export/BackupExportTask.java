@@ -14,7 +14,7 @@ public class BackupExportTask extends ImportExportAsyncTask {
 
     public volatile Uri backupFileUri;
 	
-	public BackupExportTask(Activity context, ProgressDialog dialog, boolean uploadOnline) {
+	public BackupExportTask(Context context, ProgressDialog dialog, boolean uploadOnline) {
 		super(context, dialog);
         this.uploadOnline = uploadOnline;
 	}

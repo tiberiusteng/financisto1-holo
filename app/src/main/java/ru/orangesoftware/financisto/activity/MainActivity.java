@@ -89,7 +89,7 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
-        new TabLayoutMediator(tabLayout, viewPager,
+        new TabLayoutMediator(tabLayout, viewPager, true, false,
                 (tab, position) -> {
                     switch (position) {
                         case 0:
@@ -118,8 +118,7 @@ public class MainActivity extends AppCompatActivity {
                             tabs.put("menu", tab);
                             break;
                     }
-                }
-        ).attach();
+                }).attach();
     }
 
     @Override

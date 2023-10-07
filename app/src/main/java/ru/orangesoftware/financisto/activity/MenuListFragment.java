@@ -55,7 +55,7 @@ public class MenuListFragment extends ListFragment {
 
     @Override
     public void onListItemClick(ListView l, View v, int position, long id) {
-        MenuListItem.values()[position].call(getActivity());
+        MenuListItem.values()[position].call(this);
     }
 
     @OnActivityResult(MenuListItem.ACTIVITY_RESTORE_DATABASE)

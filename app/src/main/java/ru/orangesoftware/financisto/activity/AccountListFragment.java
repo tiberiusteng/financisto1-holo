@@ -94,7 +94,7 @@ public class AccountListFragment extends AbstractListFragment {
     private void handlePopupMenu(int id) {
         switch (id) {
             case R.id.backup:
-                MenuListItem.MENU_BACKUP.call(getActivity());
+                MenuListItem.MENU_BACKUP.call(this);
                 break;
             case R.id.go_to_menu:
                 GreenRobotBus_.getInstance_(getActivity()).post(new SwitchToMenuTabEvent());

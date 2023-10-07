@@ -1,44 +1,37 @@
-/*******************************************************************************
- * Copyright (c) 2010 Denis Solonenko.
- * All rights reserved. This program and the accompanying materials
- * are made available under the terms of the GNU Public License v2.0
- * which accompanies this distribution, and is available at
- * http://www.gnu.org/licenses/old-licenses/gpl-2.0.html
- * 
- * Contributors:
- *     Denis Solonenko - initial API and implementation
- ******************************************************************************/
 package ru.orangesoftware.financisto.activity;
 
-import android.database.Cursor;
+import android.content.Context;
+import android.content.Intent;
 import android.os.Bundle;
-import android.view.View;
-import android.widget.ListAdapter;
-import ru.orangesoftware.financisto.adapter.TransactionsListAdapter;
-import ru.orangesoftware.financisto.blotter.BlotterTotalCalculationTask;
-import ru.orangesoftware.financisto.blotter.TotalCalculationTask;
 
-public class SplitsBlotterActivity extends BlotterActivity {
+import androidx.appcompat.app.AppCompatActivity;
 
-	@Override
-	protected void internalOnCreate(Bundle savedInstanceState) {
-		super.internalOnCreate(savedInstanceState);
-		bFilter.setVisibility(View.GONE);
-	}
-	
-	@Override
-	protected Cursor createCursor() {
-        return db.getBlotterForAccountWithSplits(blotterFilter);
+import ru.orangesoftware.financisto.R;
+import ru.orangesoftware.financisto.utils.MyPreferences;
+
+public class SplitsBlotterActivity extends AppCompatActivity {
+	public SplitsBlotterActivity() {
+		super(R.layout.fragment_container);
 	}
 
 	@Override
-	protected ListAdapter createAdapter(Cursor cursor) {
-		return new TransactionsListAdapter(this, db, cursor);
+	protected void attachBaseContext(Context base) {
+		super.attachBaseContext(MyPreferences.switchLocale(base));
 	}
 
-    @Override
-    protected TotalCalculationTask createTotalCalculationTask() {
-        return new BlotterTotalCalculationTask(this, db, blotterFilter, totalText);
-    }
-
+	@Override
+	protected void onCreate(Bundle savedInstanceState) {
+		super.onCreate(savedInstanceState);
+		Intent intent = getIntent();
+		Bundle args = null;
+		if (intent != null) {
+			args = intent.getExtras();
+		}
+		if (savedInstanceState == null) {
+			getSupportFragmentManager().beginTransaction()
+					.setReorderingAllowed(true)
+					.add(R.id.fragment_container_view, SplitsBlotterFragment.class, args)
+					.commit();
+		}
+	}
 }

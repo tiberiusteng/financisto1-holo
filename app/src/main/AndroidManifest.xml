@@ -161,7 +161,8 @@
 		<activity android:name=".activity.BudgetBlotterActivity" android:label="@string/budget"
 			android:theme="@style/AppThemeCompat" />
 
-		<activity android:name=".activity.SplitsBlotterActivity" android:label="@string/report"/>
+		<activity android:name=".activity.SplitsBlotterActivity" android:label="@string/report"
+			android:theme="@style/AppThemeCompat" />
 
 		<activity android:name=".activity.RecurActivity" android:label="@string/recur"
 			android:icon="@drawable/icon_transfer"
@@ -186,8 +187,6 @@
 		<activity android:name=".activity.ExchangeRateActivity" android:label="@string/exchange_rate"
 			  android:configChanges="orientation|keyboardHidden"/>
 
-		<activity android:name=".activity.AccountListActivity" android:label="@string/accounts"/>
-		
 		<activity android:name=".activity.CategoryListActivity2" android:label="@string/categories"/>
 
 		<activity android:name=".activity.AttributeListActivity" android:label="@string/attributes"/>

@@ -32,14 +32,13 @@ import static ru.orangesoftware.financisto.export.Export.uploadBackupFileToGoogl
 
 public abstract class ImportExportAsyncTask extends AsyncTask<Uri, String, Object> {
 
-    protected final Activity context;
+    protected final Context context;
     protected final ProgressDialog dialog;
     private boolean showResultMessage = true;
-    private final int REQUEST_AUTHORIZATION = 1;
 
     private ImportExportAsyncTaskListener listener;
 
-    public ImportExportAsyncTask(Activity context, ProgressDialog dialog) {
+    public ImportExportAsyncTask(Context context, ProgressDialog dialog) {
         this.dialog = dialog;
         this.context = context;
     }
@@ -124,7 +123,7 @@ public abstract class ImportExportAsyncTask extends AsyncTask<Uri, String, Objec
         }
 
         if (result instanceof UserRecoverableAuthIOException) {
-            context.startActivityForResult(((UserRecoverableAuthIOException)result).getIntent(), REQUEST_AUTHORIZATION);
+            context.startActivity(((UserRecoverableAuthIOException)result).getIntent());
         }
 
         if (result instanceof Exception)
