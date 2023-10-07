@@ -333,6 +333,9 @@
   <string name="calculating">計算中..</string>
   <string name="budget_mode">擇一限制</string>
   <string name="budget_mode_summary">只要分類或專案其中之一符合條件就納入預算</string>
+  <string name="account_by_currency">所有 %s 帳戶</string>
+  <string name="budget_type_saving">儲蓄預算</string>
+  <string name="budget_type_saving_summary">這是要累積收入指定金額的預算</string>
   <string name="gdocs_backup">Google Drive 備份</string>
   <string name="user_login">帳號</string>
   <string name="user_login_summary">Google 帳戶名稱</string>

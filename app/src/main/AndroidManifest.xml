@@ -178,10 +178,6 @@
 		
 		<activity android:name=".activity.CurrencyListActivity" android:label="@string/currencies"/>
 
-		<activity
-			android:name=".activity.MenuListActivity_"
-			android:label="@string/menu" />
-
 		<activity android:name=".activity.ExchangeRatesListActivity" android:label="@string/exchange_rates"/>
 
 		<activity android:name=".activity.ExchangeRateActivity" android:label="@string/exchange_rate"

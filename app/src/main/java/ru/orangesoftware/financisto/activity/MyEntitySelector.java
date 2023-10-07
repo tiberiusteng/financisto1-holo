@@ -145,15 +145,19 @@ public abstract class MyEntitySelector<T extends MyEntity, A extends AbstractAct
     }
 
     private void clearSelection() {
-        text.setText(defaultValueResId);
+        if (text != null) {
+            text.setText(defaultValueResId);
+        }
         selectedEntityId = 0;
         for (MyEntity e : getEntities()) e.setChecked(false);
         showHideMinusBtn(false);
     }
 
     private void showHideMinusBtn(boolean show) {
-        ImageView minusBtn = (ImageView) text.getTag(R.id.bMinus);
-        if (minusBtn != null) minusBtn.setVisibility(show ? View.VISIBLE : View.GONE);
+        if (text != null) {
+            ImageView minusBtn = (ImageView) text.getTag(R.id.bMinus);
+            if (minusBtn != null) minusBtn.setVisibility(show ? View.VISIBLE : View.GONE);
+        }
     }
 
     private void pickEntity() {
