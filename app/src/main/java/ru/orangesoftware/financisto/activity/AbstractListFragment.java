@@ -35,7 +35,6 @@ import ru.orangesoftware.financisto.utils.PinProtection;
 abstract public class AbstractListFragment extends ListFragment
         implements RefreshSupportedActivity, LoaderManager.LoaderCallbacks<Cursor>
 {
-
     protected static final int MENU_VIEW = Menu.FIRST + 1;
     protected static final int MENU_EDIT = Menu.FIRST + 2;
     protected static final int MENU_DELETE = Menu.FIRST + 3;
@@ -95,7 +94,9 @@ abstract public class AbstractListFragment extends ListFragment
         });
 
         bAdd = view.findViewById(R.id.bAdd);
-        bAdd.setOnClickListener(arg0 -> addItem());
+        if (bAdd != null) {
+            bAdd.setOnClickListener(arg0 -> addItem());
+        }
     }
 
     @Override

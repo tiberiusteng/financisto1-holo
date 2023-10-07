@@ -12,7 +12,6 @@ package ru.orangesoftware.financisto.report;
 
 import android.content.Context;
 import android.database.Cursor;
-import ru.orangesoftware.financisto.activity.BlotterActivity;
 import ru.orangesoftware.financisto.activity.SplitsBlotterActivity;
 import ru.orangesoftware.financisto.blotter.BlotterFilter;
 import ru.orangesoftware.financisto.filter.WhereFilter;
@@ -31,6 +30,8 @@ import java.util.Iterator;
 import java.util.List;
 
 import static ru.orangesoftware.financisto.db.DatabaseHelper.V_REPORT_SUB_CATEGORY;
+
+import androidx.appcompat.app.AppCompatActivity;
 
 public class SubCategoryReport extends Report {
 
@@ -138,7 +139,7 @@ public class SubCategoryReport extends Report {
     }
 
     @Override
-    protected Class<? extends BlotterActivity> getBlotterActivityClass() {
+    protected Class<? extends AppCompatActivity> getBlotterActivityClass() {
         return SplitsBlotterActivity.class;
     }
 

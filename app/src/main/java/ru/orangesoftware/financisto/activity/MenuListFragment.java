@@ -131,13 +131,13 @@ public class MenuListFragment extends ListFragment {
     // google drive
 
     @Subscribe(threadMode = ThreadMode.MAIN)
-    public void doGoogleDriveBackup(MenuListActivity.StartDriveBackup e) {
+    public void doGoogleDriveBackup(StartDriveBackup e) {
         ProgressDialog d = ProgressDialog.show(getContext(), null, getString(R.string.backup_database_gdocs_inprogress), true);
         new GoogleDriveBackupTask(getActivity(), d).execute();
     }
 
     @Subscribe(threadMode = ThreadMode.MAIN)
-    public void doGoogleDriveRestore(MenuListActivity.StartDriveRestore e) {
+    public void doGoogleDriveRestore(StartDriveRestore e) {
         ProgressDialog d = ProgressDialog.show(getContext(), null, this.getString(R.string.google_drive_loading_files), true);
         new GoogleDriveListFilesTask(getActivity(), d).execute();
     }
@@ -204,13 +204,13 @@ public class MenuListFragment extends ListFragment {
     }
 
     @Subscribe(threadMode = ThreadMode.MAIN)
-    public void doDropboxBackup(MenuListActivity.StartDropboxBackup e) {
+    public void doDropboxBackup(StartDropboxBackup e) {
         ProgressDialog d = ProgressDialog.show(getContext(), null, this.getString(R.string.backup_database_dropbox_inprogress), true);
         new DropboxBackupTask(getActivity(), d).execute();
     }
 
     @Subscribe(threadMode = ThreadMode.MAIN)
-    public void doDropboxRestore(MenuListActivity.StartDropboxRestore e) {
+    public void doDropboxRestore(StartDropboxRestore e) {
         ProgressDialog d = ProgressDialog.show(getContext(), null, this.getString(R.string.dropbox_loading_files), true);
         new DropboxListFilesTask(getActivity(), d).execute();
     }

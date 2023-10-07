@@ -8,10 +8,8 @@ import android.content.Intent;
 import android.database.Cursor;
 import android.os.Bundle;
 import android.util.Log;
-import android.view.LayoutInflater;
 import android.view.MenuInflater;
 import android.view.View;
-import android.view.ViewGroup;
 import android.widget.ImageButton;
 import android.widget.ListAdapter;
 import android.widget.PopupMenu;
@@ -170,7 +168,7 @@ public class AccountListFragment extends AbstractListFragment {
         calculateTotals();
     }
 
-    private AccountListActivity.AccountTotalsCalculationTask totalCalculationTask;
+    private AccountTotalsCalculationTask totalCalculationTask;
 
     private void calculateTotals() {
         if (totalCalculationTask != null) {
@@ -179,7 +177,7 @@ public class AccountListFragment extends AbstractListFragment {
         }
         TextView totalText = getView().findViewById(R.id.total);
         totalText.setOnClickListener(view -> showTotals());
-        totalCalculationTask = new AccountListActivity.AccountTotalsCalculationTask(getContext(), db, totalText);
+        totalCalculationTask = new AccountTotalsCalculationTask(getContext(), db, totalText);
         totalCalculationTask.execute();
     }
 

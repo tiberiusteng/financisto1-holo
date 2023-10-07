@@ -14,7 +14,6 @@ import android.text.Editable;
 import android.text.TextWatcher;
 import android.util.Log;
 import android.view.LayoutInflater;
-import android.view.MenuInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.inputmethod.InputMethodManager;
@@ -22,7 +21,6 @@ import android.widget.EditText;
 import android.widget.FrameLayout;
 import android.widget.ImageButton;
 import android.widget.ListAdapter;
-import android.widget.PopupMenu;
 import android.widget.TextView;
 import android.widget.Toast;
 import android.window.OnBackInvokedCallback;
@@ -30,6 +28,8 @@ import android.window.OnBackInvokedDispatcher;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.appcompat.app.ActionBar;
+import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.os.BuildCompat;
 
 import java.util.List;
@@ -47,7 +47,6 @@ import ru.orangesoftware.financisto.db.DatabaseAdapter;
 import ru.orangesoftware.financisto.dialog.TransactionInfoDialog;
 import ru.orangesoftware.financisto.filter.WhereFilter;
 import ru.orangesoftware.financisto.model.Account;
-import ru.orangesoftware.financisto.model.AccountType;
 import ru.orangesoftware.financisto.model.Transaction;
 import ru.orangesoftware.financisto.utils.IntegrityCheckRunningBalance;
 import ru.orangesoftware.financisto.utils.MenuItemInfo;
@@ -121,7 +120,6 @@ public class BlotterFragment extends AbstractListFragment implements BlotterOper
     }
 
     @Override
-    @BuildCompat.PrereleaseSdkCheck
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
     }
@@ -153,24 +151,32 @@ public class BlotterFragment extends AbstractListFragment implements BlotterOper
 
         if (showAllBlotterButtons) {
             bTransfer = view.findViewById(R.id.bTransfer);
-            bTransfer.setVisibility(View.VISIBLE);
-            bTransfer.setOnClickListener(arg0 -> addItem(NEW_TRANSFER_REQUEST, TransferActivity.class));
+            if (bTransfer != null) {
+                bTransfer.setVisibility(View.VISIBLE);
+                bTransfer.setOnClickListener(arg0 -> addItem(NEW_TRANSFER_REQUEST, TransferActivity.class));
+            }
 
             bTemplate = view.findViewById(R.id.bTemplate);
-            bTemplate.setVisibility(View.VISIBLE);
-            bTemplate.setOnClickListener(v -> createFromTemplate());
+            if (bTemplate != null) {
+                bTemplate.setVisibility(View.VISIBLE);
+                bTemplate.setOnClickListener(v -> createFromTemplate());
+            }
         }
 
         bFilter = view.findViewById(R.id.bFilter);
-        bFilter.setOnClickListener(v -> {
-            Intent intent = new Intent(getContext(), BlotterFilterActivity.class);
-            blotterFilter.toIntent(intent);
-            intent.putExtra(BlotterFilterActivity.IS_ACCOUNT_FILTER, isAccountBlotter && blotterFilter.getAccountId() > 0);
-            startActivityForResult(intent, FILTER_REQUEST);
-        });
+        if (bFilter != null) {
+            bFilter.setOnClickListener(v -> {
+                Intent intent = new Intent(getContext(), BlotterFilterActivity.class);
+                blotterFilter.toIntent(intent);
+                intent.putExtra(BlotterFilterActivity.IS_ACCOUNT_FILTER, isAccountBlotter && blotterFilter.getAccountId() > 0);
+                startActivityForResult(intent, FILTER_REQUEST);
+            });
+        }
 
         totalText = view.findViewById(R.id.total);
-        totalText.setOnClickListener(v -> showTotals());
+        if (totalText != null) {
+            totalText.setOnClickListener(v -> showTotals());
+        }
 
         Bundle args = getArguments();
         if (args != null) {
@@ -186,73 +192,77 @@ public class BlotterFragment extends AbstractListFragment implements BlotterOper
         }
 
         bSearch = view.findViewById(R.id.bSearch);
-        bSearch.setOnClickListener(method -> {
-            EditText searchText = view.findViewById(R.id.search_text);
-            FrameLayout searchLayout = view.findViewById(R.id.search_text_frame);
-            ImageButton searchTextClearButton = view.findViewById(R.id.search_text_clear);
-            InputMethodManager imm = (InputMethodManager) getContext().getSystemService(Context.INPUT_METHOD_SERVICE);
+        if (bSearch != null) {
+            bSearch.setOnClickListener(method -> {
+                EditText searchText = view.findViewById(R.id.search_text);
+                FrameLayout searchLayout = view.findViewById(R.id.search_text_frame);
+                ImageButton searchTextClearButton = view.findViewById(R.id.search_text_clear);
+                InputMethodManager imm = (InputMethodManager) getContext().getSystemService(Context.INPUT_METHOD_SERVICE);
 
-            searchText.setOnFocusChangeListener((v, b) -> {
-                if (!v.hasFocus()) {
+                searchText.setOnFocusChangeListener((v, b) -> {
+                    if (!v.hasFocus()) {
+                        imm.hideSoftInputFromWindow(searchLayout.getWindowToken(), 0);
+                    }
+                });
+
+                searchTextClearButton.setOnClickListener(v -> {
+                    searchText.setText("");
+                });
+
+                if (searchLayout.getVisibility() == View.VISIBLE) {
                     imm.hideSoftInputFromWindow(searchLayout.getWindowToken(), 0);
+                    searchLayout.setVisibility(View.GONE);
+                    if (BuildCompat.isAtLeastT()) {
+                        view.findOnBackInvokedDispatcher().unregisterOnBackInvokedCallback(backCallback);
+                    }
+                    return;
                 }
-            });
 
-            searchTextClearButton.setOnClickListener(v -> {
-                searchText.setText("");
-            });
-
-            if (searchLayout.getVisibility() == View.VISIBLE) {
-                imm.hideSoftInputFromWindow(searchLayout.getWindowToken(), 0);
-                searchLayout.setVisibility(View.GONE);
+                searchLayout.setVisibility(View.VISIBLE);
+                searchText.requestFocusFromTouch();
+                imm.showSoftInput(searchText, InputMethodManager.SHOW_IMPLICIT);
                 if (BuildCompat.isAtLeastT()) {
-                    view.findOnBackInvokedDispatcher().unregisterOnBackInvokedCallback(backCallback);
+                    view.findOnBackInvokedDispatcher().registerOnBackInvokedCallback(
+                            OnBackInvokedDispatcher.PRIORITY_DEFAULT, backCallback);
                 }
-                return;
-            }
 
-            searchLayout.setVisibility(View.VISIBLE);
-            searchText.requestFocusFromTouch();
-            imm.showSoftInput(searchText, InputMethodManager.SHOW_IMPLICIT);
-            if (BuildCompat.isAtLeastT()) {
-                view.findOnBackInvokedDispatcher().registerOnBackInvokedCallback(
-                        OnBackInvokedDispatcher.PRIORITY_DEFAULT, backCallback);
-            }
-
-            searchText.addTextChangedListener(new TextWatcher() {
-                @Override
-                public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {}
-
-                @Override
-                public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {}
-
-                @Override
-                public void afterTextChanged(Editable editable) {
-                    ImageButton clearButton = view.findViewById(R.id.search_text_clear);
-                    String text = editable.toString();
-                    blotterFilter.remove(BlotterFilter.NOTE);
-
-                    if (!text.isEmpty()) {
-                        blotterFilter.contains(BlotterFilter.NOTE, text);
-                        clearButton.setVisibility(View.VISIBLE);
-                    } else {
-                        clearButton.setVisibility(View.GONE);
+                searchText.addTextChangedListener(new TextWatcher() {
+                    @Override
+                    public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {
                     }
 
-                    recreateCursor();
-                    applyFilter();
-                    saveFilter();
+                    @Override
+                    public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {
+                    }
+
+                    @Override
+                    public void afterTextChanged(Editable editable) {
+                        ImageButton clearButton = view.findViewById(R.id.search_text_clear);
+                        String text = editable.toString();
+                        blotterFilter.remove(BlotterFilter.NOTE);
+
+                        if (!text.isEmpty()) {
+                            blotterFilter.contains(BlotterFilter.NOTE, text);
+                            clearButton.setVisibility(View.VISIBLE);
+                        } else {
+                            clearButton.setVisibility(View.GONE);
+                        }
+
+                        recreateCursor();
+                        applyFilter();
+                        saveFilter();
+                    }
+                });
+
+                if (blotterFilter.get(BlotterFilter.NOTE) != null) {
+                    String searchFilterText = blotterFilter.get(BlotterFilter.NOTE).getStringValue();
+                    if (!searchFilterText.isEmpty()) {
+                        searchFilterText = searchFilterText.substring(1, searchFilterText.length() - 1);
+                        searchText.setText(searchFilterText);
+                    }
                 }
             });
-
-            if (blotterFilter.get(BlotterFilter.NOTE) != null) {
-                String searchFilterText = blotterFilter.get(BlotterFilter.NOTE).getStringValue();
-                if (!searchFilterText.isEmpty()) {
-                    searchFilterText = searchFilterText.substring(1, searchFilterText.length() - 1);
-                    searchText.setText(searchFilterText);
-                }
-            }
-        });
+        }
 
         applyFilter();
 //        applyPopupMenu();
@@ -563,9 +573,9 @@ public class BlotterFragment extends AbstractListFragment implements BlotterOper
     }
 
     private void createTransactionFromTemplate(Intent data) {
-        long templateId = data.getLongExtra(SelectTemplateActivity.TEMPATE_ID, -1);
-        int multiplier = data.getIntExtra(SelectTemplateActivity.MULTIPLIER, 1);
-        boolean edit = data.getBooleanExtra(SelectTemplateActivity.EDIT_AFTER_CREATION, false);
+        long templateId = data.getLongExtra(SelectTemplateFragment.TEMPLATE_ID, -1);
+        int multiplier = data.getIntExtra(SelectTemplateFragment.MULTIPLIER, 1);
+        boolean edit = data.getBooleanExtra(SelectTemplateFragment.EDIT_AFTER_CREATION, false);
         if (templateId > 0) {
             long id = duplicateTransaction(templateId, multiplier);
             Transaction t = db.getTransaction(id);
@@ -591,7 +601,11 @@ public class BlotterFragment extends AbstractListFragment implements BlotterOper
         }
         String title = blotterFilter.getTitle();
         if (title != null) {
-            getActivity().setTitle(getString(R.string.blotter) + " : " + title);
+            ActionBar actionBar = ((AppCompatActivity) getActivity()).getSupportActionBar();
+            if (actionBar != null) {
+                actionBar.setTitle(title);
+                actionBar.setSubtitle(R.string.blotter);
+            }
         }
         updateFilterImage();
     }

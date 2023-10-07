@@ -22,6 +22,8 @@ import ru.orangesoftware.financisto.model.Currency;
 
 import static ru.orangesoftware.financisto.db.DatabaseHelper.V_REPORT_CATEGORY;
 
+import androidx.appcompat.app.AppCompatActivity;
+
 public class CategoryReportAll extends Report {
 
 	public CategoryReportAll(Context context, Currency currency) {
@@ -46,7 +48,7 @@ public class CategoryReportAll extends Report {
     }
 
     @Override
-    protected Class<? extends BlotterActivity> getBlotterActivityClass() {
+    protected Class<? extends AppCompatActivity> getBlotterActivityClass() {
         return SplitsBlotterActivity.class;
     }
 

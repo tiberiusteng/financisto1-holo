@@ -25,7 +25,6 @@ import android.widget.Toast;
 import java.util.List;
 
 import ru.orangesoftware.financisto.R;
-import ru.orangesoftware.financisto.activity.BlotterActivity;
 import ru.orangesoftware.financisto.activity.BlotterOperations;
 import ru.orangesoftware.financisto.db.DatabaseAdapter;
 import ru.orangesoftware.financisto.model.Account;

@@ -14,28 +14,25 @@
 		android:layout_width="fill_parent"
 		android:paddingTop="2dp"
 		style="@style/MassOpActionDropdown">
-		<Spinner android:layout_height="wrap_content"
-			android:layout_width="fill_parent" android:id="@+id/spOperation" />
+		<Spinner
+			android:id="@+id/spOperation"
+			android:layout_width="fill_parent"
+			android:layout_height="wrap_content" />
 	</LinearLayout>
-	<ListView android:id="@android:id/list" android:layout_width="fill_parent"
-		android:layout_weight="1" android:layout_height="wrap_content">
-	</ListView>
-	<TextView android:id="@id/android:empty" android:layout_width="fill_parent"
-		android:layout_height="wrap_content" android:layout_weight="1"
-		android:gravity="center" android:text="@string/mass_operations_use_filter" />
-	<LinearLayout android:layout_height="wrap_content"
-		android:layout_width="fill_parent" android:background="#FFF"
-		android:paddingTop="2dp">
-		<ImageButton android:layout_width="wrap_content"
-			android:layout_height="wrap_content" android:id="@+id/bFilter"
+		<ListView android:id="@android:id/list" android:layout_width="fill_parent"
+			android:layout_weight="1" android:layout_height="wrap_content">
+		</ListView>
+		<TextView android:id="@id/android:empty" android:layout_width="fill_parent"
+			android:layout_height="wrap_content" android:layout_weight="1"
+			android:gravity="center" android:text="@string/mass_operations_use_filter" />
+	<LinearLayout style="@style/BottomBar">
+		<ImageButton style="@style/BottomBarButton" android:id="@+id/bFilter"
 			android:src="@drawable/ic_menu_filter_off" />
-		<ImageButton android:layout_width="wrap_content"
-			android:layout_height="wrap_content" android:src="@drawable/btn_check_all"
+		<ImageButton style="@style/BottomBarButton" android:src="@drawable/btn_check_all"
 			android:id="@+id/bCheckAll" />
-		<ImageButton android:layout_width="wrap_content"
-			android:layout_height="wrap_content" android:src="@drawable/btn_uncheck_all"
+		<ImageButton style="@style/BottomBarButton" android:src="@drawable/btn_uncheck_all"
 			android:id="@+id/bUncheckAll" />
 		<Button android:id="@+id/proceed" android:text="@string/proceed"
-			android:layout_width="fill_parent" android:layout_height="fill_parent" />
+			style="@style/BottomBarButton" />
 	</LinearLayout>
 </LinearLayout>

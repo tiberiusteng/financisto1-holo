@@ -1,27 +1,25 @@
-/*******************************************************************************
- * Copyright (c) 2010 Denis Solonenko.
- * All rights reserved. This program and the accompanying materials
- * are made available under the terms of the GNU Public License v2.0
- * which accompanies this distribution, and is available at
- * http://www.gnu.org/licenses/old-licenses/gpl-2.0.html
- * <p/>
- * Contributors:
- * Denis Solonenko - initial API and implementation
- ******************************************************************************/
 package ru.orangesoftware.financisto.activity;
 
-import android.app.Activity;
-import android.app.TabActivity;
 import android.content.Context;
-import android.content.Intent;
 import android.database.sqlite.SQLiteDatabase;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.Window;
-import android.widget.TabHost;
+
+import androidx.annotation.NonNull;
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.content.res.ResourcesCompat;
+import androidx.fragment.app.Fragment;
+import androidx.viewpager2.adapter.FragmentStateAdapter;
+import androidx.viewpager2.widget.ViewPager2;
+
+import com.google.android.material.tabs.TabLayout;
+import com.google.android.material.tabs.TabLayoutMediator;
 
 import org.greenrobot.eventbus.Subscribe;
 import org.greenrobot.eventbus.ThreadMode;
+
+import java.util.HashMap;
 
 import ru.orangesoftware.financisto.R;
 import ru.orangesoftware.financisto.bus.GreenRobotBus;
@@ -35,9 +33,11 @@ import ru.orangesoftware.financisto.utils.CurrencyCache;
 import ru.orangesoftware.financisto.utils.MyPreferences;
 import ru.orangesoftware.financisto.utils.PinProtection;
 
-public class MainActivity extends TabActivity implements TabHost.OnTabChangeListener {
-
+public class MainActivity extends AppCompatActivity {
     private GreenRobotBus greenRobotBus;
+    private Fragment fragments[];
+    HashMap<String, TabLayout.Tab> tabs;
+    private TabLayout tabLayout;
 
     @Override
     protected void attachBaseContext(Context base) {
@@ -49,32 +49,77 @@ public class MainActivity extends TabActivity implements TabHost.OnTabChangeList
         super.onCreate(savedInstanceState);
 
         greenRobotBus = GreenRobotBus_.getInstance_(this);
+        supportRequestWindowFeature(Window.FEATURE_NO_TITLE);
 
-        requestWindowFeature(Window.FEATURE_NO_TITLE);
+        setContentView(R.layout.main2);
 
         initialLoad();
 
-        final TabHost tabHost = getTabHost();
+        tabLayout = findViewById(R.id.tabs);
+        ViewPager2 viewPager = findViewById(R.id.viewpager);
 
-        setupAccountsTab(tabHost);
-        setupBlotterTab(tabHost);
-        setupBudgetsTab(tabHost);
-        setupReportsTab(tabHost);
-        setupMenuTab(tabHost);
+        viewPager.setUserInputEnabled(false);
 
-        MyPreferences.StartupScreen screen = MyPreferences.getStartupScreen(this);
-        tabHost.setCurrentTabByTag(screen.tag);
-        tabHost.setOnTabChangedListener(this);
-    }
+        fragments = new Fragment[]{
+                new AccountListFragment(),
+                new BlotterFragment(),
+                new BudgetListFragment(),
+                new ReportsListFragment(),
+                new MenuListFragment_()
+        };
+        tabs = new HashMap<>();
 
-    @Subscribe(threadMode = ThreadMode.MAIN)
-    public void onSwitchToMenuTab(SwitchToMenuTabEvent event) {
-        getTabHost().setCurrentTabByTag("menu");
-    }
+        viewPager.setAdapter(new FragmentStateAdapter(this) {
+            @NonNull
+            @Override
+            public Fragment createFragment(int position) {
+                return fragments[position];
+            }
 
-    @Subscribe(threadMode = ThreadMode.MAIN)
-    public void onRefreshCurrentTab(RefreshCurrentTab e) {
-        refreshCurrentTab();
+            @Override
+            public int getItemCount() {
+                return fragments.length;
+            }
+        });
+
+        viewPager.registerOnPageChangeCallback(new ViewPager2.OnPageChangeCallback() {
+            @Override
+            public void onPageSelected(int position) {
+                refreshCurrentTab();
+            }
+        });
+
+        new TabLayoutMediator(tabLayout, viewPager,
+                (tab, position) -> {
+                    switch (position) {
+                        case 0:
+                            tab.setText(getString(R.string.accounts))
+                                    .setIcon(ResourcesCompat.getDrawable(getResources(), R.drawable.ic_tab_accounts, getTheme()));
+                            tabs.put("accounts", tab);
+                            break;
+                        case 1:
+                            tab.setText(getString(R.string.blotter))
+                                    .setIcon(ResourcesCompat.getDrawable(getResources(), R.drawable.ic_tab_blotter, getTheme()));
+                            tabs.put("blotter", tab);
+                            break;
+                        case 2:
+                            tab.setText(getString(R.string.budgets))
+                                    .setIcon(ResourcesCompat.getDrawable(getResources(), R.drawable.ic_tab_budgets, getTheme()));
+                            tabs.put("budgets", tab);
+                            break;
+                        case 3:
+                            tab.setText(getString(R.string.reports))
+                                    .setIcon(ResourcesCompat.getDrawable(getResources(), R.drawable.ic_tab_reports, getTheme()));
+                            tabs.put("reports", tab);
+                            break;
+                        case 4:
+                            tab.setText(getString(R.string.menu))
+                                    .setIcon(ResourcesCompat.getDrawable(getResources(), R.drawable.ic_tab_menu, getTheme()));
+                            tabs.put("menu", tab);
+                            break;
+                    }
+                }
+        ).attach();
     }
 
     @Override
@@ -134,62 +179,34 @@ public class MainActivity extends TabActivity implements TabHost.OnTabChangeList
             db.close();
         }
         long t4 = System.currentTimeMillis();
-        Log.d("Financisto", "Load time = " + (t4 - t0) + "ms = " + (t2 - t1) + "ms+" + (t3 - t2) + "ms+" + (t4 - t3) + "ms");
+        Log.d(getLocalClassName(), "Load time = " + (t4 - t0) + "ms = " + (t2 - t1) + "ms+" + (t3 - t2) + "ms+" + (t4 - t3) + "ms");
+    }
+
+    public void refreshCurrentTab() {
+        if (fragments[tabLayout.getSelectedTabPosition()] instanceof RefreshSupportedActivity) {
+            Fragment f = fragments[tabLayout.getSelectedTabPosition()];
+            if (f.isAdded()) {
+                RefreshSupportedActivity r = (RefreshSupportedActivity) f;
+                r.recreateCursor();
+                r.integrityCheck();
+            }
+        }
+    }
+
+    @Subscribe(threadMode = ThreadMode.MAIN)
+    public void onSwitchToMenuTab(SwitchToMenuTabEvent event) {
+        TabLayout.Tab tab = tabs.get("menu");
+        if (tab != null) {
+            tabLayout.selectTab(tab);
+        }
+    }
+
+    @Subscribe(threadMode = ThreadMode.MAIN)
+    public void onRefreshCurrentTab(RefreshCurrentTab e) {
+        refreshCurrentTab();
     }
 
     private void updateFieldInTable(SQLiteDatabase db, String table, long id, String field, String value) {
         db.execSQL("update " + table + " set " + field + "=? where _id=?", new Object[]{value, id});
     }
-
-    @Override
-    public void onTabChanged(String tabId) {
-        Log.d("Financisto", "About to update tab " + tabId);
-        long t0 = System.currentTimeMillis();
-        refreshCurrentTab();
-        long t1 = System.currentTimeMillis();
-        Log.d("Financisto", "Tab " + tabId + " updated in " + (t1 - t0) + "ms");
-    }
-
-    public void refreshCurrentTab() {
-        Activity currentActivity = getLocalActivityManager().getCurrentActivity();
-        if (currentActivity instanceof RefreshSupportedActivity) {
-            RefreshSupportedActivity activity = (RefreshSupportedActivity) currentActivity;
-            activity.recreateCursor();
-            activity.integrityCheck();
-        }
-    }
-
-    private void setupAccountsTab(TabHost tabHost) {
-        tabHost.addTab(tabHost.newTabSpec("accounts")
-                .setIndicator(getString(R.string.accounts), getResources().getDrawable(R.drawable.ic_tab_accounts))
-                .setContent(new Intent(this, AccountListActivity.class)));
-    }
-
-    private void setupBlotterTab(TabHost tabHost) {
-        Intent intent = new Intent(this, BlotterActivity.class);
-        intent.putExtra(BlotterActivity.SAVE_FILTER, true);
-        intent.putExtra(BlotterActivity.EXTRA_FILTER_ACCOUNTS, true);
-        tabHost.addTab(tabHost.newTabSpec("blotter")
-                .setIndicator(getString(R.string.blotter), getResources().getDrawable(R.drawable.ic_tab_blotter))
-                .setContent(intent));
-    }
-
-    private void setupBudgetsTab(TabHost tabHost) {
-        tabHost.addTab(tabHost.newTabSpec("budgets")
-                .setIndicator(getString(R.string.budgets), getResources().getDrawable(R.drawable.ic_tab_budgets))
-                .setContent(new Intent(this, BudgetListActivity.class)));
-    }
-
-    private void setupReportsTab(TabHost tabHost) {
-        tabHost.addTab(tabHost.newTabSpec("reports")
-                .setIndicator(getString(R.string.reports), getResources().getDrawable(R.drawable.ic_tab_reports))
-                .setContent(new Intent(this, ReportsListActivity.class)));
-    }
-
-    private void setupMenuTab(TabHost tabHost) {
-        tabHost.addTab(tabHost.newTabSpec("menu")
-                .setIndicator(getString(R.string.menu), getResources().getDrawable(R.drawable.ic_tab_menu))
-                .setContent(new Intent(this, MenuListActivity_.class)));
-    }
-
 }

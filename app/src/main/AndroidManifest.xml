@@ -61,7 +61,7 @@
 		tools:targetApi="tiramisu">
 		
 		<uses-library android:name="com.google.android.maps" android:required="false" />
-	<meta-data android:name="com.google.android.gms.version" android:value="@integer/google_play_services_version" />
+		<meta-data android:name="com.google.android.gms.version" android:value="@integer/google_play_services_version" />
 		
 		<receiver android:name=".activity.AccountWidget" android:label="@string/widget_2x1" android:exported="true">
 		    <intent-filter>
@@ -71,21 +71,21 @@
 		    <meta-data android:name="android.appwidget.provider" android:resource="@xml/widget_2x1" />
 		</receiver>
 
-	<receiver android:name=".activity.AccountWidget3x1" android:label="@string/widget_3x1" android:exported="true">
-	    <intent-filter>
-		<action android:name="android.appwidget.action.APPWIDGET_UPDATE" />
-		<action android:name="ru.orangesoftware.financisto.UPDATE_WIDGET" />
-	    </intent-filter>
-	    <meta-data android:name="android.appwidget.provider" android:resource="@xml/widget_3x1" />
-	</receiver>
+		<receiver android:name=".activity.AccountWidget3x1" android:label="@string/widget_3x1" android:exported="true">
+			<intent-filter>
+			<action android:name="android.appwidget.action.APPWIDGET_UPDATE" />
+			<action android:name="ru.orangesoftware.financisto.UPDATE_WIDGET" />
+			</intent-filter>
+			<meta-data android:name="android.appwidget.provider" android:resource="@xml/widget_3x1" />
+		</receiver>
 
-	<receiver android:name=".activity.AccountWidget4x1" android:label="@string/widget_4x1" android:exported="true">
-	    <intent-filter>
-		<action android:name="android.appwidget.action.APPWIDGET_UPDATE" />
-		<action android:name="ru.orangesoftware.financisto.UPDATE_WIDGET" />
-	    </intent-filter>
-	    <meta-data android:name="android.appwidget.provider" android:resource="@xml/widget_4x1" />
-	</receiver>
+		<receiver android:name=".activity.AccountWidget4x1" android:label="@string/widget_4x1" android:exported="true">
+			<intent-filter>
+			<action android:name="android.appwidget.action.APPWIDGET_UPDATE" />
+			<action android:name="ru.orangesoftware.financisto.UPDATE_WIDGET" />
+			</intent-filter>
+			<meta-data android:name="android.appwidget.provider" android:resource="@xml/widget_4x1" />
+		</receiver>
 
 		<receiver android:name=".activity.ScheduledAlarmReceiver" android:exported="true">
 		    <intent-filter>
@@ -114,17 +114,6 @@
 		</service>
 
 		<activity android:name=".activity.MainActivity" android:label="@string/app_name" android:exported="true"
-			android:configChanges="orientation|keyboardHidden"  
-			android:taskAffinity=".MainActivity">
-			<!--
-			<intent-filter>
-				<action android:name="android.intent.action.MAIN" />
-				<category android:name="android.intent.category.LAUNCHER" />
-			</intent-filter>
-			-->
-		</activity>
-
-		<activity android:name=".activity.MainActivity2" android:label="@string/app_name" android:exported="true"
 			android:configChanges="orientation|keyboardHidden"
 			android:taskAffinity=".MainActivity"
 			android:theme="@style/AppThemeCompat">
@@ -161,15 +150,18 @@
 		<activity android:name=".activity.PinActivity" android:label="@string/enter_pin"
 			android:launchMode="singleTop"/>
 
-		<activity android:name=".activity.BlotterActivity" android:label="@string/blotter"/>
+		<activity android:name=".activity.BlotterActivity" android:label="@string/blotter"
+			android:theme="@style/AppThemeCompat" />
 
-	<activity android:name=".activity.PlannerActivity" android:label="@string/planner"/>
+		<activity android:name=".activity.PlannerActivity" android:label="@string/planner"/>
 
-	<activity android:name=".activity.MassOpActivity" android:label="@string/mass_operations"/>
+		<activity android:name=".activity.MassOpActivity" android:label="@string/mass_operations"
+			android:theme="@style/AppThemeCompat" />
 		
-		<activity android:name=".activity.BudgetBlotterActivity" android:label="@string/budget"/>
+		<activity android:name=".activity.BudgetBlotterActivity" android:label="@string/budget"
+			android:theme="@style/AppThemeCompat" />
 
-	<activity android:name=".activity.SplitsBlotterActivity" android:label="@string/report"/>
+		<activity android:name=".activity.SplitsBlotterActivity" android:label="@string/report"/>
 
 		<activity android:name=".activity.RecurActivity" android:label="@string/recur"
 			android:icon="@drawable/icon_transfer"
@@ -189,10 +181,10 @@
 			android:name=".activity.MenuListActivity_"
 			android:label="@string/menu" />
 
-	<activity android:name=".activity.ExchangeRatesListActivity" android:label="@string/exchange_rates"/>
+		<activity android:name=".activity.ExchangeRatesListActivity" android:label="@string/exchange_rates"/>
 
-	<activity android:name=".activity.ExchangeRateActivity" android:label="@string/exchange_rate"
-		  android:configChanges="orientation|keyboardHidden"/>
+		<activity android:name=".activity.ExchangeRateActivity" android:label="@string/exchange_rate"
+			  android:configChanges="orientation|keyboardHidden"/>
 
 		<activity android:name=".activity.AccountListActivity" android:label="@string/accounts"/>
 		
@@ -221,8 +213,8 @@
 		<activity android:name=".activity.BlotterFilterActivity" android:label="@string/filter"
 			android:theme="@style/AppDialog" android:configChanges="orientation|keyboardHidden"/>
 
-	<activity android:name=".activity.ReportFilterActivity" android:label="@string/filter"
-		  android:theme="@style/AppDialog" android:configChanges="orientation|keyboardHidden"/>
+		<activity android:name=".activity.ReportFilterActivity" android:label="@string/filter"
+			  android:theme="@style/AppDialog" android:configChanges="orientation|keyboardHidden"/>
 
 		<activity android:name=".activity.CategoryActivity" android:label="@string/category"
 			android:configChanges="orientation|keyboardHidden"/>
@@ -246,82 +238,84 @@
 		
 		<activity android:name=".activity.ProjectListActivity" android:label="@string/projects"/>
 		
-	<activity android:name=".activity.PayeeActivity" android:label="@string/payee"
-	    android:theme="@style/AppDialog" android:configChanges="orientation|keyboardHidden"/>
+		<activity android:name=".activity.PayeeActivity" android:label="@string/payee"
+			android:theme="@style/AppDialog" android:configChanges="orientation|keyboardHidden"/>
 
-	<activity android:name=".activity.PayeeListActivity" android:label="@string/payees"/>
+		<activity android:name=".activity.PayeeListActivity" android:label="@string/payees"/>
 
 		<activity android:name=".activity.LocationsListActivity" android:label="@string/locations"/>
 		
-		<activity android:name=".activity.TemplatesListActivity" android:label="@string/transaction_templates"/>
+		<activity android:name=".activity.TemplatesListActivity" android:label="@string/transaction_templates"
+			android:theme="@style/AppThemeCompat" />
 		
-		<activity android:name=".activity.ScheduledListActivity" android:label="@string/scheduled_transactions"/>		
+		<activity android:name=".activity.ScheduledListActivity" android:label="@string/scheduled_transactions"
+			android:theme="@style/AppThemeCompat" />
 
-		<activity android:name=".activity.SelectTemplateActivity" android:label="@string/transaction_templates"		 
-			android:theme="@style/AppDialog" android:configChanges="orientation|keyboardHidden"/>
+		<activity android:name=".activity.SelectTemplateActivity" android:label="@string/transaction_templates"
+			android:theme="@style/AppDialogCompat" android:configChanges="orientation|keyboardHidden"/>
 
 		<activity android:name=".activity.CsvExportActivity" android:label="@string/csv_export" />
-	<activity android:name=".activity.CsvImportActivity" android:label="@string/csv_import" />
+		<activity android:name=".activity.CsvImportActivity" android:label="@string/csv_import" />
 
-	<activity android:name=".activity.QifExportActivity" android:label="@string/qif_export"/>
-	<activity android:name=".activity.QifImportActivity" android:label="@string/qif_import"/>
+		<activity android:name=".activity.QifExportActivity" android:label="@string/qif_export"/>
+		<activity android:name=".activity.QifImportActivity" android:label="@string/qif_import"/>
 
 		<activity android:name=".activity.MonthlyViewActivity" android:label="@string/monthly_view"/>
 		<activity android:name=".activity.CCardStatementClosingDayActivity" android:label="@string/closing_day" />
 		
 		<activity android:name=".activity.Report2DChartActivity" android:label="@string/report"/>
 		<activity android:name=".activity.ReportPreferencesActivity" android:label="@string/report_preferences"/>
-	<activity android:name=".activity.AboutActivity" android:label="@string/about"/>
-	<activity android:name=".activity.WebViewActivity" android:label="@string/about"/>
+		<activity android:name=".activity.AboutActivity" android:label="@string/about"/>
+		<activity android:name=".activity.WebViewActivity" android:label="@string/about"/>
 
-	<activity android:name=".activity.SplitTransactionActivity" android:label="@string/split_transaction" />
-	<activity android:name=".activity.SplitTransferActivity" android:label="@string/split_transfer"/>
+		<activity android:name=".activity.SplitTransactionActivity" android:label="@string/split_transaction" />
+		<activity android:name=".activity.SplitTransferActivity" android:label="@string/split_transfer"/>
 
-	<activity android:name=".dialog.FolderBrowser" android:label="@string/select_folder"/>
-	<activity android:name=".activity.CategorySelectorActivity" android:label="@string/select_category"/>
+		<activity android:name=".dialog.FolderBrowser" android:label="@string/select_folder"/>
+		<activity android:name=".activity.CategorySelectorActivity" android:label="@string/select_category"/>
 
-	<activity android:name=".activity.AccountListTotalsDetailsActivity" android:label="@string/totals"
-		  android:theme="@style/AppDialog" android:configChanges="orientation|keyboardHidden"/>
+		<activity android:name=".activity.AccountListTotalsDetailsActivity" android:label="@string/totals"
+			  android:theme="@style/AppDialog" android:configChanges="orientation|keyboardHidden"/>
 
-	<activity android:name=".activity.BlotterTotalsDetailsActivity" android:label="@string/totals"
-		  android:theme="@style/AppDialog" android:configChanges="orientation|keyboardHidden"/>
+		<activity android:name=".activity.BlotterTotalsDetailsActivity" android:label="@string/totals"
+			  android:theme="@style/AppDialog" android:configChanges="orientation|keyboardHidden"/>
 
-	<activity android:name=".activity.BudgetListTotalsDetailsActivity" android:label="@string/totals"
-		  android:theme="@style/AppDialog" android:configChanges="orientation|keyboardHidden"/>
+		<activity android:name=".activity.BudgetListTotalsDetailsActivity" android:label="@string/totals"
+			  android:theme="@style/AppDialog" android:configChanges="orientation|keyboardHidden"/>
 
-	<activity android:name=".activity.PurgeAccountActivity" android:label="@string/delete_old_transactions"/>
+		<activity android:name=".activity.PurgeAccountActivity" android:label="@string/delete_old_transactions"/>
 
-	<activity android:name="org.achartengine.GraphicalActivity"/>
+		<activity android:name="org.achartengine.GraphicalActivity"/>
 
-	<activity
-		android:name=".activity.RequestPermissionActivity_"
-		android:label="@string/permissions"
-		android:theme="@style/Theme.AppCompat" />
+		<activity
+			android:name=".activity.RequestPermissionActivity_"
+			android:label="@string/permissions"
+			android:theme="@style/Theme.AppCompat" />
 
-	<activity android:exported="true"
-		android:name="com.dropbox.core.android.AuthActivity"
-		android:configChanges="orientation|keyboard"
-		android:launchMode="singleTask" >
-		<intent-filter>
+		<activity android:exported="true"
+			android:name="com.dropbox.core.android.AuthActivity"
+			android:configChanges="orientation|keyboard"
+			android:launchMode="singleTask" >
+			<intent-filter>
 
-			<!-- Change this to be db- followed by your app key -->
-			<data android:scheme="db-aenijec51r68hsv" />
+				<!-- Change this to be db- followed by your app key -->
+				<data android:scheme="db-aenijec51r68hsv" />
 
-			<action android:name="android.intent.action.VIEW" />
+				<action android:name="android.intent.action.VIEW" />
 
-			<category android:name="android.intent.category.BROWSABLE" />
-			<category android:name="android.intent.category.DEFAULT" />
-		</intent-filter>
-	</activity>
+				<category android:name="android.intent.category.BROWSABLE" />
+				<category android:name="android.intent.category.DEFAULT" />
+			</intent-filter>
+		</activity>
 
-	<provider
-		android:name="androidx.core.content.FileProvider"
-		android:authorities="ru.orangesoftware.financisto"
-		android:grantUriPermissions="true">
-		<meta-data
-			android:name="android.support.FILE_PROVIDER_PATHS"
-			android:resource="@xml/file_paths" />
-	</provider>
+		<provider
+			android:name="androidx.core.content.FileProvider"
+			android:authorities="ru.orangesoftware.financisto"
+			android:grantUriPermissions="true">
+			<meta-data
+				android:name="android.support.FILE_PROVIDER_PATHS"
+				android:resource="@xml/file_paths" />
+		</provider>
 
 	</application>
 

@@ -14,11 +14,9 @@ import android.content.Context;
 import android.net.Uri;
 
 import ru.orangesoftware.financisto.R;
-import ru.orangesoftware.financisto.activity.MainActivity;
 import ru.orangesoftware.financisto.backup.DatabaseImport;
 import ru.orangesoftware.financisto.db.DatabaseAdapter;
 import ru.orangesoftware.financisto.export.ImportExportAsyncTask;
-import ru.orangesoftware.financisto.export.ImportExportAsyncTaskListener;
 
 /**
  * Created by IntelliJ IDEA.

@@ -299,7 +299,7 @@ public class BlotterListAdapter extends ResourceCursorAdapter {
 
     public static class BlotterViewHolder {
 
-        public final RelativeLayout layout;
+        public final View layout;
         public final TextView indicator;
         public final TextView topView;
         public final TextView centerView;
@@ -310,7 +310,7 @@ public class BlotterListAdapter extends ResourceCursorAdapter {
         public final CheckBox checkBox;
 
         public BlotterViewHolder(View view) {
-            layout = (RelativeLayout) view.findViewById(R.id.layout);
+            layout = view.findViewById(R.id.layout);
             indicator = (TextView) view.findViewById(R.id.indicator);
             topView = (TextView) view.findViewById(R.id.top);
             centerView = (TextView) view.findViewById(R.id.center);

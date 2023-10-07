@@ -14,6 +14,8 @@ import android.content.Context;
 import android.content.Intent;
 import android.database.Cursor;
 
+import androidx.appcompat.app.AppCompatActivity;
+
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -188,7 +190,7 @@ public abstract class Report {
 
     protected abstract Criteria getCriteriaForId(DatabaseAdapter db, long id);
 
-    protected Class<? extends BlotterActivity> getBlotterActivityClass() {
+    protected Class<? extends AppCompatActivity> getBlotterActivityClass() {
         return BlotterActivity.class;
     }
 
