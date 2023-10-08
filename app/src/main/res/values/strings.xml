@@ -915,6 +915,8 @@
     <string name="request_permissions_not_granted">Permission NOT granted</string>
     <string name="request_permissions_receive_sms_title">SMS</string>
     <string name="request_permissions_receive_sms_description">Required for adding new transactions automatically by SMS templates.</string>
+    <string name="request_permissions_notification_title">Notification</string>
+    <string name="request_permissions_notification_description">Required for adding new transactions automatically by SMS templates.</string>
     <string name="privacy_policy">Privacy Policy</string>
 
     <string name="show_menu_button_on_accounts_screen">Show Menu</string>

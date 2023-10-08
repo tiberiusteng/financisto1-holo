@@ -8,6 +8,9 @@ import androidx.annotation.NonNull;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 import androidx.appcompat.widget.SwitchCompat;
+
+import android.os.Build;
+import android.view.View;
 import android.view.ViewGroup;
 import android.widget.CompoundButton;
 
@@ -26,18 +29,6 @@ public class RequestPermissionActivity extends Activity {
     @Extra("requestedPermission")
     String requestedPermission;
 
-    @ViewById(R.id.toggleWriteStorageWrap)
-    ViewGroup toggleWriteStorageWrap;
-
-    @ViewById(R.id.toggleWriteStorage)
-    SwitchCompat toggleWriteStorage;
-
-    @ViewById(R.id.toggleGetAccountsWrap)
-    ViewGroup toggleGetAccountsWrap;
-
-    @ViewById(R.id.toggleGetAccounts)
-    SwitchCompat toggleGetAccounts;
-
     @ViewById(R.id.toggleCameraWrap)
     ViewGroup toggleCameraWrap;
 
@@ -49,6 +40,12 @@ public class RequestPermissionActivity extends Activity {
 
     @ViewById(R.id.toggleSms)
     SwitchCompat toggleSms;
+
+    @ViewById(R.id.toggleNotificationWrap)
+    ViewGroup toggleNotificationWrap;
+
+    @ViewById(R.id.toggleNotification)
+    SwitchCompat toggleNotification;
 
     @Override
     protected void attachBaseContext(Context base) {
@@ -62,13 +59,16 @@ public class RequestPermissionActivity extends Activity {
 
     private void checkPermissions() {
         // using scoped storage, write external storage permission is not needed
-        toggleWriteStorage.setChecked(false);
-        toggleWriteStorage.setEnabled(false);
-        toggleWriteStorageWrap.setBackgroundResource(0);
 
-        disableToggleIfGranted(Manifest.permission.GET_ACCOUNTS, toggleGetAccounts, toggleGetAccountsWrap);
         disableToggleIfGranted(Manifest.permission.CAMERA, toggleCamera, toggleCameraWrap);
         disableToggleIfGranted(Manifest.permission.RECEIVE_SMS, toggleSms, toggleSmsWrap);
+
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+            disableToggleIfGranted(Manifest.permission.POST_NOTIFICATIONS, toggleNotification, toggleNotificationWrap);
+        }
+        else {
+            toggleNotificationWrap.setVisibility(View.GONE);
+        }
     }
 
     private void disableToggleIfGranted(String permission, CompoundButton toggleButton, ViewGroup wrapLayout) {
@@ -81,11 +81,6 @@ public class RequestPermissionActivity extends Activity {
         }
     }
 
-    @Click(R.id.toggleGetAccounts)
-    public void onGrantGetAccounts() {
-        requestPermission(Manifest.permission.GET_ACCOUNTS, toggleGetAccounts);
-    }
-
     @Click(R.id.toggleCamera)
     public void onGrantCamera() {
         requestPermission(Manifest.permission.CAMERA, toggleCamera);
@@ -94,6 +89,11 @@ public class RequestPermissionActivity extends Activity {
     @Click(R.id.toggleSms)
     public void onGrantSms() {
         requestPermission(Manifest.permission.RECEIVE_SMS, toggleSms);
+    }
+
+    @Click(R.id.toggleNotification)
+    public void onGrantNotification() {
+        requestPermission(Manifest.permission.POST_NOTIFICATIONS, toggleNotification);
     }
 
     private void requestPermission(String permission, CompoundButton toggleButton) {

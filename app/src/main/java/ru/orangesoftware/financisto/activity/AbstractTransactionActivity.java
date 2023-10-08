@@ -10,10 +10,12 @@
  ******************************************************************************/
 package ru.orangesoftware.financisto.activity;
 
+import static android.Manifest.permission.POST_NOTIFICATIONS;
 import android.Manifest;
 import android.app.AlertDialog;
 import android.content.Intent;
 import android.database.Cursor;
+import android.os.Build;
 import android.os.Bundle;
 import android.text.InputType;
 import android.util.Log;
@@ -430,9 +432,13 @@ public abstract class AbstractTransactionActivity extends AbstractActivity imple
 				break;
 			}
 			case R.id.notification: {
-				Intent intent = new Intent(this, NotificationOptionsActivity.class);
-				intent.putExtra(NotificationOptionsActivity.NOTIFICATION_OPTIONS, notificationOptions);
-				startActivityForResult(intent, NOTIFICATION_REQUEST);
+				if ((Build.VERSION.SDK_INT < Build.VERSION_CODES.TIRAMISU) ||
+					(!isRequestingPermission(this, POST_NOTIFICATIONS)))
+				{
+					Intent intent = new Intent(this, NotificationOptionsActivity.class);
+					intent.putExtra(NotificationOptionsActivity.NOTIFICATION_OPTIONS, notificationOptions);
+					startActivityForResult(intent, NOTIFICATION_REQUEST);
+				}
 				break;
 			}
 			case R.id.attach_picture: {

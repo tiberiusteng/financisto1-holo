@@ -236,6 +236,8 @@
   <string name="gdocs_folder_error">讀寫 Google Drive 目錄時發生錯誤。</string>
   <string name="gdocs_service_error">Google Drive 目前無法提供服務。</string>
   <string name="gdocs_io_error">連線到 Google Drive 時發生錯誤。</string>
+
+
   <string name="success">成功!</string>
   <string name="fail">失敗…</string>
   <string name="duplicate">複製</string>
@@ -400,7 +402,7 @@
   <string name="delete_template_confirm">確定刪除樣版?</string>
   <string name="save_as_template">儲存為樣板</string>
   <string name="save_as_template_success">已將交易儲存為樣板</string>
-  <string name="scheduled_transactions">定期</string>
+  <string name="scheduled_transactions">排程交易</string>
   <string name="no_scheduled_transactions">無定期交易</string>
   <string name="recur_interval_geeky">玩家描述</string>
   <string name="recurrence_pattern">循環模式</string>
@@ -701,6 +703,38 @@
   <string name="show_currency">顯示幣值</string>
   <string name="show_currency_summary">在新交易畫面顯示幣值選項</string>
   <string name="reconcile">結帳</string>
+  <string name="permissions">權限</string>
+  <string name="permissions_summary">檢視需要手動許可的權限</string>
+
+  <string name="request_permissions_title">Financisto 有些功能需要您賦予權限才能運作。</string>
+  <string name="request_permissions_description">請在下面賦予權限，然後回到前一個畫面再操作一次。您可從 設定 -> 系統 -> 應用程式 收回權限。</string>
+  <string name="request_permissions_camera_title">相機</string>
+  <string name="request_permissions_camera_description">拍照以附加到交易紀錄。</string>
+  <string name="request_permissions_granted">已授權</string>
+  <string name="request_permissions_not_granted">未授權</string>
+  <string name="request_permissions_receive_sms_title">簡訊</string>
+  <string name="request_permissions_receive_sms_description">讀取簡訊內容以根據簡訊模板自動建立交易。</string>
+  <string name="request_permissions_notification_title">通知</string>
+  <string name="request_permissions_notification_description">傳送排程交易設定的通知</string>
+  <string name="privacy_policy">Privacy Policy</string>
+
+  <string name="preferences_summary">變更程式設定</string>
+  <string name="entities_summary">修改分類、受款人、專案、地點等等</string>
+  <string name="scheduled_transactions_summary">定期自動產生交易與轉帳</string>
+  <string name="backup_database_summary">備份資料庫到本機</string>
+  <string name="restore_database_summary">從本機復原資料庫</string>
+  <string name="backup_database_online_google_drive_summary">備份資料庫到 Google Drive</string>
+  <string name="restore_database_online_google_drive_summary">從 Google Drive 復原資料庫</string>
+  <string name="backup_database_online_dropbox_summary">備份資料庫到 Dropbox</string>
+  <string name="restore_database_online_dropbox_summary">從 Dropbox 復原資料庫</string>
+  <string name="backup_database_to_summary">備份資料庫並透過其他 app 分享或傳送</string>
+  <string name="import_export_summary">以 csv, qif 等格式匯入或匯出資料庫</string>
+  <string name="mass_operations_summary">對符合條件的許多交易進行操作</string>
+  <string name="planner_summary">View monthly planner</string>
+  <string name="integrity_fix_summary">檢查並嘗試修復資料庫內容</string>
+  <string name="donate_summary">Make a voluntary donation to support the project</string>
+  <string name="about_summary">Get more information about the project</string>
+
   <string-array name="attribute_types">
     <item>文字</item>
     <item>數值</item>
