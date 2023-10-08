@@ -10,6 +10,7 @@
  ******************************************************************************/
 package ru.orangesoftware.financisto.activity;
 
+import android.content.Context;
 import android.content.Intent;
 import android.text.TextUtils;
 import android.util.Log;
@@ -23,6 +24,7 @@ import ru.orangesoftware.financisto.filter.Criteria;
 import ru.orangesoftware.financisto.filter.WhereFilter;
 import ru.orangesoftware.financisto.model.*;
 import ru.orangesoftware.financisto.utils.ArrUtils;
+import ru.orangesoftware.financisto.utils.MyPreferences;
 
 import java.util.Arrays;
 import java.util.LinkedList;
@@ -47,6 +49,11 @@ public abstract class FilterAbstractActivity extends AbstractActivity implements
 	protected TextView categoryTxt;
 
 	protected String noFilterValue;
+
+	@Override
+	protected void attachBaseContext(Context base) {
+		super.attachBaseContext(MyPreferences.switchLocale(base));
+	}
 
 	protected void initPayeeSelector(LinearLayout layout) {
 		payeeSelector = new PayeeSelector<>(this, db, x, 0, R.id.payee_clear, R.string.no_filter);

@@ -53,6 +53,7 @@ public class PinActivity extends Activity implements PinView.PinListener {
             onSuccess(null);
         } else if (RxFingerprint.isAvailable(this) && MyPreferences.isPinLockUseFingerprint(this)) {
             setContentView(R.layout.lock_fingerprint);
+            findViewById(R.id.try_biometric_again).setOnClickListener(v -> askForFingerprint());
             askForFingerprint();
         } else {
             usePinLock();
@@ -75,6 +76,8 @@ public class PinActivity extends Activity implements PinView.PinListener {
 
     private void askForFingerprint() {
         View usePinButton = findViewById(R.id.use_pin);
+        View tryBiometricAgain = findViewById(R.id.try_biometric_again);
+        tryBiometricAgain.setVisibility(View.INVISIBLE);
         if (MyPreferences.isUseFingerprintFallbackToPinEnabled(this)) {
             usePinButton.setOnClickListener(v -> {
                 disposeFingerprintListener();
@@ -92,6 +95,7 @@ public class PinActivity extends Activity implements PinView.PinListener {
                             break;
                         case FAILED:
                             setFingerprintStatus(R.string.fingerprint_auth_failed, R.drawable.ic_error_black_48dp, R.color.material_orange);
+                            tryBiometricAgain.setVisibility(View.VISIBLE);
                             break;
                         case HELP:
                             Toast.makeText(this, result.getMessage(), Toast.LENGTH_LONG).show();
@@ -100,6 +104,7 @@ public class PinActivity extends Activity implements PinView.PinListener {
                 },
                 throwable -> {
                     setFingerprintStatus(R.string.fingerprint_error, R.drawable.ic_error_black_48dp, R.color.holo_red_dark);
+                    tryBiometricAgain.setVisibility(View.VISIBLE);
                     Toast.makeText(this, throwable.getMessage(), Toast.LENGTH_LONG).show();
                 }
         );

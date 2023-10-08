@@ -988,7 +988,7 @@
     <string name="pin_protection_use_fingerprint_summary">Use Fingerprint to unlock the application</string>
     <string name="pin_protection_use_fingerprint_fallback_to_pin_summary">Fallback to PIN</string>
     <string name="pin_protection_use_fingerprint_fallback_to_pin">Allow to use PIN to unlock the application even if the fingerprint is enabled.</string>
-    <string name="fingerprint_description">Confirm fingerprint to continue</string>
+    <string name="fingerprint_description">Confirm biometrics to continue</string>
     <string name="fingerprint_hint">Touch sensor</string>
     <string name="fingerprint_auth_success">Fingerprint recognized</string>
     <string name="fingerprint_auth_failed">Fingerprint not recognized. Try again.</string>
@@ -1001,6 +1001,7 @@
     <string name="image_pick_camera">Camera</string>
     <string name="image_pick_images">Images</string>
     <string name="use_pin">Use PIN</string>
+    <string name="try_fingerprint_again">Try Biometrics Again</string>
     <string name="set_focus_on_amount_field">Set focus on amount field</string>
     <string name="set_focus_on_amount_field_summary">Automatically set focus on amount field for new transactions</string>
 

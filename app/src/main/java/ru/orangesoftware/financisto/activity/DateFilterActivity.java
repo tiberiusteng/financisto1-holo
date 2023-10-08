@@ -12,6 +12,7 @@ package ru.orangesoftware.financisto.activity;
 
 import android.app.Activity;
 import android.app.Dialog;
+import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
@@ -26,6 +27,7 @@ import ru.orangesoftware.financisto.datetime.Period;
 import ru.orangesoftware.financisto.datetime.PeriodType;
 import ru.orangesoftware.financisto.filter.DateTimeCriteria;
 import ru.orangesoftware.financisto.filter.WhereFilter;
+import ru.orangesoftware.financisto.utils.MyPreferences;
 
 import java.text.DateFormat;
 import java.util.Calendar;
@@ -50,6 +52,11 @@ public class DateFilterActivity extends Activity {
 	
 	private DateFormat df;
     private PeriodType[] periods = PeriodType.allRegular();
+
+	@Override
+	protected void attachBaseContext(Context base) {
+		super.attachBaseContext(MyPreferences.switchLocale(base));
+	}
 
     @Override
 	protected void onCreate(Bundle savedInstanceState) {

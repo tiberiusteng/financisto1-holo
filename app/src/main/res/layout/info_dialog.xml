@@ -22,21 +22,16 @@
 			android:orientation="vertical"
 			android:id="@+id/list" />
 	</ScrollView>
-	<LinearLayout 
-		android:layout_height="wrap_content" 
-		android:layout_width="fill_parent"
-		android:background="#fff">
+	<LinearLayout style="@style/BottomBar">
 		<Button 
 			android:layout_weight="1" 
 			android:id="@+id/bEdit"
-			android:text="@string/edit" 
-			android:layout_height="wrap_content"
-			android:layout_width="0dp" />
+			android:text="@string/edit"
+			style="@style/BottomBarButton" />
 		<Button 
-			android:layout_height="wrap_content"
-			android:layout_weight="1" 
+			android:layout_weight="1"
 			android:id="@+id/bClose" 
 			android:text="@string/close"
-			android:layout_width="0dp" />
+			style="@style/BottomBarButton" />
 	</LinearLayout>
 </LinearLayout>	

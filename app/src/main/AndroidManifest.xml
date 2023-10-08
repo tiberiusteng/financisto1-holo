@@ -12,7 +12,7 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
 	xmlns:tools="http://schemas.android.com/tools"
 	package="ru.orangesoftware.financisto"
-	android:versionName="2023-10-04" android:versionCode="94"
+	android:versionName="2023-10-08" android:versionCode="95"
     android:installLocation="internalOnly">
 
     <supports-screens
