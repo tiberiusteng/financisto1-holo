@@ -141,7 +141,7 @@ public class MyPreferences {
 
 	public static AccountSortOrder getAccountSortOrder(Context context) {
 		SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(context);
-		String sortOrder = sharedPreferences.getString("sort_accounts", AccountSortOrder.SORT_ORDER_DESC.name());
+		String sortOrder = sharedPreferences.getString("sort_accounts", AccountSortOrder.SORT_ORDER_ASC.name());
 		return AccountSortOrder.valueOf(sortOrder);
 	}
 
@@ -425,7 +425,7 @@ public class MyPreferences {
 
 	public static boolean isResetCopiedTransactionStatus(Context context) {
 		SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(context);
-		return sharedPreferences.getBoolean("reset_copied_transaction_status", false);
+		return sharedPreferences.getBoolean("reset_copied_transaction_status", true);
 	}
 
 	private static final String DEFAULT = "default";

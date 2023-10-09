@@ -38,7 +38,7 @@
                 android:summary="@string/show_account_last_transaction_date_summary"
                 android:title="@string/show_account_last_transaction_date" />
             <ListPreference
-                android:defaultValue="SORT_ORDER_DESC"
+                android:defaultValue="SORT_ORDER_ASC"
                 android:entries="@array/sort_accounts_entities"
                 android:entryValues="@array/sort_accounts_values"
                 android:key="sort_accounts"
@@ -74,12 +74,12 @@
                 android:summary="@string/show_running_balance_summary"
                 android:title="@string/show_running_balance" />
             <CheckBoxPreference
-                android:defaultValue="false"
+                android:defaultValue="true"
                 android:key="colorize_blotter_item"
                 android:summary="@string/colorize_blotter_item_summary"
                 android:title="@string/colorize_blotter_item" />
             <CheckBoxPreference
-                android:defaultValue="false"
+                android:defaultValue="true"
                 android:key="reset_copied_transaction_status"
                 android:summary="@string/reset_copied_transaction_status_summary"
                 android:title="@string/reset_copied_transaction_status" />
