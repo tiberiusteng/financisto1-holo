@@ -11,7 +11,7 @@
 -->
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
 	xmlns:tools="http://schemas.android.com/tools"
-	package="ru.orangesoftware.financisto"
+	package="tw.tib.financisto"
 	android:versionName="2023-10-08" android:versionCode="95"
     android:installLocation="internalOnly">
 
@@ -46,8 +46,8 @@
 	<uses-permission android:name="android.permission.USE_FINGERPRINT" />
 
     <uses-permission android:name="com.google.android.c2dm.permission.RECEIVE" />    
-	<permission android:name="ru.orangesoftware.financisto.permission.C2D_MESSAGE" android:protectionLevel="signature" />
-    <uses-permission android:name="ru.orangesoftware.financisto.permission.C2D_MESSAGE"/>
+	<permission android:name="tw.tib.financisto.permission.C2D_MESSAGE" android:protectionLevel="signature" />
+    <uses-permission android:name="tw.tib.financisto.permission.C2D_MESSAGE"/>
 
 
     <application
@@ -67,7 +67,7 @@
 		<receiver android:name=".activity.AccountWidget" android:label="@string/widget_2x1" android:exported="true">
 		    <intent-filter>
 			<action android:name="android.appwidget.action.APPWIDGET_UPDATE" />
-		<action android:name="ru.orangesoftware.financisto.UPDATE_WIDGET" />
+		<action android:name="tw.tib.financisto.UPDATE_WIDGET" />
 		    </intent-filter>
 		    <meta-data android:name="android.appwidget.provider" android:resource="@xml/widget_2x1" />
 		</receiver>
@@ -75,7 +75,7 @@
 		<receiver android:name=".activity.AccountWidget3x1" android:label="@string/widget_3x1" android:exported="true">
 			<intent-filter>
 			<action android:name="android.appwidget.action.APPWIDGET_UPDATE" />
-			<action android:name="ru.orangesoftware.financisto.UPDATE_WIDGET" />
+			<action android:name="tw.tib.financisto.UPDATE_WIDGET" />
 			</intent-filter>
 			<meta-data android:name="android.appwidget.provider" android:resource="@xml/widget_3x1" />
 		</receiver>
@@ -83,7 +83,7 @@
 		<receiver android:name=".activity.AccountWidget4x1" android:label="@string/widget_4x1" android:exported="true">
 			<intent-filter>
 			<action android:name="android.appwidget.action.APPWIDGET_UPDATE" />
-			<action android:name="ru.orangesoftware.financisto.UPDATE_WIDGET" />
+			<action android:name="tw.tib.financisto.UPDATE_WIDGET" />
 			</intent-filter>
 			<meta-data android:name="android.appwidget.provider" android:resource="@xml/widget_4x1" />
 		</receiver>
@@ -99,7 +99,7 @@
 		<receiver android:name=".activity.PackageReplaceReceiver" android:exported="true">
 			<intent-filter>
 			    <action android:name="android.intent.action.PACKAGE_REPLACED" />
-			    <data android:scheme="package" android:path="ru.orangesoftware.financisto" />
+			    <data android:scheme="package" android:path="tw.tib.financisto" />
 			</intent-filter>
 		</receiver>		
 
@@ -131,7 +131,7 @@
 			android:taskAffinity=".TransactionActivity">
 			<intent-filter>
 				<action android:name="android.intent.action.MAIN" />
-				<action android:name="ru.orangesoftware.financisto.NEW_TRANSACTION" />
+				<action android:name="tw.tib.financisto.NEW_TRANSACTION" />
 				<category android:name="android.intent.category.DEFAULT" />
 			</intent-filter>
 		</activity>
@@ -143,7 +143,7 @@
 			android:taskAffinity=".TransferActivity">
 			<intent-filter>
 				<action android:name="android.intent.action.MAIN" />
-				<action android:name="ru.orangesoftware.financisto.NEW_TRANSFER" />
+				<action android:name="tw.tib.financisto.NEW_TRANSFER" />
 				<category android:name="android.intent.category.DEFAULT" />
 			</intent-filter>
 		</activity>
@@ -169,10 +169,10 @@
 			android:icon="@drawable/icon_transfer"
 			android:theme="@style/AppDialog" android:configChanges="orientation|keyboardHidden"/>
 
-		<activity android:name=".activity.RecurrenceActivity" android:label="@string/recur"		 
+		<activity android:name=".activity.RecurrenceActivity" android:label="@string/recur"
 			android:theme="@style/AppDialog" android:configChanges="orientation|keyboardHidden"/>
 			
-		<activity android:name=".activity.NotificationOptionsActivity" android:label="@string/notification"		 
+		<activity android:name=".activity.NotificationOptionsActivity" android:label="@string/notification"
 			android:theme="@style/AppDialog" android:configChanges="orientation|keyboardHidden"/>
 
 		<activity android:name=".activity.ReportsListActivity" android:label="@string/reports"/>
@@ -227,7 +227,7 @@
 		
 		<activity android:name=".activity.PreferencesActivity" android:label="@string/preferences" />
 		
-		<activity android:name=".activity.BudgetListActivity" android:label="@string/budgets"/>		
+		<activity android:name=".activity.BudgetListActivity" android:label="@string/budgets"/>
 		
 		<activity android:name=".activity.ProjectActivity" android:label="@string/project"
 			android:theme="@style/AppDialog" android:configChanges="orientation|keyboardHidden"/>
@@ -306,7 +306,7 @@
 
 		<provider
 			android:name="androidx.core.content.FileProvider"
-			android:authorities="ru.orangesoftware.financisto"
+			android:authorities="tw.tib.financisto"
 			android:grantUriPermissions="true">
 			<meta-data
 				android:name="android.support.FILE_PROVIDER_PATHS"

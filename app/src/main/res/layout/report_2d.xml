@@ -53,7 +53,7 @@
         android:textColor="#FFF"
         android:textStyle="bold" />
 
-    <ru.orangesoftware.financisto.view.Report2DChartView
+    <tw.tib.financisto.view.Report2DChartView
         android:id="@+id/report_2d_chart"
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"

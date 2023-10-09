@@ -234,7 +234,7 @@
             android:key="pin_protection"
             android:summary="@string/pin_protection_summary"
             android:title="@string/pin_protection" />
-        <ru.orangesoftware.financisto.dialog.PinDialogPreference
+        <tw.tib.financisto.dialog.PinDialogPreference
             android:dependency="pin_protection"
             android:dialogLayout="@layout/lock"
             android:key="pin"
@@ -294,7 +294,7 @@
             android:key="auto_backup_enabled"
             android:summary="@string/auto_backup_enabled_summary"
             android:title="@string/auto_backup_enabled" />
-        <ru.orangesoftware.financisto.dialog.TimePreference
+        <tw.tib.financisto.dialog.TimePreference
             android:dependency="auto_backup_enabled"
             android:key="auto_backup_time"
             android:summary="@string/auto_backup_time_summary"
