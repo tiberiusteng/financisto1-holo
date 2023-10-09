@@ -131,10 +131,12 @@ public class CategoryListAdapter2 extends BaseAdapter {
 		if (c.level > 1) {
 			SpannableStringBuilder ssb = new SpannableStringBuilder();
 			for (int i=1; i<c.level; ++i) {
-				ssb.append("＞ ", new ForegroundColorSpan(levelMark), SPAN_EXCLUSIVE_EXCLUSIVE);
+				ssb.append(" ＞ ", new ForegroundColorSpan(levelMark), SPAN_EXCLUSIVE_EXCLUSIVE);
 			}
-			ssb.append(c.title);
-			title.setText(ssb);
+			h.indent.setText(ssb);
+		}
+		else {
+			h.indent.setText("");
 		}
         //title.setPadding(padding, 0, 0, 0);
 		//label.setPadding(padding, 0, 0, 0);
@@ -202,6 +204,7 @@ public class CategoryListAdapter2 extends BaseAdapter {
 	private static class Holder {
 		
         public TextView indicator;
+		public TextView indent;
 		public ImageView span;
 		public TextView title;
 		public TextView label;
@@ -209,6 +212,7 @@ public class CategoryListAdapter2 extends BaseAdapter {
 		public static Holder create(View convertView) {
 			Holder h = new Holder();
             h.indicator = (TextView)convertView.findViewById(R.id.indicator);
+			h.indent = (TextView)convertView.findViewById(R.id.indent);
 			h.span = (ImageView)convertView.findViewById(R.id.span);
 			h.title = (TextView)convertView.findViewById(R.id.line1);
 			h.label = (TextView)convertView.findViewById(R.id.label);

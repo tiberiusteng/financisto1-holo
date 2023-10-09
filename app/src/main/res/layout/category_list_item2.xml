@@ -24,8 +24,17 @@
         android:layout_marginStart="5dp"
         android:layout_marginBottom="3dp"
         android:layout_marginTop="3dp"/>
-    <ImageView android:id="@+id/span"
+    <TextView android:id="@+id/indent"
         app:layout_constraintStart_toEndOf="@id/indicator"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintBottom_toBottomOf="parent"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textAppearance="?android:attr/textAppearanceLarge"
+        android:singleLine="true" android:gravity="center_vertical"
+        android:text="" android:ellipsize="marquee"/>
+    <ImageView android:id="@+id/span"
+        app:layout_constraintStart_toEndOf="@id/indent"
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintBottom_toBottomOf="parent"
         android:layout_width="wrap_content"

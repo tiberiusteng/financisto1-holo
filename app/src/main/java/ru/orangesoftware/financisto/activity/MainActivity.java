@@ -93,27 +93,27 @@ public class MainActivity extends AppCompatActivity {
                 (tab, position) -> {
                     switch (position) {
                         case 0:
-                            tab.setText(getString(R.string.accounts))
+                            tab/*.setText(getString(R.string.accounts))*/
                                     .setIcon(ResourcesCompat.getDrawable(getResources(), R.drawable.ic_tab_accounts, getTheme()));
                             tabs.put("accounts", tab);
                             break;
                         case 1:
-                            tab.setText(getString(R.string.blotter))
+                            tab/*.setText(getString(R.string.blotter))*/
                                     .setIcon(ResourcesCompat.getDrawable(getResources(), R.drawable.ic_tab_blotter, getTheme()));
                             tabs.put("blotter", tab);
                             break;
                         case 2:
-                            tab.setText(getString(R.string.budgets))
+                            tab/*.setText(getString(R.string.budgets))*/
                                     .setIcon(ResourcesCompat.getDrawable(getResources(), R.drawable.ic_tab_budgets, getTheme()));
                             tabs.put("budgets", tab);
                             break;
                         case 3:
-                            tab.setText(getString(R.string.reports))
+                            tab/*.setText(getString(R.string.reports))*/
                                     .setIcon(ResourcesCompat.getDrawable(getResources(), R.drawable.ic_tab_reports, getTheme()));
                             tabs.put("reports", tab);
                             break;
                         case 4:
-                            tab.setText(getString(R.string.menu))
+                            tab/*.setText(getString(R.string.menu))*/
                                     .setIcon(ResourcesCompat.getDrawable(getResources(), R.drawable.ic_tab_menu, getTheme()));
                             tabs.put("menu", tab);
                             break;
