@@ -10,6 +10,8 @@
  ******************************************************************************/
 package ru.orangesoftware.financisto.adapter;
 
+import static android.text.Spanned.SPAN_EXCLUSIVE_EXCLUSIVE;
+
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.Map;
@@ -21,6 +23,8 @@ import ru.orangesoftware.financisto.model.Category;
 import ru.orangesoftware.financisto.model.CategoryTree;
 import android.content.Context;
 import android.graphics.drawable.Drawable;
+import android.text.SpannableStringBuilder;
+import android.text.style.ForegroundColorSpan;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -45,6 +49,8 @@ public class CategoryListAdapter2 extends BaseAdapter {
 
     private final int levelPadding;
 
+	private final int levelMark;
+
 	public CategoryListAdapter2(Context context, CategoryTree<Category> categories) {
 		this.inflater = (LayoutInflater)context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
 		this.categories = categories;
@@ -54,6 +60,7 @@ public class CategoryListAdapter2 extends BaseAdapter {
         this.incomeColor = resources.getColor(R.color.category_type_income);
         this.expenseColor = resources.getColor(R.color.category_type_expense);
         this.levelPadding = resources.getDimensionPixelSize(R.dimen.category_padding);
+		this.levelMark = context.getResources().getColor(R.color.material_blue_gray);
 		recreatePlainList();
 	}
 	
@@ -114,15 +121,23 @@ public class CategoryListAdapter2 extends BaseAdapter {
 					onListItemClick(c.id);
 				}
 			});
-            span.setPadding(padding, 0, 0, 0);
+            //span.setPadding(padding, 0, 0, 0);
 			span.setVisibility(View.VISIBLE);
-            padding += collapsedDrawable.getMinimumWidth();
+            //padding += collapsedDrawable.getMinimumWidth();
 		} else {
             padding += levelPadding/2;
 			span.setVisibility(View.GONE);
 		}
-        title.setPadding(padding, 0, 0, 0);
-        label.setPadding(padding, 0, 0, 0);
+		if (c.level > 1) {
+			SpannableStringBuilder ssb = new SpannableStringBuilder();
+			for (int i=1; i<c.level; ++i) {
+				ssb.append("＞ ", new ForegroundColorSpan(levelMark), SPAN_EXCLUSIVE_EXCLUSIVE);
+			}
+			ssb.append(c.title);
+			title.setText(ssb);
+		}
+        //title.setPadding(padding, 0, 0, 0);
+		//label.setPadding(padding, 0, 0, 0);
 		long id = c.id;
 		if (attributes != null && attributes.containsKey(id)) {
 			label.setText(attributes.get(id));

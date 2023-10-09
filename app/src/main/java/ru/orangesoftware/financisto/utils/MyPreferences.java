@@ -420,7 +420,7 @@ public class MyPreferences {
 
 	public static boolean isColorizeBlotterItem(Context context) {
 		SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(context);
-		return sharedPreferences.getBoolean("colorize_blotter_item", false);
+		return sharedPreferences.getBoolean("colorize_blotter_item", true);
 	}
 
 	public static boolean isResetCopiedTransactionStatus(Context context) {
