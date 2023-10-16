@@ -29,7 +29,6 @@ public class MassOpFragment extends BlotterFragment {
     }
 
     @Override
-    @BuildCompat.PrereleaseSdkCheck
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         bFilter = view.findViewById(R.id.bFilter);
         bFilter.setOnClickListener(v -> {

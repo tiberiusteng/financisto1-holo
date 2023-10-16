@@ -13,6 +13,7 @@ package tw.tib.financisto.activity;
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
+import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
 import android.view.View;
@@ -45,7 +46,6 @@ public class PinActivity extends Activity implements PinView.PinListener {
     }
 
     @Override
-    @BuildCompat.PrereleaseSdkCheck
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         String pin = MyPreferences.getPin(this);
@@ -59,7 +59,7 @@ public class PinActivity extends Activity implements PinView.PinListener {
             usePinLock();
         }
 
-        if (BuildCompat.isAtLeastT()) {
+        if (Build.VERSION.SDK_INT >= 33) {
             getOnBackInvokedDispatcher().registerOnBackInvokedCallback(
                     OnBackInvokedDispatcher.PRIORITY_DEFAULT,
                     () -> {
@@ -141,9 +141,8 @@ public class PinActivity extends Activity implements PinView.PinListener {
     }
 
     @Override
-    @BuildCompat.PrereleaseSdkCheck
     public void onBackPressed() {
-        if (BuildCompat.isAtLeastT()) {
+        if (Build.VERSION.SDK_INT >= 33) {
             super.onBackPressed();
         }
         else {

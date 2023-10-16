@@ -26,7 +26,6 @@ import tw.tib.financisto.blotter.TotalCalculationTask;
 public class SplitsBlotterFragment extends BlotterFragment {
 
     @Override
-    @BuildCompat.PrereleaseSdkCheck
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
         bFilter.setVisibility(View.GONE);

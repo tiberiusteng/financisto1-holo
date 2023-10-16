@@ -69,7 +69,6 @@ public class TemplatesListFragment extends BlotterFragment {
     }
 
     @Override
-    @BuildCompat.PrereleaseSdkCheck
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
 

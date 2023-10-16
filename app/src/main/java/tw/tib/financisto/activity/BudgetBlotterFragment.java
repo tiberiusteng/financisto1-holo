@@ -41,7 +41,6 @@ public class BudgetBlotterFragment extends BlotterFragment {
     }
 
     @Override
-    @BuildCompat.PrereleaseSdkCheck
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         categories = MyEntity.asMap(db.getCategoriesList(true));
         projects = MyEntity.asMap(db.getActiveProjectsList(true));

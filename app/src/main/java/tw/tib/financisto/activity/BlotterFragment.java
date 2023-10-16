@@ -8,6 +8,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.database.Cursor;
+import android.os.Build;
 import android.os.Bundle;
 import android.text.Editable;
 import android.text.TextWatcher;
@@ -131,20 +132,17 @@ public class BlotterFragment extends AbstractListFragment implements BlotterOper
     }
 
     @Override
-    @BuildCompat.PrereleaseSdkCheck
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
 
         integrityCheck();
 
-        if (BuildCompat.isAtLeastT()) {
-            backCallback = () -> {
-                FrameLayout searchLayout = view.findViewById(R.id.search_text_frame);
-                if (searchLayout != null && searchLayout.getVisibility() == View.VISIBLE) {
-                    searchLayout.setVisibility(View.GONE);
-                }
-            };
-        }
+        backCallback = () -> {
+            FrameLayout searchLayout = view.findViewById(R.id.search_text_frame);
+            if (searchLayout != null && searchLayout.getVisibility() == View.VISIBLE) {
+                searchLayout.setVisibility(View.GONE);
+            }
+        };
 
         showAllBlotterButtons = !MyPreferences.isCollapseBlotterButtons(getContext());
 
@@ -211,7 +209,7 @@ public class BlotterFragment extends AbstractListFragment implements BlotterOper
                 if (searchLayout.getVisibility() == View.VISIBLE) {
                     imm.hideSoftInputFromWindow(searchLayout.getWindowToken(), 0);
                     searchLayout.setVisibility(View.GONE);
-                    if (BuildCompat.isAtLeastT()) {
+                    if (Build.VERSION.SDK_INT >= 33) {
                         view.findOnBackInvokedDispatcher().unregisterOnBackInvokedCallback(backCallback);
                     }
                     return;
@@ -220,7 +218,7 @@ public class BlotterFragment extends AbstractListFragment implements BlotterOper
                 searchLayout.setVisibility(View.VISIBLE);
                 searchText.requestFocusFromTouch();
                 imm.showSoftInput(searchText, InputMethodManager.SHOW_IMPLICIT);
-                if (BuildCompat.isAtLeastT()) {
+                if (Build.VERSION.SDK_INT >= 33) {
                     view.findOnBackInvokedDispatcher().registerOnBackInvokedCallback(
                             OnBackInvokedDispatcher.PRIORITY_DEFAULT, backCallback);
                 }
@@ -641,7 +639,6 @@ public class BlotterFragment extends AbstractListFragment implements BlotterOper
         new IntegrityCheckTask(getActivity()).execute(new IntegrityCheckRunningBalance(getContext(), db));
     }
 
-    @BuildCompat.PrereleaseSdkCheck
     public boolean onBackPressed()
     {
         FrameLayout searchLayout = getView().findViewById(R.id.search_text_frame);
