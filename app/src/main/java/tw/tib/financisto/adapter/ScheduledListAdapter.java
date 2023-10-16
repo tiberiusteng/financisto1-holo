@@ -179,7 +179,7 @@ public class ScheduledListAdapter extends BaseAdapter {
 	}
 	
 	public static class Holder {
-		public RelativeLayout layout;
+		public View layout;
 		public TextView indicator;
 		public TextView topView;
 		public TextView centerView;
@@ -189,7 +189,7 @@ public class ScheduledListAdapter extends BaseAdapter {
 		
 		public static Holder create(View view) {
 			Holder v = new Holder();
-			v.layout = (RelativeLayout)view.findViewById(R.id.layout);
+			v.layout = view.findViewById(R.id.layout);
 			v.indicator = (TextView)view.findViewById(R.id.indicator);
 			v.topView = (TextView)view.findViewById(R.id.top);
 			v.centerView = (TextView)view.findViewById(R.id.center);		
