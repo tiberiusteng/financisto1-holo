@@ -66,6 +66,7 @@
   <string name="warning">警告</string>
   <string name="no_accounts">您必須從建立新帳戶開始，請點擊下面綠色的 \'+\' 按鈕…</string>
   <string name="no_budgets">無預算</string>
+  <string name="loading">載入中 ...</string>
   <string name="no_transactions">無交易</string>
   <string name="no_categories">無分類</string>
   <string name="no_currencies">無貨幣</string>

@@ -51,6 +51,7 @@ import tw.tib.financisto.model.Transaction;
 import tw.tib.financisto.utils.IntegrityCheckRunningBalance;
 import tw.tib.financisto.utils.MenuItemInfo;
 import tw.tib.financisto.utils.MyPreferences;
+import tw.tib.financisto.utils.PinProtection;
 import tw.tib.financisto.view.NodeInflater;
 
 public class BlotterFragment extends AbstractListFragment implements BlotterOperations.BlotterOperationsCallback {
@@ -68,6 +69,8 @@ public class BlotterFragment extends AbstractListFragment implements BlotterOper
     private static final int MENU_SAVE_AS_TEMPLATE = MENU_ADD + 2;
 
     protected TextView totalText;
+    protected TextView emptyText;
+
     protected ImageButton bFilter;
     protected ImageButton bTransfer;
     protected ImageButton bTemplate;
@@ -174,6 +177,8 @@ public class BlotterFragment extends AbstractListFragment implements BlotterOper
         if (totalText != null) {
             totalText.setOnClickListener(v -> showTotals());
         }
+
+        emptyText = view.findViewById(android.R.id.empty);
 
         Bundle args = getArguments();
         if (args != null) {
@@ -493,6 +498,7 @@ public class BlotterFragment extends AbstractListFragment implements BlotterOper
     @Override
     protected Cursor createCursor() {
         Cursor c;
+        emptyText.setText(R.string.loading);
         long t1 = System.currentTimeMillis();
         if (db == null) {
             db = new DatabaseAdapter(getActivity());
@@ -518,6 +524,9 @@ public class BlotterFragment extends AbstractListFragment implements BlotterOper
             a = new TransactionsListAdapter(getContext(), db, cursor);
         } else {
             a = new BlotterListAdapter(getContext(), db, cursor);
+        }
+        if (a.getCount() == 0) {
+            emptyText.setText(R.string.no_transactions);
         }
         Log.d(this.getTag(), "createAdapter: " + (System.currentTimeMillis() - t1) + " ms");
         return a;
@@ -647,6 +656,22 @@ public class BlotterFragment extends AbstractListFragment implements BlotterOper
             return true;
         } else {
             return false;
+        }
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        Log.d(this.getClass().getSimpleName(), "onResume");
+
+        if (PinProtection.isUnlocked()) {
+            Log.d(this.getClass().getSimpleName(), "onResume isUnlocked, show list");
+            getListView().setVisibility(View.VISIBLE);
+        }
+        else {
+            // still locked, don't show account list balances
+            Log.d(this.getClass().getSimpleName(), "onResume NOT isUnlocked, hide list");
+            getListView().setVisibility(View.INVISIBLE);
         }
     }
 }

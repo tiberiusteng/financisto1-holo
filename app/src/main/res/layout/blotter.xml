@@ -13,21 +13,25 @@
 	android:layout_height="fill_parent"
 	android:orientation="vertical">
 
-	<ListView
-		android:id="@android:id/list"
-		android:layout_width="fill_parent"
-		android:layout_height="wrap_content"
-		android:layout_weight="1"
-		android:cacheColorHint="@android:color/transparent"
-		android:fastScrollEnabled="true" />
+	<FrameLayout
+		android:layout_width="match_parent"
+		android:layout_height="0dp"
+		android:layout_weight="1">
+		<ListView
+			android:id="@android:id/list"
+			android:layout_width="fill_parent"
+			android:layout_height="wrap_content"
+			android:cacheColorHint="@android:color/transparent"
+			android:fastScrollEnabled="true" />
 
-	<TextView
-		android:id="@android:id/empty"
-		android:layout_width="fill_parent"
-		android:layout_height="wrap_content"
-		android:layout_weight="1"
-		android:gravity="center"
-		android:text="@string/no_transactions" />
+		<TextView
+			android:id="@android:id/empty"
+			android:layout_width="fill_parent"
+			android:layout_height="wrap_content"
+			android:layout_gravity="center_vertical"
+			android:gravity="center"
+			android:text="@string/loading" />
+	</FrameLayout>
 
 	<FrameLayout
 		android:id="@+id/search_text_frame"

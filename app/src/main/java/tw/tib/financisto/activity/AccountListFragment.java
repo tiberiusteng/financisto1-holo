@@ -36,6 +36,7 @@ import tw.tib.financisto.model.Total;
 import tw.tib.financisto.utils.IntegrityCheckAutobackup;
 import tw.tib.financisto.utils.MenuItemInfo;
 import tw.tib.financisto.utils.MyPreferences;
+import tw.tib.financisto.utils.PinProtection;
 import tw.tib.financisto.view.NodeInflater;
 
 public class AccountListFragment extends AbstractListFragment {
@@ -47,6 +48,7 @@ public class AccountListFragment extends AbstractListFragment {
     private static final int PURGE_ACCOUNT_REQUEST = 4;
 
     private QuickActionWidget accountActionGrid;
+    private TextView emptyText;
 
     public AccountListFragment() {
         super(R.layout.account_list);
@@ -69,6 +71,7 @@ public class AccountListFragment extends AbstractListFragment {
             accountActionGrid.show(view);
             return true;
         });
+        emptyText = getView().findViewById(android.R.id.empty);
     }
 
     private void setupMenuButton() {
@@ -209,13 +212,20 @@ public class AccountListFragment extends AbstractListFragment {
     protected ListAdapter createAdapter(Cursor cursor) {
         long t1 = System.currentTimeMillis();
         ListAdapter a = new AccountListAdapter2(getContext(), cursor);
-        Log.d(this.getTag(), "createAdapter: " + (System.currentTimeMillis() - t1) + " ms");
+        if (a.getCount() == 0) {
+            emptyText.setText(R.string.no_accounts);
+        }
+        Log.d(this.getClass().getSimpleName(), "createAdapter: " + (System.currentTimeMillis() - t1) + " ms");
         return a;
     }
 
     @Override
     protected Cursor createCursor() {
         Cursor c;
+
+        emptyText.setText(R.string.loading);
+
+        Log.d(this.getClass().getSimpleName(), "createCursor start");
         long t1 = System.currentTimeMillis();
         if (MyPreferences.isHideClosedAccounts(getContext())) {
             c = db.getAllActiveAccounts();
@@ -361,5 +371,21 @@ public class AccountListFragment extends AbstractListFragment {
     @Override
     public void integrityCheck() {
         new IntegrityCheckTask(getActivity()).execute(new IntegrityCheckAutobackup(getContext(), TimeUnit.DAYS.toMillis(7)));
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        Log.d(this.getClass().getSimpleName(), "onResume");
+
+        if (PinProtection.isUnlocked()) {
+            Log.d(this.getClass().getSimpleName(), "onResume isUnlocked, show list");
+            getListView().setVisibility(View.VISIBLE);
+        }
+        else {
+            // still locked, don't show account list balances
+            Log.d(this.getClass().getSimpleName(), "onResume NOT isUnlocked, hide list");
+            getListView().setVisibility(View.INVISIBLE);
+        }
     }
 }
