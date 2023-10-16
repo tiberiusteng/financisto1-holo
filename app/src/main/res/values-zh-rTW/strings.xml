@@ -208,6 +208,8 @@
   <string name="sort_locations">地點排序</string>
   <string name="sort_locations_summary">定義地點列表的排列順序</string>
   <string name="more_products">更多商品…</string>
+  <string name="secure_window">保護敏感資料</string>
+  <string name="secure_window_summary">在程式切換畫面與解鎖畫面前隱藏內容，同時防止螢幕截圖 (需要重新啟動)</string>
   <string name="pin_protection">密碼保護</string>
   <string name="pin_protection_summary">勾選啟用密碼保護</string>
   <string name="pin_protection_notify">請在設定選項設定密碼</string>

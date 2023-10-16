@@ -104,6 +104,11 @@ public class MyPreferences {
 
 	}
 
+	public static boolean isSecureWindow(Context context) {
+		SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(context);
+		return sharedPreferences.getBoolean("secure_window", true);
+	}
+
 	public static boolean isPinProtected(Context context) {
 		SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(context);
 		return sharedPreferences.getBoolean("pin_protection", false);

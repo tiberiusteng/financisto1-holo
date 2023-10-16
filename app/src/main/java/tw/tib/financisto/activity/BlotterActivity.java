@@ -3,6 +3,7 @@ package tw.tib.financisto.activity;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
+import android.view.WindowManager;
 
 import androidx.appcompat.app.AppCompatActivity;
 
@@ -22,6 +23,11 @@ public class BlotterActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
+        if (MyPreferences.isSecureWindow(this)) {
+            getWindow().addFlags(WindowManager.LayoutParams.FLAG_SECURE);
+        }
+
         Intent intent = getIntent();
         Bundle args = null;
         if (intent != null) {

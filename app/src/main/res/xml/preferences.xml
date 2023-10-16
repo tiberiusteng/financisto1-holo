@@ -226,6 +226,11 @@
     <PreferenceCategory android:title="@string/protection">
         <CheckBoxPreference
             android:defaultValue="true"
+            android:key="secure_window"
+            android:summary="@string/secure_window_summary"
+            android:title="@string/secure_window" />
+        <CheckBoxPreference
+            android:defaultValue="true"
             android:key="enable_widget"
             android:summary="@string/enable_widget_summary"
             android:title="@string/enable_widget" />
