@@ -149,7 +149,8 @@
 		</activity>
 
 		<activity android:name=".activity.PinActivity" android:label="@string/enter_pin"
-			android:launchMode="singleTop"/>
+			android:launchMode="singleTop"
+			android:theme="@style/AppThemeCompat" />
 
 		<activity android:name=".activity.BlotterActivity" android:label="@string/blotter"
 			android:theme="@style/AppThemeCompat" />

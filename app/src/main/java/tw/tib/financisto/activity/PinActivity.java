@@ -22,6 +22,8 @@ import android.widget.TextView;
 import android.widget.Toast;
 import android.window.OnBackInvokedDispatcher;
 
+import androidx.activity.OnBackPressedCallback;
+import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.os.BuildCompat;
 
 import com.mtramin.rxfingerprint.RxFingerprint;
@@ -32,7 +34,7 @@ import tw.tib.financisto.utils.MyPreferences;
 import tw.tib.financisto.utils.PinProtection;
 import tw.tib.financisto.view.PinView;
 
-public class PinActivity extends Activity implements PinView.PinListener {
+public class PinActivity extends AppCompatActivity implements PinView.PinListener {
 
     public static final String SUCCESS = "PIN_SUCCESS";
 
@@ -59,13 +61,12 @@ public class PinActivity extends Activity implements PinView.PinListener {
             usePinLock();
         }
 
-        if (Build.VERSION.SDK_INT >= 33) {
-            getOnBackInvokedDispatcher().registerOnBackInvokedCallback(
-                    OnBackInvokedDispatcher.PRIORITY_DEFAULT,
-                    () -> {
-                        moveTaskToBack(true);
-                    });
-        }
+        getOnBackPressedDispatcher().addCallback(new OnBackPressedCallback(true) {
+            @Override
+            public void handleOnBackPressed() {
+                moveTaskToBack(true);
+            }
+        });
     }
 
     private void usePinLock() {

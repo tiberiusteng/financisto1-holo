@@ -26,14 +26,12 @@ import android.widget.ListAdapter;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
-import android.window.OnBackInvokedCallback;
-import android.window.OnBackInvokedDispatcher;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.core.os.BuildCompat;
+import androidx.activity.OnBackPressedCallback;
 
 import java.util.List;
 
@@ -92,7 +90,7 @@ public class BlotterFragment extends AbstractListFragment implements BlotterOper
     protected boolean isAccountBlotter = false;
     protected boolean showAllBlotterButtons = true;
 
-    protected OnBackInvokedCallback backCallback;
+    protected OnBackPressedCallback backCallback;
 
     public BlotterFragment(int layoutId) {
         super(layoutId);
@@ -144,12 +142,18 @@ public class BlotterFragment extends AbstractListFragment implements BlotterOper
 
         integrityCheck();
 
-        backCallback = () -> {
-            FrameLayout searchLayout = view.findViewById(R.id.search_text_frame);
-            if (searchLayout != null && searchLayout.getVisibility() == View.VISIBLE) {
-                searchLayout.setVisibility(View.GONE);
+        backCallback = new OnBackPressedCallback(false) {
+            @Override
+            public void handleOnBackPressed() {
+                FrameLayout searchLayout = view.findViewById(R.id.search_text_frame);
+                if (searchLayout != null && searchLayout.getVisibility() == View.VISIBLE) {
+                    searchLayout.setVisibility(View.GONE);
+                    this.setEnabled(false);
+                }
             }
         };
+
+        getActivity().getOnBackPressedDispatcher().addCallback(backCallback);
 
         showAllBlotterButtons = !MyPreferences.isCollapseBlotterButtons(getContext());
 
@@ -219,19 +223,14 @@ public class BlotterFragment extends AbstractListFragment implements BlotterOper
                 if (searchLayout.getVisibility() == View.VISIBLE) {
                     imm.hideSoftInputFromWindow(searchLayout.getWindowToken(), 0);
                     searchLayout.setVisibility(View.GONE);
-                    if (Build.VERSION.SDK_INT >= 33) {
-                        view.findOnBackInvokedDispatcher().unregisterOnBackInvokedCallback(backCallback);
-                    }
+                    backCallback.setEnabled(false);
                     return;
                 }
 
                 searchLayout.setVisibility(View.VISIBLE);
                 searchText.requestFocusFromTouch();
                 imm.showSoftInput(searchText, InputMethodManager.SHOW_IMPLICIT);
-                if (Build.VERSION.SDK_INT >= 33) {
-                    view.findOnBackInvokedDispatcher().registerOnBackInvokedCallback(
-                            OnBackInvokedDispatcher.PRIORITY_DEFAULT, backCallback);
-                }
+                backCallback.setEnabled(true);
 
                 searchText.addTextChangedListener(new TextWatcher() {
                     @Override
