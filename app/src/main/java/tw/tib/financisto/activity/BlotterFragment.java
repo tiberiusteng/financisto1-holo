@@ -10,6 +10,8 @@ import android.content.SharedPreferences;
 import android.database.Cursor;
 import android.os.Build;
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.Looper;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.util.Log;
@@ -21,6 +23,7 @@ import android.widget.EditText;
 import android.widget.FrameLayout;
 import android.widget.ImageButton;
 import android.widget.ListAdapter;
+import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 import android.window.OnBackInvokedCallback;
@@ -70,6 +73,7 @@ public class BlotterFragment extends AbstractListFragment implements BlotterOper
 
     protected TextView totalText;
     protected TextView emptyText;
+    protected ProgressBar progressBar;
 
     protected ImageButton bFilter;
     protected ImageButton bTransfer;
@@ -179,6 +183,7 @@ public class BlotterFragment extends AbstractListFragment implements BlotterOper
         }
 
         emptyText = view.findViewById(android.R.id.empty);
+        progressBar = view.findViewById(android.R.id.progress);
 
         Bundle args = getArguments();
         if (args != null) {
@@ -498,7 +503,10 @@ public class BlotterFragment extends AbstractListFragment implements BlotterOper
     @Override
     protected Cursor createCursor() {
         Cursor c;
-        emptyText.setText(R.string.loading);
+        new Handler(Looper.getMainLooper()).post(()-> {
+            emptyText.setVisibility(View.GONE);
+            progressBar.setVisibility(View.VISIBLE);
+        });
         long t1 = System.currentTimeMillis();
         if (db == null) {
             db = new DatabaseAdapter(getActivity());
@@ -526,8 +534,9 @@ public class BlotterFragment extends AbstractListFragment implements BlotterOper
             a = new BlotterListAdapter(getContext(), db, cursor);
         }
         if (a.getCount() == 0) {
-            emptyText.setText(R.string.no_transactions);
+            emptyText.setVisibility(View.VISIBLE);
         }
+        progressBar.setVisibility(View.GONE);
         Log.d(this.getTag(), "createAdapter: " + (System.currentTimeMillis() - t1) + " ms");
         return a;
     }

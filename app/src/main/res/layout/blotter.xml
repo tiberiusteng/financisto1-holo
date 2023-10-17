@@ -30,7 +30,15 @@
 			android:layout_height="wrap_content"
 			android:layout_gravity="center_vertical"
 			android:gravity="center"
-			android:text="@string/loading" />
+			android:text="@string/no_transactions" />
+
+		<ProgressBar
+			android:id="@android:id/progress"
+			android:layout_width="match_parent"
+			android:layout_height="wrap_content"
+			android:gravity="center"
+			android:layout_gravity="center_vertical"
+			android:indeterminate="true"/>
 	</FrameLayout>
 
 	<FrameLayout

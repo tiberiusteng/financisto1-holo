@@ -5,12 +5,15 @@ import android.content.Context;
 import android.content.Intent;
 import android.database.Cursor;
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.Looper;
 import android.util.Log;
 import android.view.MenuInflater;
 import android.view.View;
 import android.widget.ImageButton;
 import android.widget.ListAdapter;
 import android.widget.PopupMenu;
+import android.widget.ProgressBar;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
@@ -49,6 +52,7 @@ public class AccountListFragment extends AbstractListFragment {
 
     private QuickActionWidget accountActionGrid;
     private TextView emptyText;
+    private ProgressBar progressBar;
 
     public AccountListFragment() {
         super(R.layout.account_list);
@@ -72,6 +76,7 @@ public class AccountListFragment extends AbstractListFragment {
             return true;
         });
         emptyText = getView().findViewById(android.R.id.empty);
+        progressBar = getView().findViewById(android.R.id.progress);
     }
 
     private void setupMenuButton() {
@@ -213,8 +218,9 @@ public class AccountListFragment extends AbstractListFragment {
         long t1 = System.currentTimeMillis();
         ListAdapter a = new AccountListAdapter2(getContext(), cursor);
         if (a.getCount() == 0) {
-            emptyText.setText(R.string.no_accounts);
+            emptyText.setVisibility(View.VISIBLE);
         }
+        progressBar.setVisibility(View.GONE);
         Log.d(this.getClass().getSimpleName(), "createAdapter: " + (System.currentTimeMillis() - t1) + " ms");
         return a;
     }
@@ -223,7 +229,10 @@ public class AccountListFragment extends AbstractListFragment {
     protected Cursor createCursor() {
         Cursor c;
 
-        emptyText.setText(R.string.loading);
+        new Handler(Looper.getMainLooper()).post(()-> {
+            emptyText.setVisibility(View.GONE);
+            progressBar.setVisibility(View.VISIBLE);
+        });
 
         Log.d(this.getClass().getSimpleName(), "createCursor start");
         long t1 = System.currentTimeMillis();

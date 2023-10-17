@@ -23,12 +23,20 @@
 			android:layout_height="wrap_content" />
 
 		<TextView
-			android:id="@id/android:empty"
+			android:id="@android:id/empty"
 			android:layout_width="fill_parent"
 			android:layout_height="wrap_content"
 			android:gravity="center"
 			android:layout_gravity="center_vertical"
-			android:text="@string/loading" />
+			android:text="@string/no_accounts" />
+
+		<ProgressBar
+			android:id="@android:id/progress"
+			android:layout_width="match_parent"
+			android:layout_height="wrap_content"
+			android:gravity="center"
+			android:layout_gravity="center_vertical"
+			android:indeterminate="true"/>
 	</FrameLayout>
 
 	<TextView
