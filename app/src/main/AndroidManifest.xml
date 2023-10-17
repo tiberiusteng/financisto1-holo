@@ -261,8 +261,8 @@
 		
 		<activity android:name=".activity.Report2DChartActivity" android:label="@string/report"/>
 		<activity android:name=".activity.ReportPreferencesActivity" android:label="@string/report_preferences"/>
-		<activity android:name=".activity.AboutActivity" android:label="@string/about"/>
-		<activity android:name=".activity.WebViewActivity" android:label="@string/about"/>
+		<activity android:name=".activity.AboutActivity" android:label="@string/about"
+			android:theme="@style/AppThemeCompat" />
 
 		<activity android:name=".activity.SplitTransactionActivity" android:label="@string/split_transaction" />
 		<activity android:name=".activity.SplitTransferActivity" android:label="@string/split_transfer"/>
