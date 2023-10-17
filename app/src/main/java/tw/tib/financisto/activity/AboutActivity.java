@@ -41,7 +41,7 @@ public class AboutActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState ) {
         super.onCreate(savedInstanceState);
-        setTitle("Financisto ("+getAppVersion(this)+")");
+        setTitle("Financisto Holo ("+getAppVersion(this)+")");
 
         setContentView(R.layout.main2);
 

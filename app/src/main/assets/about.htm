@@ -11,6 +11,76 @@
     <title>Financisto - personal finance manager for Android</title>
 </head>
 <body>
+
+<p>
+This codebase is started from an imported copy of an old version of source code at launchpad
+(<a href="https://code.launchpad.net/~financisto-dev/financisto/trunk">https://code.launchpad.net/~financisto-dev/financisto/trunk</a>).
+</p>
+
+<p>
+Old-school, no cloud, no online service. Everything is on your device, unless you explicitly enables Google Drive and/or Dropbox online backup. I used it for 12+ years but it stopped updated a while ago, tweaked some quirks to fit my own needs. Hope it helps you too!
+</p>
+
+<p>
+<strong>BE SURE TO BACKUP YOUR DATA!</strong>
+</p>
+
+<ul>
+    <li>Support new Android storage permissions</li>
+    <li>Fingerprint unlock</li>
+    <li>Dropbox/Google Drive backup/restore</li>
+    <li>Date/time picker provided by new Android versions</li>
+</ul>
+
+<p>
+Google no longer allow SMS permissions on new submitted apps, so automatic creating transactions
+from SMS won't work. If you really need it you can clone the source and make a build yourself, it'll
+work on your own devices that way.
+</p>
+
+<p>
+To import old Financisto backup files: First choose/make a new backup folder, then copy your old
+backup files into it, then restore from backup.
+</p>
+
+<p>
+If Dropbox authorization doesn't work (stays at the same page after clicking "Authorize"), try
+close browser then return to Financisto, or try install Dropbox app and try again.
+</p>
+
+<p>
+For automation and/or integration, rather than directly hacking the app I strongly recommend you
+start from interoperating with the backup file. It's just gzipped text file containing key-value of
+database rows.
+</p>
+
+<hr />
+
+<p>
+I have some example scripts that can:
+
+<ul>
+    <li>Exporting Financisto backup files to hledger text format (for easy human read, searching in editor)</li>
+    <li>Creating transactions from Taiwan EasyCard</li>
+    <li>Importing transaction logs from Taiwan Government Unified Invoice</li>
+</ul>
+
+find them here: <a href="https://github.com/tiberiusteng/financisto-backup-to-hledger">https://github.com/tiberiusteng/financisto-backup-to-hledger</a>
+</p>
+
+<hr>
+
+<p>
+Source code at <a href="https://github.com/tiberiusteng/financisto1-holo">https://github.com/tiberiusteng/financisto1-holo</a><br />
+Report issues at <a href="https://github.com/tiberiusteng/financisto1-holo/issues">https://github.com/tiberiusteng/financisto1-holo/issues</a>
+</p>
+
+<p>
+Below are original about page for historical interest, some of those links may no longer working.
+</p>
+
+<hr>
+
 <p>
     <b>Financisto</b> - open-source personal finance manager for Android platform.<br/>
 </p>
