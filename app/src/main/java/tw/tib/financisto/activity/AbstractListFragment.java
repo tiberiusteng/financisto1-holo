@@ -46,7 +46,6 @@ abstract public class AbstractListFragment extends ListFragment
     protected ListAdapter adapter;
     protected DatabaseAdapter db;
     protected ImageButton bAdd;
-    protected Parcelable listViewState;
 
     protected boolean enablePin = true;
 
@@ -162,8 +161,7 @@ abstract public class AbstractListFragment extends ListFragment
     protected abstract void viewItem(View v, int position, long id);
 
     public void recreateCursor() {
-        Log.i("AbstractListFragment", "Recreating cursor");
-        listViewState = getListView().onSaveInstanceState();
+        Log.i(this.getClass().getSimpleName(), "Recreating cursor");
         LoaderManager.getInstance(this).restartLoader(0, null, this);
     }
 
@@ -196,16 +194,14 @@ abstract public class AbstractListFragment extends ListFragment
     @Override
     public void onLoadFinished(@NonNull Loader<Cursor> loader, Cursor data) {
         adapter = createAdapter(data);
-        long t1 = System.currentTimeMillis();
+        long t1 = System.nanoTime();
+        Parcelable listViewState = getListView().onSaveInstanceState();
         setListAdapter(adapter);
-        long t2 = System.currentTimeMillis();
-        Log.d(this.getClass().getCanonicalName(), "setListAdapter: " + (t2 - t1));
-
-        if (listViewState != null) {
-            getListView().onRestoreInstanceState(listViewState);
-            Log.d(this.getClass().getCanonicalName(), "getListView().onRestoreInstanceState: " + (System.currentTimeMillis() - t2));
-            listViewState = null;
-        }
+        long t2 = System.nanoTime();
+        Log.d(this.getClass().getSimpleName(), "setListAdapter: " + (t2 - t1) / 1000 + " us");
+        getListView().onRestoreInstanceState(listViewState);
+        long t3 = System.nanoTime();
+        Log.d(this.getClass().getSimpleName(), "getListView().onRestoreInstanceState: " + (t3 - t2) / 1000 + " us");
     }
 
     @Override
