@@ -347,6 +347,7 @@
   <string name="user_password">密碼</string>
   <string name="user_password_summary">Google 帳戶密碼</string>
   <string name="backup_folder">備份目錄</string>
+  <string name="backup_folder_not_configured">請先到設定選項設定備份目錄。</string>
   <string name="backup_folder_summary">為儲存備份檔，請在 My Drive 建立新目錄</string>
   <string name="report_preferences">報告選項</string>
   <string name="all_reports_preferences">一般報告選項</string>

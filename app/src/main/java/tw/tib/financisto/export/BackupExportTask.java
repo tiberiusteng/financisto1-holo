@@ -22,7 +22,7 @@ public class BackupExportTask extends ImportExportAsyncTask {
 	protected Object work(Context context, DatabaseAdapter db, Uri...params) throws Exception {
 		DatabaseExport export = new DatabaseExport(context, db.db(), true);
         backupFileUri = export.export();
-        if (uploadOnline) {
+        if (backupFileUri != null && uploadOnline) {
             doUploadToDropbox(context, backupFileUri);
 			doUploadToGoogleDrive(context, backupFileUri);
         }

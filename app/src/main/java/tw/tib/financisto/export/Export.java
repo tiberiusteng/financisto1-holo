@@ -26,6 +26,7 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.zip.GZIPOutputStream;
 
+import tw.tib.financisto.R;
 import tw.tib.financisto.export.drive.GoogleDriveRESTClient;
 import tw.tib.financisto.export.dropbox.Dropbox;
 import tw.tib.financisto.utils.MyPreferences;
@@ -45,7 +46,12 @@ public abstract class Export {
 
     public Uri export() throws Exception {
         Uri backupFolderUri = Uri.parse(getBackupFolder(context));
-        String backupFolderId = DocumentsContract.getTreeDocumentId(backupFolderUri);
+        String backupFolderId;
+        try {
+            backupFolderId = DocumentsContract.getTreeDocumentId(backupFolderUri);
+        } catch (Exception e) {
+            throw new ImportExportException(R.string.backup_folder_not_configured);
+        }
         Log.i("Financisto", "backupPathId: " + backupFolderId);
         Uri dirUri = DocumentsContract.buildDocumentUriUsingTree(backupFolderUri, backupFolderId);
         Log.i("Financisto", "dirUri: " + dirUri.toString());
