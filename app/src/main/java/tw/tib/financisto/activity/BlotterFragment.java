@@ -502,23 +502,26 @@ public class BlotterFragment extends AbstractListFragment implements BlotterOper
     @Override
     protected Cursor createCursor() {
         Cursor c;
+        WhereFilter blotterFilterCopy = WhereFilter.copyOf(blotterFilter);
+
         new Handler(Looper.getMainLooper()).post(()-> {
             emptyText.setVisibility(View.GONE);
             progressBar.setVisibility(View.VISIBLE);
         });
+
         long t1 = System.currentTimeMillis();
         if (db == null) {
             db = new DatabaseAdapter(getActivity());
             db.open();
         }
-        long accountId = blotterFilter.getAccountId();
+        long accountId = blotterFilterCopy.getAccountId();
         if (accountId != -1) {
-            c = db.getBlotterForAccount(blotterFilter);
+            c = db.getBlotterForAccount(blotterFilterCopy);
         } else {
-            c = db.getBlotter(blotterFilter);
+            c = db.getBlotter(blotterFilterCopy);
         }
         c.getCount();
-        Log.d(this.getTag(), "createCursor: " + (System.currentTimeMillis() - t1) + " ms");
+        Log.d(getClass().getSimpleName(), "createCursor: " + (System.currentTimeMillis() - t1) + " ms");
         return c;
     }
 
@@ -565,7 +568,7 @@ public class BlotterFragment extends AbstractListFragment implements BlotterOper
 
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
-        Log.d(getTag(), "onActivityResult requestCode=" + requestCode + " resultCode=" + resultCode);
+        Log.d(getClass().getSimpleName(), "onActivityResult requestCode=" + requestCode + " resultCode=" + resultCode);
 
         if (requestCode == FILTER_REQUEST) {
             if (resultCode == RESULT_FIRST_USER) {
@@ -581,7 +584,7 @@ public class BlotterFragment extends AbstractListFragment implements BlotterOper
             createTransactionFromTemplate(data);
         }
         if (resultCode == RESULT_OK || resultCode == RESULT_FIRST_USER) {
-            Log.d(getTag(), "RESULT_OK || RESULT_FIRST_USER");
+            Log.d(getClass().getSimpleName(), "RESULT_OK || RESULT_FIRST_USER");
         }
         recreateCursor();
     }
