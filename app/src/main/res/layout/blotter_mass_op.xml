@@ -10,21 +10,36 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
 	android:layout_height="fill_parent" android:layout_width="fill_parent"
 	android:orientation="vertical">
-	<LinearLayout android:layout_height="wrap_content"
+	<LinearLayout android:layout_height="?android:attr/listPreferredItemHeightSmall"
 		android:layout_width="fill_parent"
 		android:paddingTop="2dp"
 		style="@style/MassOpActionDropdown">
 		<Spinner
 			android:id="@+id/spOperation"
 			android:layout_width="fill_parent"
-			android:layout_height="wrap_content" />
+			android:layout_height="wrap_content"
+			android:layout_gravity="center_vertical" />
 	</LinearLayout>
+	<FrameLayout
+		android:layout_width="match_parent"
+		android:layout_height="0dp"
+		android:layout_weight="1">
 		<ListView android:id="@android:id/list" android:layout_width="fill_parent"
-			android:layout_weight="1" android:layout_height="wrap_content">
+			android:layout_height="wrap_content">
 		</ListView>
-		<TextView android:id="@id/android:empty" android:layout_width="fill_parent"
-			android:layout_height="wrap_content" android:layout_weight="1"
+		<TextView android:id="@android:id/empty" android:layout_width="fill_parent"
+			android:layout_height="wrap_content"
+			android:layout_gravity="center_vertical"
 			android:gravity="center" android:text="@string/mass_operations_use_filter" />
+		<ProgressBar
+			android:id="@android:id/progress"
+			android:layout_width="match_parent"
+			android:layout_height="wrap_content"
+			android:gravity="center"
+			android:layout_gravity="center_vertical"
+			android:indeterminate="true"
+			android:visibility="gone" />
+	</FrameLayout>
 	<LinearLayout style="@style/BottomBar">
 		<ImageButton style="@style/BottomBarButton" android:id="@+id/bFilter"
 			android:src="@drawable/ic_menu_filter_off" />

@@ -58,6 +58,9 @@ public class MassOpFragment extends BlotterFragment {
         spOperation.setPrompt(getString(R.string.mass_operations));
         spOperation.setAdapter(EnumUtils.createSpinnerAdapter(getContext(), operations));
         prepareTransactionActionGrid();
+
+        emptyText = view.findViewById(android.R.id.empty);
+        progressBar = view.findViewById(android.R.id.progress);
     }
 
     protected void applyMassOp(final MassOp op) {
@@ -73,7 +76,7 @@ public class MassOpFragment extends BlotterFragment {
                             Log.d("Financisto", "Will apply "+op+" on "+Arrays.toString(ids));
                             op.apply(db, ids);
                             adapter.uncheckAll();
-                            adapter.changeCursor(createCursor());
+                            recreateCursor();
                         }
                     })
                     .setNegativeButton(R.string.no, null)
@@ -95,6 +98,10 @@ public class MassOpFragment extends BlotterFragment {
 
     @Override
     protected ListAdapter createAdapter(Cursor cursor) {
+        if (cursor.getCount() == 0) {
+            emptyText.setVisibility(View.VISIBLE);
+        }
+        progressBar.setVisibility(View.GONE);
         return new BlotterListAdapter(getContext(), db, R.layout.blotter_mass_op_list_item, cursor, true);
     }
 

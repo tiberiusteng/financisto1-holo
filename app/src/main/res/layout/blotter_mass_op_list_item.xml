@@ -1,106 +1,99 @@
-<?xml version="1.0" encoding="utf-8"?><!--
-  Copyright (c) 2010 Denis Solonenko.
-  All rights reserved. This program and the accompanying materials
-  are made available under the terms of the GNU Public License v2.0
-  which accompanies this distribution, and is available at
-  http://www.gnu.org/licenses/old-licenses/gpl-2.0.html
-
-  Contributors:
-      Denis Solonenko - initial API and implementation
--->
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:id="@+id/layout"
-    android:layout_width="fill_parent"
-    android:layout_height="wrap_content"
-    android:paddingBottom="2dp"
-    android:paddingTop="2dp">
+    android:paddingRight="5dp"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content">
 
     <TextView
         android:id="@+id/indicator"
-        android:layout_width="7dp"
-        android:layout_height="wrap_content"
-        android:layout_alignBottom="@+id/bottom"
-        android:layout_alignParentLeft="true"
-        android:layout_alignTop="@+id/top"
-        android:layout_centerVertical="true"
-        android:layout_marginRight="6dp"
-        android:background="@color/unreconciled_transaction_color" />
+        android:layout_width="4sp"
+        android:layout_height="0dp"
+        android:layout_marginLeft="1sp"
+        android:background="@color/unreconciled_transaction_color"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintBottom_toBottomOf="parent" />
 
     <CheckBox
         android:id="@+id/cb"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_centerInParent="true"
-        android:layout_marginRight="6dp"
-        android:layout_toRightOf="@id/indicator"
-        android:focusable="false" />
-
-    <ImageView
-        android:id="@+id/right_top"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignBottom="@+id/top"
-        android:layout_alignParentRight="true"
-        android:layout_alignParentTop="true"
-        android:layout_alignTop="@+id/top"
-        android:adjustViewBounds="false"
-        android:paddingRight="10dp"
-        android:scaleType="fitEnd"
-        android:src="@drawable/ic_blotter_income" />
+        android:focusable="false"
+        app:layout_constraintStart_toEndOf="@id/indicator"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintBottom_toBottomOf="parent" />
 
     <TextView
         android:id="@+id/top"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_toRightOf="@id/cb"
-        android:maxLines="1"
+        android:layout_marginTop="-1sp"
+        android:layout_marginStart="4sp"
+        android:paddingTop="1sp"
+        android:singleLine="true"
         android:text="top"
-        android:textAppearance="?android:attr/textAppearanceSmall" />
+        android:textAppearance="@style/ListSecondary"
+        app:layout_constraintStart_toEndOf="@id/cb"
+        app:layout_constraintTop_toTopOf="parent" />
 
-    <TextView
-        android:id="@+id/center"
-        android:layout_width="fill_parent"
-        android:layout_height="wrap_content"
-        android:layout_alignLeft="@id/top"
-        android:layout_below="@+id/top"
-        android:layout_toLeftOf="@+id/right_center"
-        android:ellipsize="end"
-        android:maxLines="1"
-        android:text="Center"
-        android:textAppearance="?android:attr/textAppearanceMedium" />
-
-    <TextView
-        android:id="@+id/bottom"
+    <ImageView android:id="@+id/right_top"
         android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignLeft="@id/center"
-        android:layout_below="@id/center"
-        android:maxLines="1"
-        android:text="bottom"
-        android:textAppearance="?android:attr/textAppearanceSmall" />
+        android:layout_height="0dp"
+        android:layout_marginTop="2sp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintBottom_toBottomOf="@id/top"
+        android:scaleType="fitEnd"
+        android:src="@drawable/ic_blotter_income" />
 
-    <TextView
-        android:id="@+id/right"
-        style="@style/TextAppearance.BalanceAmount"
-        android:layout_width="wrap_content"
+    <TextView android:id="@+id/center"
         android:layout_height="wrap_content"
-        android:layout_alignBottom="@id/bottom"
-        android:layout_alignParentRight="true"
-        android:maxLines="1"
-        android:paddingRight="10dp"
-        android:text="right" />
+        android:layout_width="0dp"
+        android:layout_marginStart="3sp"
+        android:layout_marginTop="-2sp"
+        android:layout_marginBottom="-2sp"
+        android:layout_marginRight="2sp"
+        android:text="center"
+        android:textAppearance="@style/ListPrimary"
+        android:maxLines="1" android:ellipsize="end"
+        app:layout_constraintStart_toEndOf="@id/cb"
+        app:layout_constraintEnd_toStartOf="@id/right_center"
+        app:layout_constraintTop_toBottomOf="@id/top"
+        />
 
     <TextView
         android:id="@+id/right_center"
-        android:textAppearance="?android:attr/textAppearanceMedium"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_alignBaseline="@+id/center"
-        android:layout_alignBottom="@+id/center"
-        android:layout_alignParentEnd="true"
-        android:layout_alignParentRight="true"
         android:maxLines="1"
-        android:paddingRight="10dp"
-        android:text="right_center"/>
+        android:text="right_center"
+        android:textAppearance="@style/ListPrimary"
+        app:layout_constraintBaseline_toBaselineOf="@id/center"
+        app:layout_constraintEnd_toEndOf="parent"/>
 
-</RelativeLayout>
+    <TextView android:id="@+id/bottom"
+        android:text="bottom"
+        android:layout_width="wrap_content" android:layout_height="wrap_content"
+        android:layout_marginTop="-1sp"
+        android:layout_marginStart="3sp"
+        android:textAppearance="@style/ListSecondary"
+        android:maxLines="1"
+        android:paddingBottom="2sp"
+        app:layout_constraintStart_toEndOf="@id/cb"
+        app:layout_constraintTop_toBottomOf="@id/center" />
+
+    <TextView
+        android:id="@+id/right"
+        android:textAppearance="@style/TextAppearance.BalanceAmount"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="-1sp"
+        android:maxLines="1"
+        android:text="right"
+        app:layout_constraintTop_toBottomOf="@id/right_center"
+        app:layout_constraintEnd_toEndOf="parent" />
+
+</androidx.constraintlayout.widget.ConstraintLayout>
