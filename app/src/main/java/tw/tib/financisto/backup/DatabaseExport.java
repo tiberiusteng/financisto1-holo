@@ -11,7 +11,10 @@
 package tw.tib.financisto.backup;
 
 import static tw.tib.financisto.backup.Backup.BACKUP_TABLES;
+import static tw.tib.financisto.backup.Backup.tableHasOrder;
 import static tw.tib.financisto.backup.Backup.tableHasSystemIds;
+import static tw.tib.financisto.db.DatabaseHelper.ACCOUNT_TABLE;
+import static tw.tib.orb.EntityManager.DEF_SORT_COL;
 
 import java.io.BufferedWriter;
 import java.io.File;
@@ -85,25 +88,34 @@ public class DatabaseExport extends Export {
 	}
 
 	private void exportTable(BufferedWriter bw, String tableName) throws IOException {
-		String sql = "select * from " + tableName + (tableHasSystemIds(tableName) ? " WHERE _id>=0" : "");
-		Cursor c = db.rawQuery(sql, null);
-		try {
+		final boolean orderedTable = tableHasOrder(tableName);
+		final boolean customOrdered = ACCOUNT_TABLE.equals(tableName);
+		String sql = "select * from " + tableName
+				+ (tableHasSystemIds(tableName) ? " WHERE _id > 0 " : " ")
+				+ (orderedTable ? " order by " + DEF_SORT_COL + " asc" : "");
+		long row = 0;
+		try (Cursor c = db.rawQuery(sql, null)) {
 			String[] columnNames = c.getColumnNames();
 			int cols = columnNames.length;
 			while (c.moveToNext()) {
 				bw.write("$ENTITY:");bw.write(tableName);bw.write("\n");
-				for (int i=0; i<cols; i++) {					
-					String value = c.getString(i);
+				for (int i=0; i<cols; i++) {
+					final String colName = columnNames[i];
+					final String value = c.getString(i);
 					if (value != null) {
-						bw.write(columnNames[i]);bw.write(":");
-						bw.write(removeNewLine(value));
+						bw.write(colName); bw.write(":");
+						if (customOrdered || !DEF_SORT_COL.equalsIgnoreCase(colName)) {
+							// if internal managed sort_order column - then re-enumerate it starting from 1 sequentially
+							// to prevent gaps and much differences
+							bw.write(removeNewLine(value));
+						} else {
+							bw.write(String.valueOf(++row));
+						}
 						bw.write("\n");
 					}
 				}
 				bw.write("$$\n");
 			}
-		} finally {
-			c.close();
 		}
 	}
 

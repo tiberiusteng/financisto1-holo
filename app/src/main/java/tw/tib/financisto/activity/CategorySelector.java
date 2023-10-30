@@ -34,6 +34,7 @@ import tw.tib.financisto.view.AttributeViewFactory;
 import java.util.*;
 
 import static java.util.Objects.requireNonNull;
+import static tw.tib.financisto.model.Category.NO_CATEGORY_ID;
 
 public class CategorySelector<A extends AbstractActivity> {
 
@@ -48,7 +49,7 @@ public class CategorySelector<A extends AbstractActivity> {
     private ListAdapter categoryAdapter;
     private LinearLayout attributesLayout;
 
-    private long selectedCategoryId = 0;
+    private long selectedCategoryId = NO_CATEGORY_ID;
     private CategorySelectorListener listener;
     private boolean showSplitCategory = true;
     private boolean multiSelect;
@@ -79,7 +80,7 @@ public class CategorySelector<A extends AbstractActivity> {
     
     public void initMultiSelect() {
         this.multiSelect = true;
-        this.categories = db.getCategoriesList(false);
+        this.categories = db.getCategoriesList(true);
         this.doNotShowSplitCategory();
     }
 
@@ -121,8 +122,13 @@ public class CategorySelector<A extends AbstractActivity> {
         LinkedList<String> res = new LinkedList<>();
         for (Category c : categories) {
             if (c.checked) {
-                res.add(String.valueOf(c.left));
-                res.add(String.valueOf(c.right));
+                if (c.id == NO_CATEGORY_ID) { // special case as it must include only itself
+                    res.add("0");
+                    res.add("0");
+                } else {
+                    res.add(String.valueOf(c.left));
+                    res.add(String.valueOf(c.right));
+                }
             }
         }
         return ArrUtils.strListToArr(res);
@@ -231,7 +237,7 @@ public class CategorySelector<A extends AbstractActivity> {
 
     private void clearCategory() {
         categoryText.setText(emptyResId);
-        selectedCategoryId = 0;
+        selectedCategoryId = NO_CATEGORY_ID;
         for (MyEntity e : categories) e.setChecked(false);
         showHideMinusBtn(false);
     }

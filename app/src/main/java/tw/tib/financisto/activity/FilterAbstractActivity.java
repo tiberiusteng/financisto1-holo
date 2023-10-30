@@ -13,6 +13,7 @@ package tw.tib.financisto.activity;
 import android.content.Context;
 import android.content.Intent;
 import android.text.TextUtils;
+import android.util.Log;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
@@ -198,7 +199,11 @@ public abstract class FilterAbstractActivity extends AbstractActivity implements
 	protected void updateCategoryFromFilter() {
 		Criteria c = filter.get(CATEGORY_LEFT);
 		if (c != null) {
-			if (c.operation != BTW) throw new UnsupportedOperationException(c.operation.name());
+			if (c.operation != BTW) { // todo.mb: only for backward compatibility, just remove in next releases
+				Log.i(getClass().getSimpleName(), "Found category filter with deprecated op: " + c.operation);
+				filter.remove(CATEGORY_LEFT);
+				return;
+			}
 
 			List<String> checkedLeftIds = getLeftCategoryNodesFromFilter(c);
 			List<Long> catIds = db.getCategoryIdsByLeftIds(checkedLeftIds);
