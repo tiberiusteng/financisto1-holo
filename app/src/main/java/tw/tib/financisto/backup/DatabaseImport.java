@@ -12,6 +12,7 @@ package tw.tib.financisto.backup;
 
 import android.content.ContentValues;
 import android.content.Context;
+import android.database.Cursor;
 import android.net.Uri;
 import android.util.Log;
 import com.dropbox.core.util.IOUtil;
@@ -24,6 +25,9 @@ import tw.tib.financisto.db.DatabaseSchemaEvolution;
 import tw.tib.financisto.export.dropbox.Dropbox;
 
 import java.io.*;
+import java.util.Arrays;
+import java.util.HashSet;
+import java.util.Set;
 import java.util.zip.GZIPInputStream;
 
 import static tw.tib.financisto.backup.Backup.RESTORE_SCRIPTS;
@@ -163,6 +167,12 @@ public class DatabaseImport extends FullDatabaseImport {
                 values.remove("name");
             }
         }
+        // remove unknown columns
+        String sql = "select * from " + tableName + " WHERE 1=0";
+        try (Cursor c = db.rawQuery(sql, null)) {
+            final String[] columnNames = c.getColumnNames();
+            removeUnknownColumns(values, columnNames, tableName);
+        }
 
         /*
         if ("account".equals(tableName)) {
@@ -176,4 +186,14 @@ public class DatabaseImport extends FullDatabaseImport {
         */
     }
 
+    private void removeUnknownColumns(ContentValues values, String[] columnNames, String tableName) {
+        Set<String> possibleKeys = new HashSet<>(Arrays.asList(columnNames));
+        Set<String> keys = new HashSet<>(values.keySet());
+        for (String key : keys) {
+            if (!possibleKeys.contains(key)) {
+                values.remove(key);
+                Log.i(getClass().getSimpleName(), "Removing "+key+" from backup values for "+tableName);
+            }
+        }
+    }
 }
