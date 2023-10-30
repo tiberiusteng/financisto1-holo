@@ -101,17 +101,16 @@ public class DatabaseExport extends Export {
 				bw.write("$ENTITY:");bw.write(tableName);bw.write("\n");
 				for (int i=0; i<cols; i++) {
 					final String colName = columnNames[i];
-					final String value = c.getString(i);
-					if (value != null) {
-						bw.write(colName); bw.write(":");
-						if (customOrdered || !DEF_SORT_COL.equalsIgnoreCase(colName)) {
-							// if internal managed sort_order column - then re-enumerate it starting from 1 sequentially
-							// to prevent gaps and much differences
+					if (!DEF_SORT_COL.equals(colName) || customOrdered) {
+						final String value = c.getString(i);
+						if (value != null) {
+							bw.write(colName);
+							bw.write(":");
 							bw.write(removeNewLine(value));
 						} else {
 							bw.write(String.valueOf(++row));
+							bw.write("\n");
 						}
-						bw.write("\n");
 					}
 				}
 				bw.write("$$\n");
