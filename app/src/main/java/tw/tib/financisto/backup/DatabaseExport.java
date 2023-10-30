@@ -93,7 +93,6 @@ public class DatabaseExport extends Export {
 		String sql = "select * from " + tableName
 				+ (tableHasSystemIds(tableName) ? " WHERE _id > 0 " : " ")
 				+ (orderedTable ? " order by " + DEF_SORT_COL + " asc" : "");
-		long row = 0;
 		try (Cursor c = db.rawQuery(sql, null)) {
 			String[] columnNames = c.getColumnNames();
 			int cols = columnNames.length;
@@ -107,8 +106,6 @@ public class DatabaseExport extends Export {
 							bw.write(colName);
 							bw.write(":");
 							bw.write(removeNewLine(value));
-						} else {
-							bw.write(String.valueOf(++row));
 							bw.write("\n");
 						}
 					}
