@@ -272,13 +272,6 @@ public class TransactionActivity extends AbstractTransactionActivity {
     }
 
     @Override
-    public void onWindowFocusChanged(boolean hasFocus) {
-        if (hasFocus) {
-            accountText.requestFocusFromTouch();
-        }
-    }
-
-    @Override
     protected boolean onOKClicked() {
         if (checkSelectedId(getSelectedAccountId(), R.string.select_account) &&
                 checkUnsplitAmount()) {
