@@ -9,14 +9,14 @@
 package tw.tib.financisto.activity;
 
 import android.app.Activity;
+import android.app.AlertDialog;
+import android.app.DatePickerDialog;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
 import android.widget.LinearLayout;
 import android.widget.TextView;
-
-import com.wdullaer.materialdatetimepicker.date.DatePickerDialog;
 
 import tw.tib.financisto.R;
 import tw.tib.financisto.datetime.DateUtils;
@@ -137,7 +137,8 @@ public class ExchangeRateActivity extends AbstractActivity implements RateNodeOw
     private void editDate() {
         final Calendar c = Calendar.getInstance();
         c.setTimeInMillis(date);
-        DatePickerDialog datePickerDialog = DatePickerDialog.newInstance(
+        DatePickerDialog datePickerDialog = new DatePickerDialog(this,
+                AlertDialog.THEME_DEVICE_DEFAULT_DARK,
                 (view, year, monthOfYear, dayOfMonth) -> {
                     c.set(year, monthOfYear, dayOfMonth);
                     date = c.getTimeInMillis();
@@ -147,7 +148,7 @@ public class ExchangeRateActivity extends AbstractActivity implements RateNodeOw
                 c.get(Calendar.MONTH),
                 c.get(Calendar.DAY_OF_MONTH)
         );
-        datePickerDialog.show(getFragmentManager(), "DatePickerDialog");
+        datePickerDialog.show();
     }
 
     @Override

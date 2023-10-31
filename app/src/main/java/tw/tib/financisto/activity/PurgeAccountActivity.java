@@ -23,7 +23,7 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.wdullaer.materialdatetimepicker.date.DatePickerDialog;
+import android.app.DatePickerDialog;
 
 import java.text.DateFormat;
 import java.util.Calendar;
@@ -32,8 +32,6 @@ import tw.tib.financisto.R;
 import tw.tib.financisto.datetime.DateUtils;
 import tw.tib.financisto.backup.DatabaseExport;
 import tw.tib.financisto.model.Account;
-
-import static tw.tib.financisto.activity.UiUtils.applyTheme;
 
 /**
  * Created by IntelliJ IDEA.
@@ -120,7 +118,8 @@ public class PurgeAccountActivity extends AbstractActivity {
     protected void onClick(View v, int id) {
         switch (id) {
             case R.id.date:
-                DatePickerDialog dialog = DatePickerDialog.newInstance(
+                DatePickerDialog dialog = new DatePickerDialog(this,
+                        AlertDialog.THEME_DEVICE_DEFAULT_DARK,
                         (view, year, monthOfYear, dayOfMonth) -> {
                             date.set(year, monthOfYear, dayOfMonth);
                             setDateText();
@@ -129,8 +128,7 @@ public class PurgeAccountActivity extends AbstractActivity {
                         date.get(Calendar.MONTH),
                         date.get(Calendar.DAY_OF_MONTH)
                 );
-                UiUtils.applyTheme(this, dialog);
-                dialog.show(getFragmentManager(), "DatePickerDialog");
+                dialog.show();
                 break;
             case R.id.backup:
                 databaseBackup.setChecked(!databaseBackup.isChecked());

@@ -20,6 +20,7 @@ import android.content.Context;
 import android.os.Environment;
 import android.widget.ImageView;
 import com.bumptech.glide.Glide;
+import com.bumptech.glide.load.resource.drawable.DrawableTransitionOptions;
 
 import java.io.File;
 import java.text.SimpleDateFormat;
@@ -50,7 +51,7 @@ public class PicturesUtil {
         if (pictureFileName == null || imageView == null) return;
         Glide.with(context)
                 .load(PicturesUtil.pictureFile(pictureFileName, true))
-                .crossFade()
+                .transition(DrawableTransitionOptions.withCrossFade())
                 //.override(320, 320)
                 .into(imageView);
     }

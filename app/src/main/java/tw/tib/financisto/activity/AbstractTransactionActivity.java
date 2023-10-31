@@ -58,7 +58,6 @@ import java.util.Date;
 import java.util.List;
 
 import static tw.tib.financisto.activity.RequestPermission.isRequestingPermission;
-import static tw.tib.financisto.activity.UiUtils.applyTheme;
 import static tw.tib.financisto.model.Category.NO_CATEGORY_ID;
 import static tw.tib.financisto.model.MyLocation.CURRENT_LOCATION_ID;
 import static tw.tib.financisto.model.Project.NO_PROJECT_ID;
