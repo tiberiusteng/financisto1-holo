@@ -21,7 +21,6 @@ import tw.tib.financisto.service.RecurrenceScheduler;
 public class ScheduledAlarmReceiver extends PackageReplaceReceiver {
 
     private static final String BOOT_COMPLETED = "android.intent.action.BOOT_COMPLETED";
-    private static final String SCHEDULED_BACKUP = "tw.tib.financisto.SCHEDULED_BACKUP";
 
     @Override
     public void onReceive(Context context, Intent intent) {
@@ -30,8 +29,6 @@ public class ScheduledAlarmReceiver extends PackageReplaceReceiver {
         if (BOOT_COMPLETED.equals(action)) {
             requestScheduleAll(context);
             requestScheduleAutoBackup(context);
-        } else if (SCHEDULED_BACKUP.equals(action)) {
-            requestAutoBackup(context);
         } else {
             requestScheduleOne(context, intent);
         }
@@ -42,10 +39,4 @@ public class ScheduledAlarmReceiver extends PackageReplaceReceiver {
         serviceIntent.putExtra(RecurrenceScheduler.SCHEDULED_TRANSACTION_ID, intent.getLongExtra(RecurrenceScheduler.SCHEDULED_TRANSACTION_ID, -1));
         FinancistoService.enqueueWork(context, serviceIntent);
     }
-
-    private void requestAutoBackup(Context context) {
-        Intent serviceIntent = new Intent(FinancistoService.ACTION_AUTO_BACKUP, null, context, FinancistoService.class);
-        FinancistoService.enqueueWork(context, serviceIntent);
-    }
-
 }

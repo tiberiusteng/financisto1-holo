@@ -41,14 +41,11 @@ import static tw.tib.financisto.utils.MyPreferences.getSmsTransactionStatus;
 import static tw.tib.financisto.utils.MyPreferences.shouldSaveSmsToTransactionNote;
 
 public class FinancistoService extends JobIntentService {
-
-    private static final String TAG = "FinancistoService";
     public static final int JOB_ID = 1000;
 
     public static final String ACTION_SCHEDULE_ALL = "tw.tib.financisto.SCHEDULE_ALL";
     public static final String ACTION_SCHEDULE_ONE = "tw.tib.financisto.SCHEDULE_ONE";
     public static final String ACTION_SCHEDULE_AUTO_BACKUP = "tw.tib.financisto.ACTION_SCHEDULE_AUTO_BACKUP";
-    public static final String ACTION_AUTO_BACKUP = "tw.tib.financisto.ACTION_AUTO_BACKUP";
     public static final String ACTION_NEW_TRANSACTION_SMS = "tw.tib.financisto.NEW_TRANSACTON_SMS";
 
     private static final int RESTORED_NOTIFICATION_ID = 0;
@@ -92,9 +89,6 @@ public class FinancistoService extends JobIntentService {
                 case ACTION_SCHEDULE_AUTO_BACKUP:
                     DailyAutoBackupScheduler.scheduleNextAutoBackup(this);
                     break;
-                case ACTION_AUTO_BACKUP:
-                    doAutoBackup();
-                    break;
                 case ACTION_NEW_TRANSACTION_SMS:
                     processSmsTransaction(intent);
                     break;
@@ -132,45 +126,6 @@ public class FinancistoService extends JobIntentService {
                 notifyUser(transaction);
                 AccountWidget.updateWidgets(this);
             }
-        }
-    }
-
-    private void doAutoBackup() {
-        try {
-            try {
-                long t0 = System.currentTimeMillis();
-                Log.e(TAG, "Auto-backup started at " + new Date());
-                DatabaseExport export = new DatabaseExport(this, db.db(), true);
-                Uri backupFileUri = export.export();
-                boolean successful = true;
-                if (MyPreferences.isDropboxUploadAutoBackups(this)) {
-                    try {
-                        Export.uploadBackupFileToDropbox(this, backupFileUri);
-                    } catch (Exception e) {
-                        Log.e(TAG, "Unable to upload auto-backup to Dropbox", e);
-                        MyPreferences.notifyAutobackupFailed(this, e);
-                        successful = false;
-                    }
-                }
-                if (MyPreferences.isGoogleDriveUploadAutoBackups(this)) {
-                    try {
-                        Export.uploadBackupFileToGoogleDrive(this, backupFileUri);
-                    } catch (Exception e) {
-                        Log.e(TAG, "Unable to upload auto-backup to Google Drive", e);
-                        MyPreferences.notifyAutobackupFailed(this, e);
-                        successful = false;
-                    }
-                }
-                Log.e(TAG, "Auto-backup completed in " + (System.currentTimeMillis() - t0) + "ms");
-                if (successful) {
-                    MyPreferences.notifyAutobackupSucceeded(this);
-                }
-            } catch (Exception e) {
-                Log.e(TAG, "Auto-backup unsuccessful", e);
-                MyPreferences.notifyAutobackupFailed(this, e);
-            }
-        } finally {
-            DailyAutoBackupScheduler.scheduleNextAutoBackup(this);
         }
     }
 

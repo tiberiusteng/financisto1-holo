@@ -12,7 +12,7 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
 	xmlns:tools="http://schemas.android.com/tools"
 	package="tw.tib.financisto"
-	android:versionName="2023-10-30" android:versionCode="103"
+	android:versionName="2023-11-04" android:versionCode="104"
     android:installLocation="internalOnly">
 
     <supports-screens
@@ -109,7 +109,6 @@
 			<action android:name=".SCHEDULE_ONE" />
 			<action android:name=".SCHEDULE_ALL" />
 			<action android:name=".ACTION_SCHEDULE_AUTO_BACKUP" />
-			<action android:name=".ACTION_AUTO_BACKUP" />
 			<action android:name=".NEW_TRANSACTION_SMS" />
 	    </intent-filter>
 		</service>

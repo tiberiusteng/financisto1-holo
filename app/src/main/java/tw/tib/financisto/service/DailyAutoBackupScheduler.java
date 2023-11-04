@@ -8,17 +8,21 @@
 
 package tw.tib.financisto.service;
 
-import android.app.AlarmManager;
-import android.app.PendingIntent;
 import android.content.Context;
-import android.content.Intent;
 import android.util.Log;
+
+import androidx.work.Constraints;
+import androidx.work.ExistingPeriodicWorkPolicy;
+import androidx.work.NetworkType;
+import androidx.work.PeriodicWorkRequest;
+import androidx.work.WorkManager;
 
 import java.util.Calendar;
 import java.util.Date;
+import java.util.concurrent.TimeUnit;
 
-import tw.tib.financisto.activity.ScheduledAlarmReceiver;
 import tw.tib.financisto.utils.MyPreferences;
+import tw.tib.financisto.worker.AutoBackupWorker;
 
 /**
  * Created by IntelliJ IDEA.
@@ -31,6 +35,8 @@ public class DailyAutoBackupScheduler {
     private final int mm;
     private final long now;
 
+    private String TAG;
+
     public static void scheduleNextAutoBackup(Context context) {
         if (MyPreferences.isAutoBackupEnabled(context)) {
             int hhmm = MyPreferences.getAutoBackupTime(context);
@@ -38,26 +44,45 @@ public class DailyAutoBackupScheduler {
             int mm = hhmm - 100*hh;
             new DailyAutoBackupScheduler(hh, mm, System.currentTimeMillis()).scheduleBackup(context);
         }
+        else {
+            WorkManager.getInstance(context)
+                    .cancelUniqueWork(AutoBackupWorker.WORK_NAME);
+        }
     }
 
     DailyAutoBackupScheduler(int hh, int mm, long now) {
         this.hh = hh;
         this.mm = mm;
         this.now = now;
+
+        TAG = getClass().getSimpleName();
     }
 
     private void scheduleBackup(Context context) {
-        AlarmManager service = (AlarmManager)context.getSystemService(Context.ALARM_SERVICE);
-        PendingIntent pendingIntent = createPendingIntent(context);
         Date scheduledTime = getScheduledTime();
-        service.set(AlarmManager.RTC_WAKEUP, scheduledTime.getTime(), pendingIntent);
-        Log.i("Financisto", "Next auto-backup scheduled at "+scheduledTime);
-    }
 
-    private PendingIntent createPendingIntent(Context context) {
-        Intent intent = new Intent("tw.tib.financisto.SCHEDULED_BACKUP");
-        intent.setClass(context, ScheduledAlarmReceiver.class);
-        return PendingIntent.getBroadcast(context, -100, intent, PendingIntent.FLAG_CANCEL_CURRENT|PendingIntent.FLAG_IMMUTABLE);
+        long initialDelay = scheduledTime.getTime() - Calendar.getInstance().getTime().getTime();
+
+        Log.i(TAG, "Initial delay: " + initialDelay + " ms");
+
+        var builder = new PeriodicWorkRequest.Builder(AutoBackupWorker.class, 24, TimeUnit.HOURS)
+                .setInitialDelay(initialDelay, TimeUnit.MILLISECONDS);
+
+        if (MyPreferences.isDropboxUploadAutoBackups(context)
+                || MyPreferences.isGoogleDriveUploadAutoBackups(context))
+        {
+            builder.setConstraints(new Constraints.Builder()
+                    .setRequiredNetworkType(NetworkType.CONNECTED).build());
+        }
+
+        PeriodicWorkRequest backupWorkRequest = builder.build();
+
+        WorkManager.getInstance(context).enqueueUniquePeriodicWork(
+                AutoBackupWorker.WORK_NAME,
+                ExistingPeriodicWorkPolicy.CANCEL_AND_REENQUEUE,
+                backupWorkRequest);
+
+        Log.i(TAG, "Next auto-backup scheduled at " + scheduledTime);
     }
 
     Date getScheduledTime() {
