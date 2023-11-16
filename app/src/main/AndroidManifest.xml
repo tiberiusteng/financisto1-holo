@@ -12,7 +12,7 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
 	xmlns:tools="http://schemas.android.com/tools"
 	package="tw.tib.financisto"
-	android:versionName="2023-11-04" android:versionCode="104"
+	android:versionName="2023-11-17" android:versionCode="105"
     android:installLocation="internalOnly">
 
     <supports-screens
@@ -239,6 +239,9 @@
 
 		<activity android:name=".activity.PayeeListActivity" android:label="@string/payees"/>
 
+		<activity android:name=".activity.LocationActivity" android:label="@string/location"
+			android:theme="@style/AppDialog" android:configChanges="orientation|keyboardHidden"/>
+
 		<activity android:name=".activity.LocationsListActivity" android:label="@string/locations"/>
 		
 		<activity android:name=".activity.TemplatesListActivity" android:label="@string/transaction_templates"
@@ -268,7 +271,7 @@
 		<activity android:name=".activity.SplitTransferActivity" android:label="@string/split_transfer"/>
 
 		<activity android:name=".dialog.FolderBrowser" android:label="@string/select_folder"/>
-		<activity android:name=".activity.CategorySelectorActivity" android:label="@string/select_category"/>
+		<activity android:name=".activity.CategorySelectorActivity" android:label="@string/select_category" />
 
 		<activity android:name=".activity.AccountListTotalsDetailsActivity" android:label="@string/totals"
 			  android:theme="@style/AppDialog" android:configChanges="orientation|keyboardHidden"/>
