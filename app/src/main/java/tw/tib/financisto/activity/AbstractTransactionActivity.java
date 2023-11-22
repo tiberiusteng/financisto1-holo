@@ -21,6 +21,7 @@ import android.text.InputType;
 import android.util.Log;
 import android.view.View;
 import android.view.Window;
+import android.view.WindowManager;
 import android.widget.*;
 import com.mlsdev.rximagepicker.RxImageConverters;
 import com.mlsdev.rximagepicker.RxImagePicker;
@@ -140,6 +141,10 @@ public abstract class AbstractTransactionActivity extends AbstractActivity imple
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
+
+		if (MyPreferences.isSecureWindow(this)) {
+			getWindow().addFlags(WindowManager.LayoutParams.FLAG_SECURE);
+		}
 
 		df = DateUtils.getLongDateFormat(this);
 		tf = DateUtils.getTimeFormat(this);
