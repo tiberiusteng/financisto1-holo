@@ -65,8 +65,8 @@ public class DailyAutoBackupScheduler {
 
         Log.i(TAG, "Initial delay: " + initialDelay + " ms");
 
-        var builder = new PeriodicWorkRequest.Builder(AutoBackupWorker.class, 24, TimeUnit.HOURS)
-                .setInitialDelay(initialDelay, TimeUnit.MILLISECONDS);
+        var builder = new PeriodicWorkRequest.Builder(AutoBackupWorker.class,
+                initialDelay, TimeUnit.MILLISECONDS, 1, TimeUnit.HOURS);
 
         if (MyPreferences.isDropboxUploadAutoBackups(context)
                 || MyPreferences.isGoogleDriveUploadAutoBackups(context))
@@ -79,7 +79,7 @@ public class DailyAutoBackupScheduler {
 
         WorkManager.getInstance(context).enqueueUniquePeriodicWork(
                 AutoBackupWorker.WORK_NAME,
-                ExistingPeriodicWorkPolicy.CANCEL_AND_REENQUEUE,
+                ExistingPeriodicWorkPolicy.UPDATE,
                 backupWorkRequest);
 
         Log.i(TAG, "Next auto-backup scheduled at " + scheduledTime);
@@ -92,7 +92,7 @@ public class DailyAutoBackupScheduler {
         c.set(Calendar.MINUTE, mm);
         c.set(Calendar.SECOND, 0);
         c.set(Calendar.MILLISECOND, 0);
-        if (c.getTimeInMillis() < now) {
+        if (c.getTimeInMillis() < (now + (2 * 3600 * 1000))) {
             c.add(Calendar.DAY_OF_MONTH, 1);
         }
         return c.getTime();

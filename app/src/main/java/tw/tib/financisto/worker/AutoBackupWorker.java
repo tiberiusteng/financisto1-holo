@@ -13,6 +13,7 @@ import java.util.Date;
 import tw.tib.financisto.backup.DatabaseExport;
 import tw.tib.financisto.db.DatabaseAdapter;
 import tw.tib.financisto.export.Export;
+import tw.tib.financisto.service.DailyAutoBackupScheduler;
 import tw.tib.financisto.utils.MyPreferences;
 
 public class AutoBackupWorker extends Worker {
@@ -67,6 +68,8 @@ public class AutoBackupWorker extends Worker {
 
             return Result.failure();
         }
+
+        DailyAutoBackupScheduler.scheduleNextAutoBackup(context);
 
         return Result.success();
     }
