@@ -23,9 +23,6 @@ import android.view.View;
 import android.view.Window;
 import android.view.WindowManager;
 import android.widget.*;
-import com.mlsdev.rximagepicker.RxImageConverters;
-import com.mlsdev.rximagepicker.RxImagePicker;
-import com.mlsdev.rximagepicker.Sources;
 import android.app.DatePickerDialog;
 import android.app.TimePickerDialog;
 
@@ -116,7 +113,7 @@ public abstract class AbstractTransactionActivity extends AbstractActivity imple
 	protected boolean isRememberLastLocation;
 	protected boolean isRememberLastProject;
 	protected boolean isShowNote;
-	protected boolean isShowTakePicture;
+	protected boolean isShowTakePicture = false;
 	protected boolean isShowIsCCardPayment;
 	protected boolean isOpenCalculatorForTemplates;
 
@@ -160,7 +157,7 @@ public abstract class AbstractTransactionActivity extends AbstractActivity imple
 		isRememberLastLocation = isRememberLastCategory && MyPreferences.isRememberLocation(this);
 		isRememberLastProject = isRememberLastCategory && MyPreferences.isRememberProject(this);
 		isShowNote = MyPreferences.isShowNote(this);
-		isShowTakePicture = MyPreferences.isShowTakePicture(this);
+		//isShowTakePicture = MyPreferences.isShowTakePicture(this);
 		isShowIsCCardPayment = MyPreferences.isShowIsCCardPayment(this);
 		isOpenCalculatorForTemplates = MyPreferences.isOpenCalculatorForTemplates(this);
 
@@ -326,21 +323,23 @@ public abstract class AbstractTransactionActivity extends AbstractActivity imple
 		pickImageActionGrid.setOnQuickActionClickListener((widget, position) -> {
 			switch (position) {
 				case 0:
-					requestImage(Sources.CAMERA);
+					//requestImage(Sources.CAMERA);
 					break;
 				case 1:
-					requestImage(Sources.GALLERY);
+					//requestImage(Sources.GALLERY);
 					break;
 			}
 		});
 	}
 
+	/*
 	protected void requestImage(Sources source) {
 		transaction.blobKey = null;
-		RxImagePicker.with(this).requestImage(source)
+		disposable.add(RxImagePicker.with(getFragmentManager()).requestImage(source)
 				.flatMap(uri -> RxImageConverters.uriToFile(this, uri, PicturesUtil.createEmptyImageFile()))
-				.subscribe(file -> selectPicture(file.getName()));
+				.subscribe(file -> selectPicture(file.getName())));
 	}
+	 */
 
 	protected void createPayeeNode(LinearLayout layout) {
 		payeeSelector = new PayeeSelector<>(this, db, x);

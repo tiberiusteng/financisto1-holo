@@ -99,14 +99,12 @@ dependencies {
     implementation 'androidx.viewpager2:viewpager2:1.0.0'
 
     implementation 'com.github.bumptech.glide:glide:4.16.0'
-    implementation('com.mlsdev.rximagepicker:library:2.0.2') {
-        exclude group: 'com.android.support'
-    }
 
     implementation 'com.google.guava:listenablefuture:9999.0-empty-to-avoid-conflict-with-guava'
 
     implementation 'com.mtramin:rxfingerprint:2.2.1'
-    implementation 'io.reactivex.rxjava2:rxjava:2.1.7'
+    implementation 'io.reactivex.rxjava2:rxjava:2.1.9'
+    implementation 'io.reactivex.rxjava2:rxandroid:2.0.2'
     implementation files('libs/achartengine-1.2.0.jar')
     implementation files('libs/CWAC-WakefulIntentService.jar')
     //implementation files('libs/google-api-client-1.17.0-rc.jar')
