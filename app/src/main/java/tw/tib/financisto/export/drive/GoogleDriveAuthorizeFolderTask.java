@@ -18,8 +18,8 @@ public class GoogleDriveAuthorizeFolderTask extends AsyncTask<String, String, Ob
 
     @Override
     protected Object doInBackground(String... params) {
-        GoogleDriveRESTClient googleDriveRESTClient = new GoogleDriveRESTClient(this.context);
         try {
+            GoogleDriveRESTClient googleDriveRESTClient = new GoogleDriveRESTClient(this.context);
             googleDriveRESTClient.getBackupFolderID(true);
         } catch (Exception e) {
             if (e instanceof UserRecoverableAuthIOException) {
