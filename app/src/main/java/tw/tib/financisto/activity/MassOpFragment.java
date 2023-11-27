@@ -64,14 +64,19 @@ public class MassOpFragment extends BlotterFragment {
     }
 
     protected void applyMassOp(final MassOp op) {
-        int count = ((BlotterListAdapter)getListAdapter()).getCheckedCount();
+        BlotterListAdapter adapter = (BlotterListAdapter)getListAdapter();
+        int count = 0;
+
+        if (adapter != null) {
+            count = adapter.getCheckedCount();
+        }
+
         if (count > 0) {
             new AlertDialog.Builder(getContext())
                     .setMessage(getString(R.string.apply_mass_op, getString(op.getTitleId()), count))
                     .setPositiveButton(R.string.yes, new DialogInterface.OnClickListener(){
                         @Override
                         public void onClick(DialogInterface arg0, int arg1) {
-                            BlotterListAdapter adapter = ((BlotterListAdapter)getListAdapter());
                             long[] ids = adapter.getAllCheckedIds();
                             Log.d("Financisto", "Will apply "+op+" on "+Arrays.toString(ids));
                             op.apply(db, ids);
