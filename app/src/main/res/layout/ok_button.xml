@@ -6,8 +6,7 @@
   ~ http://www.gnu.org/licenses/old-licenses/gpl-2.0.html
   -->
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-	android:layout_height="wrap_content" android:layout_width="fill_parent"
-	style="@style/WhiteBackgroundButtonBar">
-	<Button android:id="@+id/bOK" android:text="@string/ok"
-		android:layout_height="wrap_content" android:layout_width="fill_parent"/>
+	style="@style/BottomBar">
+	<Button android:layout_weight="1" android:id="@+id/bOK" android:text="@string/ok"
+		style="@style/BottomBarButton" />
 </LinearLayout>
