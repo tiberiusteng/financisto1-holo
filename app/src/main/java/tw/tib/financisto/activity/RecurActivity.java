@@ -29,6 +29,7 @@ import tw.tib.financisto.utils.RecurUtils.SemiMonthly;
 import tw.tib.financisto.utils.RecurUtils.Weekly;
 
 import android.app.Activity;
+import android.app.AlertDialog;
 import android.app.DatePickerDialog;
 import android.content.Intent;
 import android.os.Bundle;
@@ -40,7 +41,6 @@ import android.view.ViewGroup.LayoutParams;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
-import android.widget.DatePicker;
 import android.widget.EditText;
 import android.widget.LinearLayout;
 import android.widget.Spinner;
@@ -81,22 +81,17 @@ public class RecurActivity extends Activity {
 		layoutRecur = (LinearLayout)findViewById(R.id.recurInterval);
 		
 		bStartDate = (Button)findViewById(R.id.bStartDate);
-		bStartDate.setOnClickListener(new OnClickListener(){
-			@Override
-			public void onClick(final View v) {
-				final Calendar c = startDate;
-				DatePickerDialog d = new DatePickerDialog(RecurActivity.this, new DatePickerDialog.OnDateSetListener(){
-					@Override
-					public void onDateSet(DatePicker view, int year, int monthOfYear, int dayOfMonth) {
+		bStartDate.setOnClickListener(v -> {
+			final Calendar c = startDate;
+			DatePickerDialog d = new DatePickerDialog(RecurActivity.this,
+					AlertDialog.THEME_DEVICE_DEFAULT_DARK, (view, year, monthOfYear, dayOfMonth) -> {
 						c.set(Calendar.YEAR, year);
 						c.set(Calendar.MONTH, monthOfYear);
 						c.set(Calendar.DAY_OF_MONTH, dayOfMonth);
 						DateUtils.startOfDay(c);
 						editStartDate(c.getTimeInMillis());
-					}
-				}, c.get(Calendar.YEAR), c.get(Calendar.MONTH), c.get(Calendar.DAY_OF_MONTH));
-				d.show();
-			}
+					}, c.get(Calendar.YEAR), c.get(Calendar.MONTH), c.get(Calendar.DAY_OF_MONTH));
+			d.show();
 		});
 		
 		addSpinnerItems(sInterval, new RecurInterval[]{RecurInterval.NO_RECUR, RecurInterval.WEEKLY, RecurInterval.MONTHLY});
@@ -240,21 +235,21 @@ public class RecurActivity extends Activity {
 					Button b = (Button)v.findViewById(R.id.bStopsOnDate);
 					final Calendar c = this.stopsOnDate;
 					editStopsOnDate(v, c.getTimeInMillis());
-					b.setOnClickListener(new OnClickListener(){
-						@Override
-						public void onClick(final View view) {
-							DatePickerDialog d = new DatePickerDialog(RecurActivity.this, new DatePickerDialog.OnDateSetListener(){
-								@Override
-								public void onDateSet(DatePicker view, int year, int monthOfYear, int dayOfMonth) {
+					b.setOnClickListener(view -> {
+						DatePickerDialog d = new DatePickerDialog(RecurActivity.this,
+								AlertDialog.THEME_DEVICE_DEFAULT_DARK,
+								(view1, year, monthOfYear, dayOfMonth) -> {
 									c.set(Calendar.YEAR, year);
 									c.set(Calendar.MONTH, monthOfYear);
 									c.set(Calendar.DAY_OF_MONTH, dayOfMonth);
 									DateUtils.endOfDay(c);
 									editStopsOnDate(v, c.getTimeInMillis());
-								}
-							}, c.get(Calendar.YEAR), c.get(Calendar.MONTH), c.get(Calendar.DAY_OF_MONTH));
-							d.show();
-						}
+								},
+								c.get(Calendar.YEAR),
+								c.get(Calendar.MONTH),
+								c.get(Calendar.DAY_OF_MONTH)
+						);
+						d.show();
 					});
 				}
 				layout.addView(v, LayoutParams.FILL_PARENT, LayoutParams.WRAP_CONTENT);
