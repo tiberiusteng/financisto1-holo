@@ -10,12 +10,13 @@
  ******************************************************************************/
 package tw.tib.financisto.activity;
 
-import android.app.Activity;
 import android.content.Context;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.Toast;
+
+import androidx.activity.ComponentActivity;
 
 import java.util.List;
 
@@ -25,7 +26,7 @@ import tw.tib.financisto.utils.MyPreferences;
 import tw.tib.financisto.utils.PinProtection;
 import tw.tib.financisto.view.NodeInflater;
 
-public abstract class AbstractActivity extends Activity implements ActivityLayoutListener {
+public abstract class AbstractActivity extends ComponentActivity implements ActivityLayoutListener {
 
 	protected DatabaseAdapter db;
 

@@ -16,6 +16,9 @@ import android.text.Editable;
 import android.text.TextWatcher;
 import android.util.Log;
 import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.inputmethod.InputMethodManager;
@@ -32,6 +35,8 @@ import androidx.annotation.Nullable;
 import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.activity.OnBackPressedCallback;
+import androidx.core.view.MenuProvider;
+import androidx.lifecycle.Lifecycle;
 
 import java.util.List;
 
@@ -48,6 +53,7 @@ import tw.tib.financisto.dialog.TransactionInfoDialog;
 import tw.tib.financisto.filter.WhereFilter;
 import tw.tib.financisto.db.DatabaseAdapter;
 import tw.tib.financisto.model.Account;
+import tw.tib.financisto.model.AccountType;
 import tw.tib.financisto.model.Transaction;
 import tw.tib.financisto.utils.IntegrityCheckRunningBalance;
 import tw.tib.financisto.utils.MenuItemInfo;
@@ -271,77 +277,66 @@ public class BlotterFragment extends AbstractListFragment implements BlotterOper
         }
 
         applyFilter();
-//        applyPopupMenu();
         calculateTotals();
         prepareTransactionActionGrid();
         prepareAddButtonActionGrid();
-    }
 
-//    private void applyPopupMenu() {
-//        bMenu = getView().findViewById(R.id.bMenu);
-//        if (isAccountBlotter) {
-//            bMenu.setOnClickListener(v -> {
-//                PopupMenu popupMenu = new PopupMenu(getContext(), bMenu);
-//                long accountId = blotterFilter.getAccountId();
-//                if (accountId != -1) {
-//                    // get account type
-//                    Account account = db.getAccount(accountId);
-//                    AccountType type = AccountType.valueOf(account.type);
-//                    if (type.isCreditCard) {
-//                        // Show menu for Credit Cards - bill
-//                        MenuInflater inflater = getActivity().getMenuInflater();
-//                        inflater.inflate(R.menu.ccard_blotter_menu, popupMenu.getMenu());
-//                    } else {
-//                        // Show menu for other accounts - monthly view
-//                        MenuInflater inflater = getActivity().getMenuInflater();
-//                        inflater.inflate(R.menu.blotter_menu, popupMenu.getMenu());
-//                    }
-//                    popupMenu.setOnMenuItemClickListener(item -> {
-//                        onPopupMenuSelected(item.getItemId());
-//                        return true;
-//                    });
-//                    popupMenu.show();
-//                }
-//            });
-//        } else {
-//            bMenu.setVisibility(View.GONE);
-//        }
-//    }
-
-    public void onPopupMenuSelected(int id) {
-
-        long accountId = blotterFilter.getAccountId();
-
-        Intent intent = new Intent(getContext(), MonthlyViewActivity.class);
-        intent.putExtra(MonthlyViewActivity.ACCOUNT_EXTRA, accountId);
-
-        switch (id) {
-
-            case R.id.opt_menu_month:
-                // call credit card bill activity sending account id
-                intent.putExtra(MonthlyViewActivity.BILL_PREVIEW_EXTRA, false);
-                startActivityForResult(intent, MONTHLY_VIEW_REQUEST);
-                break;
-
-            case R.id.opt_menu_bill:
-                if (accountId != -1) {
-                    Account account = db.getAccount(accountId);
-
-                    // call credit card bill activity sending account id
-                    if (account.paymentDay > 0 && account.closingDay > 0) {
-                        intent.putExtra(MonthlyViewActivity.BILL_PREVIEW_EXTRA, true);
-                        startActivityForResult(intent, BILL_PREVIEW_REQUEST);
-                    } else {
-                        // display message: need payment and closing day
-                        AlertDialog.Builder dlgAlert = new AlertDialog.Builder(getContext());
-                        dlgAlert.setMessage(R.string.statement_error);
-                        dlgAlert.setTitle(R.string.ccard_statement);
-                        dlgAlert.setPositiveButton(R.string.ok, null);
-                        dlgAlert.setCancelable(true);
-                        dlgAlert.create().show();
+        requireActivity().addMenuProvider(new MenuProvider() {
+            @Override
+            public void onCreateMenu(@NonNull Menu menu, @NonNull MenuInflater menuInflater) {
+                if (isAccountBlotter) {
+                    long accountId = blotterFilter.getAccountId();
+                    if (accountId != -1) {
+                        // get account type
+                        Account account = db.getAccount(accountId);
+                        AccountType type = AccountType.valueOf(account.type);
+                        if (type.isCreditCard) {
+                            // Show menu for Credit Cards - bill
+                            menuInflater.inflate(R.menu.ccard_blotter_menu, menu);
+                        } else {
+                            // Show menu for other accounts - monthly view
+                            menuInflater.inflate(R.menu.blotter_menu, menu);
+                        }
                     }
                 }
-        }
+            }
+
+            @Override
+            public boolean onMenuItemSelected(@NonNull MenuItem menuItem) {
+                long accountId = blotterFilter.getAccountId();
+                Intent intent = new Intent(getContext(), MonthlyViewActivity.class);
+                intent.putExtra(MonthlyViewActivity.ACCOUNT_EXTRA, accountId);
+
+                switch (menuItem.getItemId()) {
+                    case R.id.opt_menu_month:
+                        // call credit card bill activity sending account id
+                        intent.putExtra(MonthlyViewActivity.BILL_PREVIEW_EXTRA, false);
+                        startActivityForResult(intent, MONTHLY_VIEW_REQUEST);
+                        return true;
+
+                    case R.id.opt_menu_bill:
+                        if (accountId != -1) {
+                            Account account = db.getAccount(accountId);
+
+                            // call credit card bill activity sending account id
+                            if (account.paymentDay > 0 && account.closingDay > 0) {
+                                intent.putExtra(MonthlyViewActivity.BILL_PREVIEW_EXTRA, true);
+                                startActivityForResult(intent, BILL_PREVIEW_REQUEST);
+                            } else {
+                                // display message: need payment and closing day
+                                AlertDialog.Builder dlgAlert = new AlertDialog.Builder(getContext());
+                                dlgAlert.setMessage(R.string.statement_error);
+                                dlgAlert.setTitle(R.string.ccard_statement);
+                                dlgAlert.setPositiveButton(R.string.ok, null);
+                                dlgAlert.setCancelable(true);
+                                dlgAlert.create().show();
+                            }
+                        }
+                        return true;
+                }
+                return false;
+            }
+        }, getViewLifecycleOwner(), Lifecycle.State.RESUMED);
     }
 
     private void showTotals() {
