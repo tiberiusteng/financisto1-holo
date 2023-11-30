@@ -10,8 +10,8 @@
  ******************************************************************************/
 package tw.tib.financisto.recur;
 
+import android.app.AlertDialog;
 import android.app.DatePickerDialog;
-import android.app.DatePickerDialog.OnDateSetListener;
 import android.content.Context;
 import android.text.InputType;
 import android.view.LayoutInflater;
@@ -723,15 +723,14 @@ public class RecurrenceViewFactory {
 
 		@Override
 		protected void onClick(View v, int id) {
-			new DatePickerDialog(activity, new OnDateSetListener(){
-				@Override
-				public void onDateSet(DatePicker view, int year, int monthOfYear, int dayOfMonth) {
-					c.set(Calendar.YEAR, year);
-					c.set(Calendar.MONTH, monthOfYear);
-					c.set(Calendar.DAY_OF_MONTH, dayOfMonth);
-					onDateText.setText(DateUtils.getMediumDateFormat(activity).format(c.getTime()));						
-				}				
-			}, c.get(Calendar.YEAR), c.get(Calendar.MONTH), c.get(Calendar.DAY_OF_MONTH)).show();
+			new DatePickerDialog(activity,
+					AlertDialog.THEME_DEVICE_DEFAULT_DARK,
+					(view, year, monthOfYear, dayOfMonth) -> {
+						c.set(Calendar.YEAR, year);
+						c.set(Calendar.MONTH, monthOfYear);
+						c.set(Calendar.DAY_OF_MONTH, dayOfMonth);
+						onDateText.setText(DateUtils.getMediumDateFormat(activity).format(c.getTime()));
+					}, c.get(Calendar.YEAR), c.get(Calendar.MONTH), c.get(Calendar.DAY_OF_MONTH)).show();
 		}
 
 		@Override
