@@ -57,12 +57,24 @@ public abstract class MyEntityManager extends EntityManager {
 		return queryEntities(clazz, titleLike, false, true);
 	}
 
-	public <T extends MyEntity> Cursor queryEntities(Class<T> clazz, String titleLike, boolean include0, boolean onlyActive) {
+	public <T extends MyEntity> Cursor queryEntities(Class<T> clazz, String titleLike, boolean include0, boolean onlyActive, long... includeEntityIds) {
 		Query<T> q = createQuery(clazz);
 		Expression include0Ex = include0 ? Expressions.gte("id", 0) : Expressions.gt("id", 0);
 		Expression whereEx = include0Ex;
 		if (onlyActive) {
-			whereEx = Expressions.and(include0Ex, Expressions.eq("isActive", 1));
+			int count = 0;
+			if (includeEntityIds != null) count = includeEntityIds.length;
+			if (count > 0) {
+				Expression[] ee = new Expression[count + 1];
+				for (int i = 0; i < count; i++) {
+					ee[i] = Expressions.eq("id", includeEntityIds[i]);
+				}
+				ee[count] = Expressions.eq("isActive", 1);
+				whereEx = Expressions.and(include0Ex, Expressions.or(ee));
+			}
+			else {
+				whereEx = Expressions.and(include0Ex, Expressions.eq("isActive", 1));
+			}
 		}
 		if (!StringUtil.isEmpty(titleLike)) {
 			titleLike = "%" + titleLike.replace(" ", "%") + "%";
@@ -75,12 +87,12 @@ public abstract class MyEntityManager extends EntityManager {
 		return q.execute();
 	}
 
-	public  <T extends MyEntity> ArrayList<T> getAllEntitiesList(Class<T> clazz, boolean include0, boolean onlyActive) {
-		return getAllEntitiesList(clazz, include0, onlyActive, null);
+	public  <T extends MyEntity> ArrayList<T> getAllEntitiesList(Class<T> clazz, boolean include0, boolean onlyActive, long... includeEntityIds) {
+		return getAllEntitiesList(clazz, include0, onlyActive, null, includeEntityIds);
 	}
 
-	public  <T extends MyEntity> ArrayList<T> getAllEntitiesList(Class<T> clazz, boolean include0, boolean onlyActive, String filter) {
-		try (Cursor c = queryEntities(clazz, filter, include0, onlyActive)) {
+	public  <T extends MyEntity> ArrayList<T> getAllEntitiesList(Class<T> clazz, boolean include0, boolean onlyActive, String filter, long... includeEntityIds) {
+		try (Cursor c = queryEntities(clazz, filter, include0, onlyActive, includeEntityIds)) {
 			T e0 = null;
 			ArrayList<T> list = new ArrayList<>();
 			while (c.moveToNext()) {
@@ -362,8 +374,8 @@ public abstract class MyEntityManager extends EntityManager {
 		return getAllEntitiesList(Project.class, includeNoProject, false);
 	}
 
-	public ArrayList<Project> getActiveProjectsList(boolean includeNoProject) {
-		return getAllEntitiesList(Project.class, includeNoProject, true);
+	public ArrayList<Project> getActiveProjectsList(boolean includeNoProject, long... includeProjectIds) {
+		return getAllEntitiesList(Project.class, includeNoProject, true, includeProjectIds);
 	}
 
 	public Map<String, Project> getAllProjectsByTitleMap(boolean includeNoProject) {

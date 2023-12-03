@@ -43,7 +43,7 @@ public class BudgetBlotterFragment extends BlotterFragment {
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         categories = MyEntity.asMap(db.getCategoriesList(true));
-        projects = MyEntity.asMap(db.getActiveProjectsList(true));
+        projects = MyEntity.asMap(db.getAllProjectsList(true));
 
         super.onViewCreated(view, savedInstanceState);
 

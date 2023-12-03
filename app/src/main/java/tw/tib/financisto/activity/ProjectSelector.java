@@ -27,6 +27,9 @@ import java.util.List;
  */
 public class ProjectSelector<A extends AbstractActivity> extends MyEntitySelector<Project, A> {
 
+    long[] includeProjectIds;
+    boolean fetchAllProjects = false;
+
     public ProjectSelector(A activity, DatabaseAdapter db, ActivityLayout x) {
         this(activity, db, x, R.id.project_add, R.id.project_clear, R.string.no_project);
     }
@@ -36,6 +39,14 @@ public class ProjectSelector<A extends AbstractActivity> extends MyEntitySelecto
                 R.id.project, actBtnId, clearBtnId, R.string.project, emptyId, R.id.project_filter_toggle);
     }
 
+    protected void setIncludeProjectIds(long... includeProjectIds) {
+        this.includeProjectIds = includeProjectIds;
+    }
+
+    protected void setFetchAllProjects(boolean fetchAllProjects) {
+        this.fetchAllProjects = fetchAllProjects;
+    }
+
     @Override
     protected Class getEditActivityClass() {
         return ProjectActivity.class;
@@ -43,7 +54,11 @@ public class ProjectSelector<A extends AbstractActivity> extends MyEntitySelecto
 
     @Override
     protected List<Project> fetchEntities(MyEntityManager em) {
-        return em.getActiveProjectsList(!isMultiSelect());
+        if (fetchAllProjects) {
+            return em.getAllProjectsList(!isMultiSelect());
+        } else {
+            return em.getActiveProjectsList(!isMultiSelect(), includeProjectIds);
+        }
     }
 
     @Override

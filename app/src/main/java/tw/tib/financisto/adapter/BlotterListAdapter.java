@@ -186,21 +186,25 @@ public class BlotterListAdapter extends ResourceCursorAdapter {
                 }
             }
 
-            long projectId = cursor.getLong(BlotterColumns.project_id.ordinal());
-            if (projectId == NO_PROJECT_ID || showProject == false) {
-                v.top2View.setVisibility(View.INVISIBLE);
-            }
-            else {
-                v.top2View.setVisibility(View.VISIBLE);
-                v.top2View.setTextColor(projectColor);
-                v.top2View.setText(cursor.getString(BlotterColumns.project.ordinal()));
-            }
+//            long t6 = System.nanoTime();
+//            Log.d(getClass().getSimpleName(), "bindView iconView " + (t6 - t5) / 1000 + " us");
 
             if (v.rightView != null) {
                 long balance = cursor.getLong(BlotterColumns.from_account_balance.ordinal());
                 v.rightView.setText(Utils.amountToString(fromCurrency, balance, false));
             }
         }
+
+        long projectId = cursor.getLong(BlotterColumns.project_id.ordinal());
+        if (projectId == NO_PROJECT_ID || showProject == false) {
+            v.top2View.setVisibility(View.INVISIBLE);
+        }
+        else {
+            v.top2View.setVisibility(View.VISIBLE);
+            v.top2View.setTextColor(projectColor);
+            v.top2View.setText(cursor.getString(BlotterColumns.project.ordinal()));
+        }
+
         setIndicatorColor(v, cursor);
         if (isTemplate == 1) {
             String templateName = cursor.getString(BlotterColumns.template_name.ordinal());
@@ -319,6 +323,7 @@ public class BlotterListAdapter extends ResourceCursorAdapter {
         public final View layout;
         public final TextView indicator;
         public final TextView topView;
+        public final TextView top2View;
         public final TextView centerView;
         public final TextView bottomView;
         public final TextView rightCenterView;

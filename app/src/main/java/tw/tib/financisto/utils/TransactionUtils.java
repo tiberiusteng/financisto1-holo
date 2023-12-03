@@ -89,7 +89,9 @@ public class TransactionUtils {
     }
 
     public static SimpleCursorAdapter createProjectAutoCompleteAdapter(Context context, final MyEntityManager db) {
-        return new FilterSimpleCursorAdapter<>(context, db, Project.class);
+        FilterSimpleCursorAdapter adapter = new FilterSimpleCursorAdapter<>(context, db, Project.class);
+        adapter.setIncludeAllRecords(true);
+        return adapter;
     }
 
     public static SimpleCursorAdapter createLocationAutoCompleteAdapter(Context context, final MyEntityManager db) {
@@ -125,6 +127,7 @@ public class TransactionUtils {
         private final String filterColumn;
         private final Class<E> entityClass;
 
+        private boolean includeAllRecords = false;
 
         FilterSimpleCursorAdapter(Context context, final T db, Class<E> entityClass) {
             this(context, db, entityClass, "e_title");
@@ -135,6 +138,10 @@ public class TransactionUtils {
             this.db = db;
             this.filterColumn = filterColumn;
             this.entityClass = entityClass;
+        }
+
+        public void setIncludeAllRecords(boolean includeAllRecords) {
+            this.includeAllRecords = includeAllRecords;
         }
 
         @Override
@@ -152,11 +159,21 @@ public class TransactionUtils {
         }
 
         Cursor filterRows(CharSequence constraint) {
-            return db.filterActiveEntities(entityClass, constraint.toString());
+            if (this.includeAllRecords) {
+                return db.filterAllEntities(entityClass, constraint.toString());
+            }
+            else {
+                return db.filterActiveEntities(entityClass, constraint.toString());
+            }
         }
 
         Cursor getAllRows() {
-            return db.filterActiveEntities(entityClass, null);
+            if (this.includeAllRecords) {
+                return db.filterAllEntities(entityClass, null);
+            }
+            else {
+                return db.filterActiveEntities(entityClass, null);
+            }
         }
     }
 }
