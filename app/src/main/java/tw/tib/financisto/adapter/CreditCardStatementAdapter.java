@@ -3,12 +3,15 @@ package tw.tib.financisto.adapter;
 import android.content.Context;
 import android.graphics.Color;
 import android.graphics.Typeface;
+import android.text.TextPaint;
+import android.text.format.DateUtils;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
 import android.widget.Filter;
 import android.widget.Filterable;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 import tw.tib.financisto.R;
 import tw.tib.financisto.model.Currency;
@@ -40,6 +43,9 @@ public class CreditCardStatementAdapter extends BaseAdapter implements Filterabl
     private final LayoutInflater inflater;
 
     private boolean isStatementPreview = false;
+
+    private LinearLayout.LayoutParams dateLayoutParams;
+    private LinearLayout.LayoutParams wrapContent;
 
     /**
      * Create an adapter to display the expenses list of a credit card bill.
@@ -106,8 +112,22 @@ public class CreditCardStatementAdapter extends BaseAdapter implements Filterabl
         return v;
     }
 
+    private void measureDateWidth(TextView v) {
+        float maxDateWidth = 0;
+        TextPaint p = v.getPaint();
+        for (TransactionInfo t : transactions) {
+            if (isHeader(t)) continue;
+            maxDateWidth = Math.max(maxDateWidth, p.measureText(DateUtils.formatDateTime(context,
+                    t.dateTime, DateUtils.FORMAT_SHOW_DATE|DateUtils.FORMAT_NUMERIC_DATE) + "-"));
+        }
+        dateLayoutParams = new LinearLayout.LayoutParams((int)maxDateWidth, ViewGroup.LayoutParams.MATCH_PARENT);
+        wrapContent = new LinearLayout.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT);
+    }
+
     private void updateListItem(Holder h, int i) {
         TransactionInfo t = getItem(i);
+
+        if (dateLayoutParams == null) measureDateWidth(h.dateText);
 
         if (isHeader(t)) {
             drawGroupTitle(context.getResources().getString(getHeaderTitle(t)), h);
@@ -152,13 +172,19 @@ public class CreditCardStatementAdapter extends BaseAdapter implements Filterabl
         TextView descText = h.descText;
         TextView valueText = h.valueText;
 
-        dateText.setText(getDate(date) + " ");
+        dateText.setLayoutParams(dateLayoutParams);
+        dateText.setText(DateUtils.formatDateTime(context, date,
+                DateUtils.FORMAT_SHOW_DATE|DateUtils.FORMAT_NUMERIC_DATE) + " ");
         descText.setText(desc);
         if (isStatementPreview) {
             u.setAmountText(valueText, currency, (-1) * value, false);
         } else {
             u.setAmountText(valueText, currency, value, false);
         }
+
+        dateText.setBackground(null);
+        descText.setBackground(null);
+        valueText.setBackground(null);
 
         // set style
         if (isScheduled) {
@@ -208,6 +234,7 @@ public class CreditCardStatementAdapter extends BaseAdapter implements Filterabl
         TextView dateText = h.dateText;
         TextView descText = h.descText;
         TextView valueText = h.valueText;
+        dateText.setLayoutParams(wrapContent);
         dateText.setText("");
         descText.setText(title);
         valueText.setText("");
@@ -234,7 +261,7 @@ public class CreditCardStatementAdapter extends BaseAdapter implements Filterabl
         return (d < 10 ? "0" + d : d) + "/" + (m < 10 ? "0" + m : m) + "/" + (y - 2000);
     }
 
-    private class Holder {
+    private static class Holder {
         private final TextView dateText;
         private final TextView descText;
         private final TextView valueText;
