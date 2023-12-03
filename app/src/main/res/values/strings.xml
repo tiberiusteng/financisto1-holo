@@ -631,6 +631,9 @@
     <string name="colorize_blotter_item">Colorize transaction fields</string>
     <string name="colorize_blotter_item_summary">Use color to distinguish transaction category, payee and note</string>
 
+    <string name="show_project_in_blotter">Show project name</string>
+    <string name="show_project_in_blotter_summary">Show project name when transaction has assigned a project</string>
+
     <string name="reset_copied_transaction_status">Reset copied transaction status</string>
     <string name="reset_copied_transaction_status_summary">Make copied transaction unreconciled</string>
 

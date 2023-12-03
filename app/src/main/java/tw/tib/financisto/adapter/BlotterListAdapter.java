@@ -31,6 +31,7 @@ import tw.tib.financisto.R;
 import tw.tib.financisto.db.DatabaseAdapter;
 import tw.tib.financisto.db.DatabaseHelper.BlotterColumns;
 import static tw.tib.financisto.model.Category.isSplit;
+import static tw.tib.financisto.model.Project.NO_PROJECT_ID;
 
 import tw.tib.financisto.model.CategoryEntity;
 import tw.tib.financisto.model.Currency;
@@ -56,10 +57,13 @@ public class BlotterListAdapter extends ResourceCursorAdapter {
     protected final TransactionTitleUtils transactionTitleUtils;
     private final int colors[];
 
+    private final int projectColor;
+
     private boolean allChecked = true;
     private final HashMap<Long, Boolean> checkedItems = new HashMap<Long, Boolean>();
 
-    private boolean showRunningBalance;
+    private final boolean showRunningBalance;
+    private final boolean showProject;
 
     public BlotterListAdapter(Context context, DatabaseAdapter db, Cursor c) {
         this(context, db, R.layout.blotter_list_item, c, false);
@@ -77,7 +81,9 @@ public class BlotterListAdapter extends ResourceCursorAdapter {
         this.icBlotterSplit = context.getResources().getDrawable(R.drawable.ic_action_share);
         this.u = new Utils(context);
         this.colors = initializeColors(context);
+        this.projectColor = context.getResources().getColor(R.color.project_color);
         this.showRunningBalance = MyPreferences.isShowRunningBalance(context);
+        this.showProject = MyPreferences.isShowProjectInBlotter(context);
         this.transactionTitleUtils = new TransactionTitleUtils(context, MyPreferences.isColorizeBlotterItem(context));
         this.db = db;
     }
@@ -179,6 +185,17 @@ public class BlotterListAdapter extends ResourceCursorAdapter {
                     v.iconView.setColorFilter(u.negativeColor);
                 }
             }
+
+            long projectId = cursor.getLong(BlotterColumns.project_id.ordinal());
+            if (projectId == NO_PROJECT_ID || showProject == false) {
+                v.top2View.setVisibility(View.INVISIBLE);
+            }
+            else {
+                v.top2View.setVisibility(View.VISIBLE);
+                v.top2View.setTextColor(projectColor);
+                v.top2View.setText(cursor.getString(BlotterColumns.project.ordinal()));
+            }
+
             if (v.rightView != null) {
                 long balance = cursor.getLong(BlotterColumns.from_account_balance.ordinal());
                 v.rightView.setText(Utils.amountToString(fromCurrency, balance, false));
@@ -311,14 +328,15 @@ public class BlotterListAdapter extends ResourceCursorAdapter {
 
         public BlotterViewHolder(View view) {
             layout = view.findViewById(R.id.layout);
-            indicator = (TextView) view.findViewById(R.id.indicator);
-            topView = (TextView) view.findViewById(R.id.top);
-            centerView = (TextView) view.findViewById(R.id.center);
-            bottomView = (TextView) view.findViewById(R.id.bottom);
-            rightCenterView = (TextView) view.findViewById(R.id.right_center);
-            rightView = (TextView) view.findViewById(R.id.right);
-            iconView = (ImageView) view.findViewById(R.id.right_top);
-            checkBox = (CheckBox) view.findViewById(R.id.cb);
+            indicator = view.findViewById(R.id.indicator);
+            topView = view.findViewById(R.id.top);
+            top2View = view.findViewById(R.id.top2);
+            centerView = view.findViewById(R.id.center);
+            bottomView = view.findViewById(R.id.bottom);
+            rightCenterView = view.findViewById(R.id.right_center);
+            rightView = view.findViewById(R.id.right);
+            iconView = view.findViewById(R.id.right_top);
+            checkBox = view.findViewById(R.id.cb);
         }
 
     }

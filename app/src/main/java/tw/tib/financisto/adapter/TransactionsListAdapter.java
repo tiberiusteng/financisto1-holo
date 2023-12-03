@@ -10,11 +10,14 @@
  ******************************************************************************/
 package tw.tib.financisto.adapter;
 
+import static tw.tib.financisto.model.Project.NO_PROJECT_ID;
+
 import android.content.Context;
 import android.content.res.Resources;
 import android.database.Cursor;
 import android.graphics.Color;
 import android.text.format.DateUtils;
+import android.view.View;
 
 import java.util.Calendar;
 
@@ -23,12 +26,15 @@ import tw.tib.financisto.db.DatabaseAdapter;
 import tw.tib.financisto.db.DatabaseHelper.BlotterColumns;
 import tw.tib.financisto.model.Currency;
 import tw.tib.financisto.utils.CurrencyCache;
+import tw.tib.financisto.utils.MyPreferences;
 import tw.tib.financisto.utils.Utils;
 
 public class TransactionsListAdapter extends BlotterListAdapter {
 
     private int dateColor;
     private int dateWeekendColor;
+    private int projectColor;
+    private boolean showProject;
 
     public TransactionsListAdapter(Context context, DatabaseAdapter db, Cursor c) {
         super(context, db, c);
@@ -36,6 +42,8 @@ public class TransactionsListAdapter extends BlotterListAdapter {
 
         this.dateColor = r.getColor(R.color.transaction_date);
         this.dateWeekendColor = r.getColor(R.color.transaction_date_weekend);
+        this.projectColor = r.getColor(R.color.project_color);
+        this.showProject = MyPreferences.isShowProjectInBlotter(context);
     }
 
     @Override
@@ -72,6 +80,17 @@ public class TransactionsListAdapter extends BlotterListAdapter {
         CharSequence text = transactionTitleUtils.generateTransactionTitle(toAccountId > 0, payee, note, location, categoryId, category);
         v.centerView.setText(text);
         sb.setLength(0);
+
+        long projectId = cursor.getLong(BlotterColumns.project_id.ordinal());
+
+        if (projectId == NO_PROJECT_ID || showProject == false) {
+            v.top2View.setVisibility(View.INVISIBLE);
+        }
+        else {
+            v.top2View.setVisibility(View.VISIBLE);
+            v.top2View.setTextColor(projectColor);
+            v.top2View.setText(cursor.getString(BlotterColumns.project.ordinal()));
+        }
 
         long currencyId = cursor.getLong(BlotterColumns.from_account_currency_id.ordinal());
         Currency c = CurrencyCache.getCurrency(db, currencyId);

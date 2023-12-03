@@ -428,6 +428,11 @@ public class MyPreferences {
 		return sharedPreferences.getBoolean("colorize_blotter_item", true);
 	}
 
+	public static boolean isShowProjectInBlotter(Context context) {
+		SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(context);
+		return sharedPreferences.getBoolean("show_project_in_blotter", true);
+	}
+
 	public static boolean isResetCopiedTransactionStatus(Context context) {
 		SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(context);
 		return sharedPreferences.getBoolean("reset_copied_transaction_status", true);

@@ -10,6 +10,8 @@
  ******************************************************************************/
 package tw.tib.financisto.adapter;
 
+import static tw.tib.financisto.model.Project.NO_PROJECT_ID;
+
 import android.content.Context;
 import android.graphics.Color;
 import android.graphics.drawable.Drawable;
@@ -19,7 +21,6 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
 import android.widget.ImageView;
-import android.widget.RelativeLayout;
 import android.widget.TextView;
 import tw.tib.financisto.R;
 import tw.tib.financisto.model.Currency;
@@ -38,6 +39,7 @@ public class ScheduledListAdapter extends BaseAdapter {
 	private final Date dt = new Date();
 	private final int transferColor;
 	private final int scheduledColor;
+	private final int projectColor;
 	private final Drawable icBlotterIncome;
 	private final Drawable icBlotterExpense;
 	private final Drawable icBlotterTransfer;	
@@ -50,17 +52,21 @@ public class ScheduledListAdapter extends BaseAdapter {
 	private Date now = new Date();
 	private List<TransactionInfo> transactions;
 
+	private final boolean showProject;
+
 	public ScheduledListAdapter(Context context, List<TransactionInfo> transactions) {
 		this.context = context;
 		this.inflater = (LayoutInflater)context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
 		this.transferColor = context.getResources().getColor(R.color.transfer_color);
 		this.scheduledColor = context.getResources().getColor(R.color.scheduled);
+		this.projectColor = context.getResources().getColor(R.color.project_color);
 		this.icBlotterIncome = context.getResources().getDrawable(R.drawable.ic_blotter_income);
 		this.icBlotterExpense = context.getResources().getDrawable(R.drawable.ic_blotter_expense);
 		this.icBlotterTransfer = context.getResources().getDrawable(R.drawable.ic_blotter_transfer);
 		this.u = new Utils(context);
 		this.transactions = transactions;
 		this.transactionTitleUtils = new TransactionTitleUtils(context, MyPreferences.isColorizeBlotterItem(context));
+		this.showProject = MyPreferences.isShowProjectInBlotter(context);
 	}
 
 	public void setTransactions(ArrayList<TransactionInfo> transactions) {
@@ -145,7 +151,16 @@ public class ScheduledListAdapter extends BaseAdapter {
             CharSequence text = transactionTitleUtils.generateTransactionTitle(false, payee, note, location, t.category.id, category);
             noteView.setText(text);
 			noteView.setTextColor(Color.WHITE);
-			
+
+			if (t.project.id == NO_PROJECT_ID || showProject == false) {
+				v.top2View.setVisibility(View.INVISIBLE);
+			}
+			else {
+				v.top2View.setVisibility(View.VISIBLE);
+				v.top2View.setTextColor(projectColor);
+				v.top2View.setText(t.project.title);
+			}
+
 			long amount = t.fromAmount;
 			sb.setLength(0);
 			u.setAmountText(sb, v.rightCenterView, t.fromAccount.currency, amount, true);
@@ -182,6 +197,7 @@ public class ScheduledListAdapter extends BaseAdapter {
 		public View layout;
 		public TextView indicator;
 		public TextView topView;
+		public TextView top2View;
 		public TextView centerView;
 		public TextView bottomView;
 		public TextView rightCenterView;
@@ -190,12 +206,13 @@ public class ScheduledListAdapter extends BaseAdapter {
 		public static Holder create(View view) {
 			Holder v = new Holder();
 			v.layout = view.findViewById(R.id.layout);
-			v.indicator = (TextView)view.findViewById(R.id.indicator);
-			v.topView = (TextView)view.findViewById(R.id.top);
-			v.centerView = (TextView)view.findViewById(R.id.center);		
-			v.bottomView = (TextView)view.findViewById(R.id.bottom);
-			v.rightCenterView = (TextView)view.findViewById(R.id.right_center);
-			v.iconView = (ImageView)view.findViewById(R.id.right_top);
+			v.indicator = view.findViewById(R.id.indicator);
+			v.topView = view.findViewById(R.id.top);
+			v.top2View = view.findViewById(R.id.top2);
+			v.centerView = view.findViewById(R.id.center);
+			v.bottomView = view.findViewById(R.id.bottom);
+			v.rightCenterView = view.findViewById(R.id.right_center);
+			v.iconView = view.findViewById(R.id.right_top);
             removeRightView(view);
 			view.setTag(v);
 			return v;

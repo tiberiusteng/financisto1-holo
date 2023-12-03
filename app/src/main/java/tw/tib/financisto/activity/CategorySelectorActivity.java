@@ -188,6 +188,7 @@ public class CategorySelectorActivity extends AbstractListActivity {
             } else {
                 v.layout.setBackgroundResource(0);
             }
+            v.top2View.setVisibility(View.INVISIBLE);
             return convertView;
         }
 

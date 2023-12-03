@@ -16,6 +16,7 @@
 	<color name="scheduled">#7cc623</color>
 	<color name="positive_amount">#66bb6a</color>
 	<color name="negative_amount">#ef5350</color>
+	<color name="project_color">#ffdd33</color>
 	<color name="transfer_color">@color/holo_orange_dark</color>
 	<color name="future_color">@color/holo_orange_dark</color>
 	<color name="split_color">@color/holo_blue_dark</color>
