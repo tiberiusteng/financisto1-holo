@@ -22,7 +22,10 @@ public class QifExportTask extends ImportExportAsyncTask {
 		QifExport qifExport = new QifExport(context, db, options);
 		Uri backupFileUri = qifExport.export();
 		if (options.uploadToDropbox) {
-			doUploadToDropbox(context, backupFileUri);
+			doForceUploadToDropbox(context, backupFileUri);
+		}
+		if (options.uploadToGDrive) {
+			doForceUploadToGoogleDrive(context, backupFileUri);
 		}
 		return backupFileUri;
 	}

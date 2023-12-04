@@ -61,6 +61,8 @@
                      android:id="@+id/spinnerDateFormats" android:entries="@array/date_format_values"/>
             <CheckBox android:layout_height="wrap_content" android:layout_width="fill_parent"
                      android:id="@+id/checkboxUploadToDropbox" android:text="@string/upload_to_dropbox"/>
+            <CheckBox android:layout_height="wrap_content" android:layout_width="fill_parent"
+                android:id="@+id/checkboxUploadToGDrive" android:text="@string/upload_to_gdrive"/>
         </LinearLayout>
     </ScrollView>
     <include layout="@layout/ok_cancel_buttons"/>

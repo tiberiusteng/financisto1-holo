@@ -666,6 +666,7 @@
   <string name="total_rate">匯率: %0.5f</string>
   <string name="home_currency">本國貨幣</string>
   <string name="upload_to_dropbox">上傳到\nDropbox</string>
+  <string name="upload_to_gdrive">上傳到\nGoogle Drive</string>
   <string name="not_available">N/A</string>
   <string name="rate_not_available_on_date_error" formatted="false">%s 沒有指定 %s 與 %s 之間的匯率</string>
   <string name="rate_not_available_error" formatted="false">沒有指定 %s 與 %s 之間的匯率</string>

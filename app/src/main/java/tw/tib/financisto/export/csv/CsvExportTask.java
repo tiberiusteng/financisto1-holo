@@ -22,7 +22,7 @@ public class CsvExportTask extends ImportExportAsyncTask {
 		CsvExport export = new CsvExport(context, db, options);
 		Uri backupFileUri = export.export();
 		if (options.uploadToDropbox) {
-			doUploadToDropbox(context, backupFileUri);
+			doForceUploadToDropbox(context, backupFileUri);
 		}
 		if (options.uploadToGDrive) {
 			doForceUploadToGoogleDrive(context, backupFileUri);
