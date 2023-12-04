@@ -27,6 +27,7 @@
         <item name="android:background">@android:color/background_light</item>
     </style>
     <style name="LightButton" parent="@android:style/Widget.Holo.Light.Button"></style>
+    <style name="DarkButton" parent="@android:style/Widget.Holo.Button"></style>
     <style name="EntityEnumListItemText">
         <item name="android:textColor">@android:color/primary_text_dark</item>
     </style>

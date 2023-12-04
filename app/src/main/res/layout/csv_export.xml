@@ -19,7 +19,8 @@
                       android:layout_width="fill_parent" android:layout_marginLeft="3dp"
                       android:text="@string/period"/>
             <Button android:layout_height="wrap_content" android:id="@+id/bPeriod"
-                    android:layout_width="fill_parent"/>
+                    android:layout_width="fill_parent"
+                    style="@style/DarkButton" />
             <include layout="@layout/list_divider"/>
             <TableLayout android:layout_height="wrap_content"
                          android:layout_width="fill_parent"

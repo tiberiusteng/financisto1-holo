@@ -37,7 +37,7 @@ public class CsvImportTask extends ImportExportAsyncTask {
     @Override
     protected Object work(Context context, DatabaseAdapter db, Uri... params) throws Exception {
         try {
-            CsvImport csvimport = new CsvImport(db, options);
+            CsvImport csvimport = new CsvImport(context, db, options);
             csvimport.setProgressListener(new ProgressListener() {
                 @Override
                 public void onProgress(int percentage) {
@@ -63,7 +63,9 @@ public class CsvImportTask extends ImportExportAsyncTask {
             else if (message.equals("IllegalArgumentException"))
                 throw new ImportExportException(R.string.import_illegal_argument_exception);
             else if (message.equals("ParseException"))
-                throw new ImportExportException(R.string.import_parse_error);
+                throw new ImportExportException(R.string.import_parse_error, e.getCause());
+            else if (e instanceof SecurityException)
+                throw new ImportExportException(R.string.file_import_permission);
             else
                 throw new ImportExportException(R.string.csv_import_error);
         }

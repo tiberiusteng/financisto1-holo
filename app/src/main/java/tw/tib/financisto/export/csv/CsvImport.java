@@ -1,10 +1,12 @@
 package tw.tib.financisto.export.csv;
 
+import android.content.Context;
 import android.database.sqlite.SQLiteDatabase;
+import android.net.Uri;
 import android.util.Log;
 
 import java.io.FileNotFoundException;
-import java.io.FileReader;
+import java.io.InputStreamReader;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Arrays;
@@ -36,11 +38,13 @@ public class CsvImport {
     private final DatabaseAdapter db;
     private final CsvImportOptions options;
     private final Account account;
+    private final Context context;
     private char decimalSeparator;
     private char groupSeparator;
     private ProgressListener progressListener;
 
-    public CsvImport(DatabaseAdapter db, CsvImportOptions options) {
+    public CsvImport(Context context, DatabaseAdapter db, CsvImportOptions options) {
+        this.context = context;
         this.db = db;
         this.options = options;
         this.account = db.getAccount(options.selectedAccountId);
@@ -69,7 +73,9 @@ public class CsvImport {
         long t6 = System.currentTimeMillis();
         Log.i("Financisto", "Inserting transactions =" + (t6 - t5) + "ms");
         Log.i("Financisto", "Overall csv import =" + ((t6 - t0) / 1000) + "s");
-        return options.filename + " imported!";
+
+        String path = options.uri.getPath();
+        return path.substring(path.lastIndexOf("/") + 1) + " imported!";
     }
 
     public Map<String, Project> collectAndInsertProjects(List<CsvTransaction> transactions) {
@@ -165,7 +171,8 @@ public class CsvImport {
     }
 
     private List<CsvTransaction> parseTransactions() throws Exception {
-        String csvFilename = options.filename;
+        Uri uri = options.uri;
+
         boolean parseLine = false;
         List<String> header = null;
         if (!options.useHeaderFromFile) {
@@ -175,7 +182,7 @@ public class CsvImport {
         try {
             long deltaTime = 0;
             SimpleDateFormat format = new SimpleDateFormat("HH:mm:ss");
-            Csv.Reader reader = new Csv.Reader(new FileReader(csvFilename))
+            Csv.Reader reader = new Csv.Reader(new InputStreamReader(context.getContentResolver().openInputStream(uri)))
                     .delimiter(options.fieldSeparator).ignoreComments(true);
             List<CsvTransaction> transactions = new LinkedList<CsvTransaction>();
             List<String> line;
@@ -222,7 +229,7 @@ public class CsvImport {
                             } catch (IllegalArgumentException e) {
                                 throw new Exception("IllegalArgumentException");
                             } catch (ParseException e) {
-                                throw new Exception("ParseException");
+                                throw new Exception("ParseException", e);
                             }
                         }
                     }
@@ -236,10 +243,6 @@ public class CsvImport {
             }
             return transactions;
         } catch (FileNotFoundException e) {
-            if (csvFilename.contains(":")){
-                throw new ImportExportException(R.string.import_file_not_found_2, null,
-                        csvFilename.substring(0, csvFilename.indexOf(":")+1));
-            }
             throw new Exception("Import file not found");
         }
     }

@@ -12,14 +12,12 @@ import android.content.ActivityNotFoundException;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
-import android.view.View;
+import android.provider.DocumentsContract;
 import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.Toast;
 import tw.tib.financisto.R;
 import tw.tib.financisto.utils.PinProtection;
-
-import java.io.File;
 
 public abstract class AbstractImportActivity extends Activity {
 
@@ -28,6 +26,7 @@ public abstract class AbstractImportActivity extends Activity {
     private final int layoutId;
     protected ImageButton bBrowse;
     protected EditText edFilename;
+    protected Uri importFileUri;
 
     public AbstractImportActivity(int layoutId) {
         this.layoutId = layoutId;
@@ -38,27 +37,20 @@ public abstract class AbstractImportActivity extends Activity {
         super.onCreate(savedInstanceState);
         setContentView(layoutId);
 
-        bBrowse = (ImageButton) findViewById(R.id.btn_browse);
-        bBrowse.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                openFile();
-            }
-        });
-        edFilename = (EditText) findViewById(R.id.edFilename);
+        bBrowse = findViewById(R.id.btn_browse);
+        bBrowse.setOnClickListener(v -> openFile());
+        edFilename = findViewById(R.id.edFilename);
 
         internalOnCreate();
     }
 
     protected void openFile() {
-        String filePath = edFilename.getText().toString();
-
-        Intent intent = new Intent(Intent.ACTION_GET_CONTENT);
+        Intent intent = new Intent(Intent.ACTION_OPEN_DOCUMENT);
         intent.addCategory(Intent.CATEGORY_OPENABLE);
+        intent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION | Intent.FLAG_GRANT_PERSISTABLE_URI_PERMISSION);
 
-        File file = new File(filePath);
-        intent.setData(Uri.fromFile(file));
         intent.setType("*/*");
+        intent.putExtra(DocumentsContract.EXTRA_INITIAL_URI, importFileUri);
 
         try {
             startActivityForResult(intent, IMPORT_FILENAME_REQUESTCODE);
@@ -77,11 +69,12 @@ public abstract class AbstractImportActivity extends Activity {
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         if (requestCode == IMPORT_FILENAME_REQUESTCODE) {
             if (resultCode == RESULT_OK && data != null) {
-                Uri fileUri = data.getData();
-                if (fileUri != null) {
-                    String filePath = fileUri.getPath();
+                importFileUri = data.getData();
+                getContentResolver().takePersistableUriPermission(importFileUri, Intent.FLAG_GRANT_READ_URI_PERMISSION);
+                if (importFileUri != null) {
+                    String filePath = importFileUri.getPath();
                     if (filePath != null) {
-                        edFilename.setText(filePath);
+                        edFilename.setText(filePath.substring(filePath.lastIndexOf("/") + 1));
                         savePreferences();
                     }
                 }

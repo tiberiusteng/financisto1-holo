@@ -9,6 +9,7 @@
 package tw.tib.financisto.export.qif;
 
 import android.content.Intent;
+import android.net.Uri;
 
 import tw.tib.financisto.activity.QifImportActivity;
 import tw.tib.financisto.model.Currency;
@@ -22,21 +23,21 @@ import tw.tib.financisto.utils.CurrencyCache;
 public class QifImportOptions {
 
     public final QifDateFormat dateFormat;
-    public final String filename;
+    public final Uri uri;
     public final Currency currency;
 
-    public QifImportOptions(String filename, QifDateFormat dateFormat, Currency currency) {
-        this.filename = filename;
+    public QifImportOptions(Uri uri, QifDateFormat dateFormat, Currency currency) {
+        this.uri = uri;
         this.dateFormat = dateFormat;
         this.currency = currency;
     }
 
     public static QifImportOptions fromIntent(Intent data) {
-        String filename = data.getStringExtra(QifImportActivity.QIF_IMPORT_FILENAME);
+        Uri uri = Uri.parse(data.getStringExtra(QifImportActivity.QIF_IMPORT_URI));
         int f = data.getIntExtra(QifImportActivity.QIF_IMPORT_DATE_FORMAT, 0);
         long currencyId = data.getLongExtra(QifImportActivity.QIF_IMPORT_CURRENCY, 1);
         Currency currency = CurrencyCache.getCurrencyOrEmpty(currencyId);
-        return new QifImportOptions(filename, f == 0 ? QifDateFormat.EU_FORMAT : QifDateFormat.US_FORMAT, currency);
+        return new QifImportOptions(uri, f == 0 ? QifDateFormat.EU_FORMAT : QifDateFormat.US_FORMAT, currency);
     }
 
 }

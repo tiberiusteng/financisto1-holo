@@ -9,6 +9,7 @@ package tw.tib.financisto.activity;
 
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.net.Uri;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.CheckBox;
@@ -27,7 +28,7 @@ public class CsvImportActivity extends AbstractImportActivity {
 
     public static final String CSV_IMPORT_SELECTED_ACCOUNT_2 = "CSV_IMPORT_SELECTED_ACCOUNT_2";
     public static final String CSV_IMPORT_DATE_FORMAT = "CSV_IMPORT_DATE_FORMAT";
-    public static final String CSV_IMPORT_FILENAME = "CSV_IMPORT_FILENAME";
+    public static final String CSV_IMPORT_URI = "CSV_IMPORT_URI";
     public static final String CSV_IMPORT_FIELD_SEPARATOR = "CSV_IMPORT_FIELD_SEPARATOR";
     public static final String CSV_IMPORT_USE_HEADER_FROM_FILE = "CSV_IMPORT_USE_HEADER_FROM_FILE";
 
@@ -88,7 +89,7 @@ public class CsvImportActivity extends AbstractImportActivity {
         data.putExtra(CSV_IMPORT_SELECTED_ACCOUNT_2, getSelectedAccountId());
         Spinner dateFormats = findViewById(R.id.spinnerDateFormats);
         data.putExtra(CSV_IMPORT_DATE_FORMAT, dateFormats.getSelectedItem().toString());
-        data.putExtra(CSV_IMPORT_FILENAME, edFilename.getText().toString());
+        data.putExtra(CSV_IMPORT_URI, importFileUri.toString());
         Spinner fieldSeparator = findViewById(R.id.spinnerFieldSeparator);
         data.putExtra(CSV_IMPORT_FIELD_SEPARATOR, fieldSeparator.getSelectedItem().toString().charAt(1));
         data.putExtra(CSV_IMPORT_USE_HEADER_FROM_FILE, useHeaderFromFile.isChecked());
@@ -102,7 +103,7 @@ public class CsvImportActivity extends AbstractImportActivity {
         editor.putLong(CSV_IMPORT_SELECTED_ACCOUNT_2, getSelectedAccountId());
         Spinner dateFormats = findViewById(R.id.spinnerDateFormats);
         editor.putInt(CSV_IMPORT_DATE_FORMAT, dateFormats.getSelectedItemPosition());
-        editor.putString(CSV_IMPORT_FILENAME, edFilename.getText().toString());
+        editor.putString(CSV_IMPORT_URI, importFileUri.toString());
         Spinner fieldSeparator = findViewById(R.id.spinnerFieldSeparator);
         editor.putInt(CSV_IMPORT_FIELD_SEPARATOR, fieldSeparator.getSelectedItemPosition());
         editor.putBoolean(CSV_IMPORT_USE_HEADER_FROM_FILE, useHeaderFromFile.isChecked());
@@ -120,8 +121,14 @@ public class CsvImportActivity extends AbstractImportActivity {
 
         Spinner dateFormats = findViewById(R.id.spinnerDateFormats);
         dateFormats.setSelection(preferences.getInt(CSV_IMPORT_DATE_FORMAT, 0));
+
         edFilename = findViewById(R.id.edFilename);
-        edFilename.setText(preferences.getString(CSV_IMPORT_FILENAME, ""));
+        importFileUri = Uri.parse(preferences.getString(CSV_IMPORT_URI, ""));
+        String filePath = importFileUri.getPath();
+        if (filePath != null) {
+            edFilename.setText(filePath.substring(filePath.lastIndexOf("/") + 1));
+        }
+
         Spinner fieldSeparator = findViewById(R.id.spinnerFieldSeparator);
         fieldSeparator.setSelection(preferences.getInt(CSV_IMPORT_FIELD_SEPARATOR, 0));
         useHeaderFromFile.setChecked(preferences.getBoolean(CSV_IMPORT_USE_HEADER_FROM_FILE, true));

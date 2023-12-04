@@ -597,6 +597,7 @@
   <string name="import_illegal_argument_exception">不合法引數例外</string>
   <string name="import_parse_error">匯入檔解析錯誤</string>
   <string name="csv_import_error">CSV 匯入錯誤</string>
+  <string name="file_import_permission">讀取檔案的權限已被系統收回，請重新選取檔案以賦予權限</string>
   <string name="qif_import">QIF 匯入</string>
   <string name="qif_import_inprogress">正在從 QIF 匯入資料...</string>
   <string name="qif_import_error">QIF 匯入錯誤</string>

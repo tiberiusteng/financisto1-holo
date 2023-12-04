@@ -19,13 +19,19 @@
                       android:layout_width="fill_parent" android:layout_marginLeft="3dp"
                       android:text="@string/period"/>
             <Button android:layout_height="wrap_content" android:id="@+id/bPeriod"
-                    android:layout_width="fill_parent"/>
+                    android:layout_width="fill_parent"
+                    style="@style/DarkButton" />
             <include layout="@layout/list_divider"/>
             <TextView android:layout_height="wrap_content"
                       android:layout_width="fill_parent" android:layout_marginLeft="3dp"
                       android:text="@string/accounts"/>
-            <Button android:layout_height="wrap_content" android:id="@+id/bAccounts"
-                    android:layout_width="fill_parent" android:text="@string/all_accounts"/>
+
+            <Button
+                android:id="@+id/bAccounts"
+                style="@style/DarkButton"
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:text="@string/all_accounts" />
             <include layout="@layout/list_divider"/>
             <TableLayout android:layout_height="wrap_content"
                          android:layout_width="fill_parent"
