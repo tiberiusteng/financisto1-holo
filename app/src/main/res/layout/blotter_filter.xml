@@ -24,6 +24,7 @@
 			android:text="@string/no_filter" android:src="@drawable/actionbar_filter_cancel"
 			style="@style/BottomBarButton" />
 		<Button android:id="@+id/bCancel" android:text="@string/cancel"
-			style="@style/BottomBarButton" android:layout_weight="1" />
+			style="@style/BottomBarButton" android:layout_weight="1"
+			android:layout_marginRight="@dimen/action_button_margin" />
 	</LinearLayout>
 </LinearLayout>

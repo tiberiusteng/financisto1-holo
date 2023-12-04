@@ -36,7 +36,8 @@
         <ImageButton
             android:id="@+id/bt_popup"
             style="@style/BottomBarButton"
-            android:src="@android:drawable/ic_menu_more" />
+            android:src="@android:drawable/ic_menu_more"
+            android:layout_marginRight="@dimen/action_button_margin" />
 
     </LinearLayout>
 

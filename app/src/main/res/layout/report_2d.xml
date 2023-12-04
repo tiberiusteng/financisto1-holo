@@ -37,7 +37,8 @@
         <ImageButton
             android:id="@+id/bt_preferences"
             style="@style/BottomBarButton"
-            android:src="@android:drawable/ic_menu_preferences" />
+            android:src="@android:drawable/ic_menu_preferences"
+            android:layout_marginRight="@dimen/action_button_margin" />
 
     </LinearLayout>
 

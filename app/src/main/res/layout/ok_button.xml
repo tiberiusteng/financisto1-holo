@@ -8,5 +8,6 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
 	style="@style/BottomBar">
 	<Button android:layout_weight="1" android:id="@+id/bOK" android:text="@string/ok"
-		style="@style/BottomBarButton" />
+		style="@style/BottomBarButton"
+		android:layout_marginRight="@dimen/action_button_margin" />
 </LinearLayout>

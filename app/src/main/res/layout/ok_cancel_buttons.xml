@@ -13,5 +13,6 @@
 	<Button android:layout_weight="1" android:id="@+id/bOK" android:text="@string/ok"
 		style="@style/BottomBarButton" />
 	<Button android:layout_weight="1" android:id="@+id/bCancel" android:text="@string/cancel"
-		style="@style/BottomBarButton" />
+		style="@style/BottomBarButton"
+		android:layout_marginRight="@dimen/action_button_margin" />
 </LinearLayout>

@@ -53,7 +53,8 @@
         <ImageButton
             android:id="@+id/bRefresh"
             style="@style/BottomBarButton"
-            android:src="@drawable/ic_refresh_24dp" />
+            android:src="@drawable/ic_refresh_24dp"
+            android:layout_marginRight="@dimen/action_button_margin" />
     </LinearLayout>
 
 </LinearLayout>

@@ -32,6 +32,7 @@
 			android:layout_weight="1"
 			android:id="@+id/bClose" 
 			android:text="@string/close"
-			style="@style/BottomBarButton" />
+			style="@style/BottomBarButton"
+			android:layout_marginRight="@dimen/action_button_margin" />
 	</LinearLayout>
 </LinearLayout>	
