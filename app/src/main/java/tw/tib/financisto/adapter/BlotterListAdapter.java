@@ -195,14 +195,15 @@ public class BlotterListAdapter extends ResourceCursorAdapter {
             }
         }
 
-        long projectId = cursor.getLong(BlotterColumns.project_id.ordinal());
-        if (projectId == NO_PROJECT_ID || showProject == false) {
-            v.top2View.setVisibility(View.INVISIBLE);
-        }
-        else {
-            v.top2View.setVisibility(View.VISIBLE);
-            v.top2View.setTextColor(projectColor);
-            v.top2View.setText(cursor.getString(BlotterColumns.project.ordinal()));
+        if (v.top2View != null) {
+            long projectId = cursor.getLong(BlotterColumns.project_id.ordinal());
+            if (projectId == NO_PROJECT_ID || showProject == false) {
+                v.top2View.setVisibility(View.INVISIBLE);
+            } else {
+                v.top2View.setVisibility(View.VISIBLE);
+                v.top2View.setTextColor(projectColor);
+                v.top2View.setText(cursor.getString(BlotterColumns.project.ordinal()));
+            }
         }
 
         setIndicatorColor(v, cursor);
