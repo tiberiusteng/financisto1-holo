@@ -490,6 +490,8 @@
   <string name="sort_all_by_title">全部根據標題排序</string>
   <string name="include_transfers_into_reports">報告包含轉帳</string>
   <string name="include_transfers_into_reports_summary">在報告之中納入轉帳交易</string>
+  <string name="treat_transfer_to_ccard_as_payment">轉帳至信用卡視為付款</string>
+  <string name="treat_transfer_to_ccard_as_payment_summary">不從當期應繳金額扣除轉入額</string>
   <string name="negative_opening_amount">負數起始金額</string>
   <string name="negative_opening_amount_summary">新建一個起始金額是負數的帳戶</string>
   <string name="payment_day">付款日</string>
@@ -516,7 +518,7 @@
   <string name="is_ccard_payment">信用卡付款</string>
   <string name="is_ccard_payment_summary">不納入帳單總金額</string>
   <string name="header_payments">付款</string>
-  <string name="header_credits">各信用額</string>
+  <string name="header_credits">扣抵</string>
   <string name="header_expenses">支出</string>
   <string name="ui_language">Locales / 語言</string>
   <string name="ui_language_summary">Set language of user interface (requires restart!) / 設定使用者介面的語言 (需要重新啟動!)</string>

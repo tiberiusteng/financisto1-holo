@@ -42,11 +42,13 @@ public class MonthlyViewPlanner extends AbstractPlanner {
 
     private final Account account;
     private final boolean isStatementPreview;
+    private final boolean treatTransferToCCardAsPayment;
 
-    public MonthlyViewPlanner(DatabaseAdapter db, Account account, boolean isStatementPreview, Date startDate, Date endDate, Date now) {
+    public MonthlyViewPlanner(DatabaseAdapter db, Account account, boolean isStatementPreview, boolean treatTransferToCCardAsPayment, Date startDate, Date endDate, Date now) {
         super(db, createMonthlyViewFilter(startDate, endDate, account), now);
         this.account = account;
         this.isStatementPreview = isStatementPreview;
+        this.treatTransferToCCardAsPayment = treatTransferToCCardAsPayment;
     }
 
     @Override
@@ -99,14 +101,14 @@ public class MonthlyViewPlanner extends AbstractPlanner {
         // add payments
         statement.add(PAYMENTS_HEADER);
         for (TransactionInfo transaction : transactions) {
-            if (transaction.isCreditCardPayment() && transaction.fromAmount > 0) {
+            if (((treatTransferToCCardAsPayment && transaction.isTransfer()) || transaction.isCreditCardPayment()) && transaction.fromAmount > 0) {
                 statement.add(transaction);
             }
         }
         // add credits
         statement.add(CREDITS_HEADER);
         for (TransactionInfo transaction : transactions) {
-            if (!transaction.isCreditCardPayment() && transaction.fromAmount > 0) {
+            if (!((treatTransferToCCardAsPayment && transaction.isTransfer()) || transaction.isCreditCardPayment()) && transaction.fromAmount > 0) {
                 statement.add(transaction);
             }
         }
@@ -133,7 +135,7 @@ public class MonthlyViewPlanner extends AbstractPlanner {
         if (isStatementPreview) {
             // exclude payments
             for (TransactionInfo t : transactions) {
-                if (!t.isCreditCardPayment()) {
+                if (!((treatTransferToCCardAsPayment && t.isTransfer()) || t.isCreditCardPayment())) {
                     total += getAmount(t);
                 }
             }

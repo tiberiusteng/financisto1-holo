@@ -412,6 +412,11 @@
             android:key="restore_missed_scheduled_transactions"
             android:summary="@string/restore_missed_scheduled_transactions_summary"
             android:title="@string/restore_missed_scheduled_transactions" />
+        <CheckBoxPreference
+            android:defaultValue="true"
+            android:key="treat_transfer_to_ccard_as_payment"
+            android:summary="@string/treat_transfer_to_ccard_as_payment_summary"
+            android:title="@string/treat_transfer_to_ccard_as_payment" />
     </PreferenceCategory>
 
 </PreferenceScreen>

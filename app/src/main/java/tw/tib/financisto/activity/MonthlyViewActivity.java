@@ -379,8 +379,10 @@ public class MonthlyViewActivity extends ListActivity {
 		private final Date open;
 		private final Date close;
 		private final Date now;
+		private final Context context;
 
-		private MonthlyPreviewTask(Date open, Date close, Date now) {
+		private MonthlyPreviewTask(Context context, Date open, Date close, Date now) {
+			this.context = context;
 			this.open = open;
 			this.close = close;
 			this.now = now;
@@ -393,7 +395,8 @@ public class MonthlyViewActivity extends ListActivity {
 
 		@Override
 		protected TransactionList doInBackground(Void... voids) {
-			MonthlyViewPlanner planner = new MonthlyViewPlanner(db, account, isStatementPreview, open, close, now);
+			boolean treatTransferToCCardAsPayment = MyPreferences.isTreatTransferToCCardAsPayment(context);
+			MonthlyViewPlanner planner = new MonthlyViewPlanner(db, account, isStatementPreview, treatTransferToCCardAsPayment, open, close, now);
 			TransactionList transactions;
 			if (isStatementPreview) {
 				transactions = planner.getCreditCardStatement();
@@ -443,7 +446,7 @@ public class MonthlyViewActivity extends ListActivity {
 	 */
 	private void fillData(Calendar open, Calendar close) {
 		cancelCurrentTask();
-		currentTask = new MonthlyPreviewTask(open.getTime(), close.getTime(), new Date());
+		currentTask = new MonthlyPreviewTask(this, open.getTime(), close.getTime(), new Date());
 		currentTask.execute();
 	}
 

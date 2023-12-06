@@ -554,6 +554,8 @@
     <string name="sort_all_by_title">Sort all by title</string>
     <string name="include_transfers_into_reports">Transfers into reports</string>
     <string name="include_transfers_into_reports_summary">Include transfers into reports</string>
+    <string name="treat_transfer_to_ccard_as_payment">Treat Transfer to Credit Card as Bill Payment</string>
+    <string name="treat_transfer_to_ccard_as_payment_summary">Do not deduce transfered amount from bill cycle</string>
     <string name="negative_opening_amount">Negative opening amount</string>
     <string name="negative_opening_amount_summary">Open account with negative opening amount</string>
     <string name="payment_day">Payment day</string>
