@@ -77,9 +77,9 @@ public class CalculatorInput extends DialogFragment {
 
     @AfterViews
     public void initUi() {
-        int bgColorResource = R.color.calculator_background;
-        int bgColor = ContextCompat.getColor(getActivity(), bgColorResource);
-        getView().setBackgroundColor(bgColor);
+        //int bgColorResource = R.color.calculator_background;
+        //int bgColor = ContextCompat.getColor(getActivity(), bgColorResource);
+        //getView().setBackgroundColor(bgColor);
         setDisplay(amount);
     }
 

@@ -31,6 +31,8 @@
 	<dimen name="picker_width">62dp</dimen>
 	<dimen name="calculator_button_width">56dp</dimen>
 	<dimen name="calculator_button_height">56dp</dimen>
+	<dimen name="calculator_button_margin">0dp</dimen>
+	<dimen name="calculator_button_padding">0dp</dimen>
 	<dimen name="pin_button_width">70dp</dimen>
 	<dimen name="pin_button_height">70dp</dimen>
 	<dimen name="select_entry_height">51dp</dimen>
