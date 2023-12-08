@@ -38,10 +38,16 @@ public class MassOpFragment extends BlotterFragment {
         });
 
         ImageButton bCheckAll = view.findViewById(R.id.bCheckAll);
-        bCheckAll.setOnClickListener(arg0 -> ((BlotterListAdapter)getListAdapter()).checkAll());
+        bCheckAll.setOnClickListener(arg0 -> {
+            var adapter = (BlotterListAdapter) getListAdapter();
+            if (adapter != null) adapter.checkAll();
+        });
 
         ImageButton bUncheckAll = view.findViewById(R.id.bUncheckAll);
-        bUncheckAll.setOnClickListener(arg0 -> ((BlotterListAdapter)getListAdapter()).uncheckAll());
+        bUncheckAll.setOnClickListener(arg0 -> {
+            var adapter = (BlotterListAdapter)getListAdapter();
+            if (adapter != null) adapter.uncheckAll();
+        });
 
         final MassOp[] operations = MassOp.values();
         final Spinner spOperation = view.findViewById(R.id.spOperation);
