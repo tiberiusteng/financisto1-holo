@@ -18,20 +18,11 @@ import tw.tib.financisto.service.FinancistoService;
 
 public class PackageReplaceReceiver extends BroadcastReceiver {
 
-    private static final String PACKAGE_REPLACED = "android.intent.action.PACKAGE_REPLACED";
-
     @Override
     public void onReceive(Context context, Intent intent) {
-        String action = intent.getAction();
-        String dataString = intent.getDataString();
-        if (PACKAGE_REPLACED.equals(action)) {
-            Log.d("PackageReplaceReceiver", "Received " + dataString);
-            if ("package:tw.tib.financisto".equals(dataString)) {
-                Log.d("PackageReplaceReceiver", "Re-scheduling all transactions");
-                requestScheduleAll(context);
-                requestScheduleAutoBackup(context);
-            }
-        }
+        Log.d("PackageReplaceReceiver", "Re-scheduling all transactions");
+        requestScheduleAll(context);
+        requestScheduleAutoBackup(context);
     }
 
     protected void requestScheduleAll(Context context) {

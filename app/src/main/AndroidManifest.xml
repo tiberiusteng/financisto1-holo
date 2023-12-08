@@ -98,8 +98,7 @@
 
 		<receiver android:name=".activity.PackageReplaceReceiver" android:exported="true">
 			<intent-filter>
-			    <action android:name="android.intent.action.PACKAGE_REPLACED" />
-			    <data android:scheme="package" android:path="tw.tib.financisto" />
+			    <action android:name="android.intent.action.MY_PACKAGE_REPLACED" />
 			</intent-filter>
 		</receiver>		
 
