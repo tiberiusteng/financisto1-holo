@@ -45,7 +45,6 @@ public class FinancistoService extends JobIntentService {
 
     public static final String ACTION_SCHEDULE_ALL = "tw.tib.financisto.SCHEDULE_ALL";
     public static final String ACTION_SCHEDULE_ONE = "tw.tib.financisto.SCHEDULE_ONE";
-    public static final String ACTION_SCHEDULE_AUTO_BACKUP = "tw.tib.financisto.ACTION_SCHEDULE_AUTO_BACKUP";
     public static final String ACTION_NEW_TRANSACTION_SMS = "tw.tib.financisto.NEW_TRANSACTON_SMS";
 
     private static final int RESTORED_NOTIFICATION_ID = 0;
@@ -85,9 +84,6 @@ public class FinancistoService extends JobIntentService {
                     break;
                 case ACTION_SCHEDULE_ONE:
                     scheduleOne(intent);
-                    break;
-                case ACTION_SCHEDULE_AUTO_BACKUP:
-                    DailyAutoBackupScheduler.scheduleNextAutoBackup(this);
                     break;
                 case ACTION_NEW_TRANSACTION_SMS:
                     processSmsTransaction(intent);

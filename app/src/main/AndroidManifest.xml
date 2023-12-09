@@ -107,7 +107,6 @@
 	    <intent-filter>
 			<action android:name=".SCHEDULE_ONE" />
 			<action android:name=".SCHEDULE_ALL" />
-			<action android:name=".ACTION_SCHEDULE_AUTO_BACKUP" />
 			<action android:name=".NEW_TRANSACTION_SMS" />
 	    </intent-filter>
 		</service>

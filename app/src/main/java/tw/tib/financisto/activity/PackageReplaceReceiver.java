@@ -14,6 +14,8 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.util.Log;
+
+import tw.tib.financisto.service.DailyAutoBackupScheduler;
 import tw.tib.financisto.service.FinancistoService;
 
 public class PackageReplaceReceiver extends BroadcastReceiver {
@@ -31,8 +33,7 @@ public class PackageReplaceReceiver extends BroadcastReceiver {
     }
 
     protected void requestScheduleAutoBackup(Context context) {
-        Intent serviceIntent = new Intent(FinancistoService.ACTION_SCHEDULE_AUTO_BACKUP, null, context, FinancistoService.class);
-        FinancistoService.enqueueWork(context, serviceIntent);
+        DailyAutoBackupScheduler.scheduleNextAutoBackup(context);
     }
 
 }
