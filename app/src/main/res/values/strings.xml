@@ -807,6 +807,14 @@
 
     <string name="show_account_last_transaction_date">Last transaction date</string>
     <string name="show_account_last_transaction_date_summary">Show last transaction date for on accounts list screen (requires restart)</string>
+    <string name="account_list_date">Date in account list</string>
+    <string name="account_list_date_summary">Select the date to display below accounts (requires restart)</string>
+    <string-array name="account_list_date_types">
+        <item>Last transaction date</item>
+        <item>Account creation date</item>
+        <item>Hidden</item>
+    </string-array>
+
     <string name="accounts_list_screen">Accounts List</string>
     <string name="accounts_list_screen_summary">Preferences for accounts list screen</string>
     <string name="blotter_screen">Blotter</string>

@@ -510,7 +510,7 @@
   <string name="credit_card_statement">信用卡帳單</string>
   <string name="ccard_statement_title">&lt;ccard&gt; 帳單</string>
   <string name="ccard_par">&lt;ccard&gt;</string>
-  <string name="bill_on">統計到</string>
+  <string name="bill_on">帳單結帳日</string>
   <string name="monthly_result">當月餘額</string>
   <string name="closing_day_error">關帳日有誤。</string>
   <string name="payment_day_error">付款日有誤。</string>
@@ -688,8 +688,8 @@
   <string name="purge_account_payee">上次範圍</string>
   <string name="purge_account_in_progress">正在刪除舊交易 ...</string>
   <string name="purge_account_unable_to_do_backup">無法備份資料庫，中止 ...</string>
-  <string name="show_account_last_transaction_date">最後交易日期</string>
-  <string name="show_account_last_transaction_date_summary">在帳戶列表顯示最後一筆交易的日期 (需要重新啟動)</string>
+  <string name="account_list_date">帳戶列表日期</string>
+  <string name="account_list_date_summary">選擇要顯示在帳戶下的日期 (需要重新啟動)</string>
   <string name="accounts_list_screen">帳戶清單</string>
   <string name="accounts_list_screen_summary">帳戶清單選項</string>
   <string name="blotter_screen">明細</string>
@@ -755,6 +755,11 @@
     <item>銀行</item>
     <item>現金</item>
     <item>信用卡</item>
+  </string-array>
+  <string-array name="account_list_date_types">
+    <item>最後交易日期</item>
+    <item>帳戶建立日期</item>
+    <item>不顯示</item>
   </string-array>
   <string-array name="sort_accounts_entities">
     <item>以指定順序 (小至大)</item>

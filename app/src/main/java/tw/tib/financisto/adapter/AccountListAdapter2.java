@@ -31,13 +31,13 @@ public class AccountListAdapter2 extends ResourceCursorAdapter {
 	
 	private final Utils u;
 	private DateFormat df;
-    private boolean isShowAccountLastTransactionDate;
+    private MyPreferences.AccountListDateType accountListDateType;
 
 	public AccountListAdapter2(Context context, Cursor c) {
 		super(context, R.layout.generic_list_item_2, c);
 		this.u = new Utils(context);
 		this.df = DateUtils.getShortDateFormat(context);
-        this.isShowAccountLastTransactionDate = MyPreferences.isShowAccountLastTransactionDate(context);
+        this.accountListDateType = MyPreferences.getAccountListDateType(context);
 	}		
 
 	@Override
@@ -80,12 +80,18 @@ public class AccountListAdapter2 extends ResourceCursorAdapter {
 		}
 		v.topView.setText(sb.toString());
 
-        long date = a.creationDate;
-        if (isShowAccountLastTransactionDate && a.lastTransactionDate > 0) {
-            date = a.lastTransactionDate;
-        }
-		v.bottomView.setText(df.format(new Date(date)));
-		
+		switch (accountListDateType) {
+			case LAST_TX:
+				v.bottomView.setText(df.format(new Date(a.lastTransactionDate)));
+				break;
+			case ACCOUNT_CREATION:
+				v.bottomView.setText(df.format(new Date(a.creationDate)));
+				break;
+			default:
+			case HIDDEN:
+				v.bottomView.setVisibility(View.INVISIBLE);
+		}
+
 		long amount = a.totalAmount;			
 		if (type == AccountType.CREDIT_CARD && a.limitAmount != 0) {
             long limitAmount = Math.abs(a.limitAmount);

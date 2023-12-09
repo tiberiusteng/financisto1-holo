@@ -217,6 +217,12 @@
 		<item>REPORTS</item>
 	</string-array>
 
+	<string-array name="account_list_date_type_values">
+		<item>LAST_TX</item>
+		<item>ACCOUNT_CREATION</item>
+		<item>HIDDEN</item>
+	</string-array>
+
 	<string-array name="exchange_rate_provider_entities">
 		<item>WebserviceX.NET</item>
 		<item>OpenExchangeRates</item>

@@ -92,6 +92,16 @@ public class MyPreferences {
 		}
 	}
 
+	public enum AccountListDateType {
+		LAST_TX("LAST_TX"),
+		ACCOUNT_CREATION("ACCOUNT_CREATION"),
+		HIDDEN("HIDDEN");
+
+		public final String tag;
+
+		AccountListDateType(String tag) { this.tag = tag; }
+	}
+
 	private static Method hasSystemFeatureMethod;
 
 	static {
@@ -606,8 +616,10 @@ public class MyPreferences {
 		return getBoolean(context, "hierarchical_category_selector_income_expense", false);
 	}
 
-	public static boolean isShowAccountLastTransactionDate(Context context) {
-		return getBoolean(context, "show_account_last_transaction_date", true);
+	public static AccountListDateType getAccountListDateType(Context context) {
+		SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(context);
+		String accountListDateType = sharedPreferences.getString("account_list_date_type", AccountListDateType.LAST_TX.name());
+		return AccountListDateType.valueOf(accountListDateType);
 	}
 
 	public static boolean isHideClosedAccounts(Context context) {

@@ -32,11 +32,13 @@
                 android:key="quick_menu_account_enabled"
                 android:summary="@string/quick_menu_account_enabled_summary"
                 android:title="@string/quick_menu_account_enabled" />
-            <CheckBoxPreference
-                android:defaultValue="true"
-                android:key="show_account_last_transaction_date"
-                android:summary="@string/show_account_last_transaction_date_summary"
-                android:title="@string/show_account_last_transaction_date" />
+            <ListPreference
+                android:defaultValue="LAST_TX"
+                android:entries="@array/account_list_date_types"
+                android:entryValues="@array/account_list_date_type_values"
+                android:key="account_list_date_type"
+                android:summary="@string/account_list_date_summary"
+                android:title="@string/account_list_date" />
             <ListPreference
                 android:defaultValue="SORT_ORDER_ASC"
                 android:entries="@array/sort_accounts_entities"
