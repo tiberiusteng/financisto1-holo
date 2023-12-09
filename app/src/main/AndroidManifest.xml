@@ -12,7 +12,7 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
 	xmlns:tools="http://schemas.android.com/tools"
 	package="tw.tib.financisto"
-	android:versionName="2023-12-04 b" android:versionCode="112"
+	android:versionName="2023-12-09" android:versionCode="113"
     android:installLocation="internalOnly">
 
     <supports-screens
@@ -316,5 +316,10 @@
 		</provider>
 
 	</application>
+
+	<queries>
+		<!-- for Dropbox app auth -->
+		<package android:name="com.dropbox.android" />
+	</queries>
 
 </manifest> 
