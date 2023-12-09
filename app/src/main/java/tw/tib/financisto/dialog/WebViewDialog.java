@@ -15,7 +15,9 @@ import android.app.AlertDialog;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.content.pm.PackageInfo;
+import android.view.ContextThemeWrapper;
 import android.webkit.WebView;
+
 import tw.tib.financisto.R;
 import tw.tib.financisto.utils.Utils;
 
@@ -42,9 +44,10 @@ public class WebViewDialog {
 	}
 
 	private static void showHTMDialog(Context context, String fileName, int dialogTitleResId) {
-		WebView webView = new WebView(context);
+		Context theme = new ContextThemeWrapper(context, R.style.Theme_AppCompat_Dialog);
+		WebView webView = new WebView(theme);
 		webView.loadUrl("file:///android_asset/"+fileName);
-		new AlertDialog.Builder(context)
+		new AlertDialog.Builder(theme)
 			.setView(webView)
 			.setTitle(dialogTitleResId)
 			.setPositiveButton(R.string.ok, null)
