@@ -6,6 +6,7 @@ import android.content.Intent;
 import android.graphics.Color;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.text.format.DateUtils;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
@@ -467,21 +468,8 @@ public class MonthlyViewActivity extends ListActivity {
 
 		Calendar date = new GregorianCalendar(year, month - 1, paymentDay);
 
-		String monthStr = Integer.toString(date.get(Calendar.MONTH) + 1);
-		String yearStr = Integer.toString(date.get(Calendar.YEAR));
-
-		String paymentDayStr;
-		if (paymentDay < 10) {
-			paymentDayStr = "0" + paymentDay;
-		} else {
-			paymentDayStr = Integer.toString(paymentDay);
-		}
-
-		if (monthStr.length() < 2) {
-			monthStr = "0" + monthStr;
-		}
-
-		String pd = paymentDayStr + "/" + monthStr + "/" + yearStr;
+		String pd = DateUtils.formatDateTime(this, date.getTimeInMillis(),
+				DateUtils.FORMAT_SHOW_YEAR|DateUtils.FORMAT_SHOW_DATE|DateUtils.FORMAT_NUMERIC_DATE);
 
 		// set payment date and label on title bar
 		TextView label = (TextView) findViewById(R.id.monthly_view_title);
