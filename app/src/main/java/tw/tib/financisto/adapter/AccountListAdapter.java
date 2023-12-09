@@ -27,14 +27,14 @@ import tw.tib.orb.EntityManager;
 import java.text.DateFormat;
 import java.util.Date;
 
-public class AccountListAdapter2 extends ResourceCursorAdapter {
+public class AccountListAdapter extends ResourceCursorAdapter {
 	
 	private final Utils u;
 	private DateFormat df;
     private MyPreferences.AccountListDateType accountListDateType;
 
-	public AccountListAdapter2(Context context, Cursor c) {
-		super(context, R.layout.generic_list_item_2, c);
+	public AccountListAdapter(Context context, Cursor c) {
+		super(context, R.layout.account_list_item, c);
 		this.u = new Utils(context);
 		this.df = DateUtils.getShortDateFormat(context);
         this.accountListDateType = MyPreferences.getAccountListDateType(context);
@@ -89,7 +89,7 @@ public class AccountListAdapter2 extends ResourceCursorAdapter {
 				break;
 			default:
 			case HIDDEN:
-				v.bottomView.setVisibility(View.INVISIBLE);
+				v.bottomView.setVisibility(View.GONE);
 		}
 
 		long amount = a.totalAmount;			
@@ -107,7 +107,6 @@ public class AccountListAdapter2 extends ResourceCursorAdapter {
 			u.setAmountText(v.rightCenterView, a.currency, amount, false);
 			v.rightView.setVisibility(View.GONE);
 			v.progressBar.setVisibility(View.GONE);
-			v.progressText.setVisibility(View.GONE);
 		}
 	}
 

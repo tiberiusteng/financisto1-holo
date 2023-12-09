@@ -25,8 +25,7 @@ public class GenericViewHolder2 {
 	public TextView rightView;
 	public TextView rightCenterView;
 	public ProgressBar progressBar;
-	public TextView progressText;
-	
+
 	public static View create(View view) {
 		GenericViewHolder2 v = new GenericViewHolder2();
 		v.iconView = (ImageView)view.findViewById(R.id.icon);
@@ -39,8 +38,6 @@ public class GenericViewHolder2 {
 		v.rightCenterView = (TextView)view.findViewById(R.id.right_center);
 		v.progressBar = (ProgressBar)view.findViewById(R.id.progress);
 		v.progressBar.setVisibility(View.GONE);
-		v.progressText = (TextView)view.findViewById(R.id.progress_text);
-		v.progressText.setVisibility(View.GONE);
 		view.setTag(v);
 		return view;
 	}

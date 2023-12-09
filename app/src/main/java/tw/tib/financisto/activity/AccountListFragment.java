@@ -26,7 +26,7 @@ import java.util.concurrent.TimeUnit;
 import greendroid.widget.QuickActionGrid;
 import greendroid.widget.QuickActionWidget;
 import tw.tib.financisto.R;
-import tw.tib.financisto.adapter.AccountListAdapter2;
+import tw.tib.financisto.adapter.AccountListAdapter;
 import tw.tib.financisto.blotter.BlotterFilter;
 import tw.tib.financisto.blotter.TotalCalculationTask;
 import tw.tib.financisto.bus.SwitchToMenuTabEvent;
@@ -216,7 +216,7 @@ public class AccountListFragment extends AbstractListFragment {
     @Override
     protected ListAdapter createAdapter(Cursor cursor) {
         long t1 = System.currentTimeMillis();
-        ListAdapter a = new AccountListAdapter2(getContext(), cursor);
+        ListAdapter a = new AccountListAdapter(getContext(), cursor);
         if (a.getCount() == 0) {
             emptyText.setVisibility(View.VISIBLE);
         }
