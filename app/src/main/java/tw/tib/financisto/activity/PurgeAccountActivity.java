@@ -119,7 +119,6 @@ public class PurgeAccountActivity extends AbstractActivity {
         switch (id) {
             case R.id.date:
                 DatePickerDialog dialog = new DatePickerDialog(this,
-                        AlertDialog.THEME_DEVICE_DEFAULT_DARK,
                         (view, year, monthOfYear, dayOfMonth) -> {
                             date.set(year, monthOfYear, dayOfMonth);
                             setDateText();

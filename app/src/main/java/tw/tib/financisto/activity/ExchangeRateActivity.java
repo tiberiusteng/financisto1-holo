@@ -138,7 +138,6 @@ public class ExchangeRateActivity extends AbstractActivity implements RateNodeOw
         final Calendar c = Calendar.getInstance();
         c.setTimeInMillis(date);
         DatePickerDialog datePickerDialog = new DatePickerDialog(this,
-                AlertDialog.THEME_DEVICE_DEFAULT_DARK,
                 (view, year, monthOfYear, dayOfMonth) -> {
                     c.set(year, monthOfYear, dayOfMonth);
                     date = c.getTimeInMillis();

@@ -724,7 +724,6 @@ public class RecurrenceViewFactory {
 		@Override
 		protected void onClick(View v, int id) {
 			new DatePickerDialog(activity,
-					AlertDialog.THEME_DEVICE_DEFAULT_DARK,
 					(view, year, monthOfYear, dayOfMonth) -> {
 						c.set(Calendar.YEAR, year);
 						c.set(Calendar.MONTH, monthOfYear);

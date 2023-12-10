@@ -207,7 +207,6 @@ public abstract class AbstractTransactionActivity extends AbstractActivity imple
 		dateText.setText(df.format(date));
 		dateText.setOnClickListener(arg0 -> {
 			DatePickerDialog dialog = new DatePickerDialog(AbstractTransactionActivity.this,
-					AlertDialog.THEME_DEVICE_DEFAULT_DARK,
 					(view, year, monthOfYear, dayOfMonth) -> {
 						dateTime.set(year, monthOfYear, dayOfMonth);
 						dateText.setText(df.format(dateTime.getTime()));
@@ -224,7 +223,6 @@ public abstract class AbstractTransactionActivity extends AbstractActivity imple
 		timeText.setOnClickListener(arg0 -> {
 			boolean is24Format = DateUtils.is24HourFormat(AbstractTransactionActivity.this);
 			TimePickerDialog dialog = new TimePickerDialog(AbstractTransactionActivity.this,
-					AlertDialog.THEME_DEVICE_DEFAULT_DARK,
 					(picker, hourOfDay, minute) -> {
 						dateTime.set(Calendar.HOUR_OF_DAY, hourOfDay);
 						dateTime.set(Calendar.MINUTE, minute);

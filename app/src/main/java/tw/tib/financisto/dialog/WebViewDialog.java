@@ -44,10 +44,9 @@ public class WebViewDialog {
 	}
 
 	private static void showHTMDialog(Context context, String fileName, int dialogTitleResId) {
-		Context theme = new ContextThemeWrapper(context, R.style.Theme_AppCompat_Dialog);
-		WebView webView = new WebView(theme);
+		WebView webView = new WebView(context);
 		webView.loadUrl("file:///android_asset/"+fileName);
-		new AlertDialog.Builder(theme)
+		new AlertDialog.Builder(context)
 			.setView(webView)
 			.setTitle(dialogTitleResId)
 			.setPositiveButton(R.string.ok, null)

@@ -166,7 +166,6 @@ public class RecurrenceActivity extends AbstractActivity {
 			case R.id.start_date: {
 				final Calendar c = recurrence.getStartDate();
 				new DatePickerDialog(this,
-						AlertDialog.THEME_DEVICE_DEFAULT_DARK,
 						(view, year, monthOfYear, dayOfMonth) -> {
 							recurrence.updateStartDate(year, monthOfYear, dayOfMonth);
 							startDateView.setText(DateUtils.getMediumDateFormat(RecurrenceActivity.this).format(c.getTime()));
@@ -176,7 +175,6 @@ public class RecurrenceActivity extends AbstractActivity {
 				final Calendar c = recurrence.getStartDate();
 				boolean is24Format = DateUtils.is24HourFormat(RecurrenceActivity.this);
 				new TimePickerDialog(RecurrenceActivity.this,
-						AlertDialog.THEME_DEVICE_DEFAULT_DARK,
 						(view, hourOfDay, minute) -> {
 							recurrence.updateStartTime(hourOfDay, minute, 0);
 							startTimeView.setText(DateUtils.getTimeFormat(RecurrenceActivity.this).format(c.getTime()));

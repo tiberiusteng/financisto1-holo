@@ -84,7 +84,7 @@ public class RecurActivity extends Activity {
 		bStartDate.setOnClickListener(v -> {
 			final Calendar c = startDate;
 			DatePickerDialog d = new DatePickerDialog(RecurActivity.this,
-					AlertDialog.THEME_DEVICE_DEFAULT_DARK, (view, year, monthOfYear, dayOfMonth) -> {
+					(view, year, monthOfYear, dayOfMonth) -> {
 						c.set(Calendar.YEAR, year);
 						c.set(Calendar.MONTH, monthOfYear);
 						c.set(Calendar.DAY_OF_MONTH, dayOfMonth);
@@ -237,7 +237,6 @@ public class RecurActivity extends Activity {
 					editStopsOnDate(v, c.getTimeInMillis());
 					b.setOnClickListener(view -> {
 						DatePickerDialog d = new DatePickerDialog(RecurActivity.this,
-								AlertDialog.THEME_DEVICE_DEFAULT_DARK,
 								(view1, year, monthOfYear, dayOfMonth) -> {
 									c.set(Calendar.YEAR, year);
 									c.set(Calendar.MONTH, monthOfYear);
