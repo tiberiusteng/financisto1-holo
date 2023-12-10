@@ -14,8 +14,10 @@ import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
+import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.TextView;
 
 import tw.tib.financisto.R;
 import tw.tib.financisto.db.DatabaseAdapter;
@@ -78,6 +80,8 @@ public abstract class MyEntityActivity<T extends MyEntity> extends Activity {
 		if (intent != null) {
 			long id = intent.getLongExtra(ENTITY_ID_EXTRA, -1);
 			if (id != -1) {
+				TextView create = findViewById(R.id.create);
+				create.setVisibility(View.GONE);
 				entity = db.load(clazz, id);
 				editEntity();
 			}
