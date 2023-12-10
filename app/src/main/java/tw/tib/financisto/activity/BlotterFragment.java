@@ -54,6 +54,7 @@ import tw.tib.financisto.filter.WhereFilter;
 import tw.tib.financisto.db.DatabaseAdapter;
 import tw.tib.financisto.model.Account;
 import tw.tib.financisto.model.AccountType;
+import tw.tib.financisto.model.Budget;
 import tw.tib.financisto.model.Transaction;
 import tw.tib.financisto.utils.IntegrityCheckRunningBalance;
 import tw.tib.financisto.utils.MenuItemInfo;
@@ -490,6 +491,16 @@ public class BlotterFragment extends AbstractListFragment implements BlotterOper
         if (accountId != -1) {
             intent.putExtra(TransactionActivity.ACCOUNT_ID_EXTRA, accountId);
         }
+        else {
+            long budgetId = blotterFilter.getBudgetId();
+            if (budgetId != -1) {
+                Budget budget = db.load(Budget.class, budgetId);
+                if (budget.account != null) {
+                    intent.putExtra(TransactionActivity.ACCOUNT_ID_EXTRA, budget.account.id);
+                }
+            }
+        }
+
         intent.putExtra(TransactionActivity.TEMPLATE_EXTRA, blotterFilter.getIsTemplate());
         startActivityForResult(intent, requestId);
     }
