@@ -250,6 +250,9 @@ public abstract class AbstractTransactionActivity extends AbstractActivity imple
 		locationSelector.fetchEntities();
 
 		projectSelector = new ProjectSelector<>(this, db, x);
+		if (transaction.projectId != NO_PROJECT_ID) {
+			projectSelector.setIncludeProjectIds(transaction.projectId);
+		}
 		projectSelector.fetchEntities();
 
 		createListNodes(layout);
