@@ -88,16 +88,9 @@
 			<meta-data android:name="android.appwidget.provider" android:resource="@xml/widget_4x1" />
 		</receiver>
 
-		<receiver android:name=".activity.ScheduledAlarmReceiver" android:exported="true">
-		    <intent-filter>
-				<action android:name=".SCHEDULED_ALARM" />
-				<action android:name=".SCHEDULED_BACKUP" />
-				<action android:name="android.intent.action.BOOT_COMPLETED" />
-		    </intent-filter>
-		</receiver>
-
 		<receiver android:name=".activity.PackageReplaceReceiver" android:exported="true">
 			<intent-filter>
+				<action android:name="android.intent.action.BOOT_COMPLETED" />
 			    <action android:name="android.intent.action.MY_PACKAGE_REPLACED" />
 			</intent-filter>
 		</receiver>		

@@ -19,10 +19,12 @@ import tw.tib.financisto.service.DailyAutoBackupScheduler;
 import tw.tib.financisto.service.FinancistoService;
 
 public class PackageReplaceReceiver extends BroadcastReceiver {
+    private static final String TAG = "PackageReplaceReceiver";
 
     @Override
     public void onReceive(Context context, Intent intent) {
-        Log.d("PackageReplaceReceiver", "Re-scheduling all transactions");
+        Log.i(TAG, "Received intent " + intent.getAction());
+        Log.i(TAG, "reschedule transactions and auto backup");
         requestScheduleAll(context);
         requestScheduleAutoBackup(context);
     }
