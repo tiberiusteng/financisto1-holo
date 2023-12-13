@@ -1,6 +1,7 @@
 package tw.tib.financisto.widget;
 
 import android.app.Activity;
+import android.util.Log;
 import android.view.View;
 import android.view.WindowManager;
 import android.widget.LinearLayout;
@@ -164,7 +165,7 @@ public class RateLayoutView implements RateNodeOwner {
         public void onAmountChanged(long oldAmount, long newAmount) {
             long amountFrom = amountInputFrom.getAmount();
             long amountTo = amountInputTo.getAmount();
-            if (amountFrom > 0) {
+            if (amountFrom != 0) {
                 rateNode.setRate(1.0f * amountTo / amountFrom);
             }
             if (amountInputFrom.isIncomeExpenseEnabled()) {
@@ -186,7 +187,7 @@ public class RateLayoutView implements RateNodeOwner {
         public void onAmountChanged(long oldAmount, long newAmount) {
             long amountFrom = amountInputFrom.getAmount();
             long amountTo = amountInputTo.getAmount();
-            if (amountFrom > 0) {
+            if (amountFrom != 0) {
                 rateNode.setRate(1.0f * amountTo / amountFrom);
             }
             rateNode.updateRateInfo();
