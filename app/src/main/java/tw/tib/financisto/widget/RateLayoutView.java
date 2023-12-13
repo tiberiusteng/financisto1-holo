@@ -200,6 +200,7 @@ public class RateLayoutView implements RateNodeOwner {
     public void setFromAmount(long fromAmount) {
         amountInputFrom.setAmount(fromAmount);
         calculateRate();
+        amountInputFrom.primary.selectAll();
     }
 
     public void setToAmount(long toAmount) {
