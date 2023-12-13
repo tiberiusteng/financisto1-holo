@@ -21,7 +21,6 @@ import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
-import androidx.core.os.BuildCompat;
 
 import tw.tib.financisto.R;
 import tw.tib.financisto.adapter.ScheduledListAdapter;
@@ -84,7 +83,7 @@ public class ScheduledListFragment extends BlotterFragment {
         // change empty list message
         ((TextView) getView().findViewById(android.R.id.empty)).setText(R.string.no_scheduled_transactions);
         // fix filter
-        blotterFilter = new WhereFilter("schedules");
+        blotterFilter = new WhereFilter(getString(R.string.scheduled_transactions));
         blotterFilter.eq(BlotterFilter.IS_TEMPLATE, String.valueOf(2));
         blotterFilter.eq(BlotterFilter.PARENT_ID, String.valueOf(0));
     }
@@ -100,7 +99,7 @@ public class ScheduledListFragment extends BlotterFragment {
     @Override
     public void afterDeletingTransaction(long id) {
         super.afterDeletingTransaction(id);
-        scheduler.cancelPendingIntentForSchedule(getContext(), id);
+        scheduler.cancelPendingWorkForSchedule(getContext(), id);
     }
 
     @Override

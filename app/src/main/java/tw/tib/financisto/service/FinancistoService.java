@@ -44,7 +44,6 @@ public class FinancistoService extends JobIntentService {
     public static final int JOB_ID = 1000;
 
     public static final String ACTION_SCHEDULE_ALL = "tw.tib.financisto.SCHEDULE_ALL";
-    public static final String ACTION_SCHEDULE_ONE = "tw.tib.financisto.SCHEDULE_ONE";
     public static final String ACTION_NEW_TRANSACTION_SMS = "tw.tib.financisto.NEW_TRANSACTON_SMS";
 
     private static final int RESTORED_NOTIFICATION_ID = 0;
@@ -82,9 +81,6 @@ public class FinancistoService extends JobIntentService {
                 case ACTION_SCHEDULE_ALL:
                     scheduleAll();
                     break;
-                case ACTION_SCHEDULE_ONE:
-                    scheduleOne(intent);
-                    break;
                 case ACTION_NEW_TRANSACTION_SMS:
                     processSmsTransaction(intent);
                     break;
@@ -112,22 +108,6 @@ public class FinancistoService extends JobIntentService {
         if (restoredTransactionsCount > 0) {
             notifyUser(createRestoredNotification(restoredTransactionsCount), RESTORED_NOTIFICATION_ID);
         }
-    }
-
-    private void scheduleOne(Intent intent) {
-        long scheduledTransactionId = intent.getLongExtra(RecurrenceScheduler.SCHEDULED_TRANSACTION_ID, -1);
-        if (scheduledTransactionId > 0) {
-            TransactionInfo transaction = scheduler.scheduleOne(this, scheduledTransactionId);
-            if (transaction != null) {
-                notifyUser(transaction);
-                AccountWidget.updateWidgets(this);
-            }
-        }
-    }
-
-    private void notifyUser(TransactionInfo transaction) {
-        Notification notification = createScheduledNotification(transaction);
-        notifyUser(notification, (int) transaction.id);
     }
 
     private void notifyUser(Notification notification, int id) {
@@ -161,14 +141,6 @@ public class FinancistoService extends JobIntentService {
     private Notification createSmsTransactionNotification(TransactionInfo t, String number) {
         String tickerText = getString(R.string.new_sms_transaction_text, number);
         String contentTitle = getString(R.string.new_sms_transaction_title, number);
-        String text = t.getNotificationContentText(this);
-
-        return generateNotification(t, tickerText, contentTitle, text);
-    }
-
-    private Notification createScheduledNotification(TransactionInfo t) {
-        String tickerText = t.getNotificationTickerText(this);
-        String contentTitle = t.getNotificationContentTitle(this);
         String text = t.getNotificationContentText(this);
 
         return generateNotification(t, tickerText, contentTitle, text);

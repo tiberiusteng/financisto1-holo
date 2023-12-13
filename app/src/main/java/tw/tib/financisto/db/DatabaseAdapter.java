@@ -57,6 +57,8 @@ import java.util.*;
 @EBean(scope = EBean.Scope.Singleton)
 public class DatabaseAdapter extends MyEntityManager {
 
+    private static long CURRENT_TIMESTAMP = -1;
+
     private boolean updateAccountBalance = true;
 
     public DatabaseAdapter(Context context) {
@@ -221,22 +223,34 @@ public class DatabaseAdapter extends MyEntityManager {
     }
 
     public long duplicateTransaction(long id) {
-        return duplicateTransaction(id, 0, 1);
+        return duplicateTransaction(id, 0, 1, CURRENT_TIMESTAMP);
+    }
+
+    public long duplicateTransactionWithTimestamp(long id, long timestamp) {
+        return duplicateTransaction(id, 0, 1, timestamp);
     }
 
     public long duplicateTransactionWithMultiplier(long id, int multiplier) {
-        return duplicateTransaction(id, 0, multiplier);
+        return duplicateTransaction(id, 0, multiplier, CURRENT_TIMESTAMP);
     }
 
     public long duplicateTransactionAsTemplate(long id) {
-        return duplicateTransaction(id, 1, 1);
+        return duplicateTransaction(id, 1, 1, CURRENT_TIMESTAMP);
     }
 
-    private long duplicateTransaction(long id, int isTemplate, int multiplier) {
+    private long duplicateTransaction(long id, int isTemplate, int multiplier, long timestamp) {
         SQLiteDatabase db = db();
         db.beginTransaction();
         try {
-            long now = System.currentTimeMillis();
+            long now;
+
+            if (timestamp == CURRENT_TIMESTAMP) {
+                now = System.currentTimeMillis();
+            }
+            else {
+                now = timestamp;
+            }
+
             Transaction transaction = getTransaction(id);
             if (transaction.isSplitChild()) {
                 id = transaction.parentId;

@@ -61,7 +61,7 @@ public class DailyAutoBackupScheduler {
     private void scheduleBackup(Context context) {
         Date scheduledTime = getScheduledTime();
 
-        long initialDelay = scheduledTime.getTime() - Calendar.getInstance().getTime().getTime();
+        long initialDelay = scheduledTime.getTime() - System.currentTimeMillis();
 
         Log.i(TAG, "Initial delay: " + initialDelay + " ms");
 

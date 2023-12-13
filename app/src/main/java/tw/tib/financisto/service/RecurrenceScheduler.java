@@ -10,13 +10,14 @@
  ******************************************************************************/
 package tw.tib.financisto.service;
 
-import android.app.AlarmManager;
-import android.app.PendingIntent;
 import android.content.Context;
-import android.content.Intent;
 import android.util.Log;
 
-import tw.tib.financisto.activity.ScheduledAlarmReceiver;
+import androidx.work.Data;
+import androidx.work.OneTimeWorkRequest;
+import androidx.work.Operation;
+import androidx.work.WorkManager;
+
 import tw.tib.financisto.db.DatabaseAdapter;
 import tw.tib.financisto.model.RestoredTransaction;
 import tw.tib.financisto.model.SystemAttribute;
@@ -25,16 +26,16 @@ import tw.tib.financisto.model.TransactionInfo;
 import tw.tib.financisto.recur.DateRecurrenceIterator;
 import tw.tib.financisto.recur.Recurrence;
 import tw.tib.financisto.utils.MyPreferences;
+import tw.tib.financisto.worker.ScheduleTxWorker;
 
 import java.util.*;
+import java.util.concurrent.TimeUnit;
 
 public class RecurrenceScheduler {
 
     private static final String TAG = "RecurrenceScheduler";
     private static final Date NULL_DATE = new Date(0);
     private static final int MAX_RESTORED = 1000;
-
-    public static final String SCHEDULED_TRANSACTION_ID = "scheduledTransactionId";
 
     private final DatabaseAdapter db;
 
@@ -54,12 +55,12 @@ public class RecurrenceScheduler {
         return restoredTransactionsCount;
     }
 
-    public TransactionInfo scheduleOne(Context context, long scheduledTransactionId) {
-        Log.i(TAG, "Alarm for "+scheduledTransactionId+" received..");
+    public TransactionInfo scheduleOne(Context context, long scheduledTransactionId, long timestamp) {
+        Log.i(TAG, "scheduleOne called with txId=" + scheduledTransactionId + ", timestamp=" + timestamp);
         TransactionInfo transaction = db.getTransactionInfo(scheduledTransactionId);
         if (transaction != null) {
-            long transactionId = duplicateTransactionFromTemplate(transaction);
-            boolean hasBeenRescheduled = rescheduleTransaction(context, transaction);
+            long transactionId = duplicateTransactionFromTemplate(transaction, timestamp);
+            boolean hasBeenRescheduled = rescheduleTransaction(context, transaction, timestamp);
             if (!hasBeenRescheduled) {
                 deleteTransactionIfNeeded(transaction);
                 Log.i(TAG, "Expired transaction "+transaction.id+" has been deleted");
@@ -101,8 +102,8 @@ public class RecurrenceScheduler {
         return 0;
     }
 
-    private long duplicateTransactionFromTemplate(TransactionInfo transaction) {
-        return db.duplicateTransaction(transaction.id);
+    private long duplicateTransactionFromTemplate(TransactionInfo transaction, long timestamp) {
+        return db.duplicateTransactionWithTimestamp(transaction.id, timestamp);
     }
 
     public List<RestoredTransaction> getMissedSchedules(long now) {
@@ -167,31 +168,49 @@ public class RecurrenceScheduler {
     }
 
     public ArrayList<TransactionInfo> scheduleAll(Context context, long now) {
+        cancelAll(context);
+
         ArrayList<TransactionInfo> scheduled = getSortedSchedules(now);
         for (TransactionInfo transaction : scheduled) {
-            scheduleAlarm(context, transaction, now);
+            scheduleWork(context, transaction, now);
         }
         return scheduled;
     }
 
-    public boolean scheduleAlarm(Context context, TransactionInfo transaction, long now) {
+    public Operation cancelAll(Context context) {
+        return WorkManager.getInstance(context).cancelAllWorkByTag(ScheduleTxWorker.WORK_TAG);
+    }
+
+    public boolean scheduleWork(Context context, TransactionInfo transaction, long now) {
         if (shouldSchedule(transaction, now)) {
             Date scheduleTime = transaction.nextDateTime;
-            AlarmManager service = (AlarmManager)context.getSystemService(Context.ALARM_SERVICE);
-            PendingIntent pendingIntent = createPendingIntentForScheduledAlarm(context, transaction.id);
-            service.set(AlarmManager.RTC_WAKEUP, scheduleTime.getTime(), pendingIntent);
-            Log.i(TAG, "Scheduling alarm for "+transaction.id+" at "+scheduleTime);
+
+            long initialDelay = scheduleTime.getTime() - System.currentTimeMillis();
+
+            var workRequest = new OneTimeWorkRequest.Builder(ScheduleTxWorker.class)
+                    .setInitialDelay(initialDelay, TimeUnit.MILLISECONDS)
+                    .addTag(ScheduleTxWorker.WORK_TAG)
+                    .addTag(ScheduleTxWorker.WORK_NAME_PREFIX + transaction.id)
+                    .setInputData(new Data.Builder()
+                            .putLong(ScheduleTxWorker.TX_ID, transaction.id)
+                            .putLong(ScheduleTxWorker.TX_TIME, scheduleTime.getTime())
+                            .build())
+                    .build();
+
+            WorkManager.getInstance(context).enqueue(workRequest);
+
+            Log.i(TAG, "Scheduling work for "+transaction.id+" at "+scheduleTime+" initial delay "+initialDelay);
             return true;
         }
         Log.i(TAG, "Transactions "+transaction.id+" with next date/time "+transaction.nextDateTime+" is not selected for schedule");
         return false;
     }
 
-    public boolean rescheduleTransaction(Context context, TransactionInfo transaction) {
+    public boolean rescheduleTransaction(Context context, TransactionInfo transaction, long timestamp) {
         if (transaction.recurrence != null) {
-            long now = System.currentTimeMillis()+1000;
+            long now = timestamp+1000;
             calculateAndSetNextDateTimeOnTransaction(transaction, now);
-            return scheduleAlarm(context, transaction, now);
+            return scheduleWork(context, transaction, now);
         }
         return false;
     }
@@ -200,19 +219,9 @@ public class RecurrenceScheduler {
         return transaction.nextDateTime != null && now < transaction.nextDateTime.getTime();
     }
 
-    public void cancelPendingIntentForSchedule(Context context, long transactionId) {
-        Log.i(TAG, "Cancelling pending alarm for "+transactionId);
-        AlarmManager service = (AlarmManager)context.getSystemService(Context.ALARM_SERVICE);
-        PendingIntent intent = createPendingIntentForScheduledAlarm(context, transactionId);
-        service.cancel(intent);
-    }
-
-    private PendingIntent createPendingIntentForScheduledAlarm(Context context, long transactionId) {
-        Intent intent = new Intent("tw.tib.financisto.SCHEDULED_ALARM");
-        intent.setClass(context, ScheduledAlarmReceiver.class);
-        intent.putExtra(SCHEDULED_TRANSACTION_ID, transactionId);
-        return PendingIntent.getBroadcast(context, (int)transactionId, intent,
-                PendingIntent.FLAG_CANCEL_CURRENT | PendingIntent.FLAG_IMMUTABLE);
+    public void cancelPendingWorkForSchedule(Context context, long transactionId) {
+        Log.i(TAG, "Cancelling pending work for "+transactionId);
+        WorkManager.getInstance(context).cancelAllWorkByTag(ScheduleTxWorker.WORK_NAME_PREFIX + transactionId);
     }
 
     /**
@@ -279,7 +288,7 @@ public class RecurrenceScheduler {
                 return ri.next();
             }
         } catch (Exception ex) {
-            Log.e("Financisto", "Unable to calculate next date for "+recurrence+" at "+now);
+            Log.e(TAG, "Unable to calculate next date for "+recurrence+" at "+now);
         }
         return null;
     }
