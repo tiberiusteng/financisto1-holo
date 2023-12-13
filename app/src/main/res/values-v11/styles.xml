@@ -5,13 +5,14 @@
         <item name="android:buttonStyle">@android:style/Widget.Holo.Light.Button</item>
         <item name="android:imageButtonStyle">@android:style/Widget.Holo.Light.ImageButton</item>
         <item name="android:spinnerDropDownItemStyle">@style/TextViewSpinnerDropDownItem</item>
-        <item name="android:spinnerItemStyle">@style/TextViewSpinnerDropDownItem</item>
+        <item name="android:spinnerItemStyle">@style/TextViewSpinnerItem</item>
         <item name="android:windowBackground">@android:color/black</item>
     </style>
     <style name="AppDialog" parent="@android:style/Theme.Holo.Dialog">
+        <item name="android:alertDialogTheme">@android:style/Theme.Material.Dialog.Alert</item>
         <item name="android:spinnerDropDownItemStyle">@style/TextViewSpinnerDropDownItem</item>
     </style>
-    <style name="AlertDialog" parent="@android:style/Theme.Holo.Dialog" />
+    <style name="AlertDialog" parent="@android:style/Theme.Material.Dialog.Alert" />
     <style name="CalculatorDialog" parent="@android:style/Theme.Holo.Light.Dialog" />
     <style name="MassOpActionDropdown">
         <item name="android:background">@null</item>
@@ -38,6 +39,20 @@
     </style>
     <style name="TextViewSpinnerItem" parent="Widget.AppCompat.TextView.SpinnerItem">
         <item name="android:textColor">@android:color/primary_text_dark</item>
+    </style>
+
+    <style name="BottomBar">
+        <item name="android:layout_width">fill_parent</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:background">#FFF</item>
+    </style>
+
+    <style name="LightSpinner" parent="@style/AppTheme">
+        <item name="android:spinnerItemStyle">@style/LightSpinnerItem</item>
+    </style>
+
+    <style name="LightSpinnerItem" parent="Widget.AppCompat.TextView.SpinnerItem">
+        <item name="android:textColor">@android:color/primary_text_light</item>
     </style>
 
     <style name="AppThemeCompat" parent="@style/Theme.AppCompat">

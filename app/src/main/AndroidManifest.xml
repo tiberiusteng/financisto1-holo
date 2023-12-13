@@ -177,7 +177,7 @@
 		
 		<activity android:name=".activity.CurrencyListActivity" android:label="@string/currencies"/>
 
-		<activity android:name=".activity.ExchangeRatesListActivity" android:label="@string/exchange_rates"/>
+		<activity android:name=".activity.ExchangeRatesListActivity" android:label="@string/exchange_rates" />
 
 		<activity android:name=".activity.ExchangeRateActivity" android:label="@string/exchange_rate"
 			  android:configChanges="screenSize|smallestScreenSize|orientation|screenLayout|keyboardHidden"/>
