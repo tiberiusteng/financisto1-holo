@@ -623,7 +623,7 @@ public class BlotterFragment extends AbstractListFragment implements BlotterOper
             }
         }
         String title = blotterFilter.getTitle();
-        if (title != null) {
+        if (title != null && !title.isEmpty()) {
             ActionBar actionBar = ((AppCompatActivity) getActivity()).getSupportActionBar();
             if (actionBar != null) {
                 actionBar.setTitle(title);
