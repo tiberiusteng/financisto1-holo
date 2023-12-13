@@ -72,6 +72,10 @@ public class Criteria {
     public static Criteria or(Criteria a, Criteria b) {
         return new OrCriteria(a, b);
     }
+
+    public static Criteria and(Criteria a, Criteria b) {
+        return new AndCriteria(a, b);
+    }
     
     public final String columnName;
     public final WhereFilter.Operation operation;
@@ -126,6 +130,9 @@ public class Criteria {
         final String[] p = extra.split(";");
         if (p.length == 2) {
             return new OrCriteria(fromStringExtra(p[0]), fromStringExtra(p[1]));
+        }
+        else if (p.length == 3) {
+            return new AndCriteria(fromStringExtra(p[0]), fromStringExtra(p[1]));
         }
 
         final String[] a = extra.split(",");
@@ -202,6 +209,28 @@ public class Criteria {
         public String toStringExtra() {
             StringBuilder sb = new StringBuilder();
             sb.append(a.toStringExtra()).append(";").append(b.toStringExtra());
+            return sb.toString();
+        }
+    }
+
+    static class AndCriteria extends Criteria {
+        Criteria a, b;
+
+        public AndCriteria(Criteria a, Criteria b) {
+            super(a.columnName, a.operation, ArrUtils.joinArrays(a.getValues(), b.getValues()));
+            this.a = a;
+            this.b = b;
+        }
+
+        @Override
+        public String getSelection() {
+            return "(" + a.getSelection() + " AND " + b.getSelection() + ")";
+        }
+
+        @Override
+        public String toStringExtra() {
+            StringBuilder sb = new StringBuilder();
+            sb.append(a.toStringExtra()).append(";").append(b.toStringExtra()).append(";");
             return sb.toString();
         }
     }

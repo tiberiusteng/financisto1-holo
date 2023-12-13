@@ -170,6 +170,7 @@ public class AccountListFragment extends AbstractListFragment {
 
     @Override
     public void recreateCursor() {
+        Log.d(this.getClass().getSimpleName(), "recreateCursor");
         super.recreateCursor();
         calculateTotals();
     }
@@ -197,7 +198,7 @@ public class AccountListFragment extends AbstractListFragment {
         private final DatabaseAdapter db;
 
         AccountTotalsCalculationTask(Context context, DatabaseAdapter db, TextView totalText) {
-            super(context, totalText);
+            super(context, db, totalText);
             this.db = db;
         }
 

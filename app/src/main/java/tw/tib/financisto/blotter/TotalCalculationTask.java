@@ -13,19 +13,23 @@ import android.util.Log;
 import android.widget.TextView;
 import android.widget.Toast;
 import tw.tib.financisto.R;
+import tw.tib.financisto.db.DatabaseAdapter;
 import tw.tib.financisto.model.Currency;
 import tw.tib.financisto.model.Total;
 import tw.tib.financisto.utils.Utils;
 
 public abstract class TotalCalculationTask extends AsyncTask<Object, Total, Total> {
-	
+
+	protected final DatabaseAdapter db;
+
 	private volatile boolean isRunning = true;
-	
+
 	private final Context context;
 	private final TextView totalText;
 
-	public TotalCalculationTask(Context context, TextView totalText) {
+	public TotalCalculationTask(Context context, DatabaseAdapter db, TextView totalText) {
 		this.context = context;
+		this.db = db;
 		this.totalText = totalText;
 	}
 
@@ -47,7 +51,9 @@ public abstract class TotalCalculationTask extends AsyncTask<Object, Total, Tota
 	protected void onPostExecute(Total result) {
 		if (isRunning) {
             if (result.currency == Currency.EMPTY) {
-                Toast.makeText(context, R.string.currency_make_default_warning, Toast.LENGTH_LONG).show();
+				if (db.getHomeCurrency() == Currency.EMPTY) {
+					Toast.makeText(context, R.string.currency_make_default_warning, Toast.LENGTH_LONG).show();
+				}
             }
             Utils u = new Utils(context);
     	    u.setTotal(totalText, result);

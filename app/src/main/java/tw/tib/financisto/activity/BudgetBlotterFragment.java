@@ -70,7 +70,7 @@ public class BudgetBlotterFragment extends BlotterFragment {
     @Override
     @SuppressLint("StaticFieldLeak")
     protected TotalCalculationTask createTotalCalculationTask() {
-        return new TotalCalculationTask(getContext(), totalText) {
+        return new TotalCalculationTask(getContext(), db, totalText) {
 
             @Override
             public Total getTotalInHomeCurrency() {

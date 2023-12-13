@@ -39,6 +39,8 @@ import androidx.core.view.MenuProvider;
 import androidx.lifecycle.Lifecycle;
 
 import java.util.List;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import greendroid.widget.QuickActionGrid;
 import greendroid.widget.QuickActionWidget;
@@ -50,6 +52,7 @@ import tw.tib.financisto.blotter.BlotterFilter;
 import tw.tib.financisto.blotter.BlotterTotalCalculationTask;
 import tw.tib.financisto.blotter.TotalCalculationTask;
 import tw.tib.financisto.dialog.TransactionInfoDialog;
+import tw.tib.financisto.filter.Criteria;
 import tw.tib.financisto.filter.WhereFilter;
 import tw.tib.financisto.db.DatabaseAdapter;
 import tw.tib.financisto.model.Account;
@@ -98,6 +101,8 @@ public class BlotterFragment extends AbstractListFragment implements BlotterOper
     protected boolean showAllBlotterButtons = true;
 
     protected OnBackPressedCallback backCallback;
+
+    private static final Pattern amountSearchPattern = Pattern.compile("^([<>])?(\\d+(?:\\.\\d+)?)(?:~(\\d+(?:\\.\\d+)?))?$");
 
     public BlotterFragment(int layoutId) {
         super(layoutId);
@@ -253,9 +258,79 @@ public class BlotterFragment extends AbstractListFragment implements BlotterOper
                         ImageButton clearButton = view.findViewById(R.id.search_text_clear);
                         String text = editable.toString();
                         blotterFilter.remove(BlotterFilter.NOTE);
+                        while (blotterFilter.remove(BlotterFilter.FROM_AMOUNT) != null);
+                        while (blotterFilter.remove(BlotterFilter.ORIGINAL_FROM_AMOUNT) != null);
 
                         if (!text.isEmpty()) {
-                            blotterFilter.contains(BlotterFilter.NOTE, text);
+                            Matcher m = amountSearchPattern.matcher(text);
+                            if (m.matches()) {
+                                if (m.group(1) == null && m.group(3) == null) {
+                                    // 123.45
+                                    String val = Double.toString(Math.floor(Double.parseDouble(m.group(2)) * 100));
+                                    blotterFilter.eq(Criteria.or(
+                                            Criteria.or(
+                                                    Criteria.eq(BlotterFilter.FROM_AMOUNT, val),
+                                                    Criteria.eq(BlotterFilter.FROM_AMOUNT, "-" + val)),
+                                            Criteria.or(
+                                                    Criteria.eq(BlotterFilter.ORIGINAL_FROM_AMOUNT, val),
+                                                    Criteria.eq(BlotterFilter.ORIGINAL_FROM_AMOUNT, "-" + val))));
+                                }
+                                else if (m.group(3) == null) {
+                                    // >123.45, <123.45
+                                    String val = Double.toString(Math.floor(Double.parseDouble(m.group(2)) * 100));
+                                    if (m.group(1).equals("<")) {
+                                        blotterFilter.eq(Criteria.or(
+                                                Criteria.or(
+                                                        Criteria.and(
+                                                                Criteria.lt(BlotterFilter.FROM_AMOUNT, val),
+                                                                Criteria.gt(BlotterFilter.FROM_AMOUNT, "0")),
+                                                        Criteria.and(
+                                                                Criteria.gt(BlotterFilter.FROM_AMOUNT, "-" + val),
+                                                                Criteria.lt(BlotterFilter.FROM_AMOUNT, "0"))
+                                                ),
+                                                Criteria.or(
+                                                        Criteria.and(
+                                                                Criteria.lt(BlotterFilter.ORIGINAL_FROM_AMOUNT, val),
+                                                                Criteria.gt(BlotterFilter.ORIGINAL_FROM_AMOUNT, "0")),
+                                                        Criteria.and(
+                                                                Criteria.gt(BlotterFilter.ORIGINAL_FROM_AMOUNT, "-" + val),
+                                                                Criteria.lt(BlotterFilter.ORIGINAL_FROM_AMOUNT, "0"))
+                                                )
+                                        ));
+                                    }
+                                    if (m.group(1).equals(">")) {
+                                        blotterFilter.eq(Criteria.or(
+                                                Criteria.or(
+                                                        Criteria.gt(BlotterFilter.FROM_AMOUNT, val),
+                                                        Criteria.lt(BlotterFilter.FROM_AMOUNT, "-" + val)
+                                                ),
+                                                Criteria.or(
+                                                        Criteria.gt(BlotterFilter.ORIGINAL_FROM_AMOUNT, val),
+                                                        Criteria.lt(BlotterFilter.ORIGINAL_FROM_AMOUNT, "-" + val)
+                                                )
+                                        ));
+                                    }
+                                }
+                                else if (m.group(1) == null) {
+                                    // 100~900
+                                    String val2 = Double.toString(Math.floor(Double.parseDouble(m.group(2)) * 100));
+                                    String val3 = Double.toString(Math.floor(Double.parseDouble(m.group(3)) * 100));
+                                    blotterFilter.eq(Criteria.or(
+                                            Criteria.or(
+                                                    Criteria.btw(BlotterFilter.FROM_AMOUNT, val2, val3),
+                                                    Criteria.btw(BlotterFilter.FROM_AMOUNT, "-" + val3, "-" + val2)
+                                            ),
+                                            Criteria.or(
+                                                    Criteria.btw(BlotterFilter.ORIGINAL_FROM_AMOUNT, val2, val3),
+                                                    Criteria.btw(BlotterFilter.ORIGINAL_FROM_AMOUNT, "-" + val3, "-" + val2)
+                                            )
+                                    ));
+                                }
+                            }
+                            else {
+                                blotterFilter.contains(BlotterFilter.NOTE, text);
+                            }
+
                             clearButton.setVisibility(View.VISIBLE);
                         } else {
                             clearButton.setVisibility(View.GONE);

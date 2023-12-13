@@ -15,13 +15,10 @@ import tw.tib.financisto.filter.WhereFilter;
 import tw.tib.financisto.model.Total;
 
 public class BlotterTotalCalculationTask extends TotalCalculationTask {
-
-	private final DatabaseAdapter db;
 	private final WhereFilter filter;
 
 	public BlotterTotalCalculationTask(Context context, DatabaseAdapter db, WhereFilter filter, TextView totalText) {
-        super(context, totalText);
-		this.db = db;
+        super(context, db, totalText);
 		this.filter = filter;
 	}
 

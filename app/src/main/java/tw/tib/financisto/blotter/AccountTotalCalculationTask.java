@@ -18,13 +18,10 @@ import tw.tib.financisto.model.Total;
 import static tw.tib.financisto.db.DatabaseAdapter.enhanceFilterForAccountBlotter;
 
 public class AccountTotalCalculationTask extends TotalCalculationTask {
-
-	private final DatabaseAdapter db;
 	private final WhereFilter filter;
 
 	public AccountTotalCalculationTask(Context context, DatabaseAdapter db, WhereFilter filter, TextView totalText) {
-        super(context, totalText);
-		this.db = db;
+        super(context, db, totalText);
 		this.filter = enhanceFilterForAccountBlotter(filter);
 	}
 

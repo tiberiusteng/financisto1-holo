@@ -30,6 +30,8 @@ public interface BlotterFilter {
 	String IS_TEMPLATE = BlotterColumns.is_template.name();
 	String PARENT_ID = BlotterColumns.parent_id.name();
 	String STATUS = BlotterColumns.status.name();
+	String FROM_AMOUNT = BlotterColumns.from_amount.name();
+	String ORIGINAL_FROM_AMOUNT = BlotterColumns.original_from_amount.name();
 
 	String SORT_NEWER_TO_OLDER = BlotterColumns.datetime+" desc";
 	String SORT_OLDER_TO_NEWER = BlotterColumns.datetime+" asc";
