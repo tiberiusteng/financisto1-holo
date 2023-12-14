@@ -17,6 +17,24 @@
 </head>
 <body>
 
+<p><b>2023-12-14</b></p>
+<dl>
+    <dt>[-] Fix focus on transaction amount field (select existing value for instant updating)</dt>
+    <dt>[-] Fix scheduled list crashing</dt>
+</dl>
+
+<p><b>2023-12-13 (a)</b></p>
+<dl>
+    <dt>[+] Support search for transaction amount</dt>
+    <dd>
+        Use the same magnify glass (search note) tool, supporting following syntax, without differing
+        income/expense (eg. "123" will match both income of 123 and expense of 123):<br />
+        <b>123.45</b> search for exact amount<br />
+        <b>&lt;123.45</b>, <b>&gt;123.45</b> search for less than or greater than specified value<br />
+        <b>123~456</b> search for transactions with value between specified range
+    </dd>
+</dl>
+
 <p><b>2023-12-13</b></p>
 <dl>
     <dt>[+] Reworked schedule transactions</dt>
