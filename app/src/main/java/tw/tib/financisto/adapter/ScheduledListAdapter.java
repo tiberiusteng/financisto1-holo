@@ -152,7 +152,7 @@ public class ScheduledListAdapter extends BaseAdapter {
             noteView.setText(text);
 			noteView.setTextColor(Color.WHITE);
 
-			if (t.project.id == NO_PROJECT_ID || showProject == false) {
+			if (t.project == null || t.project.id == NO_PROJECT_ID || !showProject) {
 				v.top2View.setVisibility(View.INVISIBLE);
 			}
 			else {
