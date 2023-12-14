@@ -125,6 +125,8 @@ public class MainActivity extends AppCompatActivity {
                             break;
                     }
                 }).attach();
+
+        viewPager.setCurrentItem(MyPreferences.getStartupScreen(this).ordinal(), false);
     }
 
     @Override
