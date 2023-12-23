@@ -73,7 +73,7 @@ public class Query<T> {
 			}			
 		}
 		query = sb.toString();
-		Log.d("QUERY "+clazz, query);
+		Log.d("QUERY "+clazz.getSimpleName(), query);
 		Log.d("WHERE", where != null ? where : "");
 		Log.d("ARGS", whereArgs != null ? Arrays.toString(whereArgs) : "");
 		return db.rawQuery(query, whereArgs);
