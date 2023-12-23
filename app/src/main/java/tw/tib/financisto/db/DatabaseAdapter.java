@@ -1713,7 +1713,7 @@ public class DatabaseAdapter extends MyEntityManager {
         try (Cursor c = db().rawQuery(
                 "select " + DatabaseHelper.AccountColumns.ID + " from " + DatabaseHelper.ACCOUNT_TABLE +
                         " where " + DatabaseHelper.AccountColumns.NUMBER + " like ?",
-                new String[]{"%" + numberEnding})) {
+                new String[]{"%" + numberEnding + "%"})) {
 
             List<Long> res = new ArrayList<>(c.getCount());
             while (c.moveToNext()) {
