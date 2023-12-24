@@ -6,6 +6,7 @@ import com.google.ical.util.TimeUtils;
 import com.google.ical.values.RRule;
 
 import java.text.ParseException;
+import java.util.Calendar;
 import java.util.Date;
 
 import static tw.tib.financisto.recur.RecurrencePeriod.dateToDateValue;
@@ -15,6 +16,7 @@ public class DateRecurrenceIterator {
 
 	private final RecurrenceIterator ri;
     private Date firstDate;
+    private boolean isStartDateInDaylight;
 
 	private DateRecurrenceIterator(RecurrenceIterator ri) {
 		this.ri = ri;
@@ -30,16 +32,18 @@ public class DateRecurrenceIterator {
             firstDate = null;
             return date;
         }
-		return dateValueToDate(ri.next());
+        return dateValueToDate(ri.next(), isStartDateInDaylight);
 	}
 
 	public static DateRecurrenceIterator create(RRule rrule, Date nowDate, Date startDate) throws ParseException {
         RecurrenceIterator ri = RecurrenceIteratorFactory.createRecurrenceIterator(rrule,
                 dateToDateValue(startDate), TimeUtils.utcTimezone());
         Date date = null;
-        while (ri.hasNext() && (date = dateValueToDate(ri.next())).before(nowDate));
+        boolean isStartDateInDaylight = Calendar.getInstance().getTimeZone().inDaylightTime(startDate);
+        while (ri.hasNext() && (date = dateValueToDate(ri.next(), isStartDateInDaylight)).before(nowDate));
         //ri.advanceTo(dateToDateValue(nowDate));
         DateRecurrenceIterator iterator = new DateRecurrenceIterator(ri);
+        iterator.isStartDateInDaylight = isStartDateInDaylight;
         iterator.firstDate = date;
         return iterator;
 	}

@@ -20,6 +20,7 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.GregorianCalendar;
 import java.util.HashMap;
+import java.util.TimeZone;
 
 public class RecurrencePeriod {
 
@@ -72,7 +73,7 @@ public class RecurrencePeriod {
 		}
 	}
 
-    static Date dateValueToDate(DateValue dvUtc) {
+    static Date dateValueToDate(DateValue dvUtc, boolean isStartDateInDaylight) {
         GregorianCalendar c = new GregorianCalendar(TimeUtils.utcTimezone());
         c.clear();
         if (dvUtc instanceof TimeValue) {
@@ -91,7 +92,16 @@ public class RecurrencePeriod {
                     0,
                     0);
         }
-        return c.getTime();
+		Date result = c.getTime();
+		TimeZone timeZone = Calendar.getInstance().getTimeZone();
+		boolean isResultInDaylight = timeZone.inDaylightTime(result);
+		if (isStartDateInDaylight && !isResultInDaylight) {
+			c.add(Calendar.MILLISECOND, timeZone.getDSTSavings());
+		}
+		else if (!isStartDateInDaylight && isResultInDaylight) {
+			c.add(Calendar.MILLISECOND, -timeZone.getDSTSavings());
+		}
+		return c.getTime();
     }
 
     static DateValue dateToDateValue(Date date) {
