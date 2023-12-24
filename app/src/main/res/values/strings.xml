@@ -196,6 +196,7 @@
     <string name="group_separator">Group\nseparator</string>
     <string name="field_separator">Field\nseparator</string>
     <string name="include_header">Include\nheader</string>
+    <string name="include_tx_status">Include\nTx Status</string>
     <string name="delete_account_confirm">Delete account?</string>
     <string name="delete_transaction_confirm">Delete transaction?</string>
     <string name="delete_budget_confirm">Delete budget?</string>

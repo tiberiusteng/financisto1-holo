@@ -31,6 +31,7 @@ import tw.tib.financisto.model.Payee;
 import tw.tib.financisto.model.Project;
 import tw.tib.financisto.model.Transaction;
 import tw.tib.financisto.model.TransactionAttribute;
+import tw.tib.financisto.model.TransactionStatus;
 import tw.tib.financisto.utils.Utils;
 
 public class CsvImport {
@@ -187,6 +188,7 @@ public class CsvImport {
             List<CsvTransaction> transactions = new LinkedList<CsvTransaction>();
             List<String> line;
             while ((line = reader.readLine()) != null) {
+                Log.d(getClass().getSimpleName(), "line=" + line);
                 if (parseLine) {
                     CsvTransaction transaction = new CsvTransaction();
                     transaction.fromAccountId = this.account.id;
@@ -201,6 +203,8 @@ public class CsvImport {
                                         transaction.date = options.dateFormat.parse(fieldValue);
                                     } else if (transactionField.equals("time")) {
                                         transaction.time = format.parse(fieldValue);
+                                    } else if (transactionField.equals("status")) {
+                                        transaction.status = fieldValue;
                                     } else if (transactionField.equals("amount")) {
                                         Double fromAmountDouble = parseAmount(fieldValue);
                                         transaction.fromAmount = fromAmountDouble.longValue();

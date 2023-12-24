@@ -26,6 +26,7 @@ public class CsvTransaction {
 
     public Date date;
     public Date time;
+    public String status;
     public long fromAccountId;
     public long fromAmount;
     public long originalAmount;
@@ -41,6 +42,9 @@ public class CsvTransaction {
     Transaction createTransaction(Map<String, Currency> currencies, Map<String, Category> categories, Map<String, Project> projects, Map<String, Payee> payees) {
         Transaction t = new Transaction();
         t.dateTime = combineToMillis(date, time, delta);
+        if (status != null) {
+            t.status = TransactionStatus.valueOf(status);
+        }
         t.fromAccountId = fromAccountId;
         t.fromAmount = fromAmount;
         t.categoryId = getEntityIdOrZero(categories, category);

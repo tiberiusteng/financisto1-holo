@@ -28,6 +28,7 @@ public class CsvExportOptions {
     public final NumberFormat amountFormat;
     public final char fieldSeparator;
     public final boolean includeHeader;
+    public final boolean includeTxStatus;
     public final boolean exportSplits;
     public final boolean uploadToDropbox;
     public final boolean uploadToGDrive;
@@ -35,12 +36,14 @@ public class CsvExportOptions {
     public final boolean writeUtfBom;
 
     public CsvExportOptions(Currency currency, char fieldSeparator, boolean includeHeader,
-                            boolean exportSplits, boolean uploadToDropbox, boolean uploadToGDrive,
+                            boolean includeTxStatus, boolean exportSplits,
+                            boolean uploadToDropbox, boolean uploadToGDrive,
                             WhereFilter filter, boolean writeUtfBom) {
         this.filter = filter;
         this.amountFormat = CurrencyCache.createCurrencyFormat(currency);
         this.fieldSeparator = fieldSeparator;
         this.includeHeader = includeHeader;
+        this.includeTxStatus = includeTxStatus;
         this.exportSplits = exportSplits;
         this.uploadToDropbox = uploadToDropbox;
         this.uploadToGDrive = uploadToGDrive;
@@ -52,10 +55,11 @@ public class CsvExportOptions {
         Currency currency = CurrencyExportPreferences.fromIntent(data, "csv");
         char fieldSeparator = data.getCharExtra(CsvExportActivity.CSV_EXPORT_FIELD_SEPARATOR, ',');
         boolean includeHeader = data.getBooleanExtra(CsvExportActivity.CSV_EXPORT_INCLUDE_HEADER, true);
+        boolean includeTxStatus = data.getBooleanExtra(CsvExportActivity.CSV_EXPORT_INCLUDE_TX_STATUS, false);
         boolean exportSplits = data.getBooleanExtra(CsvExportActivity.CSV_EXPORT_SPLITS, false);
         boolean uploadToDropbox = data.getBooleanExtra(CsvExportActivity.CSV_EXPORT_UPLOAD_TO_DROPBOX, false);
         boolean uploadToGDrive = data.getBooleanExtra(CsvExportActivity.CSV_EXPORT_UPLOAD_TO_GDRIVE, false);
-        return new CsvExportOptions(currency, fieldSeparator, includeHeader, exportSplits, uploadToDropbox, uploadToGDrive, filter, true);
+        return new CsvExportOptions(currency, fieldSeparator, includeHeader, includeTxStatus, exportSplits, uploadToDropbox, uploadToGDrive, filter, true);
     }
 
 }
