@@ -262,24 +262,25 @@ public class BlotterFragment extends AbstractListFragment implements BlotterOper
                         while (blotterFilter.remove(BlotterFilter.ORIGINAL_FROM_AMOUNT) != null);
 
                         if (!text.isEmpty()) {
+                            Criteria amount = null;
                             Matcher m = amountSearchPattern.matcher(text);
                             if (m.matches()) {
                                 if (m.group(1) == null && m.group(3) == null) {
                                     // 123.45
                                     String val = Double.toString(Math.floor(Double.parseDouble(m.group(2)) * 100));
-                                    blotterFilter.eq(Criteria.or(
+                                    amount = Criteria.or(
                                             Criteria.or(
                                                     Criteria.eq(BlotterFilter.FROM_AMOUNT, val),
                                                     Criteria.eq(BlotterFilter.FROM_AMOUNT, "-" + val)),
                                             Criteria.or(
                                                     Criteria.eq(BlotterFilter.ORIGINAL_FROM_AMOUNT, val),
-                                                    Criteria.eq(BlotterFilter.ORIGINAL_FROM_AMOUNT, "-" + val))));
+                                                    Criteria.eq(BlotterFilter.ORIGINAL_FROM_AMOUNT, "-" + val)));
                                 }
                                 else if (m.group(3) == null) {
                                     // >123.45, <123.45
                                     String val = Double.toString(Math.floor(Double.parseDouble(m.group(2)) * 100));
                                     if (m.group(1).equals("<")) {
-                                        blotterFilter.eq(Criteria.or(
+                                        amount = Criteria.or(
                                                 Criteria.or(
                                                         Criteria.and(
                                                                 Criteria.lt(BlotterFilter.FROM_AMOUNT, val),
@@ -296,10 +297,10 @@ public class BlotterFragment extends AbstractListFragment implements BlotterOper
                                                                 Criteria.gt(BlotterFilter.ORIGINAL_FROM_AMOUNT, "-" + val),
                                                                 Criteria.lt(BlotterFilter.ORIGINAL_FROM_AMOUNT, "0"))
                                                 )
-                                        ));
+                                        );
                                     }
-                                    if (m.group(1).equals(">")) {
-                                        blotterFilter.eq(Criteria.or(
+                                    else if (m.group(1).equals(">")) {
+                                        amount = Criteria.or(
                                                 Criteria.or(
                                                         Criteria.gt(BlotterFilter.FROM_AMOUNT, val),
                                                         Criteria.lt(BlotterFilter.FROM_AMOUNT, "-" + val)
@@ -308,14 +309,14 @@ public class BlotterFragment extends AbstractListFragment implements BlotterOper
                                                         Criteria.gt(BlotterFilter.ORIGINAL_FROM_AMOUNT, val),
                                                         Criteria.lt(BlotterFilter.ORIGINAL_FROM_AMOUNT, "-" + val)
                                                 )
-                                        ));
+                                        );
                                     }
                                 }
                                 else if (m.group(1) == null) {
                                     // 100~900
                                     String val2 = Double.toString(Math.floor(Double.parseDouble(m.group(2)) * 100));
                                     String val3 = Double.toString(Math.floor(Double.parseDouble(m.group(3)) * 100));
-                                    blotterFilter.eq(Criteria.or(
+                                    amount = Criteria.or(
                                             Criteria.or(
                                                     Criteria.btw(BlotterFilter.FROM_AMOUNT, val2, val3),
                                                     Criteria.btw(BlotterFilter.FROM_AMOUNT, "-" + val3, "-" + val2)
@@ -324,12 +325,20 @@ public class BlotterFragment extends AbstractListFragment implements BlotterOper
                                                     Criteria.btw(BlotterFilter.ORIGINAL_FROM_AMOUNT, val2, val3),
                                                     Criteria.btw(BlotterFilter.ORIGINAL_FROM_AMOUNT, "-" + val3, "-" + val2)
                                             )
-                                    ));
+                                    );
                                 }
                             }
-                            else {
+                            if (amount == null) {
                                 blotterFilter.contains(BlotterFilter.NOTE, text);
                             }
+                            else {
+                                blotterFilter.eq(Criteria.or(
+                                        amount,
+                                        Criteria.like(BlotterFilter.NOTE,
+                                                String.format("%%%s%%", text))
+                                ));
+                            }
+
 
                             clearButton.setVisibility(View.VISIBLE);
                         } else {
