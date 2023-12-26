@@ -1,10 +1,11 @@
 package tw.tib.financisto.activity;
 
+import android.Manifest;
 import android.content.Context;
 import android.content.pm.PackageManager;
-import androidx.core.content.ContextCompat;
 
-import tw.tib.financisto.activity.RequestPermissionActivity_;
+import androidx.core.app.NotificationManagerCompat;
+import androidx.core.content.ContextCompat;
 
 public class RequestPermission {
 
@@ -17,6 +18,9 @@ public class RequestPermission {
     }
 
     public static boolean checkPermission(Context ctx, String permission) {
+        if (permission.equals(Manifest.permission.BIND_NOTIFICATION_LISTENER_SERVICE)) {
+            return NotificationManagerCompat.getEnabledListenerPackages(ctx).contains(ctx.getPackageName());
+        }
         return ContextCompat.checkSelfPermission(ctx, permission) == PackageManager.PERMISSION_GRANTED;
     }
 

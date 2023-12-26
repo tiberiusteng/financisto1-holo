@@ -1,0 +1,1 @@
+ALTER TABLE sms_template ADD COLUMN to_account_id integer not null default -1;

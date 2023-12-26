@@ -445,11 +445,11 @@
   <string name="new_scheduled_transfer_text">您建立了一筆定期移轉</string>
   <string name="new_scheduled_transaction_title">定期交易</string>
   <string name="new_scheduled_transaction_text">您建立了一筆定期交易</string>
-  <string name="new_scheduled_transaction_notification" formatted="false">%s 已%s %s</string>
-  <string name="new_scheduled_transaction_debit">支付自</string>
-  <string name="new_scheduled_transaction_credit">存入</string>
-  <string name="new_scheduled_transfer_notification_differ_currency" formatted="false">%s(%s) 已從 %s 移轉至 %s</string>
-  <string name="new_scheduled_transfer_notification_same_currency" formatted="false">%s 已從 %s 移轉至 %s</string>
+  <string name="new_scheduled_transaction_notification" formatted="false">已從 %3$s %2$s %1$s</string>
+  <string name="new_scheduled_transaction_debit">支付</string>
+  <string name="new_scheduled_transaction_credit">收取</string>
+  <string name="new_scheduled_transfer_notification_differ_currency" formatted="false">已從 %3$s 移轉 %1$s (%2$s) 至 %4$s</string>
+  <string name="new_scheduled_transfer_notification_same_currency" formatted="false">已從 %2$s 移轉 %1$s 至 %3$s</string>
   <string name="notification">通知</string>
   <string name="notification_options_on">開啟</string>
   <string name="notification_options_off">關閉</string>
@@ -727,7 +727,40 @@
   <string name="request_permissions_receive_sms_description">讀取簡訊內容以根據簡訊模板自動建立交易。</string>
   <string name="request_permissions_notification_title">通知</string>
   <string name="request_permissions_notification_description">傳送排程交易設定的通知</string>
+  <string name="request_permissions_notification_listener_title">讀取通知</string>
+  <string name="request_permissions_notification_listener_description">讀取其他程式的通知以根據模板自動建立交易。</string>
   <string name="privacy_policy">Privacy Policy</string>
+
+  <!-- SMS stuff >> -->
+  <string name="sms_sender">發送通知的程式 / 簡訊發送門號</string>
+  <string name="sms_tpl_filter_hint">輸入數字或文字過濾</string>
+  <string name="sms_number_hint">發送通知的程式名稱或發送簡訊的門號</string>
+  <string name="sms_tpl">通知 / 簡訊模板</string>
+  <string name="sms_tpl_title">模板 (?)</string>
+  <string name="sms_tpl_desc">佔位標籤: \n{{p}} - 金額\n{{a}} - 帳號/卡號片段\n{{t}} - 交易內容敘述 (盡可能短)\n{{u}} - 交易內容敘述 (盡可能長)\n{{*}} - 任意內容 (不處理)</string>
+  <string name="sms_tpl_hint">在此輸入模板，並以佔位標籤標記資料</string>
+  <string name="sms_tpl_check">在此貼上通知內容進行測試</string>
+  <string name="sms_templates">通知 / 簡訊模板</string>
+  <string name="no_sms_templates">沒有模板</string>
+  <string name="add_sms_template">新增模板</string>
+  <string name="notification_list">通知列表</string>
+  <string name="notification_content">通知內容</string>
+  <string name="notification_copied">已將通知內容複製到剪貼簿</string>
+  <string name="sort_sms_templates">以名稱排序</string>
+  <string name="duplicate_sms_template">已複製模板</string>
+  <string name="sms_delete_alert">刪除此模板?</string>
+  <string name="new_sms_transaction_text">已透過模板新建來自 %s 的交易</string>
+  <string name="new_sms_transaction_title">從 %s 自動產生交易</string>
+  <string name="choose_sms_template_type_and_account">選擇分類與帳戶 (可省略)</string>
+  <string name="choose_sms_template_transfer_to_account">選擇轉帳對象 (可省略)</string>
+  <string name="tpl_not_transfer">不轉帳</string>
+  <string name="tpl_parse_result">範例處理結果</string>
+  <string name="tpl_parse_not_found">(未找到)</string>
+  <string name="pref_tpl">通知模板</string>
+  <string name="pref_tpl_transaction_status_title">交易狀態</string>
+  <string name="pref_tpl_transaction_status">從模板自動產生的交易狀態: %s</string>
+  <string name="pref_tpl_adding_to_note_title">儲存通知內文</string>
+  <string name="pref_tpl_adding_to_note">將通知內文存到自動產生的交易</string>
 
   <string name="preferences_summary">變更程式設定</string>
   <string name="entities_summary">修改分類、受款人、專案、地點等等</string>

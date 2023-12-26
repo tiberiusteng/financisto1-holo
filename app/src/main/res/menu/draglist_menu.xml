@@ -9,8 +9,13 @@
 
     <item
             android:id="@+id/new_sms_template"
-            android:title="@string/new_sms_template"
+            android:title="@string/add_sms_template"
             android:icon="@drawable/ic_btn_round_plus"
             app:showAsAction="ifRoom" />
+
+    <item android:id="@+id/list_notification"
+        android:title="@string/notification_list"
+        android:icon="@drawable/drawer_action_list"
+        app:showAsAction="ifRoom" />
 
 </menu>

@@ -93,6 +93,7 @@ public class SmsDragListActivity extends AppCompatActivity {
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
         if (resultCode == RESULT_OK) {
             adapter.reloadVisibleItems();
         } else if (resultCode == RESULT_CANCELED) {
@@ -130,6 +131,9 @@ public class SmsDragListActivity extends AppCompatActivity {
 
         final MenuItem newItem = menu.findItem(R.id.new_sms_template);
         newItem.setOnMenuItemClickListener(this::addItem);
+
+        final MenuItem listNotifications = menu.findItem(R.id.list_notification);
+        listNotifications.setOnMenuItemClickListener(this::listNotification);
         return true;
     }
 
@@ -138,7 +142,13 @@ public class SmsDragListActivity extends AppCompatActivity {
         startActivityForResult(intent, NEW_REQUEST_CODE);
         return true;
     }
-    
+
+    private boolean listNotification(MenuItem menuItem) {
+        Intent intent = new Intent(this, NotificationListActivity.class);
+        startActivity(intent);
+        return true;
+    }
+
     @Override
     public boolean onPrepareOptionsMenu(Menu menu) {
         return true;

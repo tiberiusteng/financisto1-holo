@@ -37,9 +37,12 @@ public class SmsTemplateActivity extends AbstractActivity {
     private EditText smsNumber;
     private EditText templateTxt;
     private EditText exampleTxt;
+    private TextView parseResult;
     private Spinner accountSpinner;
+    private Spinner toAccountSpinner;
     private ToggleButton toggleIncome;
     private ArrayList<Account> accounts;
+    private ArrayList<Account> toAccounts;
     private long categoryId = -1;
     private SmsTemplate smsTemplate = new SmsTemplate();
     private CategorySelector<SmsTemplateActivity> categorySelector;
@@ -62,6 +65,8 @@ public class SmsTemplateActivity extends AbstractActivity {
         templateTxt = findViewById(R.id.sms_template);
         initAccounts();
         toggleIncome = findViewById(R.id.toggle);
+
+        parseResult = findViewById(R.id.parse_result);
 
         Button bOK = findViewById(R.id.bOK);
         bOK.setOnClickListener(arg0 -> {
@@ -151,10 +156,22 @@ public class SmsTemplateActivity extends AbstractActivity {
         accounts.add(emptyItem);
         accounts.addAll(db.getAllAccountsList());
 
+        toAccounts = new ArrayList<>();
+        Account notTransfer = new Account();
+        notTransfer.id = -1;
+        notTransfer.title = getString(R.string.tpl_not_transfer);
+        toAccounts.add(notTransfer);
+        toAccounts.addAll(db.getAllAccountsList());
+
         ArrayAdapter<Account> accountsAdapter = new MyEntityAdapter<>(this, android.R.layout.simple_spinner_item, android.R.id.text1, accounts);
         accountsAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         accountSpinner = findViewById(R.id.spinnerAccount);
         accountSpinner.setAdapter(accountsAdapter);
+
+        ArrayAdapter<Account> toAccountsAdapter = new MyEntityAdapter<>(this, android.R.layout.simple_spinner_item, android.R.id.text1, toAccounts);
+        toAccountsAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        toAccountSpinner = findViewById(R.id.spinnerTransferAccount);
+        toAccountSpinner.setAdapter(toAccountsAdapter);
     }
 
     private void updateSmsTemplateFromUI() {
@@ -163,7 +180,7 @@ public class SmsTemplateActivity extends AbstractActivity {
         smsTemplate.categoryId = categorySelector == null ? categoryId : categorySelector.getSelectedCategoryId();
         smsTemplate.isIncome = toggleIncome.isChecked();
         smsTemplate.accountId = accountSpinner.getSelectedItemId();
-
+        smsTemplate.toAccountId = toAccountSpinner.getSelectedItemId();
     }
 
     private void fillByCallerData() {
@@ -182,6 +199,7 @@ public class SmsTemplateActivity extends AbstractActivity {
         smsNumber.setText(smsTemplate.title);
         templateTxt.setText(smsTemplate.template);
         selectedAccount(smsTemplate.accountId);
+        selectedToAccount(smsTemplate.toAccountId);
         toggleIncome.setChecked(smsTemplate.isIncome);
     }
 
@@ -190,6 +208,16 @@ public class SmsTemplateActivity extends AbstractActivity {
             Account a = accounts.get(i);
             if (a.id == selectedAccountId) {
                 accountSpinner.setSelection(i);
+                break;
+            }
+        }
+    }
+
+    private void selectedToAccount(long selectedAccountId) {
+        for (int i=0; i<toAccounts.size(); i++) {
+            Account a = toAccounts.get(i);
+            if (a.id == selectedAccountId) {
+                toAccountSpinner.setSelection(i);
                 break;
             }
         }
@@ -217,8 +245,24 @@ public class SmsTemplateActivity extends AbstractActivity {
             final String[] matches = SmsTransactionProcessor.findTemplateMatches(template, example);
             if (matches == null) {
                 exampleTxt.setBackgroundColor(resources.getColor(R.color.negative_amount));
+                parseResult.setText("");
             } else {
+                StringBuilder sb = new StringBuilder();
                 exampleTxt.setBackgroundColor(resources.getColor(R.color.cleared_transaction_color));
+
+                // dump match result to help debugging
+                // no styling yet, could be improved
+                for (SmsTransactionProcessor.Placeholder p : SmsTransactionProcessor.Placeholder.values()) {
+                    sb.append(p.name()); sb.append(": ");
+                    if (matches[p.ordinal()] == null) {
+                        sb.append(getString(R.string.tpl_parse_not_found));
+                    }
+                    else {
+                        sb.append(matches[p.ordinal()]);
+                    }
+                    sb.append("\n");
+                }
+                parseResult.setText(sb);
             }
         }
     }

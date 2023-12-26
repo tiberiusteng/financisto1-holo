@@ -114,5 +114,35 @@
                 a:layout_height="wrap_content"
                 a:layout_alignParentEnd="true" />
         </RelativeLayout>
+
+        <RelativeLayout
+            a:id="@+id/toggleNotificationListenerWrap"
+            a:layout_width="match_parent"
+            a:layout_height="wrap_content"
+            a:orientation="vertical"
+            a:padding="10dp">
+
+            <TextView
+                a:id="@+id/toggleNotificationListenerTitle"
+                style="@android:style/TextAppearance.Large"
+                a:layout_width="match_parent"
+                a:layout_height="wrap_content"
+                a:layout_alignEnd="@id/toggleNotificationListener"
+                a:layout_alignParentStart="true"
+                a:text="@string/request_permissions_notification_listener_title" />
+
+            <TextView
+                style="@android:style/TextAppearance.Small"
+                a:layout_width="match_parent"
+                a:layout_height="wrap_content"
+                a:layout_below="@id/toggleNotificationListenerTitle"
+                a:text="@string/request_permissions_notification_listener_description" />
+
+            <androidx.appcompat.widget.SwitchCompat
+                a:id="@+id/toggleNotificationListener"
+                a:layout_width="wrap_content"
+                a:layout_height="wrap_content"
+                a:layout_alignParentEnd="true" />
+        </RelativeLayout>
     </LinearLayout>
 </ScrollView>

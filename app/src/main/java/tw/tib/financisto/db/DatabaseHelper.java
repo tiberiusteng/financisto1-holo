@@ -275,6 +275,7 @@ public class DatabaseHelper extends DatabaseSchemaEvolution {
         template,
         category_id,
         account_id,
+        to_account_id,
         is_income,
         sort_order;
 

@@ -35,6 +35,9 @@ public class SmsTemplate extends MyEntity implements SortableEntity {
     @Column(name = "account_id")
     public long accountId = -1;
 
+    @Column(name = "to_account_id")
+    public long toAccountId = -1;
+
     @Column(name = "is_income")
     public boolean isIncome;
 
@@ -54,6 +57,7 @@ public class SmsTemplate extends MyEntity implements SortableEntity {
         t.template = c.getString(SmsTemplateColumns.template.ordinal());
         t.categoryId = c.getLong(SmsTemplateColumns.category_id.ordinal());
         t.accountId = c.getLong(SmsTemplateColumns.account_id.ordinal());
+        t.toAccountId = c.getLong(SmsTemplateColumns.to_account_id.ordinal());
         t.isIncome = c.getInt(SmsTemplateColumns.is_income.ordinal()) != 0;
         t.sortOrder = c.getLong(SmsTemplateColumns.sort_order.ordinal());
         return t;

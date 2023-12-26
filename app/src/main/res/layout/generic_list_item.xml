@@ -43,19 +43,20 @@
 	<!-- android:layout_toRightOf="@+id/divider" -->
 
 	<TextView android:id="@+id/number"
-		android:layout_width="wrap_content" android:layout_height="wrap_content"
+		android:layout_width="0dp" android:layout_height="wrap_content"
 		android:layout_marginStart="5dp"
 		app:layout_constraintVertical_chainStyle="packed"
+		app:layout_constraintStart_toEndOf="@id/line1"
 		app:layout_constraintEnd_toEndOf="parent"
 		app:layout_constraintBottom_toTopOf="@id/date"
 		app:layout_constraintTop_toTopOf="parent"
+		android:gravity="end"
 		android:singleLine="true"
 		android:ellipsize="marquee" android:textAppearance="?android:attr/textAppearanceSmall"/>
 
 	<TextView android:id="@+id/line1"
-		android:layout_width="0dp" android:layout_height="wrap_content"
+		android:layout_width="wrap_content" android:layout_height="wrap_content"
 		app:layout_constraintStart_toStartOf="parent"
-		app:layout_constraintEnd_toStartOf="@id/date"
 		app:layout_constraintTop_toTopOf="parent"
 		app:layout_constraintBottom_toBottomOf='parent'
 		android:textAppearance="?android:attr/textAppearanceLarge"

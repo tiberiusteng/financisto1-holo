@@ -38,7 +38,7 @@ import tw.tib.financisto.model.Attribute;
 import tw.tib.financisto.model.Category;
 import tw.tib.financisto.model.SmsTemplate;
 
-import static android.Manifest.permission.RECEIVE_SMS;
+import static android.Manifest.permission.BIND_NOTIFICATION_LISTENER_SERVICE;
 import static tw.tib.financisto.activity.CategorySelector.SelectorType.PARENT;
 import static tw.tib.financisto.activity.RequestPermission.isRequestingPermission;
 import static tw.tib.financisto.utils.Utils.checkEditText;
@@ -294,7 +294,7 @@ public class CategoryActivity extends AbstractActivity implements CategorySelect
 
 			// Sms templates >>
 			case R.id.new_sms_template: {
-				if (!isRequestingPermission(this, RECEIVE_SMS)) {
+				if (!isRequestingPermission(this, BIND_NOTIFICATION_LISTENER_SERVICE)) {
 					Intent intent = new Intent(this, SmsTemplateActivity.class);
 					intent.putExtra(SmsTemplateColumns.category_id.name(), category.id);
 					startActivityForResult(intent, NEW_SMS_TEMPLATE_REQUEST);
@@ -302,7 +302,7 @@ public class CategoryActivity extends AbstractActivity implements CategorySelect
 			}
 			break;
 			case R.id.edit_sms_template: {
-				if (!isRequestingPermission(this, RECEIVE_SMS)) {
+				if (!isRequestingPermission(this, BIND_NOTIFICATION_LISTENER_SERVICE)) {
 					Object o = v.getTag();
 					if (o instanceof SmsTemplate) {
 						final SmsTemplate clickedItem = (SmsTemplate) o;

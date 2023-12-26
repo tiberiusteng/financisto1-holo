@@ -39,15 +39,23 @@ public class SmsTransactionProcessor {
         for (final SmsTemplate t : addrTemplates) {
             String[] match = findTemplateMatches(t.template, fullSmsBody);
             if (match != null) {
-                Log.d(TAG, format("Found template`%s` with matches `%s`", t, Arrays.toString(match)));
+                Log.d(TAG, format("Found template \"%s\" with matches \"%s\"", t, Arrays.toString(match)));
 
                 String account = match[ACCOUNT.ordinal()];
                 String parsedPrice = match[PRICE.ordinal()];
+                String text = match[TEXT.ordinal()];
+                String greedy_text = match[GREEDY_TEXT.ordinal()];
+                if (text == null && greedy_text != null) {
+                    text = greedy_text;
+                }
+                if (text == null) {
+                    text = fullSmsBody;
+                }
                 try {
                     BigDecimal price = toBigDecimal(parsedPrice);
-                    return createNewTransaction(price, account, t, updateNote ? fullSmsBody : "", status);
+                    return createNewTransaction(price, account, t, updateNote ? text : "", status);
                 } catch (Exception e) {
-                    Log.e(TAG, format("Failed to parse price value: `%s`", parsedPrice), e);
+                    Log.e(TAG, format("Failed to parse price value: \"%s\"", parsedPrice), e);
                 }
             }
         }
@@ -124,6 +132,10 @@ public class SmsTransactionProcessor {
             res.isTemplate = 0;
             res.fromAccountId = accountId;
             res.fromAmount = (smsTemplate.isIncome ? 1 : -1) * Math.abs(price.multiply(HUNDRED).longValue());
+            if (smsTemplate.toAccountId != -1) {
+                res.toAccountId = smsTemplate.toAccountId;
+                res.toAmount = (smsTemplate.isIncome ? -1 : 1) * Math.abs(price.multiply(HUNDRED).longValue());
+            }
             res.note = note;
             res.categoryId = smsTemplate.categoryId;
             res.status = status;
@@ -167,10 +179,14 @@ public class SmsTransactionProcessor {
      * ex. ECMC<:A:> <:D:> покупка <:P:> TEREMOK <::>Баланс: <:B:>р
      */
     public static String[] findTemplateMatches(String template, final String sms) {
+        Log.d(TAG, "findTemplateMatches template=\"" + template + "\", sms=\"" + sms + "\"");
+
         String[] results = null;
         template = preprocessPatterns(template);
         final int[] phIndexes = findPlaceholderIndexes(template);
+
         if (phIndexes != null) {
+            // escape regex characters (i.e. can't use regex in template)
             template = template.replaceAll("([.\\[\\]{}()*+\\-?^$|])", "\\\\$1");
             for (int i = 0; i < phIndexes.length; i++) {
                 if (phIndexes[i] != -1) {
@@ -178,10 +194,11 @@ public class SmsTransactionProcessor {
                     template = template.replace(placeholder.code, placeholder.regexp);
                 }
             }
-            template = ANY.regexp + template.replace(ANY.code, ANY.regexp) + ANY.regexp;
+            template = template.replace(ANY.code, ANY.regexp);
+            Log.d(TAG, "template=" + template);
 
             Matcher matcher = Pattern.compile(template, DOTALL).matcher(sms);
-            if (matcher.matches()) {
+            if (matcher.find()) {
                 results = new String[Placeholder.values().length];
                 for (int i = 0; i < phIndexes.length; i++) {
                     final int groupNum = phIndexes[i] + 1;
@@ -236,7 +253,7 @@ public class SmsTransactionProcessor {
     }
 
 
-    enum Placeholder {
+    public enum Placeholder {
         /**
          * Please note that order of constants is very important,
          * and keep it in alphabetical way
@@ -246,7 +263,8 @@ public class SmsTransactionProcessor {
         BALANCE("<:B:>", "\\s{0,3}([\\d\\.,\\-\\+\\']+(?:[\\d \\.,]+?)*)\\s{0,3}", "{{b}}"),
         DATE("<:D:>", "\\s{0,3}(\\d[\\d\\. :-]{12,14}\\d)\\s*?", "{{d}}"),
         PRICE("<:P:>", BALANCE.regexp, "{{p}}"),
-        TEXT("<:T:>", "(.*?)", "{{t}}");
+        TEXT("<:T:>", "(.*?)", "{{t}}"),
+        GREEDY_TEXT("<:U:>", "(.*)", "{{u}}");
 
         public String code;
         public String regexp;

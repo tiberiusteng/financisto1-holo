@@ -1,6 +1,7 @@
 package tw.tib.financisto.activity;
 
-import static android.Manifest.permission.RECEIVE_SMS;
+import static android.Manifest.permission.BIND_NOTIFICATION_LISTENER_SERVICE;
+
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.ProgressDialog;
@@ -14,7 +15,6 @@ import android.widget.Toast;
 
 import tw.tib.financisto.R;
 
-import tw.tib.financisto.activity.RequestPermissionActivity_;
 import tw.tib.financisto.bus.GreenRobotBus_;
 import tw.tib.financisto.export.csv.CsvImportOptions;
 import tw.tib.financisto.export.qif.QifExportOptions;
@@ -216,7 +216,7 @@ public enum MenuListItem implements SummaryEntityEnum {
         CURRENCIES(R.string.currencies, R.drawable.ic_action_money, CurrencyListActivity.class),
         EXCHANGE_RATES(R.string.exchange_rates, R.drawable.ic_action_line_chart, ExchangeRatesListActivity.class),
         CATEGORIES(R.string.categories, R.drawable.ic_action_category, CategoryListActivity2.class),
-        SMS_TEMPLATES(R.string.sms_templates, R.drawable.ic_action_sms, SmsDragListActivity.class, RECEIVE_SMS),
+        SMS_TEMPLATES(R.string.sms_templates, R.drawable.ic_action_sms, SmsDragListActivity.class, BIND_NOTIFICATION_LISTENER_SERVICE),
         PAYEES(R.string.payees, R.drawable.ic_action_users, PayeeListActivity.class),
         PROJECTS(R.string.projects, R.drawable.ic_action_gear, ProjectListActivity.class),
         LOCATIONS(R.string.locations, R.drawable.ic_action_location_2, LocationsListActivity.class);

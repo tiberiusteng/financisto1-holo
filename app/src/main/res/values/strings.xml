@@ -936,6 +936,8 @@
     <string name="request_permissions_receive_sms_description">Required for adding new transactions automatically by SMS templates.</string>
     <string name="request_permissions_notification_title">Notification</string>
     <string name="request_permissions_notification_description">Required for adding new transactions automatically by SMS templates.</string>
+    <string name="request_permissions_notification_listener_title">Notification Listener</string>
+    <string name="request_permissions_notification_listener_description">Required for adding new transactions automatically from notification text with SMS templates.</string>
     <string name="privacy_policy">Privacy Policy</string>
 
     <string name="show_menu_button_on_accounts_screen">Show Menu</string>
@@ -943,29 +945,35 @@
     <string name="go_to_menu_tab">Go to Menu</string>
 
     <!-- SMS stuff >> -->
-    <string name="sms_number">Sms Number</string>
+    <string name="sms_sender">Notification Sender / SMS Number</string>
     <string name="sms_tpl_filter_hint">Filter by number or text</string>
-    <string name="sms_number_hint">SMS sender number or name</string>
-    <string name="sms_tpl">Sms Template</string>
+    <string name="sms_number_hint">Notification sender app name or SMS sender number</string>
+    <string name="sms_tpl">Notification / SMS Template</string>
     <string name="sms_tpl_title">Template (?)</string>
-    <string name="sms_tpl_desc">Placeholders: \n{{p}} - price\n{{a}} - account last digits\n{{*}} - any symbols/words</string>
+    <string name="sms_tpl_desc">Placeholders: \n{{p}} - price\n{{a}} - account last digits\n{{t}} - note text (non-greedy)\n{{u}} - note text (greedy)\n{{*}} - any symbols/words</string>
     <string name="sms_tpl_hint">Specify template with placeholders here</string>
-    <string name="sms_tpl_check">Try with sms example here</string>
-    <string name="sms_templates">SMS Templates</string>
-    <string name="no_sms_templates">No SMS templates</string>
-    <string name="add_sms_template">Add SMS template</string>
-    <string name="new_sms_template">New SMS template</string>
+    <string name="sms_tpl_check">Try with notification example here</string>
+    <string name="sms_templates">Notification / SMS Templates</string>
+    <string name="no_sms_templates">No templates</string>
+    <string name="add_sms_template">Add template</string>
+    <string name="notification_list">Notification List</string>
+    <string name="notification_content">Notification Content</string>
+    <string name="notification_copied">Copied notification content to clipboard</string>
     <string name="sort_sms_templates">Sort By Name</string>
-    <string name="duplicate_sms_template">SMS template has been duplicated</string>
-    <string name="sms_delete_alert">Delete this SMS template?</string>
-    <string name="new_sms_transaction_text">New transaction added by SMS from %s</string>
-    <string name="new_sms_transaction_title">SMS transaction from %s</string>
+    <string name="duplicate_sms_template">Template has been duplicated</string>
+    <string name="sms_delete_alert">Delete this template?</string>
+    <string name="new_sms_transaction_text">New transaction added by template from %s</string>
+    <string name="new_sms_transaction_title">Template transaction from %s</string>
     <string name="choose_sms_template_type_and_account">Choose type and account (optional)</string>
-    <string name="pref_sms">SMS</string>
-    <string name="pref_sms_transaction_status_title">Transaction Status</string>
-    <string name="pref_sms_transaction_status">Status of transaction from SMS: %s</string>
-    <string name="pref_sms_adding_to_note_title">Saving SMS text</string>
-    <string name="pref_sms_adding_to_note">Add SMS text to transaction note</string>
+    <string name="choose_sms_template_transfer_to_account">Choose transfer-to account (optional)</string>
+    <string name="tpl_not_transfer">Not transfer</string>
+    <string name="tpl_parse_result">Example notification process result</string>
+    <string name="tpl_parse_not_found">(Not found)</string>
+    <string name="pref_tpl">Notification Template</string>
+    <string name="pref_tpl_transaction_status_title">Transaction Status</string>
+    <string name="pref_tpl_transaction_status">Status of transaction created from template: %s</string>
+    <string name="pref_tpl_adding_to_note_title">Saving notification text</string>
+    <string name="pref_tpl_adding_to_note">Add notification text to transaction note</string>
 
     <string name="card_issuer_default">Default</string>
     <string name="electronic_payment_type">Payment type</string>
@@ -1024,4 +1032,5 @@
     <string name="set_focus_on_amount_field">Set focus on amount field</string>
     <string name="set_focus_on_amount_field_summary">Automatically set focus on amount field for new transactions</string>
 
+    <string name="notification_channel_name">Financisto</string>
 </resources>

@@ -3,9 +3,11 @@ package tw.tib.financisto.activity;
 import android.Manifest;
 import android.app.Activity;
 import android.content.Context;
+import android.content.Intent;
 import android.content.pm.PackageManager;
 import androidx.annotation.NonNull;
 import androidx.core.app.ActivityCompat;
+import androidx.core.app.NotificationManagerCompat;
 import androidx.core.content.ContextCompat;
 import androidx.appcompat.widget.SwitchCompat;
 
@@ -47,6 +49,12 @@ public class RequestPermissionActivity extends Activity {
     @ViewById(R.id.toggleNotification)
     SwitchCompat toggleNotification;
 
+    @ViewById(R.id.toggleNotificationListenerWrap)
+    ViewGroup toggleNotificationListenerWrap;
+
+    @ViewById(R.id.toggleNotificationListener)
+    SwitchCompat toggleNotificationListener;
+
     @Override
     protected void attachBaseContext(Context base) {
         super.attachBaseContext(MyPreferences.switchLocale(base));
@@ -60,8 +68,13 @@ public class RequestPermissionActivity extends Activity {
     private void checkPermissions() {
         // using scoped storage, write external storage permission is not needed
 
-        disableToggleIfGranted(Manifest.permission.CAMERA, toggleCamera, toggleCameraWrap);
-        disableToggleIfGranted(Manifest.permission.RECEIVE_SMS, toggleSms, toggleSmsWrap);
+        // camera is not used, sms permission not obtainable with google play install
+        //disableToggleIfGranted(Manifest.permission.CAMERA, toggleCamera, toggleCameraWrap);
+        //disableToggleIfGranted(Manifest.permission.RECEIVE_SMS, toggleSms, toggleSmsWrap);
+        toggleCameraWrap.setVisibility(View.GONE);
+        toggleSmsWrap.setVisibility(View.GONE);
+
+        disableToggleIfGranted(Manifest.permission.BIND_NOTIFICATION_LISTENER_SERVICE, toggleNotificationListener, toggleNotificationListenerWrap);
 
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
             disableToggleIfGranted(Manifest.permission.POST_NOTIFICATIONS, toggleNotification, toggleNotificationWrap);
@@ -96,12 +109,26 @@ public class RequestPermissionActivity extends Activity {
         requestPermission(Manifest.permission.POST_NOTIFICATIONS, toggleNotification);
     }
 
+    @Click(R.id.toggleNotificationListener)
+    public void onGrantNotificationListener() {
+        requestPermission(Manifest.permission.BIND_NOTIFICATION_LISTENER_SERVICE, toggleNotificationListener);
+    }
+
     private void requestPermission(String permission, CompoundButton toggleButton) {
         toggleButton.setChecked(false);
-        ActivityCompat.requestPermissions(this, new String[]{permission}, 0);
+        if (permission.equals(Manifest.permission.BIND_NOTIFICATION_LISTENER_SERVICE)) {
+            startActivityForResult(new Intent("android.settings.ACTION_NOTIFICATION_LISTENER_SETTINGS"), 0);
+        }
+        else {
+            ActivityCompat.requestPermissions(this, new String[]{permission}, 0);
+        }
     }
 
     private boolean isGranted(String permission) {
+        if (permission.equals(Manifest.permission.BIND_NOTIFICATION_LISTENER_SERVICE)) {
+            return NotificationManagerCompat.getEnabledListenerPackages(this).contains(getPackageName());
+        }
+
         return ContextCompat.checkSelfPermission(this, permission) == PackageManager.PERMISSION_GRANTED;
     }
 
@@ -110,4 +137,8 @@ public class RequestPermissionActivity extends Activity {
         checkPermissions();
     }
 
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        checkPermissions();
+    }
 }
