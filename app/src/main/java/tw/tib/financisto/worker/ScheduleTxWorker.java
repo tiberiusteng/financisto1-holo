@@ -2,15 +2,18 @@ package tw.tib.financisto.worker;
 
 import static android.app.PendingIntent.FLAG_CANCEL_CURRENT;
 
+import android.Manifest;
 import android.app.Notification;
-import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.content.Context;
 import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.util.Log;
 
 import androidx.annotation.NonNull;
+import androidx.core.app.ActivityCompat;
 import androidx.core.app.NotificationCompat;
+import androidx.core.app.NotificationManagerCompat;
 import androidx.work.Data;
 import androidx.work.Worker;
 import androidx.work.WorkerParameters;
@@ -20,6 +23,7 @@ import tw.tib.financisto.activity.AccountWidget;
 import tw.tib.financisto.db.DatabaseAdapter;
 import tw.tib.financisto.model.TransactionInfo;
 import tw.tib.financisto.recur.NotificationOptions;
+import tw.tib.financisto.service.NotificationChannelService;
 import tw.tib.financisto.service.RecurrenceScheduler;
 
 public class ScheduleTxWorker extends Worker {
@@ -65,9 +69,14 @@ public class ScheduleTxWorker extends Worker {
     }
 
     private void notifyUser(Notification notification, int id) {
-        NotificationManager notificationManager =
-                (NotificationManager) getApplicationContext()
-                        .getSystemService(Context.NOTIFICATION_SERVICE);
+        Context context = getApplicationContext();
+        NotificationChannelService.initialize(context);
+
+        NotificationManagerCompat notificationManager = NotificationManagerCompat.from(context);
+
+        if (ActivityCompat.checkSelfPermission(context, Manifest.permission.POST_NOTIFICATIONS) != PackageManager.PERMISSION_GRANTED) {
+            return;
+        }
         notificationManager.notify(id, notification);
     }
 
@@ -86,27 +95,24 @@ public class ScheduleTxWorker extends Worker {
         notificationIntent.putExtra(AbstractTransactionActivity.TRAN_ID_EXTRA, t.id);
         PendingIntent contentIntent = PendingIntent.getActivity(context, (int) t.id, notificationIntent, FLAG_CANCEL_CURRENT | PendingIntent.FLAG_IMMUTABLE); /* https://stackoverflow.com/a/3730394/365675 */
 
-        Notification notification = new NotificationCompat.Builder(context, "transactions")
+        var builder = new NotificationCompat.Builder(context, NotificationChannelService.TRANSACTIONS_CHANNEL)
                 .setContentIntent(contentIntent)
                 .setSmallIcon(t.getNotificationIcon())
                 .setWhen(System.currentTimeMillis())
                 .setTicker(tickerText)
                 .setContentText(text)
                 .setContentTitle(contentTitle)
-                .setAutoCancel(true)
-                .build();
+                .setAutoCancel(true);
 
-        applyNotificationOptions(notification, t.notificationOptions);
+        applyNotificationOptions(builder, t.notificationOptions);
 
-        return notification;
+        return builder.build();
     }
 
-    private void applyNotificationOptions(Notification notification, String notificationOptions) {
-        if (notificationOptions == null) {
-            notification.defaults = Notification.DEFAULT_ALL;
-        } else {
+    private void applyNotificationOptions(NotificationCompat.Builder builder, String notificationOptions) {
+        if (notificationOptions != null) {
             NotificationOptions options = NotificationOptions.parse(notificationOptions);
-            options.apply(notification);
+            options.apply(builder);
         }
     }
 }

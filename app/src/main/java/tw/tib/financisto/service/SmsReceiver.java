@@ -16,8 +16,6 @@ public class SmsReceiver extends BroadcastReceiver {
     public static final String PDUS_NAME = "pdus";
     public static final String FTAG = "Financisto";
     public static final String SMS_RECEIVED_ACTION = "android.provider.Telephony.SMS_RECEIVED";
-    public static final String SMS_TRANSACTION_NUMBER = "SMS_TRANSACTION_NUMBER";
-    public static final String SMS_TRANSACTION_BODY = "SMS_TRANSACTION_BODY";
 
     @Override
     public void onReceive(final Context context, final Intent intent) {
@@ -49,8 +47,8 @@ public class SmsReceiver extends BroadcastReceiver {
                 Log.d(FTAG, format("%s sms from %s: `%s`", msg.getTimestampMillis(), addr, fullSmsBody));
 
                 Intent serviceIntent = new Intent(ACTION_NEW_TRANSACTION_SMS, null, context, FinancistoService.class);
-                serviceIntent.putExtra(SMS_TRANSACTION_NUMBER, addr);
-                serviceIntent.putExtra(SMS_TRANSACTION_BODY, fullSmsBody);
+                serviceIntent.putExtra(FinancistoService.SMS_TRANSACTION_NUMBER, addr);
+                serviceIntent.putExtra(FinancistoService.SMS_TRANSACTION_BODY, fullSmsBody);
                 FinancistoService.enqueueWork(context, serviceIntent);
             }
                 // Display SMS message

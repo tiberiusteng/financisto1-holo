@@ -10,6 +10,10 @@
  ******************************************************************************/
 package tw.tib.financisto.recur;
 
+import static androidx.core.app.NotificationCompat.DEFAULT_ALL;
+import static androidx.core.app.NotificationCompat.DEFAULT_LIGHTS;
+import static androidx.core.app.NotificationCompat.DEFAULT_VIBRATE;
+
 import tw.tib.financisto.R;
 import tw.tib.financisto.utils.LocalizableEnum;
 import tw.tib.financisto.utils.Utils;
@@ -22,6 +26,8 @@ import android.media.Ringtone;
 import android.media.RingtoneManager;
 import android.net.Uri;
 import android.provider.Settings;
+
+import androidx.core.app.NotificationCompat;
 
 public class NotificationOptions {
 	
@@ -134,55 +140,35 @@ public class NotificationOptions {
 		return ringtone != null ? ringtone.getTitle(context) : context.getString(R.string.notification_options_off);
 	}
 
-	public void apply(Notification notification) {
-		notification.defaults = 0;
+	public void apply(NotificationCompat.Builder builder) {
 		if (isOff()) {
-			notification.defaults = 0;
+			builder.setSilent(true);
 		} else if (isDefault()) {
-			notification.defaults = Notification.DEFAULT_ALL;
-			enableLights(notification);
+			builder.setDefaults(DEFAULT_ALL);
 		} else {
-			applySound(notification);
-			applyVibration(notification);
-			applyLed(notification);
+			applySound(builder);
+			applyVibration(builder);
+			applyLed(builder);
 		}
 	}
 
-	private void applySound(Notification notification) {
-		if (sound == null) {
-			notification.sound = null;
+	private void applySound(NotificationCompat.Builder builder) {
+		builder.setSound(Uri.parse(sound), AudioManager.STREAM_NOTIFICATION);
+	}
+
+	private void applyVibration(NotificationCompat.Builder builder) {
+		if (vibration == VibrationPattern.DEFAULT) {
+			builder.setDefaults(DEFAULT_VIBRATE);
 		} else {
-			notification.audioStreamType = AudioManager.STREAM_NOTIFICATION;
-			notification.sound = Uri.parse(sound);
+			builder.setVibrate(vibration.pattern);
 		}
 	}
 
-	private void applyVibration(Notification notification) {
-		if (vibration == VibrationPattern.OFF) {
-			notification.vibrate = null;
-		} else if (vibration == VibrationPattern.DEFAULT) {
-			notification.defaults |= Notification.DEFAULT_VIBRATE;
+	private void applyLed(NotificationCompat.Builder builder) {
+		if (ledColor == LedColor.DEFAULT) {
+			builder.setDefaults(DEFAULT_LIGHTS);
 		} else {
-			notification.vibrate = vibration.pattern;
+			builder.setLights(ledColor.color, 200, 200);
 		}
 	}
-
-	private void applyLed(Notification notification) {
-		if (ledColor == LedColor.OFF) {
-			notification.ledARGB = 0;
-		} else if (ledColor == LedColor.DEFAULT) {
-			notification.defaults |= Notification.DEFAULT_LIGHTS;
-			enableLights(notification);
-		} else {
-			notification.ledARGB = ledColor.color;
-			enableLights(notification);
-		}
-	}
-
-	private void enableLights(Notification notification) {
-		notification.flags |= Notification.FLAG_SHOW_LIGHTS;
-		notification.ledOnMS = 200;
-		notification.ledOffMS = 200;
-	}
-
 }
