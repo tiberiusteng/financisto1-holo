@@ -39,15 +39,15 @@ public class TransactionTitleUtils {
         this.transferSpan = new ForegroundColorSpan(r.getColor(R.color.transfer_color));
     }
 
-    public CharSequence generateTransactionTitle(boolean isTransfer, String payee, String note, String location, long categoryId, String category) {
+    public CharSequence generateTransactionTitle(boolean isTransfer, String payee, String transfer, String note, String location, long categoryId, String category) {
         if (isSplit(categoryId)) {
-            return generateTransactionTitleForSplit(payee, note, location, category);
+            return generateTransactionTitleForSplit(payee, transfer, note, location, category);
         } else {
-            return generateTransactionTitleForRegular(isTransfer, payee, note, location, category);
+            return generateTransactionTitleForRegular(isTransfer, payee, transfer, note, location, category);
         }
     }
 
-    private CharSequence generateTransactionTitleForRegular(boolean isTransfer, String payee, String note, String location, String category) {
+    private CharSequence generateTransactionTitleForRegular(boolean isTransfer, String payee, String transfer, String note, String location, String category) {
         if (this.colorizeItem && Build.VERSION.SDK_INT >= 21) {
             SpannableStringBuilder ssb = new SpannableStringBuilder();
             boolean hasText = false;
@@ -66,20 +66,20 @@ public class TransactionTitleUtils {
                 ssb.append(location, locationSpan, 0);
                 hasText = true;
             }
+            if (isNotEmpty(transfer)) {
+                if (hasText) ssb.append(" ");
+                ssb.append(transfer, transferSpan, 0);
+                hasText = true;
+            }
             if (isNotEmpty(note)) {
                 if (hasText) ssb.append(" ");
-                if (isTransfer) {
-                    ssb.append(note, transferSpan, 0);
-                }
-                else {
-                    ssb.append(note, noteSpan, 0);
-                }
+                ssb.append(note, noteSpan, 0);
             }
 
             return ssb;
         }
         else {
-            String secondPart = joinAdditionalFields(payee, note, location);
+            String secondPart = joinAdditionalFields(payee, transfer, note, location);
             if (isNotEmpty(category)) {
                 if (isNotEmpty(secondPart)) {
                     sb.append(category).append(" (").append(secondPart).append(")");
@@ -93,18 +93,19 @@ public class TransactionTitleUtils {
         }
     }
 
-    private String joinAdditionalFields(String payee, String note, String location) {
+    private String joinAdditionalFields(String payee, String transfer, String note, String location) {
         sb.setLength(0);
         append(sb, payee);
         append(sb, location);
+        append(sb, transfer);
         append(sb, note);
         String secondPart = sb.toString();
         sb.setLength(0);
         return secondPart;
     }
 
-    private String generateTransactionTitleForSplit(String payee, String note, String location, String category) {
-        String secondPart = joinAdditionalFields(note, location);
+    private String generateTransactionTitleForSplit(String payee, String transfer, String note, String location, String category) {
+        String secondPart = joinAdditionalFields(transfer, note, location);
         if (isNotEmpty(payee)) {
             if (isNotEmpty(secondPart)) {
                 return sb.append("[").append(payee).append("...] ").append(secondPart).toString();
@@ -118,9 +119,10 @@ public class TransactionTitleUtils {
         }
     }
 
-    private String joinAdditionalFields(String note, String location) {
+    private String joinAdditionalFields(String transfer, String note, String location) {
         sb.setLength(0);
         append(sb, location);
+        append(sb, transfer);
         append(sb, note);
         String secondPart = sb.toString();
         sb.setLength(0);

@@ -51,6 +51,7 @@ public class TransactionsListAdapter extends BlotterListAdapter {
         long toAccountId = cursor.getLong(BlotterColumns.to_account_id.ordinal());
         String payee = cursor.getString(BlotterColumns.payee.ordinal());
         String note = cursor.getString(BlotterColumns.note.ordinal());
+        String transfer = null;
         long locationId = cursor.getLong(BlotterColumns.location_id.ordinal());
         String location = "";
         if (locationId > 0) {
@@ -61,11 +62,10 @@ public class TransactionsListAdapter extends BlotterListAdapter {
         if (toAccountId > 0) {
             v.topView.setText(R.string.transfer);
             if (fromAmount > 0) {
-                note = toAccount+" \u00BB";
+                transfer = toAccount+" \u00BB";
             } else {
-                note = "\u00AB "+toAccount;
+                transfer = "\u00AB "+toAccount;
             }
-            u.setTransferTextColor(v.centerView);
         } else {
             String title = cursor.getString(BlotterColumns.from_account_title.ordinal());
             v.topView.setText(title);
@@ -77,7 +77,7 @@ public class TransactionsListAdapter extends BlotterListAdapter {
         if (categoryId != 0) {
             category = cursor.getString(BlotterColumns.category_title.ordinal());
         }
-        CharSequence text = transactionTitleUtils.generateTransactionTitle(toAccountId > 0, payee, note, location, categoryId, category);
+        CharSequence text = transactionTitleUtils.generateTransactionTitle(toAccountId > 0, payee, transfer, note, location, categoryId, category);
         v.centerView.setText(text);
         sb.setLength(0);
 
