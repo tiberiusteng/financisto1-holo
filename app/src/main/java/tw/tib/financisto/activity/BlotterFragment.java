@@ -99,6 +99,8 @@ public class BlotterFragment extends AbstractListFragment implements BlotterOper
 
     protected boolean isAccountBlotter = false;
     protected boolean showAllBlotterButtons = true;
+    protected boolean isQuickMenuEnabledForTransaction = false;
+    protected boolean isQuickMenuShowAdditionalTransactionStatus = false;
 
     protected OnBackPressedCallback backCallback;
 
@@ -168,6 +170,9 @@ public class BlotterFragment extends AbstractListFragment implements BlotterOper
         getActivity().getOnBackPressedDispatcher().addCallback(backCallback);
 
         showAllBlotterButtons = !MyPreferences.isCollapseBlotterButtons(getContext());
+
+        isQuickMenuEnabledForTransaction = MyPreferences.isQuickMenuEnabledForTransaction(getContext());
+        isQuickMenuShowAdditionalTransactionStatus = MyPreferences.isQuickMenuShowAdditionalTransactionStatus(getContext());
 
         if (showAllBlotterButtons) {
             bTransfer = view.findViewById(R.id.bTransfer);
@@ -435,6 +440,11 @@ public class BlotterFragment extends AbstractListFragment implements BlotterOper
         transactionActionGrid.addQuickAction(new MyQuickAction(getContext(), R.drawable.ic_action_info, R.string.info));
         transactionActionGrid.addQuickAction(new MyQuickAction(getContext(), R.drawable.ic_action_edit, R.string.edit));
         transactionActionGrid.addQuickAction(new MyQuickAction(getContext(), R.drawable.ic_action_trash, R.string.delete));
+        if (isQuickMenuShowAdditionalTransactionStatus) {
+            transactionActionGrid.addQuickAction(new MyQuickAction(getContext(), R.drawable.ic_action_flash, R.string.transaction_status_restored));
+            transactionActionGrid.addQuickAction(new MyQuickAction(getContext(), R.drawable.ic_action_info, R.string.transaction_status_pending));
+            transactionActionGrid.addQuickAction(new MyQuickAction(getContext(), R.drawable.ic_action_gear, R.string.transaction_status_unreconciled));
+        }
         transactionActionGrid.addQuickAction(new MyQuickAction(getContext(), R.drawable.ic_action_copy, R.string.duplicate));
         transactionActionGrid.addQuickAction(new MyQuickAction(getContext(), R.drawable.ic_action_tick, R.string.clear));
         transactionActionGrid.addQuickAction(new MyQuickAction(getContext(), R.drawable.ic_action_double_tick, R.string.reconcile));
@@ -443,25 +453,58 @@ public class BlotterFragment extends AbstractListFragment implements BlotterOper
 
     private QuickActionWidget.OnQuickActionClickListener transactionActionListener = new QuickActionWidget.OnQuickActionClickListener() {
         public void onQuickActionClicked(QuickActionWidget widget, int position) {
-            switch (position) {
-                case 0:
-                    showTransactionInfo(selectedId);
-                    break;
-                case 1:
-                    editTransaction(selectedId);
-                    break;
-                case 2:
-                    deleteTransaction(selectedId);
-                    break;
-                case 3:
-                    duplicateTransaction(selectedId, 1);
-                    break;
-                case 4:
-                    clearTransaction(selectedId);
-                    break;
-                case 5:
-                    reconcileTransaction(selectedId);
-                    break;
+            if (isQuickMenuShowAdditionalTransactionStatus) {
+                switch (position) {
+                    case 0:
+                        showTransactionInfo(selectedId);
+                        break;
+                    case 1:
+                        editTransaction(selectedId);
+                        break;
+                    case 2:
+                        deleteTransaction(selectedId);
+                        break;
+                    case 3:
+                        restoreTransaction(selectedId);
+                        break;
+                    case 4:
+                        pendingTransaction(selectedId);
+                        break;
+                    case 5:
+                        unreconcileTransaction(selectedId);
+                        break;
+                    case 6:
+                        duplicateTransaction(selectedId, 1);
+                        break;
+                    case 7:
+                        clearTransaction(selectedId);
+                        break;
+                    case 8:
+                        reconcileTransaction(selectedId);
+                        break;
+                }
+            }
+            else {
+                switch (position) {
+                    case 0:
+                        showTransactionInfo(selectedId);
+                        break;
+                    case 1:
+                        editTransaction(selectedId);
+                        break;
+                    case 2:
+                        deleteTransaction(selectedId);
+                        break;
+                    case 3:
+                        duplicateTransaction(selectedId, 1);
+                        break;
+                    case 4:
+                        clearTransaction(selectedId);
+                        break;
+                    case 5:
+                        reconcileTransaction(selectedId);
+                        break;
+                }
             }
         }
 
@@ -496,6 +539,21 @@ public class BlotterFragment extends AbstractListFragment implements BlotterOper
                 break;
         }
     };
+
+    private void restoreTransaction(long selectedId) {
+        new BlotterOperations(getContext(), this, db, selectedId).restoreTransaction();
+        recreateCursor();
+    }
+
+    private void pendingTransaction(long selectedId) {
+        new BlotterOperations(getContext(), this, db, selectedId).pendingTransaction();
+        recreateCursor();
+    }
+
+    private void unreconcileTransaction(long selectedId) {
+        new BlotterOperations(getContext(), this, db, selectedId).unreconcileTransaction();
+        recreateCursor();
+    }
 
     private void clearTransaction(long selectedId) {
         new BlotterOperations(getContext(), this, db, selectedId).clearTransaction();
@@ -726,7 +784,7 @@ public class BlotterFragment extends AbstractListFragment implements BlotterOper
 
     @Override
     protected void onItemClick(View v, int position, long id) {
-        if (MyPreferences.isQuickMenuEnabledForTransaction(getContext())) {
+        if (isQuickMenuEnabledForTransaction) {
             selectedId = id;
             transactionActionGrid.show(v);
         } else {

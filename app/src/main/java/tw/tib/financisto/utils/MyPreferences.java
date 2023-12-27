@@ -571,6 +571,10 @@ public class MyPreferences {
 		return getBoolean(context, "quick_menu_transaction_enabled", true);
 	}
 
+	public static boolean isQuickMenuShowAdditionalTransactionStatus(Context context) {
+		return getBoolean(context, "quick_menu_transaction_additional_status", false);
+	}
+
 	public static String getDropboxAuthToken(Context context) {
 		SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(context);
 		return sharedPreferences.getString(DROPBOX_AUTH_TOKEN, null);

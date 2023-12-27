@@ -100,6 +100,18 @@ public class BlotterOperations {
         db.duplicateTransactionAsTemplate(targetTransaction.id);
     }
 
+    public void restoreTransaction() {
+        db.updateTransactionStatus(targetTransaction.id, TransactionStatus.RS);
+    }
+
+    public void pendingTransaction() {
+        db.updateTransactionStatus(targetTransaction.id, TransactionStatus.PN);
+    }
+
+    public void unreconcileTransaction() {
+        db.updateTransactionStatus(targetTransaction.id, TransactionStatus.UR);
+    }
+
     public void clearTransaction() {
         db.updateTransactionStatus(targetTransaction.id, TransactionStatus.CL);
     }

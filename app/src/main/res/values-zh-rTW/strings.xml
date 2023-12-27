@@ -473,9 +473,9 @@
   <string name="notification_led">LED</string>
   <string name="transaction_status">狀態</string>
   <string name="transaction_status_pending">擱置</string>
-  <string name="transaction_status_unreconciled">未出(入)帳</string>
-  <string name="transaction_status_cleared">已出(入)帳</string>
-  <string name="transaction_status_reconciled">已結清/已對帳</string>
+  <string name="transaction_status_unreconciled">未對帳</string>
+  <string name="transaction_status_cleared">已清算</string>
+  <string name="transaction_status_reconciled">已對帳</string>
   <string name="scheduled">(定期)</string>
   <string name="expired">(過期)</string>
   <string name="pending">(擱置)</string>
@@ -536,7 +536,7 @@
   <string name="apply_mass_op" formatted="false">以 \'%s\' 處理 %d 筆交易?</string>
   <string name="apply_mass_op_zero_count">未選擇任何交易...</string>
   <string name="entities">實體</string>
-  <string name="transaction_status_restored">復原</string>
+  <string name="transaction_status_restored">修復</string>
   <string name="scheduled_transactions_restored">已復原定期交易</string>
   <string name="scheduled_transactions_have_been_restored">已復原 %d 筆錯過執行的定期交易。請用大量操作結帳或刪除這些交易。</string>
   <string name="restore_missed_scheduled_transactions">復原錯過的定期交易</string>
@@ -636,6 +636,8 @@
   <string name="quick_menu_account_enabled_summary">在帳戶畫面啟用單按選單</string>
   <string name="quick_menu_transaction_enabled">明細畫面快速選單</string>
   <string name="quick_menu_transaction_enabled_summary">在明細畫面啟用單按選單</string>
+  <string name="quick_menu_transaction_additional_status">額外交易狀態</string>
+  <string name="quick_menu_transaction_additional_status_summary">明細畫面快速選單顯示額外交易狀態</string>
   <string name="dropbox">Dropbox</string>
   <string name="dropbox_authorize">授權</string>
   <string name="dropbox_authorize_summary">允許 Financisto 上傳檔案到您的 Dropbox</string>

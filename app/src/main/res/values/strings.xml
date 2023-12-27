@@ -740,6 +740,8 @@
     <string name="quick_menu_account_enabled_summary">Enable one-tap menu in the Accounts</string>
     <string name="quick_menu_transaction_enabled">Blotter quick-menu</string>
     <string name="quick_menu_transaction_enabled_summary">Enable one-tap menu in the Blotter</string>
+    <string name="quick_menu_transaction_additional_status">Additional status</string>
+    <string name="quick_menu_transaction_additional_status_summary">Show additional transaction status in quick menu</string>
 
     <string name="dropbox">Dropbox</string>
     <string name="dropbox_authorize">Authorize</string>
