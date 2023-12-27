@@ -31,7 +31,7 @@ public abstract class EnumUtils {
 	
 	public static ArrayAdapter<String> createDropDownAdapter(Context context, LocalizableEnum[] values) {
 		String[] items = getLocalizedValues(context, values);
-		return new ArrayAdapter<>(context, android.R.layout.simple_spinner_dropdown_item, items);
+		return new ArrayAdapter<>(context, android.R.layout.simple_list_item_activated_1, items);
 	}
 	
 	public static <T extends EntityEnum> EntityEnumAdapter<T> createEntityEnumAdapter(Context context, T[] values) {

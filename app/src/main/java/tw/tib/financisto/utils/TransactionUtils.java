@@ -31,7 +31,7 @@ import tw.tib.financisto.model.Project;
 public class TransactionUtils {
 
     public static ListAdapter createAccountAdapter(Context context, Cursor accountCursor) {
-        return new SimpleCursorAdapter(context, android.R.layout.simple_spinner_dropdown_item, accountCursor,
+        return new SimpleCursorAdapter(context, android.R.layout.simple_list_item_activated_1, accountCursor,
                 new String[]{"e_"+AccountColumns.TITLE}, new int[]{android.R.id.text1});
     }
 
@@ -41,12 +41,12 @@ public class TransactionUtils {
     }
 
     public static SimpleCursorAdapter createCurrencyAdapter(Context context, Cursor currencyCursor) {
-        return new SimpleCursorAdapter(context, android.R.layout.simple_spinner_dropdown_item, currencyCursor,
+        return new SimpleCursorAdapter(context, android.R.layout.simple_list_item_activated_1, currencyCursor,
                 new String[]{"e_name"}, new int[]{android.R.id.text1});
     }
 
     public static ListAdapter createCategoryAdapter(DatabaseAdapter db, Context context, Cursor categoryCursor) {
-        return new CategoryListAdapter(db, context, android.R.layout.simple_spinner_dropdown_item, categoryCursor);
+        return new CategoryListAdapter(db, context, android.R.layout.simple_list_item_activated_1, categoryCursor);
     }
 
     public static ListAdapter createCategoryMultiChoiceAdapter(DatabaseAdapter db, Context context, Cursor categoryCursor) {
@@ -54,23 +54,23 @@ public class TransactionUtils {
     }
 
     public static ListAdapter createProjectAdapter(Context context, List<Project> projects) {
-        return new MyEntityAdapter<>(context, android.R.layout.simple_spinner_dropdown_item, android.R.id.text1, projects);
+        return new MyEntityAdapter<>(context, android.R.layout.simple_list_item_activated_1, android.R.id.text1, projects);
     }
 
     public static ListAdapter createLocationAdapter(Context context, List<MyLocation> locations) {
-        return new MyEntityAdapter<>(context, android.R.layout.simple_spinner_dropdown_item, android.R.id.text1, locations);
+        return new MyEntityAdapter<>(context, android.R.layout.simple_list_item_activated_1, android.R.id.text1, locations);
     }
 
     public static ListAdapter createPayeeAdapter(Context context, List<Payee> payees) {
-        return new MyEntityAdapter<>(context, android.R.layout.simple_spinner_dropdown_item, android.R.id.text1, payees);
+        return new MyEntityAdapter<>(context, android.R.layout.simple_list_item_activated_1, android.R.id.text1, payees);
     }
 
     public static ListAdapter createCurrencyAdapter(Context context, List<Currency> currencies) {
-        return new MyEntityAdapter<>(context, android.R.layout.simple_spinner_dropdown_item, android.R.id.text1, currencies);
+        return new MyEntityAdapter<>(context, android.R.layout.simple_list_item_activated_1, android.R.id.text1, currencies);
     }
 
     public static ListAdapter createLocationAdapter(Context context, Cursor cursor) {
-        return new SimpleCursorAdapter(context, android.R.layout.simple_spinner_dropdown_item, cursor,
+        return new SimpleCursorAdapter(context, android.R.layout.simple_list_item_activated_1, cursor,
                 new String[]{"e_name"}, new int[]{android.R.id.text1});
     }
 
