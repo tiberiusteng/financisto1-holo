@@ -19,6 +19,7 @@ import static android.app.PendingIntent.FLAG_CANCEL_CURRENT;
 import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
+import android.graphics.BitmapFactory;
 
 import androidx.annotation.NonNull;
 import androidx.core.app.ActivityCompat;
@@ -163,6 +164,7 @@ public class FinancistoService extends JobIntentService {
         var builder = new NotificationCompat.Builder(this, NotificationChannelService.TRANSACTIONS_CHANNEL)
                 .setContentIntent(contentIntent)
                 .setSmallIcon(t.getNotificationIcon())
+                .setLargeIcon(BitmapFactory.decodeResource(getResources(), R.drawable.icon))
                 .setWhen(System.currentTimeMillis())
                 .setTicker(tickerText)
                 .setContentText(text)

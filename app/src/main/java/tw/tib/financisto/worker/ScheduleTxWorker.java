@@ -8,6 +8,7 @@ import android.app.PendingIntent;
 import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
+import android.graphics.BitmapFactory;
 import android.util.Log;
 
 import androidx.annotation.NonNull;
@@ -18,6 +19,7 @@ import androidx.work.Data;
 import androidx.work.Worker;
 import androidx.work.WorkerParameters;
 
+import tw.tib.financisto.R;
 import tw.tib.financisto.activity.AbstractTransactionActivity;
 import tw.tib.financisto.activity.AccountWidget;
 import tw.tib.financisto.db.DatabaseAdapter;
@@ -98,6 +100,7 @@ public class ScheduleTxWorker extends Worker {
         var builder = new NotificationCompat.Builder(context, NotificationChannelService.TRANSACTIONS_CHANNEL)
                 .setContentIntent(contentIntent)
                 .setSmallIcon(t.getNotificationIcon())
+                .setLargeIcon(BitmapFactory.decodeResource(context.getResources(), R.drawable.icon))
                 .setWhen(System.currentTimeMillis())
                 .setTicker(tickerText)
                 .setContentText(text)
