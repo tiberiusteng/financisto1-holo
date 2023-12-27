@@ -182,6 +182,7 @@
     <string name="period_yesterday">Yesterday</string>
     <string name="period_this_week">This week</string>
     <string name="period_this_month">This month</string>
+    <string name="period_this_year">This year</string>
     <string name="period_last_week">Last week</string>
     <string name="period_last_month">Last month</string>
     <string name="currency_name">Name</string>
