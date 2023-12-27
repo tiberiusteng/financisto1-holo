@@ -21,7 +21,7 @@
 	<color name="future_color">@color/holo_orange_dark</color>
 	<color name="split_color">@color/holo_blue_dark</color>
 	<color name="restored_transaction_color">#df0024</color>
-	<color name="pending_transaction_color">#303030</color>
+	<color name="pending_transaction_color">#eda00d</color>
 	<color name="unreconciled_transaction_color">#737373</color>
 	<color name="reconciled_transaction_color">#006a25</color>
 	<color name="cleared_transaction_color">#79c471</color>
