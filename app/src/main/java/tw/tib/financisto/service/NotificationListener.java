@@ -69,8 +69,9 @@ public class NotificationListener extends NotificationListenerService {
         ParsedNotification notification = extractNotification(sbn);
 
         if (notification != null) {
+            ParsedNotification existing = null;
             if (notification.title != null && notification.body != null) {
-                notificationCache.cache.put(notification.key, notification);
+                existing = notificationCache.cache.put(notification.key, notification);
             }
 
             Context context = getApplicationContext();
@@ -80,7 +81,7 @@ public class NotificationListener extends NotificationListenerService {
             Log.d(TAG, "title=\"" + title + "\", body=\"" + body + "\"");
             Log.d(TAG, sbn.getNotification().extras.toString());
 
-            if (processTemplate) {
+            if (processTemplate && existing == null) {
                 final DatabaseAdapter db = new DatabaseAdapter(context);
                 Set<String> smsNumbers = db.findAllSmsTemplateNumbers();
 
