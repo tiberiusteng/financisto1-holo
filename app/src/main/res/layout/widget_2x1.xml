@@ -10,22 +10,33 @@
       Denis Solonenko - initial API and implementation
 -->
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-	android:layout_width="fill_parent" android:layout_height="?android:attr/listPreferredItemHeight"
+	android:layout_width="fill_parent" android:layout_height="wrap_content"
+	android:padding="10dp"
 	android:background="@drawable/widget_background_gray" android:id="@+id/layout">
 
 	<ImageView android:id="@+id/account_icon"
-		android:layout_width="wrap_content" android:layout_height="fill_parent"
+		android:layout_width="wrap_content"
+		android:layout_height="fill_parent"
 		android:src="@drawable/account_type_cash" android:layout_marginRight="3dp" />
 	<!--  android:layout_toRightOf="@+id/financisto_icon" -->
 
-	<TextView android:id="@+id/line1" android:layout_width="wrap_content"
-		android:layout_height="wrap_content" android:singleLine="true" android:layout_alignParentTop="true"
-		android:textColor="#ffffff" android:textStyle="bold"
-		android:ellipsize="end" android:gravity="right" android:textSize="14sp" android:layout_marginTop="3dp" android:layout_toRightOf="@+id/account_icon" android:layout_alignParentRight="true"/>
+	<TextView android:id="@+id/line1"
+		android:layout_width="wrap_content"
+		android:layout_height="wrap_content"
+		android:layout_alignParentTop="true"
+		android:layout_alignParentRight="true"
+		android:layout_toRightOf="@+id/account_icon"
+		android:singleLine="true"
+		style="@android:style/TextAppearance.Small.Inverse" android:textColor="@android:color/white"
+		android:ellipsize="end" android:gravity="right" />
 
 	<TextView android:layout_width="wrap_content"
 		android:layout_height="wrap_content" android:id="@+id/note"
-		android:layout_toRightOf="@+id/account_icon" android:layout_alignParentBottom="true"
+		android:layout_below="@id/line1"
+		android:layout_toRightOf="@+id/account_icon"
+		android:layout_alignParentBottom="true"
+		android:layout_alignParentRight="true"
 		android:gravity="right"
-		android:layout_below="@id/line1" android:textSize="12sp" android:layout_alignParentRight="true"/>
+		style="@android:style/TextAppearance.Small.Inverse"
+		android:textColor="@color/holo_gray_bright" />
 </RelativeLayout>
