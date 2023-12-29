@@ -529,8 +529,8 @@
   <string name="card_issuer_unionpay">UnionPay</string>
   <string name="account_type_paypal">PayPal</string>
   <string name="mass_operations_use_filter">以過濾條件搜尋交易</string>
-  <string name="mass_operations_clear_all">全部入帳</string>
-  <string name="mass_operations_reconcile">全部結清</string>
+  <string name="mass_operations_clear_all">全部清算</string>
+  <string name="mass_operations_reconcile">全部對帳</string>
   <string name="mass_operations_delete">全部刪除</string>
   <string name="proceed">繼續</string>
   <string name="apply_mass_op" formatted="false">以 \'%s\' 處理 %d 筆交易?</string>

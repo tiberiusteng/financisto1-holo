@@ -14,7 +14,9 @@
 	xmlns:app="http://schemas.android.com/apk/res-auto"
 	android:layout_width="fill_parent"
 	android:layout_height="?android:attr/listPreferredItemHeight"
-	android:paddingStart="0dip" android:paddingEnd="12dip">
+	android:paddingStart="0dip" android:paddingEnd="12dip"
+	android:background="?android:attr/activatedBackgroundIndicator"
+	>
 	<ImageView android:id="@+id/icon"
 		android:layout_width="40dp" android:layout_height="wrap_content"
 		android:layout_marginTop="8dip"
@@ -33,9 +35,8 @@
 		app:layout_constraintStart_toEndOf="@id/icon"
 		app:layout_constraintTop_toTopOf="parent"
 		app:layout_constraintBottom_toBottomOf="parent"
-		android:textAppearance="?android:attr/textAppearanceLarge"
+		android:textAppearance="?android:attr/textAppearanceListItem"
 		android:singleLine="true" android:gravity="center_vertical"
 		android:layout_marginStart="11dip"
-		android:ellipsize="marquee" android:text="line1"
-		style="@style/EntityEnumListItemText" /> <!--  android:layout_above="@id/label" -->
+		android:ellipsize="marquee" android:text="line1" /> <!--  android:layout_above="@id/label" -->
 </androidx.constraintlayout.widget.ConstraintLayout>

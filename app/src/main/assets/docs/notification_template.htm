@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html>
+<head>
+<style type="text/css">
+img {
+	width: 95%;
+	margin: auto;
+	display: block;
+}
+</style>
+</head>
+<body>
+
+<p>
+If you want to choose account from notification content, you need to fill the 
+"Card Number" field. It's typically the last 4 digits of card number, but your s
+ituation may different. Fill the value that will appear in the message.
+</p>
+
+<p>
+If there are multiple cards belong to the same account, just fill every one of it 
+separate by comma or space.
+</p>
+
+<img src="account.png" />
+
+<p>
+There's a new button on top-right of SMS/Notification tmeplate list screen that
+displays current notifications visible to the app. Make a transaction / wait for 
+next time you make a purchase, and then open this screen. The colored line is 
+the notification title, or Sender, as seen by the app. Click one of it will copy
+its sender and content to clipboard so you can paste to template screen and edit.
+</p>
+
+<img src="notification_list.png" />
+
+<p>
+Now we can fill in the template. The color part is sender, the body part don't 
+need to contain entire message, only need to cover relevant parts. 
+Click <b>(?)</b> to see available placeholders that will extract info from the 
+message, or here's the list:
+</p>
+
+<ul>
+	<li><b>{{a}}</b> - the code part that will used to lookup account</li>
+	<li><b>{{p}}</b> - the amount/price numeric part</li>
+	<li><b>{{t}}</b> - text part to extract as transaction note, this one is "non-greedy", i.e. it will try to match as short as possible</li>
+	<li><b>{{u}}</b> - text part to extract as transaction note, "greedy" (as long as possible)</li>
+	<li><b>{{*}}</b> - anything irrevalent, i.e. if you want to skip a part of message that's dynamic but unused</li>
+</ul>
+
+<img src="template.png" />
+
+<p>
+After you make the template, you can paste the original notification body to see 
+how it extracts the data.
+</p>
+
+<img src="template_test.png" />
+
+<p>
+Save it. Next time you received a notification, hopefully it'll trigger 
+the template and create a transaction for you!
+<p>
+
+<p>
+(And yes, it's not limited to SMS or bank applications. You can create "commands" 
+that you can send to yourself via instant message apps like this ...)
+</p>
+
+<img src="received_notification.png" />
+
+</body>
+</html>
