@@ -96,7 +96,7 @@ public class AccountActivity extends AbstractActivity {
 
 		sortOrderText = new EditText(this);
 		sortOrderText.setInputType(InputType.TYPE_CLASS_NUMBER);
-		sortOrderText.setFilters(new InputFilter[]{new InputFilter.LengthFilter(3)});
+		sortOrderText.setFilters(new InputFilter[]{new InputFilter.LengthFilter(6)});
 		sortOrderText.setSingleLine();
 
 		closingDayText = new EditText(this);
