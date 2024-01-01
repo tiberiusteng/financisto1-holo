@@ -37,7 +37,7 @@ public class DateRecurrenceIterator {
 
 	public static DateRecurrenceIterator create(RRule rrule, Date nowDate, Date startDate) throws ParseException {
         RecurrenceIterator ri = RecurrenceIteratorFactory.createRecurrenceIterator(rrule,
-                dateToDateValue(startDate), TimeUtils.utcTimezone());
+                dateToDateValue(startDate), Calendar.getInstance().getTimeZone());
         Date date = null;
         boolean isStartDateInDaylight = Calendar.getInstance().getTimeZone().inDaylightTime(startDate);
         while (ri.hasNext() && (date = dateValueToDate(ri.next(), isStartDateInDaylight)).before(nowDate));

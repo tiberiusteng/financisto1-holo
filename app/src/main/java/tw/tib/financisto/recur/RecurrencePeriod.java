@@ -74,24 +74,25 @@ public class RecurrencePeriod {
 	}
 
     static Date dateValueToDate(DateValue dvUtc, boolean isStartDateInDaylight) {
-        GregorianCalendar c = new GregorianCalendar(TimeUtils.utcTimezone());
-        c.clear();
-        if (dvUtc instanceof TimeValue) {
-            TimeValue tvUtc = (TimeValue) dvUtc;
-            c.set(dvUtc.year(),
-                    dvUtc.month() - 1,  // java.util's dates are zero-indexed
-                    dvUtc.day(),
-                    tvUtc.hour(),
-                    tvUtc.minute(),
-                    tvUtc.second());
+        GregorianCalendar c = new GregorianCalendar();
+		DateValue dv = TimeUtils.fromUtc(dvUtc, c.getTimeZone());
+        if (dv instanceof TimeValue) {
+            TimeValue tv = (TimeValue) dv;
+            c.set(dv.year(),
+                    dv.month() - 1,  // java.util's dates are zero-indexed
+                    dv.day(),
+                    tv.hour(),
+                    tv.minute(),
+                    tv.second());
         } else {
-            c.set(dvUtc.year(),
-                    dvUtc.month() - 1,  // java.util's dates are zero-indexed
-                    dvUtc.day(),
+            c.set(dv.year(),
+                    dv.month() - 1,  // java.util's dates are zero-indexed
+                    dv.day(),
                     0,
                     0,
                     0);
         }
+		c.set(Calendar.MILLISECOND, 0);
 		Date result = c.getTime();
 		TimeZone timeZone = Calendar.getInstance().getTimeZone();
 		boolean isResultInDaylight = timeZone.inDaylightTime(result);
@@ -105,7 +106,7 @@ public class RecurrencePeriod {
     }
 
     static DateValue dateToDateValue(Date date) {
-        GregorianCalendar c = new GregorianCalendar(TimeUtils.utcTimezone());
+        GregorianCalendar c = new GregorianCalendar();
         c.setTime(date);
         int h = c.get(Calendar.HOUR_OF_DAY),
                 m = c.get(Calendar.MINUTE),
