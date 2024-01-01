@@ -114,6 +114,11 @@ public class BlotterFragment extends AbstractListFragment implements BlotterOper
         super(R.layout.blotter);
     }
 
+    public BlotterFragment(boolean saveFilter) {
+        super(R.layout.blotter);
+        this.saveFilter = saveFilter;
+    }
+
     protected void calculateTotals() {
         if (calculationTask != null) {
             calculationTask.stop();
@@ -209,7 +214,6 @@ public class BlotterFragment extends AbstractListFragment implements BlotterOper
         Bundle args = getArguments();
         if (args != null) {
             blotterFilter = WhereFilter.fromBundle(args);
-            saveFilter = args.getBoolean(SAVE_FILTER, false);
             isAccountBlotter = args.getBoolean(BlotterFilterActivity.IS_ACCOUNT_FILTER, false);
         }
         if (savedInstanceState != null) {

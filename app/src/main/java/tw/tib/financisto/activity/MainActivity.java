@@ -68,7 +68,7 @@ public class MainActivity extends AppCompatActivity {
 
         fragments = new Fragment[]{
                 new AccountListFragment(),
-                new BlotterFragment(),
+                new BlotterFragment(true),
                 new BudgetListFragment(),
                 new ReportsListFragment(),
                 new MenuListFragment_()
