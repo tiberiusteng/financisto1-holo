@@ -12,7 +12,7 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
 	xmlns:tools="http://schemas.android.com/tools"
 	package="tw.tib.financisto"
-	android:versionName="2023-12-29" android:versionCode="123"
+	android:versionName="2024-01-03" android:versionCode="125"
     android:installLocation="internalOnly">
 
     <supports-screens
@@ -132,7 +132,7 @@
 
 		<activity android:icon="@drawable/icon_transaction" android:exported="true"
 			android:name=".activity.TransactionActivity" android:label="@string/transaction"
-			android:configChanges="screenSize|smallestScreenSize|orientation|screenLayout|keyboardHidden" 
+			android:configChanges="screenSize|smallestScreenSize|orientation|screenLayout|keyboardHidden"
 			android:windowSoftInputMode="stateAlwaysHidden|adjustResize"
 			android:taskAffinity=".TransactionActivity">
 			<intent-filter>
