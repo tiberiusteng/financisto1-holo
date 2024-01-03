@@ -74,14 +74,9 @@ public class BudgetListFragment extends AbstractListFragment {
             filter.put(new DateTimeCriteria(PeriodType.THIS_MONTH));
         }
 
-        db = new DatabaseAdapter(getActivity());
-        db.open();
-
-        budgets = db.getAllBudgets(filter);
         handler = new Handler();
 
         applyFilter();
-        calculateTotals();
     }
 
     private void showTotals() {
@@ -124,23 +119,14 @@ public class BudgetListFragment extends AbstractListFragment {
 
     @Override
     protected ListAdapter createAdapter(Cursor cursor) {
+        calculateTotals();
         return new BudgetListAdapter(getContext(), budgets);
     }
 
     @Override
     protected Cursor createCursor() {
-        return null;
-    }
-
-    @Override
-    public void recreateCursor() {
         budgets = db.getAllBudgets(filter);
-        updateAdapter();
-        calculateTotals();
-    }
-
-    private void updateAdapter() {
-        ((BudgetListAdapter) adapter).setBudgets(budgets);
+        return null;
     }
 
     private BudgetListFragment.BudgetTotalsCalculationTask totalCalculationTask;
