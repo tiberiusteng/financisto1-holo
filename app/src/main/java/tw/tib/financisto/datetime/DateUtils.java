@@ -16,7 +16,6 @@ import java.util.Calendar;
 import java.util.Date;
 
 import android.content.Context;
-import android.provider.Settings;
 
 public class DateUtils {
 
@@ -84,7 +83,7 @@ public class DateUtils {
 	}
 
 	public static boolean is24HourFormat(Context context) {
-		return "24".equals(Settings.System.getString(context.getContentResolver(), Settings.System.TIME_12_24));
+		return android.text.format.DateFormat.is24HourFormat(context);
 	}
 
 	public static void zeroSeconds(Calendar dateTime) {
