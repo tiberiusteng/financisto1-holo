@@ -81,7 +81,7 @@ public class NotificationListener extends NotificationListenerService {
             Log.d(TAG, "title=\"" + title + "\", body=\"" + body + "\"");
             Log.d(TAG, sbn.getNotification().extras.toString());
 
-            if (processTemplate && existing == null) {
+            if (processTemplate && (existing == null || !body.equals(existing.body))) {
                 final DatabaseAdapter db = new DatabaseAdapter(context);
                 Set<String> smsNumbers = db.findAllSmsTemplateNumbers();
 

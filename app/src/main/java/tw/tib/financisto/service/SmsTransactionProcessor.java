@@ -65,7 +65,7 @@ public class SmsTransactionProcessor {
     /**
      * from <a href="https://stackoverflow.com/a/41697399/365675>SO</a>
      */
-    static BigDecimal toBigDecimal(final String value) {
+    static public BigDecimal toBigDecimal(final String value) {
         if (value != null) {
             final String EMPTY = "";
             final char COMMA = ',';
@@ -99,9 +99,11 @@ public class SmsTransactionProcessor {
                     return new BigDecimal(parsedValue);
             }
             //handle '45,3' and '4,550,000' case, only commas are in the given String
+            //assume decimal part only have at most 2 digits
             if (lastPointPosition == -1 && lastCommaPosition > -1) {
                 int firstCommaPosition = parsedValue.indexOf(COMMA);
-                if (firstCommaPosition != lastCommaPosition)
+                if (firstCommaPosition != lastCommaPosition ||
+                    lastCommaPosition < (parsedValue.length() - 3))
                     return new BigDecimal(parsedValue.replace(COMMA_AS_STRING, EMPTY));
                 else
                     return new BigDecimal(parsedValue.replace(COMMA, POINT));

@@ -31,6 +31,7 @@ import tw.tib.financisto.utils.Utils;
 import java.util.ArrayList;
 
 public class SmsTemplateActivity extends AbstractActivity {
+    private static final String TAG = "SmsTemplateActivity";
 
     private DatabaseAdapter db;
 
@@ -256,6 +257,11 @@ public class SmsTemplateActivity extends AbstractActivity {
                     sb.append(p.name()); sb.append(": ");
                     if (matches[p.ordinal()] == null) {
                         sb.append(getString(R.string.tpl_parse_not_found));
+                    }
+                    else if (p == SmsTransactionProcessor.Placeholder.PRICE) {
+                        // price will be converted to big decimal
+                        // show converted result instead of raw input
+                        sb.append(SmsTransactionProcessor.toBigDecimal(matches[p.ordinal()]));
                     }
                     else {
                         sb.append(matches[p.ordinal()]);
