@@ -114,7 +114,7 @@ public class NotificationListener extends NotificationListenerService {
                 }
                 sb.append(bigText);
             }
-            result.body = sb.toString();
+            result.body = result.title + " " + sb;
         }
         return result;
     }
