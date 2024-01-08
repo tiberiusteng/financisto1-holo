@@ -1035,7 +1035,7 @@ public class DatabaseAdapter extends MyEntityManager {
                         DatabaseHelper.SMS_TEMPLATES_TABLE,
                         DatabaseHelper.SmsTemplateColumns.title,
                         DatabaseHelper.SmsTemplateColumns.sort_order,
-                        DatabaseHelper.SmsTemplateColumns.template), new String[]{"%s" + smsNumber + "%s"})) {
+                        DatabaseHelper.SmsTemplateColumns.template), new String[]{"%" + smsNumber + "%"})) {
             List<SmsTemplate> res = new ArrayList<>(c.getCount());
             while (c.moveToNext()) {
                 SmsTemplate a = SmsTemplate.fromCursor(c);
