@@ -58,6 +58,7 @@ import java.util.*;
 public class DatabaseAdapter extends MyEntityManager {
 
     private static long CURRENT_TIMESTAMP = -1;
+    public static long KEEP_TIME_IN_DAY = -2;
 
     private boolean updateAccountBalance = true;
 
@@ -226,6 +227,10 @@ public class DatabaseAdapter extends MyEntityManager {
         return duplicateTransaction(id, 0, 1, CURRENT_TIMESTAMP);
     }
 
+    public long duplicateTransactionKeepTimeInDay(long id) {
+        return duplicateTransaction(id, 0, 1, KEEP_TIME_IN_DAY);
+    }
+
     public long duplicateTransactionWithTimestamp(long id, long timestamp) {
         return duplicateTransaction(id, 0, 1, timestamp);
     }
@@ -260,7 +265,21 @@ public class DatabaseAdapter extends MyEntityManager {
             updateTransaction(transaction);
             transaction.id = -1;
             transaction.isTemplate = isTemplate;
-            transaction.dateTime = now;
+
+            if (timestamp == KEEP_TIME_IN_DAY) {
+                Calendar calendar = Calendar.getInstance();
+                Calendar source = Calendar.getInstance();
+                source.setTimeInMillis(transaction.dateTime);
+                calendar.set(Calendar.HOUR_OF_DAY, source.get(Calendar.HOUR_OF_DAY));
+                calendar.set(Calendar.MINUTE, source.get(Calendar.MINUTE));
+                calendar.set(Calendar.SECOND, source.get(Calendar.SECOND));
+                calendar.set(Calendar.MILLISECOND, source.get(Calendar.MILLISECOND));
+                transaction.dateTime = calendar.getTimeInMillis();
+            }
+            else {
+                transaction.dateTime = now;
+            }
+
             transaction.remoteKey = null;
             if (MyPreferences.isResetCopiedTransactionStatus(context)) {
                 transaction.status = TransactionStatus.UR;

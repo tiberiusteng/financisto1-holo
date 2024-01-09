@@ -294,6 +294,7 @@
     <string name="success">Success! %s</string>
     <string name="fail">Fail…</string>
     <string name="duplicate">Duplicate</string>
+    <string name="duplicate_keep_time">Duplicate keep time</string>
     <string name="select_from_account">Please select from account…</string>
     <string name="select_to_account">Please select to account…</string>
     <string name="update_balance">Update balance</string>
@@ -742,6 +743,8 @@
     <string name="quick_menu_transaction_enabled_summary">Enable one-tap menu in the Blotter</string>
     <string name="quick_menu_transaction_additional_status">Additional status</string>
     <string name="quick_menu_transaction_additional_status_summary">Show additional transaction status in quick menu</string>
+    <string name="quick_menu_transaction_duplicate_keep_time">Show duplicate keeping time of day</string>
+    <string name="quick_menu_transaction_duplicate_keep_time_summary">Show "duplicate keeping time of the day" button in quick menu</string>
 
     <string name="dropbox">Dropbox</string>
     <string name="dropbox_authorize">Authorize</string>

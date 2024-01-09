@@ -8,7 +8,6 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.database.Cursor;
-import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
@@ -101,6 +100,7 @@ public class BlotterFragment extends AbstractListFragment implements BlotterOper
     protected boolean showAllBlotterButtons = true;
     protected boolean isQuickMenuEnabledForTransaction = false;
     protected boolean isQuickMenuShowAdditionalTransactionStatus = false;
+    protected boolean isQuickMenuShowDuplicateKeepTime = false;
 
     protected OnBackPressedCallback backCallback;
 
@@ -178,6 +178,7 @@ public class BlotterFragment extends AbstractListFragment implements BlotterOper
 
         isQuickMenuEnabledForTransaction = MyPreferences.isQuickMenuEnabledForTransaction(getContext());
         isQuickMenuShowAdditionalTransactionStatus = MyPreferences.isQuickMenuShowAdditionalTransactionStatus(getContext());
+        isQuickMenuShowDuplicateKeepTime = MyPreferences.isQuickMenuShowDuplicateKeepTime(getContext());
 
         if (showAllBlotterButtons) {
             bTransfer = view.findViewById(R.id.bTransfer);
@@ -452,6 +453,9 @@ public class BlotterFragment extends AbstractListFragment implements BlotterOper
         transactionActionGrid.addQuickAction(new MyQuickAction(getContext(), R.drawable.ic_action_copy, R.string.duplicate));
         transactionActionGrid.addQuickAction(new MyQuickAction(getContext(), R.drawable.ic_action_tick, R.string.clear));
         transactionActionGrid.addQuickAction(new MyQuickAction(getContext(), R.drawable.ic_action_double_tick, R.string.reconcile));
+        if (isQuickMenuShowDuplicateKeepTime) {
+            transactionActionGrid.addQuickAction(new MyQuickAction(getContext(), R.drawable.ic_action_drag, R.string.duplicate_keep_time));
+        }
         transactionActionGrid.setOnQuickActionClickListener(transactionActionListener);
     }
 
@@ -486,6 +490,9 @@ public class BlotterFragment extends AbstractListFragment implements BlotterOper
                     case 8:
                         reconcileTransaction(selectedId);
                         break;
+                    case 9:
+                        duplicateTransactionKeepTime(selectedId);
+                        break;
                 }
             }
             else {
@@ -507,6 +514,9 @@ public class BlotterFragment extends AbstractListFragment implements BlotterOper
                         break;
                     case 5:
                         reconcileTransaction(selectedId);
+                        break;
+                    case 6:
+                        duplicateTransactionKeepTime(selectedId);
                         break;
                 }
             }
@@ -608,8 +618,22 @@ public class BlotterFragment extends AbstractListFragment implements BlotterOper
         return false;
     }
 
+    private long duplicateTransactionKeepTime(long id) {
+        return duplicateTransaction(id, 1, true);
+    }
+
     private long duplicateTransaction(long id, int multiplier) {
-        long newId = new BlotterOperations(getContext(), this, db, id).duplicateTransaction(multiplier);
+        return duplicateTransaction(id, multiplier, false);
+    }
+
+    private long duplicateTransaction(long id, int multiplier, boolean keepTime) {
+        long newId;
+        if (keepTime) {
+            newId = new BlotterOperations(getContext(), this, db, id).duplicateTransactionKeepTime();
+        }
+        else {
+            newId = new BlotterOperations(getContext(), this, db, id).duplicateTransaction(multiplier);
+        }
         String toastText;
         if (multiplier > 1) {
             toastText = getString(R.string.duplicate_success_with_multiplier, multiplier);

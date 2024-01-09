@@ -9,7 +9,7 @@
   <string name="projects">專案</string>
   <string name="ok">確定</string>
   <string name="reset">重設</string>
-  <string name="clear">清除</string>
+  <string name="clear">清算</string>
   <string name="save">儲存</string>
   <string name="cancel">取消</string>
   <string name="close">關閉</string>
@@ -246,6 +246,7 @@
   <string name="success">成功! %s</string>
   <string name="fail">失敗…</string>
   <string name="duplicate">複製</string>
+  <string name="duplicate_keep_time">複製保留時間</string>
   <string name="select_from_account">請選擇來源帳戶…</string>
   <string name="select_to_account">請選擇目標帳戶…</string>
   <string name="update_balance">調整餘額</string>
@@ -636,8 +637,10 @@
   <string name="quick_menu_account_enabled_summary">在帳戶畫面啟用單按選單</string>
   <string name="quick_menu_transaction_enabled">明細畫面快速選單</string>
   <string name="quick_menu_transaction_enabled_summary">在明細畫面啟用單按選單</string>
-  <string name="quick_menu_transaction_additional_status">額外交易狀態</string>
+  <string name="quick_menu_transaction_additional_status">顯示「額外交易狀態」功能</string>
   <string name="quick_menu_transaction_additional_status_summary">明細畫面快速選單顯示額外交易狀態</string>
+  <string name="quick_menu_transaction_duplicate_keep_time">顯示「複製保留時間」功能</string>
+  <string name="quick_menu_transaction_duplicate_keep_time_summary">明細畫面快速選單顯示「複製保留當日時間」按鈕</string>
   <string name="dropbox">Dropbox</string>
   <string name="dropbox_authorize">授權</string>
   <string name="dropbox_authorize_summary">允許 Financisto 上傳檔案到您的 Dropbox</string>
@@ -716,7 +719,7 @@
   <string name="split_transfer_not_supported_yet">尚未支援以不同的幣值分割交易</string>
   <string name="show_currency">顯示幣值</string>
   <string name="show_currency_summary">在新交易畫面顯示幣值選項</string>
-  <string name="reconcile">結帳</string>
+  <string name="reconcile">對帳</string>
   <string name="permissions">權限</string>
   <string name="permissions_summary">檢視需要手動許可的權限</string>
 
