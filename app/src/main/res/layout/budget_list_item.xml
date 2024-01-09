@@ -51,12 +51,13 @@
 		android:id="@+id/bottom"
 		android:text="bottom"
 		android:singleLine="true"
-		android:layout_width="wrap_content"
+		android:layout_width="0dp"
 		android:layout_height="wrap_content"
 		android:textAppearance="?android:attr/textAppearanceSmall"
 		android:ellipsize="marquee"
 		app:layout_constraintTop_toBottomOf="@id/center"
-		app:layout_constraintStart_toStartOf="parent" />
+		app:layout_constraintStart_toStartOf="parent"
+		app:layout_constraintEnd_toStartOf="@id/right2" />
 
 	<TextView
 		android:id="@+id/right1"
