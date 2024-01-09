@@ -950,7 +950,7 @@
     <!-- SMS stuff >> -->
     <string name="sms_sender">Notification Sender / SMS Number</string>
     <string name="sms_tpl_filter_hint">Filter by number or text</string>
-    <string name="sms_number_hint">Notification sender app name or SMS sender number</string>
+    <string name="sms_number_hint">Notification sender app name or SMS sender number, use % to indicate wildcard match</string>
     <string name="sms_tpl">Notification / SMS Template</string>
     <string name="sms_tpl_title">Template (?)</string>
     <string name="sms_tpl_desc">Placeholders: \n{{p}} - price\n{{a}} - account last digits\n{{t}} - note text (non-greedy)\n{{u}} - note text (greedy)\n{{*}} - any symbols/words</string>

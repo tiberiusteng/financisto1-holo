@@ -13,9 +13,11 @@ import android.service.notification.StatusBarNotification;
 import android.text.SpannableString;
 import android.util.Log;
 
+import java.util.List;
 import java.util.Set;
 
 import tw.tib.financisto.db.DatabaseAdapter;
+import tw.tib.financisto.model.SmsTemplate;
 
 public class NotificationListener extends NotificationListenerService {
     private static final String TAG = "NotificationListener";
@@ -83,9 +85,9 @@ public class NotificationListener extends NotificationListenerService {
 
             if (processTemplate && (existing == null || !body.equals(existing.body))) {
                 final DatabaseAdapter db = new DatabaseAdapter(context);
-                Set<String> smsNumbers = db.findAllSmsTemplateNumbers();
+                List<SmsTemplate> templates = db.getSmsTemplatesByNumber(title);
 
-                if (smsNumbers.contains(title)) {
+                if (!templates.isEmpty()) {
                     Intent serviceIntent = new Intent(ACTION_NEW_TRANSACTION_SMS, null, context, FinancistoService.class);
                     serviceIntent.putExtra(SMS_TRANSACTION_NUMBER, title);
                     serviceIntent.putExtra(SMS_TRANSACTION_BODY, body);

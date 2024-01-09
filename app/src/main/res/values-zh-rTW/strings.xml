@@ -737,7 +737,7 @@
   <!-- SMS stuff >> -->
   <string name="sms_sender">發送通知的程式 / 簡訊發送門號</string>
   <string name="sms_tpl_filter_hint">輸入數字或文字過濾</string>
-  <string name="sms_number_hint">發送通知的程式名稱或發送簡訊的門號</string>
+  <string name="sms_number_hint">發送通知的程式名稱或發送簡訊的門號, 可用 % 代表任意字串</string>
   <string name="sms_tpl">通知 / 簡訊模板</string>
   <string name="sms_tpl_title">模板 (?)</string>
   <string name="sms_tpl_desc">佔位標籤: \n{{p}} - 金額\n{{a}} - 帳號/卡號片段\n{{t}} - 交易內容敘述 (盡可能短)\n{{u}} - 交易內容敘述 (盡可能長)\n{{*}} - 任意內容 (不處理)</string>
