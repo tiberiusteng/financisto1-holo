@@ -52,9 +52,4 @@ public class DropboxListFilesTask extends ImportExportAsyncTask {
         }
     }
 
-    @Override
-    protected String getSuccessMessage(Object result) {
-        return null;
-    }
-
 }

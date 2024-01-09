@@ -78,9 +78,4 @@ public class CsvImportTask extends ImportExportAsyncTask {
         dialog.setMessage(context.getString(R.string.csv_import_inprogress_update, values[0]));
     }
 
-    @Override
-    protected String getSuccessMessage(Object result) {
-        return String.valueOf(result);
-    }
-
 }

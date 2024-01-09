@@ -38,9 +38,4 @@ public class GoogleDriveListFilesTask extends ImportExportAsyncTask {
         }
     }
 
-    @Override
-    protected String getSuccessMessage(Object result) {
-        return null;
-    }
-
 }

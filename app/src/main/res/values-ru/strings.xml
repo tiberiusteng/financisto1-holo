@@ -234,7 +234,7 @@
   <string name="gdocs_folder_error">Ошибка доступа к папке в Google Drive.</string>
   <string name="gdocs_service_error">Системная ошибка Google Drive.</string>
   <string name="gdocs_io_error">Ошибка связи с Google Drive.</string>
-  <string name="success">Успешно!</string>
+  <string name="success">Успешно! %s</string>
   <string name="fail">Неудачно..</string>
   <string name="duplicate">Дублировать</string>
   <string name="select_from_account">Выберите счёт источник..</string>

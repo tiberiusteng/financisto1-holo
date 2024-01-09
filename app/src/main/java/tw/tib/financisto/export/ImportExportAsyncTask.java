@@ -66,7 +66,21 @@ public abstract class ImportExportAsyncTask extends AsyncTask<Uri, String, Objec
 
     protected abstract Object work(Context context, DatabaseAdapter db, Uri... params) throws Exception;
 
-    protected abstract String getSuccessMessage(Object result);
+    protected String getSuccessMessage(Object result) {
+        if (result instanceof Uri) {
+            String filename = ((Uri) result).getLastPathSegment();
+            if (filename != null) {
+                return filename.substring(filename.lastIndexOf("/") + 1);
+            }
+        }
+        if (result instanceof String) {
+            return (String) result;
+        }
+        if (result != null) {
+            return result.toString();
+        }
+        return null;
+    }
 
     protected void doUploadToDropbox(Context context, Uri backupFileUri) throws Exception {
         if (MyPreferences.isDropboxUploadBackups(context)) {

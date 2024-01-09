@@ -243,7 +243,7 @@
   <string name="gdocs_io_error">連線到 Google Drive 時發生錯誤。</string>
 
 
-  <string name="success">成功!</string>
+  <string name="success">成功! %s</string>
   <string name="fail">失敗…</string>
   <string name="duplicate">複製</string>
   <string name="select_from_account">請選擇來源帳戶…</string>

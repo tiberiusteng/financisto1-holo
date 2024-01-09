@@ -55,14 +55,15 @@ public class Dropbox {
     }
 
     public void completeAuth() {
+        Log.d(Dropbox.class.getSimpleName(), "enter completeAuth, startedAuth = " + startedAuth);
         try {
             DbxCredential dbxCredential = Auth.getDbxCredential();
             if (startedAuth && dbxCredential != null) {
                 try {
-                    Log.d("Financisto", dbxCredential.toString());
+                    Log.d(Dropbox.class.getSimpleName(), "dbxCredential = " + dbxCredential.toString());
                     MyPreferences.storeDropboxKeys(context, dbxCredential.toString());
                 } catch (IllegalStateException e) {
-                    Log.i("Financisto", "Error authenticating Dropbox", e);
+                    Log.i(Dropbox.class.getSimpleName(), "Error authenticating Dropbox", e);
                 }
             }
         } finally {

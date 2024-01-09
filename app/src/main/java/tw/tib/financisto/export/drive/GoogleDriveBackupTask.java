@@ -23,9 +23,4 @@ public class GoogleDriveBackupTask extends ImportExportAsyncTask {
         return backupFileUri;
     }
 
-    @Override
-    protected String getSuccessMessage(Object result) {
-        return String.valueOf(result);
-    }
-
 }
