@@ -453,6 +453,11 @@ public class MyPreferences {
 		return sharedPreferences.getBoolean("reset_copied_transaction_status", true);
 	}
 
+	public static boolean isResetCopiedForeignTransactionStatus(Context context) {
+		SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(context);
+		return sharedPreferences.getBoolean("reset_copied_foreign_transaction_status", false);
+	}
+
 	private static final String DEFAULT = "default";
 
 	public static Context switchLocale(Context context) {

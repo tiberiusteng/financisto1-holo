@@ -642,6 +642,9 @@
     <string name="reset_copied_transaction_status">Reset copied transaction status</string>
     <string name="reset_copied_transaction_status_summary">Make copied transaction unreconciled</string>
 
+    <string name="reset_copied_foreign_transaction_status">Reset copied foreign currency transaction status</string>
+    <string name="reset_copied_foreign_transaction_status_summary">Make copied foreign currency transaction pending</string>
+
     <string name="new_currency">New currency…</string>
     <string name="lock_time">Lock time</string>
     <string name="lock_time_summary">Time to keep main screen active before locking it off</string>

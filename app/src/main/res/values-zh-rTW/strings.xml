@@ -568,7 +568,9 @@
   <string name="show_project_in_blotter">顯示專案名稱</string>
   <string name="show_project_in_blotter_summary">若交易有專案則在明細畫面顯示專案名稱</string>
   <string name="reset_copied_transaction_status">複製交易時重設狀態</string>
-  <string name="reset_copied_transaction_status_summary">將複製的交易設為「未入帳」</string>
+  <string name="reset_copied_transaction_status_summary">將複製的交易設為「未對帳」</string>
+  <string name="reset_copied_foreign_transaction_status">複製外幣交易時重設狀態</string>
+  <string name="reset_copied_foreign_transaction_status_summary">將複製的外幣交易設為「擱置」</string>
   <string name="new_currency">新幣值 ...</string>
   <string name="lock_time">鎖定時間</string>
   <string name="lock_time_summary">主畫面在自動鎖定前的顯示時間</string>

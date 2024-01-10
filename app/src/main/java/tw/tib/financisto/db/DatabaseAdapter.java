@@ -284,6 +284,11 @@ public class DatabaseAdapter extends MyEntityManager {
             if (MyPreferences.isResetCopiedTransactionStatus(context)) {
                 transaction.status = TransactionStatus.UR;
             }
+            if (MyPreferences.isResetCopiedForeignTransactionStatus(context) &&
+                transaction.originalCurrencyId != 0)
+            {
+                transaction.status = TransactionStatus.PN;
+            }
             if (isTemplate == 0) {
                 transaction.recurrence = null;
                 transaction.notificationOptions = null;
