@@ -396,7 +396,7 @@
     <string name="user_password">Password</string>
     <string name="user_password_summary">Google account password</string>
     <string name="backup_folder">Backup Folder</string>
-    <string name="backup_folder_not_configured">Please set the backup folder in the preferences.</string>
+    <string name="backup_folder_not_configured">Can\'t make backup, please set the backup folder in the preferences.</string>
     <string name="backup_folder_summary">To store backup files create a new folder in My Drive</string>
 
     <string name="report_preferences">Report Preferences</string>

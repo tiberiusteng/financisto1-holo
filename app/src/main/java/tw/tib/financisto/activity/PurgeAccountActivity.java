@@ -15,6 +15,8 @@ import android.content.Context;
 import android.content.Intent;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.Looper;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
@@ -39,7 +41,7 @@ import tw.tib.financisto.model.Account;
  * Date: 6/12/12 11:14 PM
  */
 public class PurgeAccountActivity extends AbstractActivity {
-
+    public static final String TAG = "PurgeAccountActivity";
     public static final String ACCOUNT_ID = "ACCOUNT_ID";
 
     private Account account;
@@ -174,8 +176,10 @@ public class PurgeAccountActivity extends AbstractActivity {
                 try {
                     export.export();
                 } catch (Exception e) {
-                    Log.e("Financisto", "Unexpected error", e);
-                    Toast.makeText(context, R.string.purge_account_unable_to_do_backup, Toast.LENGTH_LONG).show();
+                    Log.e(TAG, "export.export() error", e);
+                    new Handler(Looper.getMainLooper()).post(()-> {
+                        Toast.makeText(context, R.string.backup_folder_not_configured, Toast.LENGTH_LONG).show();
+                    });
                     return null;
                 }
             }
