@@ -65,6 +65,7 @@ import tw.tib.financisto.utils.PinProtection;
 import tw.tib.financisto.view.NodeInflater;
 
 public class BlotterFragment extends AbstractListFragment implements BlotterOperations.BlotterOperationsCallback {
+    private static final String TAG = "BlotterFragment";
     public static final String SAVE_FILTER = "saveFilter";
     public static final String EXTRA_FILTER_ACCOUNTS = "filterAccounts";
 
@@ -95,6 +96,8 @@ public class BlotterFragment extends AbstractListFragment implements BlotterOper
 
     protected boolean saveFilter;
     protected WhereFilter blotterFilter = WhereFilter.empty();
+
+    protected long lastTxId = 0;
 
     protected boolean isAccountBlotter = false;
     protected boolean showAllBlotterButtons = true;
@@ -685,11 +688,14 @@ public class BlotterFragment extends AbstractListFragment implements BlotterOper
             progressBar.setVisibility(View.VISIBLE);
         });
 
-        long t1 = System.currentTimeMillis();
+        long t1 = System.nanoTime();
         if (db == null) {
             db = new DatabaseAdapter(getActivity());
             db.open();
         }
+        this.lastTxId = db.getLastTransactionId();
+        long t2 = System.nanoTime();
+        Log.d(TAG, "getLastTransactionId() = " + lastTxId + ", " + (t2 - t1) + " ns");
         long accountId = blotterFilterCopy.getAccountId();
         if (accountId != -1) {
             c = db.getBlotterForAccount(blotterFilterCopy);
@@ -697,7 +703,7 @@ public class BlotterFragment extends AbstractListFragment implements BlotterOper
             c = db.getBlotter(blotterFilterCopy);
         }
         c.getCount();
-        Log.d(getClass().getSimpleName(), "createCursor: " + (System.currentTimeMillis() - t1) + " ms");
+        Log.d(TAG, "createCursor: " + (System.nanoTime() - t1) + " ns");
         return c;
     }
 
@@ -715,7 +721,7 @@ public class BlotterFragment extends AbstractListFragment implements BlotterOper
             emptyText.setVisibility(View.VISIBLE);
         }
         progressBar.setVisibility(View.GONE);
-        Log.d(this.getTag(), "createAdapter: " + (System.currentTimeMillis() - t1) + " ms");
+        Log.d(TAG, "createAdapter: " + (System.currentTimeMillis() - t1) + " ms");
         return a;
     }
 
@@ -849,7 +855,14 @@ public class BlotterFragment extends AbstractListFragment implements BlotterOper
     @Override
     public void onResume() {
         super.onResume();
-        Log.d(this.getClass().getSimpleName(), "onResume");
+        Log.d(TAG, "onResume");
+        long t1 = System.nanoTime();
+        long lastTxId = db.getLastTransactionId();
+        Log.d(TAG, "getLastTransactionId() = " + lastTxId + ", " + (System.nanoTime() - t1) + " ns");
+        if (lastTxId != this.lastTxId) {
+            Log.d(TAG, "lastTxId " + this.lastTxId + " != " + lastTxId + ", recreating cursor");
+            recreateCursor();
+        }
 
         if (PinProtection.isUnlocked()) {
             Log.d(this.getClass().getSimpleName(), "onResume isUnlocked, show list");

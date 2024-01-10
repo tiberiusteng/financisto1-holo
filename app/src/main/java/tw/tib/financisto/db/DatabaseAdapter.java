@@ -1844,6 +1844,10 @@ public class DatabaseAdapter extends MyEntityManager {
                 new String[]{String.valueOf(accountId)});
     }
 
+    public long getLastTransactionId() {
+        return DatabaseUtils.rawFetchLongValue(this, "select max(_id) from transactions", new String[]{});
+    }
+
     private static final String ACCOUNT_LAST_TRANSACTION_DATE_UPDATE = "UPDATE " + DatabaseHelper.ACCOUNT_TABLE
             + " SET " + DatabaseHelper.AccountColumns.LAST_TRANSACTION_DATE + "=? WHERE " + DatabaseHelper.AccountColumns.ID + "=?";
 
