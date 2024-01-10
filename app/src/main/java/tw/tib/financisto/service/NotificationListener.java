@@ -131,6 +131,9 @@ public class NotificationListener extends NotificationListenerService {
         if (s instanceof SpannableString) {
             return ((SpannableString) s).subSequence(0, ((SpannableString) s).length()).toString();
         }
+        if (s == null) {
+            return "";
+        }
         return (String) s;
     }
 }
