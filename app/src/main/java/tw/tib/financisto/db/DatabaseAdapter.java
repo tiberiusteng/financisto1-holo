@@ -56,6 +56,7 @@ import java.util.*;
 
 @EBean(scope = EBean.Scope.Singleton)
 public class DatabaseAdapter extends MyEntityManager {
+    private static final String TAG = "DatabaseAdapter";
 
     private static long CURRENT_TIMESTAMP = -1;
     public static long KEEP_TIME_IN_DAY = -2;
@@ -148,12 +149,22 @@ public class DatabaseAdapter extends MyEntityManager {
         long t0 = System.currentTimeMillis();
         try {
             String sortOrder = getBlotterSortOrder(filter);
-            return db().query(view, DatabaseHelper.BlotterColumns.NORMAL_PROJECTION,
-                    filter.getSelection(), filter.getSelectionArgs(), null, null,
-                    sortOrder);
+            try {
+                return db().query(view, DatabaseHelper.BlotterColumns.NORMAL_PROJECTION,
+                        filter.getSelection(), filter.getSelectionArgs(), null, null,
+                        sortOrder);
+            }
+            catch (IllegalArgumentException e) {
+                Log.d(TAG, "IllegalArgumentException, try removing amount filter");
+                filter.remove(BlotterFilter.FROM_AMOUNT);
+                filter.remove(BlotterFilter.ORIGINAL_FROM_AMOUNT);
+                return db().query(view, DatabaseHelper.BlotterColumns.NORMAL_PROJECTION,
+                        filter.getSelection(), filter.getSelectionArgs(), null, null,
+                        sortOrder);
+            }
         } finally {
             long t1 = System.currentTimeMillis();
-            Log.i("DB", "getBlotter " + (t1 - t0) + "ms");
+            Log.i(TAG, "getBlotter " + (t1 - t0) + "ms");
         }
     }
 
@@ -179,7 +190,7 @@ public class DatabaseAdapter extends MyEntityManager {
                     sortBy);
         } finally {
             long t1 = System.currentTimeMillis();
-            Log.i("DB", "getBlotter " + (t1 - t0) + "ms");
+            Log.i(TAG, "getBlotter " + (t1 - t0) + "ms");
         }
     }
 
@@ -1533,7 +1544,7 @@ public class DatabaseAdapter extends MyEntityManager {
         ContentValues values = new ContentValues();
         values.put(DatabaseHelper.AccountColumns.TOTAL_AMOUNT, total.balance);
         db().update(DatabaseHelper.ACCOUNT_TABLE, values, DatabaseHelper.AccountColumns.ID + "=?", new String[]{String.valueOf(accountId)});
-        Log.i("DatabaseImport", "Recalculating amount for " + accountId);
+        Log.i(TAG, "Recalculating amount for " + accountId);
     }
 
     private long fetchAccountBalance(long accountId) {
@@ -1881,7 +1892,7 @@ public class DatabaseAdapter extends MyEntityManager {
             restoreLocations();
             db.setTransactionSuccessful();
         } catch (Exception e) {
-            Log.e("Financisto", "Unable to restore system entities", e);
+            Log.e(TAG, "Unable to restore system entities", e);
         } finally {
             db.endTransaction();
         }

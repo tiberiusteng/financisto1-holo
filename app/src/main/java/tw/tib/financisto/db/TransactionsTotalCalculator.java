@@ -11,6 +11,7 @@ package tw.tib.financisto.db;
 import android.database.Cursor;
 import android.util.Log;
 
+import tw.tib.financisto.blotter.BlotterFilter;
 import tw.tib.financisto.filter.Criteria;
 import tw.tib.financisto.filter.WhereFilter;
 import tw.tib.financisto.model.Currency;
@@ -32,6 +33,7 @@ import java.util.List;
  * Date: 8/1/11 11:54 PM
  */
 public class TransactionsTotalCalculator {
+    private static final String TAG = "TxTotalCalc";
 
     public static final String[] BALANCE_PROJECTION = {
             "from_account_currency_id",
@@ -107,9 +109,19 @@ public class TransactionsTotalCalculator {
 
     private Total getBalanceInHomeCurrency(String view, Currency toCurrency, WhereFilter filter) {
         Log.d("Financisto", "Query balance: "+filter.getSelection()+" => "+ Arrays.toString(filter.getSelectionArgs()));
-        Cursor c = db.db().query(view, HOME_CURRENCY_PROJECTION,
-                filter.getSelection(), filter.getSelectionArgs(),
-                null, null, null);
+        Cursor c;
+        try {
+            c = db.db().query(view, HOME_CURRENCY_PROJECTION,
+                    filter.getSelection(), filter.getSelectionArgs(),
+                    null, null, null);
+        } catch (IllegalArgumentException e) {
+            Log.d(TAG, "getBalanceInHomeCurrency() IllegalArgumentException, removing filters");
+            filter.remove(BlotterFilter.FROM_AMOUNT);
+            filter.remove(BlotterFilter.ORIGINAL_FROM_AMOUNT);
+            c = db.db().query(view, HOME_CURRENCY_PROJECTION,
+                    filter.getSelection(), filter.getSelectionArgs(),
+                    null, null, null);
+        }
         try {
             try {
                 long balance = calculateTotalFromCursor(db, c, toCurrency);
