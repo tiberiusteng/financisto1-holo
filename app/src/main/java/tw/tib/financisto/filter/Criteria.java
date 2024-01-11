@@ -9,9 +9,16 @@
 package tw.tib.financisto.filter;
 
 import android.content.Intent;
+import android.util.Log;
 
-import tw.tib.financisto.blotter.BlotterFilter;
-import tw.tib.financisto.utils.ArrUtils;
+import com.google.gson.Gson;
+import com.google.gson.JsonArray;
+import com.google.gson.JsonParser;
+import com.google.gson.JsonPrimitive;
+
+import java.util.Arrays;
+import java.util.LinkedList;
+
 import tw.tib.financisto.utils.StringUtil;
 import tw.tib.orb.Expression;
 import tw.tib.orb.Expressions;
@@ -22,6 +29,7 @@ import tw.tib.orb.Expressions;
  * Date: 12/17/12 9:06 PM
  */
 public class Criteria {
+    private static final String TAG = "Criteria";
 
     public static Criteria eq(String column, String value) {
         return new Criteria(column, WhereFilter.Operation.EQ, value);
@@ -69,22 +77,42 @@ public class Criteria {
         return new Criteria("(" + text + ")", WhereFilter.Operation.NOPE);
     }
 
-    public static Criteria or(Criteria a, Criteria b) {
-        return new OrCriteria(a, b);
+    public static Criteria or(Criteria... children) {
+        Log.d(TAG, "Criteria or() children.length=" + children.length);
+        return new Criteria(children[0].columnName, WhereFilter.Operation.OR, combineValues(children), children);
     }
 
-    public static Criteria and(Criteria a, Criteria b) {
-        return new AndCriteria(a, b);
+    public static Criteria and(Criteria... children) {
+        Log.d(TAG, "Criteria and() children.length=" + children.length);
+        return new Criteria(children[0].columnName, WhereFilter.Operation.AND, combineValues(children), children);
+    }
+
+    private static String[] combineValues(Criteria... children) {
+        LinkedList<String> values = new LinkedList<>();
+        for (Criteria c : children) {
+            values.addAll(Arrays.asList(c.getValues()));
+        }
+        String[] ret = new String[values.size()];
+        return values.toArray(ret);
     }
     
     public final String columnName;
     public final WhereFilter.Operation operation;
     private final String[] values;
+    private final Criteria[] children;
 
     public Criteria(String columnName, WhereFilter.Operation operation, String... values) {
         this.columnName = columnName;
         this.operation = operation;
         this.values = values;
+        this.children = new Criteria[0];
+    }
+
+    public Criteria(String columnName, WhereFilter.Operation operation, String[] values, Criteria... children) {
+        this.columnName = columnName;
+        this.operation = operation;
+        this.values = values;
+        this.children = children;
     }
 
     public boolean isNull() {
@@ -113,39 +141,27 @@ public class Criteria {
     }
 
     public String toStringExtra() {
-        StringBuilder sb = new StringBuilder();
-        sb.append(columnName).append(",");
-        sb.append(operation.name()).append(",");
-        String[] values = this.values;
-        for (int i = 0; i < values.length; i++) {
-            if (i > 0) {
-                sb.append(",");
-            }
-            sb.append(values[i]);
+        JsonArray ret = new JsonArray();
+        if (this instanceof DateTimeCriteria) {
+            ret.add(new JsonPrimitive(DateTimeCriteria.TAG));
         }
-        return sb.toString();
+        else {
+            ret.add(new JsonPrimitive(Criteria.TAG));
+        }
+        ret.add(new Gson().toJsonTree(this));
+        return ret.toString();
     }
 
     public static Criteria fromStringExtra(String extra) {
-        final String[] p = extra.split(";");
-        if (p.length == 2) {
-            return new OrCriteria(fromStringExtra(p[0]), fromStringExtra(p[1]));
-        }
-        else if (p.length == 3) {
-            return new AndCriteria(fromStringExtra(p[0]), fromStringExtra(p[1]));
+        Log.d(TAG, "fromStringExtra: " + extra);
+
+        JsonArray array = new JsonParser().parse(extra).getAsJsonArray();
+        String typeTag = array.get(0).getAsString();
+        if (typeTag.equals(DateTimeCriteria.TAG)) {
+            return new Gson().fromJson(array.get(1), DateTimeCriteria.class);
         }
 
-        final String[] a = extra.split(",");
-        final String col = a[0];
-        if (BlotterFilter.DATETIME.equals(col)) {
-            return DateTimeCriteria.fromStringExtra(extra);
-        } else if (BlotterFilter.CATEGORY_ID.equals(col)) {
-            return SingleCategoryCriteria.fromStringExtra(extra);
-        } else {
-            String[] values = new String[a.length - 2];
-            System.arraycopy(a, 2, values, 0, values.length);
-            return new Criteria(col, WhereFilter.Operation.valueOf(a[1]), values);
-        }
+        return new Gson().fromJson(array.get(1), Criteria.class);
     }
 
     public String[] getValues() {
@@ -169,6 +185,15 @@ public class Criteria {
     }
 
     public String getSelection() {
+        if (operation == WhereFilter.Operation.AND || operation == WhereFilter.Operation.OR)
+        {
+            String[] childSelection = new String[children.length];
+            for (int i = 0; i< children.length; ++i) {
+                childSelection[i] = children[i].getSelection();
+            }
+            return "(" + String.join(" " + operation.getOp(0) + " ", childSelection) + ")";
+        }
+
         String exp = columnName + " " + operation.getOp(getSelectionArgs().length);
         if (operation.getGroupOp() != null && getValues().length > operation.getValsPerGroup()) {
             int groupNum = getValues().length / operation.getValsPerGroup();
@@ -183,56 +208,21 @@ public class Criteria {
     }
 
     public String[] getSelectionArgs() {
+        if (children.length > 0) {
+            LinkedList<String> args = new LinkedList<>();
+            for (Criteria c : children) {
+                args.addAll(Arrays.asList(c.getSelectionArgs()));
+            }
+            String[] ret = new String[args.size()];
+            ret = args.toArray(ret);
+            return ret;
+        }
         return values;
     }
 
     public void toIntent(String title, Intent intent) {
         intent.putExtra(WhereFilter.TITLE_EXTRA, title);
         intent.putExtra(WhereFilter.FILTER_EXTRA, new String[]{toStringExtra()});
-    }
-    
-    static class OrCriteria extends Criteria {
-        Criteria a, b;
-        
-        public OrCriteria(Criteria a, Criteria b) {
-            super(a.columnName, a.operation, ArrUtils.joinArrays(a.getValues(), b.getValues()));
-            this.a = a;
-            this.b = b;
-        }
-
-        @Override
-        public String getSelection() {
-            return "(" + a.getSelection() + " OR " + b.getSelection() + ")";
-        }
-
-        @Override
-        public String toStringExtra() {
-            StringBuilder sb = new StringBuilder();
-            sb.append(a.toStringExtra()).append(";").append(b.toStringExtra());
-            return sb.toString();
-        }
-    }
-
-    static class AndCriteria extends Criteria {
-        Criteria a, b;
-
-        public AndCriteria(Criteria a, Criteria b) {
-            super(a.columnName, a.operation, ArrUtils.joinArrays(a.getValues(), b.getValues()));
-            this.a = a;
-            this.b = b;
-        }
-
-        @Override
-        public String getSelection() {
-            return "(" + a.getSelection() + " AND " + b.getSelection() + ")";
-        }
-
-        @Override
-        public String toStringExtra() {
-            StringBuilder sb = new StringBuilder();
-            sb.append(a.toStringExtra()).append(";").append(b.toStringExtra()).append(";");
-            return sb.toString();
-        }
     }
 
 }

@@ -32,6 +32,7 @@ import tw.tib.orb.Expressions;
 import static tw.tib.orb.EntityManager.DEF_SORT_COL;
 
 public class WhereFilter {
+	private static final String TAG = "WhereFilter";
 
 	public static final String TITLE_EXTRA = "title";
 	public static final String FILTER_EXTRA = "filter";
@@ -112,7 +113,10 @@ public class WhereFilter {
 
 	private String getSelection(List<Criteria> criterias) {
 		StringBuilder sb = new StringBuilder();
+		Log.d(TAG, "getSelection:");
 		for (Criteria c : criterias) {
+			Log.d(TAG, " " + c.toStringExtra());
+			Log.d(TAG, "     " + String.join(", ", c.getSelection()));
 			if (sb.length() > 0) {
 				sb.append(" AND ");
 			}
@@ -123,7 +127,10 @@ public class WhereFilter {
 
 	private String[] getSelectionArgs(List<Criteria> criterias) {
 		String[] args = new String[0];
+		Log.d(TAG, "getSelectionArgs:");
 		for (Criteria c : criterias) {
+			Log.d(TAG, " " + c.toStringExtra());
+			Log.d(TAG, "     " + String.join(", ", c.getSelectionArgs()));
 			args = ArrUtils.joinArrays(args, c.getSelectionArgs());
 		}
 		return args;
@@ -197,6 +204,7 @@ public class WhereFilter {
 		String[] extras = new String[criterias.size()];
 		for (int i=0; i<extras.length; i++) {
 			extras[i] = criterias.get(i).toStringExtra();
+			Log.d(TAG, "extras " + i + ": " + extras[i]);
 		}
 		bundle.putString(TITLE_EXTRA, title);
 		bundle.putStringArray(FILTER_EXTRA, extras);
@@ -206,20 +214,25 @@ public class WhereFilter {
 	public static WhereFilter fromBundle(Bundle bundle) {
 		String title = bundle.getString(TITLE_EXTRA);
 		WhereFilter filter = new WhereFilter(title);
-		synchronized (filter) {
-			String[] a = bundle.getStringArray(FILTER_EXTRA);
-			if (a != null) {
-				for (String s : a) {
-					filter.put(Criteria.fromStringExtra(s));
+		try {
+			synchronized (filter) {
+				String[] a = bundle.getStringArray(FILTER_EXTRA);
+				if (a != null) {
+					for (String s : a) {
+						filter.put(Criteria.fromStringExtra(s));
+					}
+				}
+				String sortOrder = bundle.getString(SORT_ORDER_EXTRA);
+				if (sortOrder != null) {
+					String[] orders = sortOrder.split(",");
+					if (orders != null && orders.length > 0) {
+						filter.sorts.addAll(Arrays.asList(orders));
+					}
 				}
 			}
-			String sortOrder = bundle.getString(SORT_ORDER_EXTRA);
-			if (sortOrder != null) {
-				String[] orders = sortOrder.split(",");
-				if (orders != null && orders.length > 0) {
-					filter.sorts.addAll(Arrays.asList(orders));
-				}
-			}
+		} catch (Exception e) {
+			Log.e(TAG, "fromBundle", e);
+			return WhereFilter.empty();
 		}
 		return filter;
 	}
@@ -267,21 +280,26 @@ public class WhereFilter {
 	public static WhereFilter fromSharedPreferences(SharedPreferences preferences) {
 		String title = preferences.getString(FILTER_TITLE_PREF, "");
 		WhereFilter filter = new WhereFilter(title);
-		synchronized (filter) {
-			int count = preferences.getInt(FILTER_LENGTH_PREF, 0);
-			if (count > 0) {
-				for (int i = 0; i < count; i++) {
-					String criteria = preferences.getString(FILTER_CRITERIA_PREF + i, "");
-					if (criteria.length() > 0) {
-						filter.put(Criteria.fromStringExtra(criteria));
+		try {
+			synchronized (filter) {
+				int count = preferences.getInt(FILTER_LENGTH_PREF, 0);
+				if (count > 0) {
+					for (int i = 0; i < count; i++) {
+						String criteria = preferences.getString(FILTER_CRITERIA_PREF + i, "");
+						if (criteria.length() > 0) {
+							filter.put(Criteria.fromStringExtra(criteria));
+						}
 					}
 				}
+				String sortOrder = preferences.getString(FILTER_SORT_ORDER_PREF, "");
+				String[] orders = sortOrder.split(",");
+				if (orders != null && orders.length > 0) {
+					filter.sorts.addAll(Arrays.asList(orders));
+				}
 			}
-			String sortOrder = preferences.getString(FILTER_SORT_ORDER_PREF, "");
-			String[] orders = sortOrder.split(",");
-			if (orders != null && orders.length > 0) {
-				filter.sorts.addAll(Arrays.asList(orders));
-			}
+		} catch (Exception e) {
+			Log.e(TAG, "fromSharedPreferences", e);
+			return WhereFilter.empty();
 		}
 		return filter;
 	}
@@ -339,7 +357,7 @@ public class WhereFilter {
 				return super.getOp(operands).replace("?", StringUtil.generateSeparated("?", ",", operands));
 			}
 		},
-		ISNULL("is NULL"), LIKE("LIKE ?");
+		ISNULL("is NULL"), LIKE("LIKE ?"), OR("OR"), AND("AND");
 
 		private final String op;
 		private final String groupOp;

@@ -283,47 +283,35 @@ public class BlotterFragment extends AbstractListFragment implements BlotterOper
                                     // 123.45
                                     String val = Double.toString(Math.floor(Double.parseDouble(m.group(2)) * 100));
                                     amount = Criteria.or(
-                                            Criteria.or(
-                                                    Criteria.eq(BlotterFilter.FROM_AMOUNT, val),
-                                                    Criteria.eq(BlotterFilter.FROM_AMOUNT, "-" + val)),
-                                            Criteria.or(
-                                                    Criteria.eq(BlotterFilter.ORIGINAL_FROM_AMOUNT, val),
-                                                    Criteria.eq(BlotterFilter.ORIGINAL_FROM_AMOUNT, "-" + val)));
+                                            Criteria.eq(BlotterFilter.FROM_AMOUNT, val),
+                                            Criteria.eq(BlotterFilter.FROM_AMOUNT, "-" + val),
+                                            Criteria.eq(BlotterFilter.ORIGINAL_FROM_AMOUNT, val),
+                                            Criteria.eq(BlotterFilter.ORIGINAL_FROM_AMOUNT, "-" + val));
                                 }
                                 else if (m.group(3) == null) {
                                     // >123.45, <123.45
                                     String val = Double.toString(Math.floor(Double.parseDouble(m.group(2)) * 100));
                                     if (m.group(1).equals("<")) {
                                         amount = Criteria.or(
-                                                Criteria.or(
-                                                        Criteria.and(
-                                                                Criteria.lt(BlotterFilter.FROM_AMOUNT, val),
-                                                                Criteria.gt(BlotterFilter.FROM_AMOUNT, "0")),
-                                                        Criteria.and(
-                                                                Criteria.gt(BlotterFilter.FROM_AMOUNT, "-" + val),
-                                                                Criteria.lt(BlotterFilter.FROM_AMOUNT, "0"))
-                                                ),
-                                                Criteria.or(
-                                                        Criteria.and(
-                                                                Criteria.lt(BlotterFilter.ORIGINAL_FROM_AMOUNT, val),
-                                                                Criteria.gt(BlotterFilter.ORIGINAL_FROM_AMOUNT, "0")),
-                                                        Criteria.and(
-                                                                Criteria.gt(BlotterFilter.ORIGINAL_FROM_AMOUNT, "-" + val),
-                                                                Criteria.lt(BlotterFilter.ORIGINAL_FROM_AMOUNT, "0"))
-                                                )
-                                        );
+                                                Criteria.and(
+                                                        Criteria.lt(BlotterFilter.FROM_AMOUNT, val),
+                                                        Criteria.gt(BlotterFilter.FROM_AMOUNT, "0")),
+                                                Criteria.and(
+                                                        Criteria.gt(BlotterFilter.FROM_AMOUNT, "-" + val),
+                                                        Criteria.lt(BlotterFilter.FROM_AMOUNT, "0")),
+                                                Criteria.and(
+                                                        Criteria.lt(BlotterFilter.ORIGINAL_FROM_AMOUNT, val),
+                                                        Criteria.gt(BlotterFilter.ORIGINAL_FROM_AMOUNT, "0")),
+                                                Criteria.and(
+                                                        Criteria.gt(BlotterFilter.ORIGINAL_FROM_AMOUNT, "-" + val),
+                                                        Criteria.lt(BlotterFilter.ORIGINAL_FROM_AMOUNT, "0")));
                                     }
                                     else if (m.group(1).equals(">")) {
                                         amount = Criteria.or(
-                                                Criteria.or(
-                                                        Criteria.gt(BlotterFilter.FROM_AMOUNT, val),
-                                                        Criteria.lt(BlotterFilter.FROM_AMOUNT, "-" + val)
-                                                ),
-                                                Criteria.or(
-                                                        Criteria.gt(BlotterFilter.ORIGINAL_FROM_AMOUNT, val),
-                                                        Criteria.lt(BlotterFilter.ORIGINAL_FROM_AMOUNT, "-" + val)
-                                                )
-                                        );
+                                                Criteria.gt(BlotterFilter.FROM_AMOUNT, val),
+                                                Criteria.lt(BlotterFilter.FROM_AMOUNT, "-" + val),
+                                                Criteria.gt(BlotterFilter.ORIGINAL_FROM_AMOUNT, val),
+                                                Criteria.lt(BlotterFilter.ORIGINAL_FROM_AMOUNT, "-" + val));
                                     }
                                 }
                                 else if (m.group(1) == null) {
@@ -331,15 +319,10 @@ public class BlotterFragment extends AbstractListFragment implements BlotterOper
                                     String val2 = Double.toString(Math.floor(Double.parseDouble(m.group(2)) * 100));
                                     String val3 = Double.toString(Math.floor(Double.parseDouble(m.group(3)) * 100));
                                     amount = Criteria.or(
-                                            Criteria.or(
-                                                    Criteria.btw(BlotterFilter.FROM_AMOUNT, val2, val3),
-                                                    Criteria.btw(BlotterFilter.FROM_AMOUNT, "-" + val3, "-" + val2)
-                                            ),
-                                            Criteria.or(
-                                                    Criteria.btw(BlotterFilter.ORIGINAL_FROM_AMOUNT, val2, val3),
-                                                    Criteria.btw(BlotterFilter.ORIGINAL_FROM_AMOUNT, "-" + val3, "-" + val2)
-                                            )
-                                    );
+                                            Criteria.btw(BlotterFilter.FROM_AMOUNT, val2, val3),
+                                            Criteria.btw(BlotterFilter.FROM_AMOUNT, "-" + val3, "-" + val2),
+                                            Criteria.btw(BlotterFilter.ORIGINAL_FROM_AMOUNT, val2, val3),
+                                            Criteria.btw(BlotterFilter.ORIGINAL_FROM_AMOUNT, "-" + val3, "-" + val2));
                                 }
                             }
                             if (amount == null) {
@@ -696,7 +679,7 @@ public class BlotterFragment extends AbstractListFragment implements BlotterOper
         }
         this.lastTxId = db.getLastTransactionId();
         long t2 = System.nanoTime();
-        Log.d(TAG, "getLastTransactionId() = " + lastTxId + ", " + (t2 - t1) + " ns");
+        Log.d(TAG, "getLastTransactionId() = " + lastTxId + ", " + String.format("%,d", (t2 - t1)) + " ns");
         long accountId = blotterFilterCopy.getAccountId();
         if (accountId != -1) {
             c = db.getBlotterForAccount(blotterFilterCopy);
@@ -704,7 +687,7 @@ public class BlotterFragment extends AbstractListFragment implements BlotterOper
             c = db.getBlotter(blotterFilterCopy);
         }
         c.getCount();
-        Log.d(TAG, "createCursor: " + (System.nanoTime() - t1) + " ns");
+        Log.d(TAG, "createCursor: " + String.format("%,d", (System.nanoTime() - t1)) + " ns");
         return c;
     }
 
