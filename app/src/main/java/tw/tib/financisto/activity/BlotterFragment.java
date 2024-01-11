@@ -97,7 +97,8 @@ public class BlotterFragment extends AbstractListFragment implements BlotterOper
     protected boolean saveFilter;
     protected WhereFilter blotterFilter = WhereFilter.empty();
 
-    protected long lastTxId = 0;
+    protected static final long BEFORE_INITIAL_LOAD = -1;
+    protected long lastTxId = BEFORE_INITIAL_LOAD;
 
     protected boolean isAccountBlotter = false;
     protected boolean showAllBlotterButtons = true;
@@ -856,12 +857,14 @@ public class BlotterFragment extends AbstractListFragment implements BlotterOper
     public void onResume() {
         super.onResume();
         Log.d(TAG, "onResume");
-        long t1 = System.nanoTime();
-        long lastTxId = db.getLastTransactionId();
-        Log.d(TAG, "getLastTransactionId() = " + lastTxId + ", " + (System.nanoTime() - t1) + " ns");
-        if (lastTxId != this.lastTxId) {
-            Log.d(TAG, "lastTxId " + this.lastTxId + " != " + lastTxId + ", recreating cursor");
-            recreateCursor();
+        if (lastTxId != BEFORE_INITIAL_LOAD) {
+            long t1 = System.nanoTime();
+            long currentLastTxId = db.getLastTransactionId();
+            Log.d(TAG, "getLastTransactionId() = " + lastTxId + ", " + String.format("%,d", System.nanoTime() - t1) + " ns");
+            if (currentLastTxId != lastTxId) {
+                Log.d(TAG, "lastTxId " + lastTxId + " != " + currentLastTxId + ", recreating cursor");
+                recreateCursor();
+            }
         }
 
         if (PinProtection.isUnlocked()) {

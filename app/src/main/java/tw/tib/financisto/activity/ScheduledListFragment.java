@@ -32,6 +32,8 @@ import tw.tib.financisto.service.RecurrenceScheduler;
 import java.util.ArrayList;
 
 public class ScheduledListFragment extends BlotterFragment {
+    private ArrayList<TransactionInfo> transactions;
+    private boolean pendingReschedule = false;
 
     private RecurrenceScheduler scheduler;
 
@@ -48,24 +50,20 @@ public class ScheduledListFragment extends BlotterFragment {
 
     @Override
     protected Cursor createCursor() {
+        if (pendingReschedule == false) {
+            transactions = scheduler.getSortedSchedules(System.currentTimeMillis());
+        }
+        else {
+            long now = System.currentTimeMillis();
+            transactions = scheduler.scheduleAll(getContext(), now);
+            pendingReschedule = false;
+        }
         return null;
     }
 
     @Override
     protected ListAdapter createAdapter(Cursor cursor) {
-        ArrayList<TransactionInfo> transactions = scheduler.getSortedSchedules(System.currentTimeMillis());
         return new ScheduledListAdapter(getContext(), transactions);
-    }
-
-    @Override
-    public void recreateCursor() {
-        long now = System.currentTimeMillis();
-        ArrayList<TransactionInfo> transactions = scheduler.scheduleAll(getContext(), now);
-        updateAdapter(transactions);
-    }
-
-    private void updateAdapter(ArrayList<TransactionInfo> transactions) {
-        ((ScheduledListAdapter)adapter).setTransactions(transactions);
     }
 
     @Override
@@ -92,6 +90,7 @@ public class ScheduledListFragment extends BlotterFragment {
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
         if (resultCode == RESULT_OK) {
+            pendingReschedule = true;
             recreateCursor();
         }
     }
