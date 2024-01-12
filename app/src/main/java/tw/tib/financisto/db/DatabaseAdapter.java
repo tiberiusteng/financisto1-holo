@@ -149,19 +149,9 @@ public class DatabaseAdapter extends MyEntityManager {
         long t0 = System.currentTimeMillis();
         try {
             String sortOrder = getBlotterSortOrder(filter);
-            try {
-                return db().query(view, DatabaseHelper.BlotterColumns.NORMAL_PROJECTION,
-                        filter.getSelection(), filter.getSelectionArgs(), null, null,
-                        sortOrder);
-            }
-            catch (IllegalArgumentException e) {
-                Log.d(TAG, "IllegalArgumentException, try removing amount filter");
-                filter.remove(BlotterFilter.FROM_AMOUNT);
-                filter.remove(BlotterFilter.ORIGINAL_FROM_AMOUNT);
-                return db().query(view, DatabaseHelper.BlotterColumns.NORMAL_PROJECTION,
-                        filter.getSelection(), filter.getSelectionArgs(), null, null,
-                        sortOrder);
-            }
+            return db().query(view, DatabaseHelper.BlotterColumns.NORMAL_PROJECTION,
+                    filter.getSelection(), filter.getSelectionArgs(), null, null,
+                    sortOrder);
         } finally {
             long t1 = System.currentTimeMillis();
             Log.i(TAG, "getBlotter " + (t1 - t0) + "ms");
