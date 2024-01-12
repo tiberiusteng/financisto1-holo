@@ -15,6 +15,33 @@
 #-keepclassmembers class fqcn.of.javascript.interface.for.webview {
 #   public *;
 #}
+-dontobfuscate
+
+-keepattributes LineNumberTable,SourceFile
+-keepattributes Signature,RuntimeVisibleAnnotations,AnnotationDefault
+
+-printusage usage.txt
+-printseeds seeds.txt
+
+-keep class javax.persistence.** { *; }
+-keep interface javax.persistence.** { *; }
+
+-keep @javax.persistence.** class *
+-keepclassmembers class * {
+    @javax.persistence.** *;
+}
+
+-keep class org.greenrobot.eventbus.** { *; }
+-keep interface org.greenrobot.eventbus.** { *; }
+
+-keep @org.greenrobot.eventbus.** class *
+-keepclassmembers class * {
+    @org.greenrobot.eventbus.** *;
+}
+
+-keepclassmembers class * {
+  @com.google.api.client.util.Key <fields>;
+}
 
 -keep class * extends java.util.ListResourceBundle {
     protected Object[][] getContents();
