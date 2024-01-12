@@ -37,6 +37,7 @@ public class SmsTemplateActivity extends AbstractActivity {
 
     private EditText smsNumber;
     private EditText templateTxt;
+    private EditText noteTxt;
     private EditText exampleTxt;
     private TextView parseResult;
     private Spinner accountSpinner;
@@ -64,6 +65,7 @@ public class SmsTemplateActivity extends AbstractActivity {
         smsNumber = findViewById(R.id.sms_number);
         initTitleAndDynamicDescription();
         templateTxt = findViewById(R.id.sms_template);
+        noteTxt = findViewById(R.id.sms_note);
         initAccounts();
         toggleIncome = findViewById(R.id.toggle);
 
@@ -96,9 +98,14 @@ public class SmsTemplateActivity extends AbstractActivity {
 
     private void initTitleAndDynamicDescription() {
         TextView templateTitle = findViewById(R.id.sms_tpl_title);
-        final TextView templateDesc = findViewById(R.id.sms_tpl_desc);
+        TextView templateDesc = findViewById(R.id.sms_tpl_desc);
         templateDesc.setOnClickListener(v -> templateDesc.setVisibility(View.GONE));
         templateTitle.setOnClickListener(v -> templateDesc.setVisibility( templateDesc.getVisibility() == View.GONE ? View.VISIBLE : View.GONE));
+
+        TextView noteTitle = findViewById(R.id.sms_note_title);
+        TextView noteDesc = findViewById(R.id.sms_note_desc);
+        noteDesc.setOnClickListener(v -> noteDesc.setVisibility(View.GONE));
+        noteTitle.setOnClickListener(v -> noteDesc.setVisibility(noteDesc.getVisibility() == View.GONE ? View.VISIBLE : View.GONE));
     }
 
     private void initExampleField() {
@@ -178,6 +185,7 @@ public class SmsTemplateActivity extends AbstractActivity {
     private void updateSmsTemplateFromUI() {
         smsTemplate.title = smsNumber.getText().toString();
         smsTemplate.template = templateTxt.getText().toString();
+        smsTemplate.note = noteTxt.getText().toString();
         smsTemplate.categoryId = categorySelector == null ? categoryId : categorySelector.getSelectedCategoryId();
         smsTemplate.isIncome = toggleIncome.isChecked();
         smsTemplate.accountId = accountSpinner.getSelectedItemId();
@@ -199,6 +207,7 @@ public class SmsTemplateActivity extends AbstractActivity {
     private void editSmsTemplate() {
         smsNumber.setText(smsTemplate.title);
         templateTxt.setText(smsTemplate.template);
+        noteTxt.setText(smsTemplate.note);
         selectedAccount(smsTemplate.accountId);
         selectedToAccount(smsTemplate.toAccountId);
         toggleIncome.setChecked(smsTemplate.isIncome);

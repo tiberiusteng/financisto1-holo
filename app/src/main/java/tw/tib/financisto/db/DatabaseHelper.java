@@ -273,6 +273,7 @@ public class DatabaseHelper extends DatabaseSchemaEvolution {
         _id,
         title,
         template,
+        note,
         category_id,
         account_id,
         to_account_id,

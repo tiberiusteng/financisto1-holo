@@ -48,12 +48,22 @@ public class SmsTransactionProcessor {
                 if (text == null && greedy_text != null) {
                     text = greedy_text;
                 }
-                if (text == null) {
-                    text = fullSmsBody;
+                String note = "";
+                if (t.note != null && !t.note.isEmpty()) {
+                    if (text == null) {
+                        text = "";
+                    }
+                    note = t.note.replace("{{t}}", text);
+                }
+                else if (text != null) {
+                    note = text;
+                }
+                else if (updateNote) {
+                    note = fullSmsBody;
                 }
                 try {
                     BigDecimal price = toBigDecimal(parsedPrice);
-                    return createNewTransaction(price, account, t, updateNote ? text : "", status);
+                    return createNewTransaction(price, account, t, note, status);
                 } catch (Exception e) {
                     Log.e(TAG, format("Failed to parse price value: \"%s\"", parsedPrice), e);
                 }

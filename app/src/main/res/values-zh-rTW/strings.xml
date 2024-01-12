@@ -748,6 +748,9 @@
   <string name="sms_tpl_title">模板 (?)</string>
   <string name="sms_tpl_desc">佔位標籤: \n{{p}} - 金額\n{{a}} - 帳號/卡號片段\n{{t}} - 交易內容敘述 (盡可能短)\n{{u}} - 交易內容敘述 (盡可能長)\n{{*}} - 任意內容 (不處理)</string>
   <string name="sms_tpl_hint">在此輸入模板，並以佔位標籤標記資料</string>
+  <string name="sms_note_title">備註 (?)</string>
+  <string name="sms_note_desc">佔位標籤: \n{{t}} - 會被換成模板取得的交易內容敘述</string>
+  <string name="sms_note_hint">輸入產生交易時填寫的備註</string>
   <string name="sms_tpl_check">在此貼上通知內容進行測試</string>
   <string name="sms_templates">通知 / 簡訊模板</string>
   <string name="no_sms_templates">沒有模板</string>

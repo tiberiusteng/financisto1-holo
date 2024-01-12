@@ -1,0 +1,1 @@
+ALTER TABLE sms_template ADD COLUMN note TEXT

@@ -963,6 +963,9 @@
     <string name="sms_tpl_title">Template (?)</string>
     <string name="sms_tpl_desc">Placeholders: \n{{p}} - price\n{{a}} - account last digits\n{{t}} - note text (non-greedy)\n{{u}} - note text (greedy)\n{{*}} - any symbols/words</string>
     <string name="sms_tpl_hint">Specify template with placeholders here</string>
+    <string name="sms_note_title">Note (?)</string>
+    <string name="sms_note_desc">Placeholders: \n{{t}} - note text extracted by template</string>
+    <string name="sms_note_hint">Specify note to apply to generated transaction</string>
     <string name="sms_tpl_check">Try with notification example here</string>
     <string name="sms_templates">Notification / SMS Templates</string>
     <string name="no_sms_templates">No templates</string>

@@ -28,6 +28,13 @@
 			<EditText a:gravity="top" a:layout_height="wrap_content" a:hint="@string/sms_tpl_hint"
 				a:layout_width="fill_parent" a:id="@+id/sms_template"/>
 
+			<TextView a:layout_height="wrap_content" a:id="@+id/sms_note_title"
+				a:layout_width="fill_parent" a:text="@string/sms_note_title" />
+			<TextView a:layout_height="wrap_content" a:id="@+id/sms_note_desc" a:visibility="gone"
+				a:layout_width="fill_parent" a:text="@string/sms_note_desc" />
+			<EditText a:gravity="top" a:layout_height="wrap_content" a:hint="@string/sms_note_hint"
+				a:layout_width="fill_parent" a:id="@+id/sms_note"/>
+
 			<LinearLayout a:layout_width="fill_parent" a:layout_height="wrap_content" a:orientation="vertical" a:id="@+id/list2"/>
 
 			<TextView a:layout_height="wrap_content" a:paddingTop="5dp"
