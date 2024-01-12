@@ -95,6 +95,7 @@ public class MyPreferences {
 	public enum AccountListDateType {
 		LAST_TX("LAST_TX"),
 		ACCOUNT_CREATION("ACCOUNT_CREATION"),
+		ACCOUNT_UPDATE("ACCOUNT_UPDATE"),
 		HIDDEN("HIDDEN");
 
 		public final String tag;

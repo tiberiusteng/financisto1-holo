@@ -226,7 +226,6 @@ public class AccountActivity extends AbstractActivity {
 			}
 
 			account.title = Utils.text(accountTitle);
-			account.creationDate = System.currentTimeMillis();
 			String sortOrder = Utils.text(sortOrderText);
 			account.sortOrder = sortOrder == null ? 0 : Integer.parseInt(sortOrder);
 			account.isIncludeIntoTotals = isIncludedIntoTotals.isChecked();

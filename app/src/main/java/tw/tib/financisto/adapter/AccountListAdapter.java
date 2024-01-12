@@ -85,7 +85,20 @@ public class AccountListAdapter extends ResourceCursorAdapter {
 				v.bottomView.setText(df.format(new Date(a.lastTransactionDate)));
 				break;
 			case ACCOUNT_CREATION:
-				v.bottomView.setText(df.format(new Date(a.creationDate)));
+				if (a.creationDate != 0) {
+					v.bottomView.setText(df.format(new Date(a.creationDate)));
+				}
+				else {
+					v.bottomView.setText("");
+				}
+				break;
+			case ACCOUNT_UPDATE:
+				if (a.updatedOn != 0) {
+					v.bottomView.setText(df.format(new Date(a.updatedOn)));
+				}
+				else {
+					v.bottomView.setText("");
+				}
 				break;
 			default:
 			case HIDDEN:

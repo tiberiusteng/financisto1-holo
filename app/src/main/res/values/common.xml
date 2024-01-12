@@ -220,6 +220,7 @@
 	<string-array name="account_list_date_type_values">
 		<item>LAST_TX</item>
 		<item>ACCOUNT_CREATION</item>
+		<item>ACCOUNT_UPDATE</item>
 		<item>HIDDEN</item>
 	</string-array>
 

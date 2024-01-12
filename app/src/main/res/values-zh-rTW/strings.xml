@@ -801,6 +801,7 @@
   <string-array name="account_list_date_types">
     <item>最後交易日期</item>
     <item>帳戶建立日期</item>
+    <item>帳戶修改日期</item>
     <item>不顯示</item>
   </string-array>
   <string-array name="sort_accounts_entities">

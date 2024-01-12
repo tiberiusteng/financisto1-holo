@@ -822,6 +822,7 @@
     <string-array name="account_list_date_types">
         <item>Last transaction date</item>
         <item>Account creation date</item>
+        <item>Account last modification date</item>
         <item>Hidden</item>
     </string-array>
 
