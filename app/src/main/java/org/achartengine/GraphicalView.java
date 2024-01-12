@@ -63,6 +63,12 @@ public class GraphicalView extends View {
   private Bitmap fitZoomImage;
   /** The zoom area size. */
   private int zoomSize = 50;
+  /** The rectangle to draw zoom out button. */
+  private RectF zoomOutRect = new RectF();
+  /** The rectangle to draw zoom in button. */
+  private RectF zoomInRect = new RectF();
+  /** The rectangle to draw fit zoom button. */
+  private RectF fitZoomRect = new RectF();
   /** The zoom buttons background color. */
   private static final int ZOOM_BUTTONS_COLOR = Color.argb(175, 150, 150, 150);
   /** The zoom in tool. */
@@ -166,7 +172,17 @@ public class GraphicalView extends View {
     return mChart;
   }
 
-  @SuppressLint("DrawAllocation")
+  @Override
+  protected void onSizeChanged(int w, int h, int oldw, int oldh) {
+    super.onSizeChanged(w, h, oldw, oldh);
+    zoomSize = Math.max(zoomSize, Math.min(w, h) / 7);
+    float buttonY = h - zoomSize * 0.625f;
+    mZoomR.set(w - zoomSize * 3, h - zoomSize * 0.775f, w, h);
+    zoomInRect.set(w - zoomSize * 2.75f, buttonY, w - zoomSize * 2.25f, buttonY + (zoomSize * 0.5f));
+    zoomOutRect.set(w - zoomSize * 1.75f, buttonY, w - zoomSize * 1.25f, buttonY + (zoomSize * 0.5f));
+    fitZoomRect.set(w - zoomSize * 0.75f, buttonY, w - zoomSize * 0.25f, buttonY + (zoomSize * 0.5f));
+  }
+
   @Override
   protected void onDraw(Canvas canvas) {
     super.onDraw(canvas);
@@ -184,25 +200,15 @@ public class GraphicalView extends View {
     mChart.draw(canvas, left, top, width, height, mPaint);
     if (mRenderer != null && mRenderer.isZoomEnabled() && mRenderer.isZoomButtonsVisible()) {
       mPaint.setColor(ZOOM_BUTTONS_COLOR);
-      zoomSize = Math.max(zoomSize, Math.min(width, height) / 7);
-      mZoomR.set(left + width - zoomSize * 3, top + height - zoomSize * 0.775f, left + width, top
-              + height);
       canvas.drawRoundRect(mZoomR, zoomSize / 3, zoomSize / 3, mPaint);
-      float buttonY = top + height - zoomSize * 0.625f;
       if(zoomInImage != null) {
-        canvas.drawBitmap(zoomInImage, null, new RectF(
-                left + width - zoomSize * 2.75f, buttonY,
-                left + width - zoomSize * 2.25f, buttonY + (zoomSize * 0.5f)), null);
+        canvas.drawBitmap(zoomInImage, null, zoomInRect, null);
       }
       if(zoomOutImage != null) {
-        canvas.drawBitmap(zoomOutImage, null, new RectF(
-                left + width - zoomSize * 1.75f, buttonY,
-                left + width - zoomSize * 1.25f, buttonY + (zoomSize * 0.5f)), null);
+        canvas.drawBitmap(zoomOutImage, null, zoomOutRect, null);
       }
       if(fitZoomImage != null) {
-        canvas.drawBitmap(fitZoomImage, null, new RectF(
-                left + width - zoomSize * 0.75f, buttonY,
-                left + width -  zoomSize * 0.25f, buttonY + (zoomSize * 0.5f)), null);
+        canvas.drawBitmap(fitZoomImage, null, fitZoomRect, null);
       }
     }
     mDrawn = true;
