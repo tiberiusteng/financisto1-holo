@@ -185,6 +185,7 @@
     <string name="period_this_year">This year</string>
     <string name="period_last_week">Last week</string>
     <string name="period_last_month">Last month</string>
+    <string name="period_last_year">Last year</string>
     <string name="currency_name">Name</string>
     <string name="currency_symbol">Symbol</string>
     <string name="currency_code">Code</string>

@@ -165,6 +165,7 @@
   <string name="period_this_year">本年</string>
   <string name="period_last_week">上一週</string>
   <string name="period_last_month">上個月</string>
+  <string name="period_last_year">去年</string>
   <string name="currency_name">名稱</string>
   <string name="currency_symbol">符號</string>
   <string name="currency_code">貨幣碼</string>
