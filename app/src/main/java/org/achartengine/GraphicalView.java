@@ -27,6 +27,7 @@ import org.achartengine.tools.PanListener;
 import org.achartengine.tools.Zoom;
 import org.achartengine.tools.ZoomListener;
 
+import android.annotation.SuppressLint;
 import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
@@ -97,12 +98,13 @@ public class GraphicalView extends View {
       mRenderer = ((RoundChart) mChart).getRenderer();
     }
     if (mRenderer.isZoomButtonsVisible()) {
-      zoomInImage = BitmapFactory.decodeStream(GraphicalView.class
-              .getResourceAsStream("image/zoom_in.png"));
-      zoomOutImage = BitmapFactory.decodeStream(GraphicalView.class
-              .getResourceAsStream("image/zoom_out.png"));
-      fitZoomImage = BitmapFactory.decodeStream(GraphicalView.class
-              .getResourceAsStream("image/zoom-1.png"));
+      try {
+        zoomInImage = BitmapFactory.decodeStream(context.getAssets().open("zoom_in.png"));
+        zoomOutImage = BitmapFactory.decodeStream(context.getAssets().open("zoom_out.png"));
+        fitZoomImage = BitmapFactory.decodeStream(context.getAssets().open("zoom-1.png"));
+      } catch (Exception e) {
+        // no images for buttons
+      }
     }
 
     if (mRenderer instanceof XYMultipleSeriesRenderer
@@ -164,6 +166,7 @@ public class GraphicalView extends View {
     return mChart;
   }
 
+  @SuppressLint("DrawAllocation")
   @Override
   protected void onDraw(Canvas canvas) {
     super.onDraw(canvas);
@@ -187,13 +190,19 @@ public class GraphicalView extends View {
       canvas.drawRoundRect(mZoomR, zoomSize / 3, zoomSize / 3, mPaint);
       float buttonY = top + height - zoomSize * 0.625f;
       if(zoomInImage != null) {
-        canvas.drawBitmap(zoomInImage, left + width - zoomSize * 2.75f, buttonY, null);
+        canvas.drawBitmap(zoomInImage, null, new RectF(
+                left + width - zoomSize * 2.75f, buttonY,
+                left + width - zoomSize * 2.25f, buttonY + (zoomSize * 0.5f)), null);
       }
       if(zoomOutImage != null) {
-        canvas.drawBitmap(zoomOutImage, left + width - zoomSize * 1.75f, buttonY, null);
+        canvas.drawBitmap(zoomOutImage, null, new RectF(
+                left + width - zoomSize * 1.75f, buttonY,
+                left + width - zoomSize * 1.25f, buttonY + (zoomSize * 0.5f)), null);
       }
       if(fitZoomImage != null) {
-        canvas.drawBitmap(fitZoomImage, left + width - zoomSize * 0.75f, buttonY, null);
+        canvas.drawBitmap(fitZoomImage, null, new RectF(
+                left + width - zoomSize * 0.75f, buttonY,
+                left + width -  zoomSize * 0.25f, buttonY + (zoomSize * 0.5f)), null);
       }
     }
     mDrawn = true;
