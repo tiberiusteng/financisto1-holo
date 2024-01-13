@@ -3,7 +3,7 @@
 <head>
 <style type="text/css">
 img {
-	width: 95%;
+	max-width: 95%;
 	margin: auto;
 	display: block;
 }
@@ -13,8 +13,8 @@ img {
 
 <p>
 If you want to choose account from notification content, you need to fill the 
-"Card Number" field. It's typically the last 4 digits of card number, but your s
-ituation may different. Fill the value that will appear in the message.
+"Card Number" field. It's typically the last 4 digits of card number, but your
+situation may different. Fill the value that will appear in the message.
 </p>
 
 <p>
@@ -46,7 +46,7 @@ message, or here's the list:
 	<li><b>{{p}}</b> - the amount/price numeric part</li>
 	<li><b>{{t}}</b> - text part to extract as transaction note, this one is "non-greedy", i.e. it will try to match as short as possible</li>
 	<li><b>{{u}}</b> - text part to extract as transaction note, "greedy" (as long as possible)</li>
-	<li><b>{{*}}</b> - anything irrevalent, i.e. if you want to skip a part of message that's dynamic but unused</li>
+	<li><b>{{*}}</b> - anything irrelevant, i.e. if you want to skip a part of message that's dynamic but unused</li>
 </ul>
 
 <img src="template.png" />

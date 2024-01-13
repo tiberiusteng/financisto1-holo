@@ -15,9 +15,32 @@
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
     <title>Financisto - Personal Finance Manager for Android</title>
 </head>
+<style>
+    dt { margin-left: 1.5em; }
+    dt span { float: left; margin-left: -1.5em; }
+</style>
 <body>
 
 <a href="docs/notification_template.htm">Notification Template docs</a>
+
+<p><b>2024-01-13</b></p>
+<dl>
+    <dt><span>[+]</span> Add "last year" to filter/report predefined period</dt>
+    <dt><span>[+]</span> Add twin date picker (both calendar and spinner) (need to enable
+        in Preferences &gt; New Transactions screen)</dt>
+    <dt><span>[+]</span> Add custom note to notification templates</dt>
+    <dd>
+        The order transactions created from templates get notes are:<br />
+        <ol>
+            <li>custom note defined in template, with text extracted from notification</li>
+            <li>(when template's note is empty) text extracted from notification, if available</li>
+            <li>(when note is empty and no extraction defined) full notification body, if enabled in config</li>
+        </ol>
+    </dd>
+    <dt><span>[-]</span> Fix blotter filter (you'll need to reselect your filters)</dt>
+    <dt><span>[-]</span> Fix account creation/update date handling and display</dt>
+    <dt><span>[-]</span> Fix report pie chart zoom buttons</dt>
+</dl>
 
 <p><b>2024-01-11 a</b></p>
 <dl>
