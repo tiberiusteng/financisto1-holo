@@ -32,6 +32,7 @@ import tw.tib.financisto.R;
 import tw.tib.financisto.datetime.DateUtils;
 import tw.tib.financisto.db.DatabaseHelper.AccountColumns;
 import tw.tib.financisto.db.DatabaseHelper.TransactionColumns;
+import tw.tib.financisto.dialog.DatePickerTwinDialog;
 import tw.tib.financisto.model.*;
 import tw.tib.financisto.model.Account;
 import tw.tib.financisto.model.Attribute;
@@ -206,16 +207,29 @@ public abstract class AbstractTransactionActivity extends AbstractActivity imple
 		dateText = findViewById(R.id.date);
 		dateText.setText(df.format(date));
 		dateText.setOnClickListener(arg0 -> {
-			DatePickerDialog dialog = new DatePickerDialog(AbstractTransactionActivity.this,
-					(view, year, monthOfYear, dayOfMonth) -> {
-						dateTime.set(year, monthOfYear, dayOfMonth);
-						dateText.setText(df.format(dateTime.getTime()));
-					},
-					dateTime.get(Calendar.YEAR),
-					dateTime.get(Calendar.MONTH),
-					dateTime.get(Calendar.DAY_OF_MONTH)
-			);
-			dialog.show();
+			if (MyPreferences.isUseTwinDatePicker(this)) {
+				DatePickerTwinDialog dpd = DatePickerTwinDialog.newInstance(
+						dateTime.get(Calendar.YEAR),
+						dateTime.get(Calendar.MONTH),
+						dateTime.get(Calendar.DAY_OF_MONTH),
+						(view, year, monthOfYear, dayOfMonth) -> {
+							dateTime.set(year, monthOfYear, dayOfMonth);
+							dateText.setText(df.format(dateTime.getTime()));
+						});
+				dpd.show(getFragmentManager(), DatePickerTwinDialog.TAG);
+			}
+			else {
+				DatePickerDialog dialog = new DatePickerDialog(AbstractTransactionActivity.this,
+						(view, year, monthOfYear, dayOfMonth) -> {
+							dateTime.set(year, monthOfYear, dayOfMonth);
+							dateText.setText(df.format(dateTime.getTime()));
+						},
+						dateTime.get(Calendar.YEAR),
+						dateTime.get(Calendar.MONTH),
+						dateTime.get(Calendar.DAY_OF_MONTH)
+				);
+				dialog.show();
+			}
 		});
 
 		timeText = findViewById(R.id.time);

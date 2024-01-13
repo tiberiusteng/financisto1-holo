@@ -153,6 +153,11 @@
             </PreferenceCategory>
             <PreferenceCategory android:title="@string/screen_layout">
                 <CheckBoxPreference
+                    android:defaultValue="false"
+                    android:key="ntsl_use_twin_date_picker"
+                    android:summary="@string/use_twin_date_picker_summary"
+                    android:title="@string/use_twin_date_picker" />
+                <CheckBoxPreference
                     android:defaultValue="true"
                     android:key="ntsl_use_fixed_layout"
                     android:summary="@string/use_fixed_layout_summary"

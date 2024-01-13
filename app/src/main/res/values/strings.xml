@@ -387,6 +387,8 @@
     <string name="shortcut_summary">Add the shortcut to the Home Screen</string>
     <string name="use_fixed_layout">Use fixed layout</string>
     <string name="use_fixed_layout_summary">Fix OK/Cancel buttons in the layout</string>
+    <string name="use_twin_date_picker">Use twin date picker</string>
+    <string name="use_twin_date_picker_summary">Show both calendar and spinner date picker</string>
     <string name="no_data">No data</string>
     <string name="calculating">Calculating…</string>
     <string name="budget_mode">Ease conditions</string>
