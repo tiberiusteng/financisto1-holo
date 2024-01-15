@@ -11,6 +11,7 @@ package tw.tib.financisto.export.dropbox;
 import android.content.Context;
 import android.net.Uri;
 import android.util.Log;
+import android.widget.Toast;
 
 import com.dropbox.core.DbxException;
 import com.dropbox.core.DbxRequestConfig;
@@ -24,6 +25,7 @@ import com.dropbox.core.v2.files.ListFolderResult;
 import com.dropbox.core.v2.files.Metadata;
 import com.dropbox.core.v2.files.WriteMode;
 
+import tw.tib.financisto.BuildConfig;
 import tw.tib.financisto.R;
 import tw.tib.financisto.export.ImportExportException;
 import tw.tib.financisto.utils.MyPreferences;
@@ -36,6 +38,7 @@ import java.util.Comparator;
 import java.util.List;
 
 public class Dropbox {
+    private static final String TAG = "Dropbox";
 
     private static final String APP_KEY = "aenijec51r68hsv";
 
@@ -49,18 +52,20 @@ public class Dropbox {
     }
 
     public void startAuth() {
+        Log.d(TAG, "startAuth");
         startedAuth = true;
         Auth.startOAuth2PKCE(context, APP_KEY, getDbxRequestConfig(),
                 Arrays.asList("files.metadata.read", "files.content.read", "files.content.write"));
     }
 
     public void completeAuth() {
-        Log.d(Dropbox.class.getSimpleName(), "enter completeAuth, startedAuth = " + startedAuth);
+        Log.d(TAG, "enter completeAuth, startedAuth = " + startedAuth);
         try {
             DbxCredential dbxCredential = Auth.getDbxCredential();
             if (startedAuth && dbxCredential != null) {
                 try {
                     Log.d(Dropbox.class.getSimpleName(), "dbxCredential = " + dbxCredential.toString());
+                    Toast.makeText(context, R.string.dropbox_authorized, Toast.LENGTH_LONG).show();
                     MyPreferences.storeDropboxKeys(context, dbxCredential.toString());
                 } catch (IllegalStateException e) {
                     Log.i(Dropbox.class.getSimpleName(), "Error authenticating Dropbox", e);
@@ -83,7 +88,7 @@ public class Dropbox {
     }
 
     private DbxRequestConfig getDbxRequestConfig() {
-        return DbxRequestConfig.newBuilder("financisto").build();
+        return DbxRequestConfig.newBuilder("financisto/" + BuildConfig.VERSION_CODE).build();
     }
 
     private boolean authSession() {

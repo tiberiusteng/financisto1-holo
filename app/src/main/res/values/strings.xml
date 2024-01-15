@@ -755,6 +755,7 @@
     <string name="dropbox">Dropbox</string>
     <string name="dropbox_authorize">Authorize</string>
     <string name="dropbox_authorize_summary">Allow Financisto to upload files to your Dropbox</string>
+    <string name="dropbox_authorized">Authorized with Dropbox</string>
     <string name="dropbox_unlink">Unlink</string>
     <string name="dropbox_unlink_summary">Prevent Financisto from uploading files to your Dropbox</string>
     <string name="dropbox_upload_backup">Upload Backups</string>

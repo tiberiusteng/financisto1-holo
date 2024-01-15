@@ -41,7 +41,6 @@ import tw.tib.financisto.utils.PinProtection;
 import tw.tib.financisto.utils.FingerprintUtils;
 
 public class PreferencesActivity extends PreferenceActivity {
-
     private static final int SELECT_DATABASE_FOLDER = 100;
     private static final int CHOOSE_ACCOUNT = 101;
     private static final int REQUEST_AUTHORIZATION = 102;
@@ -196,6 +195,7 @@ public class PreferencesActivity extends PreferenceActivity {
     private void linkToDropbox() {
         boolean dropboxAuthorized = MyPreferences.isDropboxAuthorized(this);
         PreferenceScreen preferenceScreen = getPreferenceScreen();
+        preferenceScreen.findPreference("dropbox_authorize").setEnabled(!dropboxAuthorized);
         preferenceScreen.findPreference("dropbox_unlink").setEnabled(dropboxAuthorized);
         preferenceScreen.findPreference("dropbox_upload_backup").setEnabled(dropboxAuthorized);
         preferenceScreen.findPreference("dropbox_upload_autobackup").setEnabled(dropboxAuthorized);

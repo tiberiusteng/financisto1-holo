@@ -649,6 +649,7 @@
   <string name="dropbox">Dropbox</string>
   <string name="dropbox_authorize">授權</string>
   <string name="dropbox_authorize_summary">允許 Financisto 上傳檔案到您的 Dropbox</string>
+  <string name="dropbox_authorized">已獲得 Dropbox 授權</string>
   <string name="dropbox_unlink">解除連結</string>
   <string name="dropbox_unlink_summary">防止 Financisto 上傳檔案到您的 Dropbox</string>
   <string name="dropbox_upload_backup">上傳備份</string>
