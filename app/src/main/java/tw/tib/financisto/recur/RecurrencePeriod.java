@@ -20,7 +20,6 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.GregorianCalendar;
 import java.util.HashMap;
-import java.util.TimeZone;
 
 public class RecurrencePeriod {
 
@@ -92,16 +91,6 @@ public class RecurrencePeriod {
                     0,
                     0);
         }
-		c.set(Calendar.MILLISECOND, 0);
-		Date result = c.getTime();
-		TimeZone timeZone = Calendar.getInstance().getTimeZone();
-		boolean isResultInDaylight = timeZone.inDaylightTime(result);
-		if (isStartDateInDaylight && !isResultInDaylight) {
-			c.add(Calendar.MILLISECOND, timeZone.getDSTSavings());
-		}
-		else if (!isStartDateInDaylight && isResultInDaylight) {
-			c.add(Calendar.MILLISECOND, -timeZone.getDSTSavings());
-		}
 		return c.getTime();
     }
 
