@@ -433,15 +433,16 @@ public class BlotterFragment extends AbstractListFragment implements BlotterOper
         transactionActionGrid.addQuickAction(new MyQuickAction(getContext(), R.drawable.ic_action_edit, R.string.edit));
         transactionActionGrid.addQuickAction(new MyQuickAction(getContext(), R.drawable.ic_action_trash, R.string.delete));
         if (isQuickMenuShowAdditionalTransactionStatus) {
-            transactionActionGrid.addQuickAction(new MyQuickAction(getContext(), R.drawable.ic_action_flash, R.string.transaction_status_restored));
-            transactionActionGrid.addQuickAction(new MyQuickAction(getContext(), R.drawable.ic_action_info, R.string.transaction_status_pending));
-            transactionActionGrid.addQuickAction(new MyQuickAction(getContext(), R.drawable.ic_action_gear, R.string.transaction_status_unreconciled));
+            transactionActionGrid.addQuickAction(new MyQuickAction(getContext(), R.drawable.ic_action_status_restored, MyQuickAction.NO_FILTER, R.string.transaction_status_restored));
+            transactionActionGrid.addQuickAction(new MyQuickAction(getContext(), R.drawable.ic_action_status_pending, MyQuickAction.NO_FILTER, R.string.transaction_status_pending));
+            transactionActionGrid.addQuickAction(new MyQuickAction(getContext(), R.drawable.ic_action_status_empty, MyQuickAction.NO_FILTER, R.string.transaction_status_unreconciled));
         }
         transactionActionGrid.addQuickAction(new MyQuickAction(getContext(), R.drawable.ic_action_copy, R.string.duplicate));
-        transactionActionGrid.addQuickAction(new MyQuickAction(getContext(), R.drawable.ic_action_tick, R.string.clear));
-        transactionActionGrid.addQuickAction(new MyQuickAction(getContext(), R.drawable.ic_action_double_tick, R.string.reconcile));
+        transactionActionGrid.addQuickAction(new MyQuickAction(getContext(), R.drawable.ic_action_status_cleared, MyQuickAction.NO_FILTER, R.string.clear));
+        transactionActionGrid.addQuickAction(new MyQuickAction(getContext(), R.drawable.ic_action_status_reconciled, MyQuickAction.NO_FILTER, R.string.reconcile));
         if (isQuickMenuShowDuplicateKeepTime) {
-            transactionActionGrid.addQuickAction(new MyQuickAction(getContext(), R.drawable.ic_action_drag, R.string.duplicate_keep_time));
+            transactionActionGrid.addQuickAction(new MyQuickAction(getContext(), R.drawable.ic_action_copy_keep_time, MyQuickAction.NO_FILTER, R.string.duplicate_keep_time));
+            //transactionActionGrid.addQuickAction(new MyQuickAction(getContext(), R.drawable.ic_action_copy_keep_time, getResources().getColor(R.color.holo_orange_dark), R.string.duplicate_keep_time));
         }
         transactionActionGrid.setOnQuickActionClickListener(transactionActionListener);
     }
