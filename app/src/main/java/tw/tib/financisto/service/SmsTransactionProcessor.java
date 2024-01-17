@@ -2,6 +2,7 @@ package tw.tib.financisto.service;
 
 import android.util.Log;
 import tw.tib.financisto.db.DatabaseAdapter;
+import tw.tib.financisto.model.Payee;
 import tw.tib.financisto.model.SmsTemplate;
 import tw.tib.financisto.model.Transaction;
 import tw.tib.financisto.model.TransactionStatus;
