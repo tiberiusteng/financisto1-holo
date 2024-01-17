@@ -4,3 +4,6 @@ gradle/**
 build/**
 app/build/**
 captures/
+*.iml
+gradlew*
+local.properties

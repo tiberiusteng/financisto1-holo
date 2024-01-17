@@ -23,6 +23,8 @@
 -printusage usage.txt
 -printseeds seeds.txt
 
+-keepclassmembers enum * { *; }
+
 -keep class javax.persistence.** { *; }
 -keep interface javax.persistence.** { *; }
 
