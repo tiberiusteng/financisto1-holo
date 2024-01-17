@@ -36,24 +36,25 @@ public class SmsTransactionProcessor {
      */
     public Transaction createTransactionBySms(String addr, String fullSmsBody, TransactionStatus status, boolean updateNote) {
         List<SmsTemplate> addrTemplates = db.getSmsTemplatesByNumber(addr);
-        for (final SmsTemplate t : addrTemplates) {
-            String[] match = findTemplateMatches(t.template, fullSmsBody);
+        for (final SmsTemplate template : addrTemplates) {
+            String[] match = findTemplateMatches(template.template, fullSmsBody);
             if (match != null) {
-                Log.d(TAG, format("Found template \"%s\" with matches \"%s\"", t, Arrays.toString(match)));
+                Log.d(TAG, format("Found template \"%s\" with matches \"%s\"", template, Arrays.toString(match)));
 
                 String account = match[ACCOUNT.ordinal()];
                 String parsedPrice = match[PRICE.ordinal()];
                 String text = match[TEXT.ordinal()];
                 String greedy_text = match[GREEDY_TEXT.ordinal()];
+                String payeeText =  match[PAYEE.ordinal()];
                 if (text == null && greedy_text != null) {
                     text = greedy_text;
                 }
                 String note = "";
-                if (t.note != null && !t.note.isEmpty()) {
+                if (template.note != null && !template.note.isEmpty()) {
                     if (text == null) {
                         text = "";
                     }
-                    note = t.note.replace("{{t}}", text);
+                    note = template.note.replace("{{t}}", text);
                 }
                 else if (text != null) {
                     note = text;
@@ -63,7 +64,7 @@ public class SmsTransactionProcessor {
                 }
                 try {
                     BigDecimal price = toBigDecimal(parsedPrice);
-                    return createNewTransaction(price, account, t, note, status);
+                    return createNewTransaction(template, price, account, payeeText, note, status);
                 } catch (Exception e) {
                     Log.e(TAG, format("Failed to parse price value: \"%s\"", parsedPrice), e);
                 }
@@ -132,24 +133,31 @@ public class SmsTransactionProcessor {
         throw new NumberFormatException("Unexpected number format. Cannot convert '" + value + "' to BigDecimal.");
     }
 
-    private Transaction createNewTransaction(BigDecimal price,
+    private Transaction createNewTransaction(SmsTemplate smsTemplate, BigDecimal price,
         String accountDigits,
-        SmsTemplate smsTemplate,
+        String payeeText,
         String note,
         TransactionStatus status) {
         Transaction res = null;
         long accountId = findAccount(accountDigits, smsTemplate.accountId);
+        Payee payee = db.getPayee(payeeText);
         if (price.compareTo(ZERO) > 0 && accountId > 0) {
             res = new Transaction();
             res.isTemplate = 0;
             res.fromAccountId = accountId;
+            if (payee != null) {
+                res.payeeId = payee.id;
+                res.categoryId = payee.lastCategoryId;
+            }
             res.fromAmount = (smsTemplate.isIncome ? 1 : -1) * Math.abs(price.multiply(HUNDRED).longValue());
             if (smsTemplate.toAccountId != -1) {
                 res.toAccountId = smsTemplate.toAccountId;
                 res.toAmount = (smsTemplate.isIncome ? -1 : 1) * Math.abs(price.multiply(HUNDRED).longValue());
             }
             res.note = note;
-            res.categoryId = smsTemplate.categoryId;
+            if (smsTemplate.categoryId != 0) {
+                res.categoryId = smsTemplate.categoryId;
+            }
             res.status = status;
             long id = db.insertOrUpdate(res);
             res.id = id;
@@ -274,6 +282,7 @@ public class SmsTransactionProcessor {
         ACCOUNT("<:A:>", "\\s{0,3}(\\d{4})\\s{0,3}", "{{a}}"),
         BALANCE("<:B:>", "\\s{0,3}([\\d\\.,\\-\\+\\']+(?:[\\d \\.,]+?)*)\\s{0,3}", "{{b}}"),
         DATE("<:D:>", "\\s{0,3}(\\d[\\d\\. /:-]{12,14}\\d)\\s*?", "{{d}}"),
+        PAYEE("<:E:>", "(\\w+?)", "{{e}}"),
         PRICE("<:P:>", BALANCE.regexp, "{{p}}"),
         TEXT("<:T:>", "(.*?)", "{{t}}"),
         GREEDY_TEXT("<:U:>", "(.*)", "{{u}}");

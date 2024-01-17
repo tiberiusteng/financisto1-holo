@@ -964,7 +964,7 @@
     <string name="sms_number_hint">Notification sender app name or SMS sender number, use % to indicate wildcard match</string>
     <string name="sms_tpl">Notification / SMS Template</string>
     <string name="sms_tpl_title">Template (?)</string>
-    <string name="sms_tpl_desc">Placeholders: \n{{p}} - price\n{{a}} - account last digits\n{{t}} - note text (non-greedy)\n{{u}} - note text (greedy)\n{{*}} - any symbols/words</string>
+    <string name="sms_tpl_desc">Placeholders: \n{{p}} - price\n{{a}} - account last digits\n{{e}} - payee title\n{{t}} - note text (non-greedy)\n{{u}} - note text (greedy)\n{{*}} - any symbols/words</string>
     <string name="sms_tpl_hint">Specify template with placeholders here</string>
     <string name="sms_note_title">Note (?)</string>
     <string name="sms_note_desc">Placeholders: \n{{t}} - note text extracted by template</string>
