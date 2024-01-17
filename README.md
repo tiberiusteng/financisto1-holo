@@ -10,11 +10,11 @@
 </a>
 </p>
 
-Please see [repo](https://github.com/dsolonenko/financisto) for latest development by 
+Please see https://github.com/dsolonenko/financisto for latest development by 
 orginal author.
 
 This codebase is started from an imported copy of an old version of source code 
-at [launchpad](https://code.launchpad.net/~financisto-dev/financisto/trunk), as 
+at launchpad https://code.launchpad.net/~financisto-dev/financisto/trunk, as 
 an working interim version until proper version 2 comes out.
 
 I haven't changed the package name yet, so you'll need to remove the Play Store version,
