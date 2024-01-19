@@ -8,20 +8,18 @@
 
 package tw.tib.financisto.activity;
 
-import android.app.TabActivity;
 import android.content.Context;
-import android.content.Intent;
 import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
 import android.os.Bundle;
 import android.view.View;
 import android.view.ViewGroup;
 import android.webkit.WebView;
-import android.widget.TabHost;
+import android.webkit.WebViewClient;
 
+import androidx.activity.OnBackPressedCallback;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.core.content.res.ResourcesCompat;
 import androidx.recyclerview.widget.RecyclerView;
 import androidx.viewpager2.widget.ViewPager2;
 
@@ -37,6 +35,9 @@ import tw.tib.financisto.utils.Utils;
  * Date: 3/24/11 10:20 PM
  */
 public class AboutActivity extends AppCompatActivity {
+
+    protected WebView webView;
+    protected OnBackPressedCallback onBackPressedCallback;
 
     @Override
     protected void onCreate(Bundle savedInstanceState ) {
@@ -68,6 +69,13 @@ public class AboutActivity extends AppCompatActivity {
                         break;
                     case 1:
                         vh.webView.loadUrl("file:///android_asset/whatsnew.htm");
+                        webView = vh.webView;
+                        webView.setWebViewClient(new WebViewClient() {
+                            @Override
+                            public void onPageFinished(WebView view, String url) {
+                                onBackPressedCallback.setEnabled(view.canGoBack());
+                            }
+                        });
                         break;
                     case 2:
                         vh.webView.loadUrl("file:///android_asset/gpl-2.0-standalone.htm");
@@ -80,6 +88,27 @@ public class AboutActivity extends AppCompatActivity {
                 return 3;
             }
         });
+
+        viewPager.registerOnPageChangeCallback(new ViewPager2.OnPageChangeCallback() {
+            @Override
+            public void onPageSelected(int position) {
+                if (position == 1 && webView != null) {
+                    onBackPressedCallback.setEnabled(webView.canGoBack());
+                }
+                else {
+                    onBackPressedCallback.setEnabled(false);
+                }
+            }
+        });
+
+        onBackPressedCallback = new OnBackPressedCallback(false) {
+            @Override
+            public void handleOnBackPressed() {
+                webView.goBack();
+            }
+        };
+
+        getOnBackPressedDispatcher().addCallback(onBackPressedCallback);
 
         new TabLayoutMediator(tabLayout, viewPager, true, false,
                 (tab, position) -> {
