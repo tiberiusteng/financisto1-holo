@@ -105,10 +105,14 @@ public class BlotterFragment extends AbstractListFragment implements BlotterOper
     protected boolean isQuickMenuEnabledForTransaction = false;
     protected boolean isQuickMenuShowAdditionalTransactionStatus = false;
     protected boolean isQuickMenuShowDuplicateKeepTime = false;
+    protected boolean isQuickMenuShowDuplicateKeepDateTime = false;
 
     protected OnBackPressedCallback backCallback;
 
     private static final Pattern amountSearchPattern = Pattern.compile("^([<>])?(\\d+(?:\\.\\d+)?)(?:~(\\d+(?:\\.\\d+)?))?$");
+
+    private NodeInflater inflater;
+    private long selectedId = -1;
 
     public BlotterFragment(int layoutId) {
         super(layoutId);
@@ -183,6 +187,7 @@ public class BlotterFragment extends AbstractListFragment implements BlotterOper
         isQuickMenuEnabledForTransaction = MyPreferences.isQuickMenuEnabledForTransaction(getContext());
         isQuickMenuShowAdditionalTransactionStatus = MyPreferences.isQuickMenuShowAdditionalTransactionStatus(getContext());
         isQuickMenuShowDuplicateKeepTime = MyPreferences.isQuickMenuShowDuplicateKeepTime(getContext());
+        isQuickMenuShowDuplicateKeepDateTime = MyPreferences.isQuickMenuShowDuplicateKeepDateTime(getContext());
 
         if (showAllBlotterButtons) {
             bTransfer = view.findViewById(R.id.bTransfer);
@@ -442,74 +447,49 @@ public class BlotterFragment extends AbstractListFragment implements BlotterOper
         transactionActionGrid.addQuickAction(new MyQuickAction(getContext(), R.drawable.ic_action_status_reconciled, MyQuickAction.NO_FILTER, R.string.reconcile));
         if (isQuickMenuShowDuplicateKeepTime) {
             transactionActionGrid.addQuickAction(new MyQuickAction(getContext(), R.drawable.ic_action_copy_keep_time, MyQuickAction.NO_FILTER, R.string.duplicate_keep_time));
-            //transactionActionGrid.addQuickAction(new MyQuickAction(getContext(), R.drawable.ic_action_copy_keep_time, getResources().getColor(R.color.holo_orange_dark), R.string.duplicate_keep_time));
+        }
+        if (isQuickMenuShowDuplicateKeepDateTime) {
+            transactionActionGrid.addQuickAction(new MyQuickAction(getContext(), R.drawable.ic_action_copy_keep_time, getResources().getColor(R.color.holo_orange_dark), R.string.duplicate_keep_date_time));
         }
         transactionActionGrid.setOnQuickActionClickListener(transactionActionListener);
     }
 
-    private QuickActionWidget.OnQuickActionClickListener transactionActionListener = new QuickActionWidget.OnQuickActionClickListener() {
-        public void onQuickActionClicked(QuickActionWidget widget, int position) {
-            if (isQuickMenuShowAdditionalTransactionStatus) {
-                switch (position) {
-                    case 0:
-                        showTransactionInfo(selectedId);
-                        break;
-                    case 1:
-                        editTransaction(selectedId);
-                        break;
-                    case 2:
-                        deleteTransaction(selectedId);
-                        break;
-                    case 3:
-                        restoreTransaction(selectedId);
-                        break;
-                    case 4:
-                        pendingTransaction(selectedId);
-                        break;
-                    case 5:
-                        unreconcileTransaction(selectedId);
-                        break;
-                    case 6:
-                        duplicateTransaction(selectedId, 1);
-                        break;
-                    case 7:
-                        clearTransaction(selectedId);
-                        break;
-                    case 8:
-                        reconcileTransaction(selectedId);
-                        break;
-                    case 9:
-                        duplicateTransactionKeepTime(selectedId);
-                        break;
-                }
-            }
-            else {
-                switch (position) {
-                    case 0:
-                        showTransactionInfo(selectedId);
-                        break;
-                    case 1:
-                        editTransaction(selectedId);
-                        break;
-                    case 2:
-                        deleteTransaction(selectedId);
-                        break;
-                    case 3:
-                        duplicateTransaction(selectedId, 1);
-                        break;
-                    case 4:
-                        clearTransaction(selectedId);
-                        break;
-                    case 5:
-                        reconcileTransaction(selectedId);
-                        break;
-                    case 6:
-                        duplicateTransactionKeepTime(selectedId);
-                        break;
-                }
-            }
-        }
+    private QuickActionWidget.OnQuickActionClickListener transactionActionListener = (widget, position, action) -> {
+        int titleId = ((MyQuickAction) action).titleId;
 
+        if (titleId == R.string.info) {
+            showTransactionInfo(selectedId);
+        }
+        else if (titleId == R.string.edit) {
+            editTransaction(selectedId);
+        }
+        else if (titleId == R.string.delete) {
+            deleteTransaction(selectedId);
+        }
+        else if (titleId == R.string.transaction_status_restored) {
+            restoreTransaction(selectedId);
+        }
+        else if (titleId == R.string.transaction_status_pending) {
+            pendingTransaction(selectedId);
+        }
+        else if (titleId == R.string.transaction_status_unreconciled) {
+            unreconcileTransaction(selectedId);
+        }
+        else if (titleId == R.string.duplicate) {
+            duplicateTransaction(selectedId, 1);
+        }
+        else if (titleId == R.string.clear) {
+            clearTransaction(selectedId);
+        }
+        else if (titleId == R.string.reconcile) {
+            reconcileTransaction(selectedId);
+        }
+        else if (titleId == R.string.duplicate_keep_time) {
+            duplicateTransactionKeepTime(selectedId);
+        }
+        else if (titleId == R.string.duplicate_keep_date_time) {
+            duplicateTransactionKeepDateTime(selectedId);
+        }
     };
 
     private void prepareAddButtonActionGrid() {
@@ -528,7 +508,7 @@ public class BlotterFragment extends AbstractListFragment implements BlotterOper
         return true;
     }
 
-    private QuickActionWidget.OnQuickActionClickListener addButtonActionListener = (widget, position) -> {
+    private QuickActionWidget.OnQuickActionClickListener addButtonActionListener = (widget, position, action) -> {
         switch (position) {
             case 0:
                 addItem(NEW_TRANSACTION_REQUEST, TransactionActivity.class);
@@ -607,17 +587,30 @@ public class BlotterFragment extends AbstractListFragment implements BlotterOper
     }
 
     private long duplicateTransactionKeepTime(long id) {
-        return duplicateTransaction(id, 1, true);
+        return duplicateTransaction(id, 1, KeepTime.KEEP_TIME);
+    }
+
+    private long duplicateTransactionKeepDateTime(long id) {
+        return duplicateTransaction(id, 1, KeepTime.KEEP_DATE_TIME);
     }
 
     private long duplicateTransaction(long id, int multiplier) {
-        return duplicateTransaction(id, multiplier, false);
+        return duplicateTransaction(id, multiplier, KeepTime.NONE);
     }
 
-    private long duplicateTransaction(long id, int multiplier, boolean keepTime) {
+    enum KeepTime {
+        NONE,
+        KEEP_TIME,
+        KEEP_DATE_TIME,
+    }
+
+    private long duplicateTransaction(long id, int multiplier, KeepTime keepTime) {
         long newId;
-        if (keepTime) {
+        if (keepTime == KeepTime.KEEP_TIME) {
             newId = new BlotterOperations(getContext(), this, db, id).duplicateTransactionKeepTime();
+        }
+        else if (keepTime == KeepTime.KEEP_DATE_TIME) {
+            newId = new BlotterOperations(getContext(), this, db, id).duplicateTransactionKeepDateTime();
         }
         else {
             newId = new BlotterOperations(getContext(), this, db, id).duplicateTransaction(multiplier);
@@ -797,9 +790,6 @@ public class BlotterFragment extends AbstractListFragment implements BlotterOper
     protected void updateFilterImage() {
         FilterState.updateFilterColor(getContext(), blotterFilter, bFilter);
     }
-
-    private NodeInflater inflater;
-    private long selectedId = -1;
 
     @Override
     protected void onItemClick(View v, int position, long id) {

@@ -100,6 +100,10 @@ public class BlotterOperations {
         return db.duplicateTransactionKeepTimeInDay(targetTransaction.id);
     }
 
+    public long duplicateTransactionKeepDateTime() {
+        return db.duplicateTransactionKeepDateTime(targetTransaction.id);
+    }
+
     public void duplicateAsTemplate() {
         db.duplicateTransactionAsTemplate(targetTransaction.id);
     }

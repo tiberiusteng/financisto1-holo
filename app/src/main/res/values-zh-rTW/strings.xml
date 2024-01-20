@@ -248,6 +248,7 @@
   <string name="fail">失敗…</string>
   <string name="duplicate">複製</string>
   <string name="duplicate_keep_time">複製保留時間</string>
+  <string name="duplicate_keep_date_time">複製保留日期時間</string>
   <string name="select_from_account">請選擇來源帳戶…</string>
   <string name="select_to_account">請選擇目標帳戶…</string>
   <string name="update_balance">調整餘額</string>
@@ -645,7 +646,9 @@
   <string name="quick_menu_transaction_additional_status">顯示「額外交易狀態」功能</string>
   <string name="quick_menu_transaction_additional_status_summary">明細畫面快速選單顯示額外交易狀態</string>
   <string name="quick_menu_transaction_duplicate_keep_time">顯示「複製保留時間」功能</string>
-  <string name="quick_menu_transaction_duplicate_keep_time_summary">明細畫面快速選單顯示「複製保留當日時間」按鈕</string>
+  <string name="quick_menu_transaction_duplicate_keep_time_summary">明細畫面快速選單顯示「複製保留時間」按鈕</string>
+  <string name="quick_menu_transaction_duplicate_keep_date_time">顯示「複製保留日期時間」功能</string>
+  <string name="quick_menu_transaction_duplicate_keep_date_time_summary">明細畫面快速選單顯示「複製保留日期時間」按鈕</string>
   <string name="dropbox">Dropbox</string>
   <string name="dropbox_authorize">授權</string>
   <string name="dropbox_authorize_summary">允許 Financisto 上傳檔案到您的 Dropbox</string>

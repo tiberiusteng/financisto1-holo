@@ -60,6 +60,7 @@ public class DatabaseAdapter extends MyEntityManager {
 
     private static long CURRENT_TIMESTAMP = -1;
     public static long KEEP_TIME_IN_DAY = -2;
+    public static long KEEP_DATE_TIME = -3;
 
     private boolean updateAccountBalance = true;
 
@@ -232,6 +233,10 @@ public class DatabaseAdapter extends MyEntityManager {
         return duplicateTransaction(id, 0, 1, KEEP_TIME_IN_DAY);
     }
 
+    public long duplicateTransactionKeepDateTime(long id) {
+        return duplicateTransaction(id, 0, 1, KEEP_DATE_TIME);
+    }
+
     public long duplicateTransactionWithTimestamp(long id, long timestamp) {
         return duplicateTransaction(id, 0, 1, timestamp);
     }
@@ -267,7 +272,12 @@ public class DatabaseAdapter extends MyEntityManager {
             transaction.id = -1;
             transaction.isTemplate = isTemplate;
 
-            if (timestamp == KEEP_TIME_IN_DAY) {
+            if (timestamp == KEEP_DATE_TIME) {
+                // do nothing - keep source transaction's dateTime
+                // when sorting it will be ordered additionally by _id,
+                // so it will naturally appear as later
+            }
+            else if (timestamp == KEEP_TIME_IN_DAY) {
                 Calendar calendar = Calendar.getInstance();
                 Calendar source = Calendar.getInstance();
                 source.setTimeInMillis(transaction.dateTime);

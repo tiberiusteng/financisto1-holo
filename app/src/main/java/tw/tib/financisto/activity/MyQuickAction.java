@@ -18,15 +18,18 @@ import greendroid.widget.QuickAction;
  */
 public class MyQuickAction extends QuickAction {
     public static int NO_FILTER = -1;
+    public int titleId = -1;
 
     private static final ColorFilter BLACK_CF = new LightingColorFilter(Color.BLACK, Color.BLACK);
 
     public MyQuickAction(Context ctx, int drawableId, int titleId) {
         super(ctx, buildDrawable(ctx, drawableId), titleId);
+        this.titleId = titleId;
     }
 
     public MyQuickAction(Context ctx, int drawableId, @ColorInt int color, int titleId) {
         super(ctx, buildColorDrawable(ctx, color, drawableId), titleId);
+        this.titleId = titleId;
     }
 
     private static Drawable buildDrawable(Context ctx, int drawableId) {

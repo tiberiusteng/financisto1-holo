@@ -41,6 +41,7 @@ import java.util.List;
 public class QuickActionGrid extends QuickActionWidget {
 
     private GridView mGridView;
+    private List<QuickAction> quickActions;
 
     public QuickActionGrid(Context context) {
         super(context);
@@ -57,6 +58,7 @@ public class QuickActionGrid extends QuickActionWidget {
 
     @Override
     protected void populateQuickActions(final List<QuickAction> quickActions) {
+        this.quickActions = quickActions;
         mGridView.setAdapter(new BaseAdapter() {
 
             public View getView(int position, View view, ViewGroup parent) {
@@ -113,7 +115,7 @@ public class QuickActionGrid extends QuickActionWidget {
 
     private OnItemClickListener mInternalItemClickListener = new OnItemClickListener() {
         public void onItemClick(AdapterView<?> adapterView, View view, int position, long id) {
-            getOnQuickActionClickListener().onQuickActionClicked(QuickActionGrid.this, position);
+            getOnQuickActionClickListener().onQuickActionClicked(QuickActionGrid.this, position, quickActions.get(position));
             if (getDismissOnClick()) {
                 dismiss();
             }

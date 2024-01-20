@@ -54,6 +54,8 @@ public class AccountListFragment extends AbstractListFragment {
     private TextView emptyText;
     private ProgressBar progressBar;
 
+    private long selectedId = -1;
+
     public AccountListFragment() {
         super(R.layout.account_list);
     }
@@ -127,39 +129,36 @@ public class AccountListFragment extends AbstractListFragment {
         accountActionGrid.setOnQuickActionClickListener(accountActionListener);
     }
 
-    private QuickActionWidget.OnQuickActionClickListener accountActionListener = new QuickActionWidget.OnQuickActionClickListener() {
-        public void onQuickActionClicked(QuickActionWidget widget, int position) {
-            switch (position) {
-                case 0:
-                    showAccountInfo(selectedId);
-                    break;
-                case 1:
-                    showAccountTransactions(selectedId);
-                    break;
-                case 2:
-                    editAccount(selectedId);
-                    break;
-                case 3:
-                    addTransaction(selectedId, TransactionActivity.class);
-                    break;
-                case 4:
-                    addTransaction(selectedId, TransferActivity.class);
-                    break;
-                case 5:
-                    updateAccountBalance(selectedId);
-                    break;
-                case 6:
-                    purgeAccount();
-                    break;
-                case 7:
-                    closeOrOpenAccount();
-                    break;
-                case 8:
-                    deleteAccount();
-                    break;
-            }
+    private QuickActionWidget.OnQuickActionClickListener accountActionListener = (widget, position, action) -> {
+        switch (position) {
+            case 0:
+                showAccountInfo(selectedId);
+                break;
+            case 1:
+                showAccountTransactions(selectedId);
+                break;
+            case 2:
+                editAccount(selectedId);
+                break;
+            case 3:
+                addTransaction(selectedId, TransactionActivity.class);
+                break;
+            case 4:
+                addTransaction(selectedId, TransferActivity.class);
+                break;
+            case 5:
+                updateAccountBalance(selectedId);
+                break;
+            case 6:
+                purgeAccount();
+                break;
+            case 7:
+                closeOrOpenAccount();
+                break;
+            case 8:
+                deleteAccount();
+                break;
         }
-
     };
 
     private void addTransaction(long accountId, Class<? extends AbstractTransactionActivity> clazz) {
@@ -297,8 +296,6 @@ public class AccountListFragment extends AbstractListFragment {
         intent.putExtra(AccountActivity.ACCOUNT_ID_EXTRA, id);
         startActivityForResult(intent, EDIT_ACCOUNT_REQUEST);
     }
-
-    private long selectedId = -1;
 
     private void showAccountInfo(long id) {
         NodeInflater nodeInflater = new NodeInflater(inflater);

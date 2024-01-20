@@ -591,6 +591,10 @@ public class MyPreferences {
 		return getBoolean(context, "quick_menu_transaction_duplicate_keep_time", false);
 	}
 
+	public static boolean isQuickMenuShowDuplicateKeepDateTime(Context context) {
+		return getBoolean(context, "quick_menu_transaction_duplicate_keep_date_time", false);
+	}
+
 	public static String getDropboxAuthToken(Context context) {
 		SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(context);
 		return sharedPreferences.getString(DROPBOX_AUTH_TOKEN, null);

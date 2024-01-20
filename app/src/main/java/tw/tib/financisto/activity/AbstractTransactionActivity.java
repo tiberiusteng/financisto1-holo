@@ -335,7 +335,7 @@ public abstract class AbstractTransactionActivity extends AbstractActivity imple
 		pickImageActionGrid = new QuickActionGrid(this);
 		pickImageActionGrid.addQuickAction(new MyQuickAction(this, R.drawable.ic_photo_camera, R.string.image_pick_camera));
 		pickImageActionGrid.addQuickAction(new MyQuickAction(this, R.drawable.ic_photo_library, R.string.image_pick_images));
-		pickImageActionGrid.setOnQuickActionClickListener((widget, position) -> {
+		pickImageActionGrid.setOnQuickActionClickListener((widget, position, action) -> {
 			switch (position) {
 				case 0:
 					//requestImage(Sources.CAMERA);

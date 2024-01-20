@@ -72,7 +72,7 @@ public abstract class QuickActionWidget extends PopupWindow {
          *
          * @param position Position of the quick action that have been clicked.
          */
-        void onQuickActionClicked(QuickActionWidget widget, int position);
+        void onQuickActionClicked(QuickActionWidget widget, int position, QuickAction action);
     }
 
     /**
