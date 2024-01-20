@@ -11,18 +11,21 @@ img {
 </head>
 <body>
 
-<p>
-If you want to choose account from notification content, you need to fill the 
-"Card Number" field. It's typically the last 4 digits of card number, but your
-situation may different. Fill the value that will appear in the message.
-</p>
+<h2>Notification Template</h2>
+
+<ul>
+	<li><a href="#payee">Payee extraction</a></li>
+	<li><a href="#note">Filling transaction note</a></li>
+</ul>
 
 <p>
-If there are multiple cards belong to the same account, just fill every one of it 
-separate by comma or space.
+	After you grant Financisto Holo permission to read notifications, it can match notifications
+	against rules you defined and create transactions from them, obtaining transaction info from
+	notifications with patterns. Any app generating notification can be used to trigger transaction
+	creation, including SMS messages, bank app push notifications, or even instant messaging app
+	receiving messages (so you can send message to yourself from another phone to log transaction,
+	perhaps you have an iPhone and prefer to carry it going out for example).
 </p>
-
-<img src="account.png" />
 
 <p>
 There's a new button on top-right of SMS/Notification tmeplate list screen that
@@ -43,6 +46,7 @@ message, or here's the list:
 
 <ul>
 	<li><b>{{a}}</b> - the code part that will used to lookup account</li>
+	<li><b>{{e}}</b> - payee name to lookup from database</li>
 	<li><b>{{p}}</b> - the amount/price numeric part</li>
 	<li><b>{{t}}</b> - text part to extract as transaction note, this one is "non-greedy", i.e. it will try to match as short as possible</li>
 	<li><b>{{u}}</b> - text part to extract as transaction note, "greedy" (as long as possible)</li>
@@ -50,6 +54,19 @@ message, or here's the list:
 </ul>
 
 <img src="template.png" />
+
+<p>
+	If you want to choose account from notification content, you need to fill the
+	"Card Number" field. It's typically the last 4 digits of card number, but your
+	situation may different. Fill the value that will appear in the message.
+</p>
+
+<p>
+	If there are multiple cards belong to the same account, just fill every one of it
+	separate by comma or space.
+</p>
+
+<img src="account.png" />
 
 <p>
 After you make the template, you can paste the original notification body to see 
@@ -63,12 +80,33 @@ Save it. Next time you received a notification, hopefully it'll trigger
 the template and create a transaction for you!
 <p>
 
+<img src="received_notification.png" />
+
+<h2 id="payee">Payee extraction</h2>
+
 <p>
-(And yes, it's not limited to SMS or bank applications. You can create "commands" 
-that you can send to yourself via instant message apps like this ...)
+	You can use <b>{{e}}</b> in the template to mark a section as payee name, and the app will
+	look up from database when creating transaction. If it found a payee entry with matching name,
+	it will fill transaction's payee with that, and set transaction's category as the last used
+	category of that payee.
 </p>
 
-<img src="received_notification.png" />
+<p>
+	If template has selected a category, it will be always used instead of payee's last used category.
+</p>
+
+<h2 id="note">Filling transaction note</h2>
+
+<p>
+	You can define note to be filled into transaction in template. The logic that transactions
+	created from templates get note are:<br />
+</p>
+
+<ol>
+	<li>custom note defined in template, with text extracted from notification with <b>{{t}}</b> or <b>{{u}}</b>.</li>
+	<li>(when template's note is empty) text extracted from notification, if available</li>
+	<li>(when note is empty and no extraction defined) full notification body, if enabled in config</li>
+</ol>
 
 </body>
 </html>
