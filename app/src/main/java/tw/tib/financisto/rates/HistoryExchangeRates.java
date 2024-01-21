@@ -8,8 +8,11 @@
 
 package tw.tib.financisto.rates;
 
+import android.content.Context;
+
 import gnu.trove.map.TLongObjectMap;
 import gnu.trove.map.hash.TLongObjectHashMap;
+import tw.tib.financisto.db.DatabaseAdapter;
 import tw.tib.financisto.model.Currency;
 
 import java.util.*;
@@ -22,9 +25,13 @@ import java.util.*;
  * Date: 1/30/12 7:54 PM
  */
 public class HistoryExchangeRates implements ExchangeRateProvider, ExchangeRatesCollection {
+    protected Context context;
+    protected Currency homeCurrency;
 
-    private static final ExchangeRate r = new ExchangeRate();
-    
+    public HistoryExchangeRates(Context context) {
+        this.context = context;
+    }
+
     private final TLongObjectMap<TLongObjectMap<SortedSet<ExchangeRate>>> rates = new TLongObjectHashMap<TLongObjectMap<SortedSet<ExchangeRate>>>();
 
     @Override
@@ -36,25 +43,57 @@ public class HistoryExchangeRates implements ExchangeRateProvider, ExchangeRates
     @Override
     public ExchangeRate getRate(Currency fromCurrency, Currency toCurrency) {
         SortedSet<ExchangeRate> s = getRates(fromCurrency.id, toCurrency.id);
-        return s.first();
+        if (!s.isEmpty()) {
+            return s.first();
+        }
+        s = getRates(toCurrency.id, fromCurrency.id);
+        if (!s.isEmpty()) {
+            return s.first().flip();
+        }
+        return ExchangeRate.NA;
     }
 
     @Override
     public ExchangeRate getRate(Currency fromCurrency, Currency toCurrency, long atTime) {
+        ExchangeRate r = new ExchangeRate();
         SortedSet<ExchangeRate> s = getRates(fromCurrency.id, toCurrency.id);
         r.date = atTime;
         // s.tailSet(r) still creates a new TreeSet object
         SortedSet<ExchangeRate> rates = s.tailSet(r);
-        if (rates.isEmpty()) {
-            ExchangeRate defaultRate = ExchangeRate.NA;
-            s.add(defaultRate);
-            return defaultRate;
+        if (!rates.isEmpty()) {
+            return rates.first();
         }
-        return rates.first();
+        // estimate from inverse exchange
+        SortedSet<ExchangeRate> fs = getRates(toCurrency.id, fromCurrency.id);
+        rates = fs.tailSet(r);
+        if (!rates.isEmpty()) {
+            ExchangeRate inverse = rates.first().flip();
+            s.add(inverse);
+            return inverse;
+        }
+        // estimate from exchange via home currency
+        if (homeCurrency == null) {
+            homeCurrency = new DatabaseAdapter(context).getHomeCurrency();
+        }
+        ExchangeRate e1 = getRate(fromCurrency, homeCurrency, atTime);
+        if (e1 != ExchangeRate.NA) {
+            ExchangeRate e2 = getRate(homeCurrency, toCurrency, atTime);
+            if (e2 != ExchangeRate.NA) {
+                r.fromCurrencyId = fromCurrency.id;
+                r.toCurrencyId = toCurrency.id;
+                r.rate = e1.rate * e2.rate;
+                s.add(r);
+                return r;
+            }
+        }
+        // negative cache
+        ExchangeRate defaultRate = ExchangeRate.NA;
+        s.add(defaultRate);
+        return defaultRate;
     }
 
     @Override
-    public List<ExchangeRate> getRates(List<Currency> currencies) {
+    public List<ExchangeRate> getRates(Currency homeCurrency, List<Currency> currencies) {
         throw new UnsupportedOperationException();
     }
 

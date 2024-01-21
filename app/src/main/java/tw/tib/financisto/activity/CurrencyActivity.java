@@ -48,6 +48,7 @@ public class CurrencyActivity extends Activity {
 	private EditText title;
 	private EditText symbol;
 	private CheckBox isDefault;
+	private CheckBox updateExchangeRate;
 	private Spinner decimals;
 	private Spinner decimalSeparators;
 	private Spinner groupSeparators;
@@ -76,6 +77,7 @@ public class CurrencyActivity extends Activity {
 		title = findViewById(R.id.title);
 		symbol = findViewById(R.id.symbol);
 		isDefault = findViewById(R.id.is_default);
+		updateExchangeRate = findViewById(R.id.update_exchange_rate);
 		decimals = findViewById(R.id.spinnerDecimals);
 		decimalSeparators = findViewById(R.id.spinnerDecimalSeparators);
 		groupSeparators = findViewById(R.id.spinnerGroupSeparators);
@@ -98,6 +100,7 @@ public class CurrencyActivity extends Activity {
 				currency.name = text(name);
 				currency.symbol = text(symbol);
 				currency.isDefault = isDefault.isChecked();
+				currency.updateExchangeRate = updateExchangeRate.isChecked();
 				currency.decimals = maxDecimals - decimals.getSelectedItemPosition();
 				currency.decimalSeparator = decimalSeparators.getSelectedItem().toString();
 				currency.groupSeparator = groupSeparators.getSelectedItem().toString();
@@ -131,18 +134,16 @@ public class CurrencyActivity extends Activity {
 
 	private void makeDefaultIfNecessary() {
 		isDefault.setChecked(db.getAllCurrenciesList().isEmpty());
+		updateExchangeRate.setChecked(false);
 	}
 
 	private void editCurrency() {
 		Currency currency = this.currency;
-		EditText name = findViewById(R.id.name);
 		name.setText(currency.name);
-		EditText title = findViewById(R.id.title);
 		title.setText(currency.title);
-		EditText symbol = findViewById(R.id.symbol);
 		symbol.setText(currency.symbol);
-		CheckBox isDefault = findViewById(R.id.is_default);
 		isDefault.setChecked(currency.isDefault);
+		updateExchangeRate.setChecked(currency.updateExchangeRate);
 		decimals.setSelection(maxDecimals - currency.decimals);
 		decimalSeparators.setSelection(indexOf(decimalSeparatorsItems, currency.decimalSeparator, s.getDecimalSeparator()));
 		groupSeparators.setSelection(indexOf(groupSeparatorsItems, currency.groupSeparator, s.getGroupingSeparator()));

@@ -64,6 +64,7 @@ public class DatabaseHelper extends DatabaseSchemaEvolution {
     public static final String V_REPORT_LOCATIONS = "v_report_location";
     public static final String V_REPORT_PROJECTS = "v_report_project";
     public static final String V_REPORT_PAYEES = "v_report_payee";
+    public static final String V_EXCHANGE_RATE = "v_exchange_rate";
 
     public static enum TransactionColumns {
         _id,
@@ -202,6 +203,15 @@ public class DatabaseHelper extends DatabaseSchemaEvolution {
         rate;
 
         public static String[] NORMAL_PROJECTION = EnumUtils.asStringArray(ExchangeRateColumns.values());
+        /**
+         * https://www.sqlite.org/quirks.html#aggregate_queries_can_contain_non_aggregate_result_columns_that_are_not_in_the_group_by_clause
+         *
+         * With SQLite (but not any other SQL implementation that we know of) if an aggregate query
+         * contains a single min() or max() function, then the values of columns used in the output
+         * are taken from the row where the min() or max() value was achieved. If two or more rows
+         * have the same min() or max() value, then the columns values will be chosen arbitrarily
+         * from one of those rows.
+         */
         public static String[] LATEST_RATE_PROJECTION = new String[]{
                 from_currency_id.name(),
                 to_currency_id.name(),

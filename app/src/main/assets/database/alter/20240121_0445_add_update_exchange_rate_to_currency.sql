@@ -1,0 +1,1 @@
+ALTER TABLE currency ADD COLUMN update_exchange_rate INTEGER NOT NULL DEFAULT 1;

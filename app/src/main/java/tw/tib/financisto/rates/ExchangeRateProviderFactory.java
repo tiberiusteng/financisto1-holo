@@ -8,6 +8,7 @@
 
 package tw.tib.financisto.rates;
 
+import android.content.Context;
 import android.content.SharedPreferences;
 
 import okhttp3.OkHttpClient;
@@ -21,33 +22,21 @@ import tw.tib.financisto.http.HttpClientWrapper;
  */
 public enum ExchangeRateProviderFactory {
 
-    webservicex(){
-        @Override
-        public ExchangeRateProvider createProvider(SharedPreferences sharedPreferences) {
-            return new WebserviceXConversionRateDownloader(createDefaultWrapper(), System.currentTimeMillis());
-        }
-    },
     openexchangerates(){
         @Override
-        public ExchangeRateProvider createProvider(SharedPreferences sharedPreferences) {
+        public ExchangeRateProvider createProvider(SharedPreferences sharedPreferences, Context context) {
             String appId = sharedPreferences.getString("openexchangerates_app_id", "");
-            return new OpenExchangeRatesDownloader(createDefaultWrapper(), appId);
-        }
-    },
-    flowzr(){
-        @Override
-        public ExchangeRateProvider createProvider(SharedPreferences sharedPreferences) {
-            return new FlowzrRateDownloader(createDefaultWrapper(), System.currentTimeMillis());
+            return new OpenExchangeRatesDownloader(createDefaultWrapper(), appId, context);
         }
     },
     freeCurrency(){
         @Override
-        public ExchangeRateProvider createProvider(SharedPreferences sharedPreferences) {
-            return new FreeCurrencyRateDownloader(createDefaultWrapper(), System.currentTimeMillis());
+        public ExchangeRateProvider createProvider(SharedPreferences sharedPreferences, Context context) {
+            return new FreeCurrencyRateDownloader(createDefaultWrapper(), System.currentTimeMillis(), context);
         }
     };
 
-    public abstract ExchangeRateProvider createProvider(SharedPreferences sharedPreferences);
+    public abstract ExchangeRateProvider createProvider(SharedPreferences sharedPreferences, Context context);
 
     private static HttpClientWrapper createDefaultWrapper() {
         return new HttpClientWrapper(new OkHttpClient());

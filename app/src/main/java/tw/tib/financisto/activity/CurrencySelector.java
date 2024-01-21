@@ -89,6 +89,7 @@ public class CurrencySelector {
         c.decimalSeparator = decodeSeparator(list.get(4));
         c.groupSeparator = decodeSeparator(list.get(5));
         c.isDefault = isTheFirstCurrencyAdded();
+        c.updateExchangeRate = true;
         em.saveOrUpdate(c);
         CurrencyCache.initialize(em);
         listener.onCreated(c.id);

@@ -15,6 +15,8 @@ import android.content.Intent;
 import android.database.Cursor;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.Looper;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -237,8 +239,15 @@ public class ExchangeRatesListActivity extends AbstractListActivity {
 
         @Override
         protected List<ExchangeRate> doInBackground(Void... args) {
-            List<ExchangeRate> rates = getProvider().getRates(currencies);
-            if (isCancelled()) {
+            Currency homeCurrency = db.getHomeCurrency();
+            if (homeCurrency == Currency.EMPTY) {
+                new Handler(Looper.getMainLooper()).post(() -> new AlertDialog.Builder(context)
+                        .setMessage(context.getString(R.string.exchange_rate_set_default_currency))
+                        .show());
+                return null;
+            }
+            List<ExchangeRate> rates = getProvider().getRates(homeCurrency, currencies);
+            if (isCancelled() || rates == null) {
                 return null;
             } else {
                 db.saveDownloadedRates(rates);

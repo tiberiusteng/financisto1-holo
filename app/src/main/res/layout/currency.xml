@@ -38,7 +38,7 @@
                     <EditText android:layout_height="wrap_content"
                               android:layout_width="fill_parent" android:id="@+id/name"
                               android:ellipsize="none" android:singleLine="true"
-                              android:maxLength="3" android:layout_weight="1"
+                              android:layout_weight="1"
                               android:hint="@string/currency_code_hint"/>
                     <EditText android:layout_height="wrap_content"
                               android:layout_width="fill_parent" android:id="@+id/symbol"
@@ -83,9 +83,14 @@
                              android:id="@+id/spinnerSymbolFormat" android:entries="@array/symbol_formats"/>
                 </TableRow>
             </TableLayout>
-            <CheckBox android:layout_width="fill_parent"
-                      android:layout_height="wrap_content" android:id="@+id/is_default"
-                      android:text="@string/is_default"/>
+            <CheckBox android:id="@+id/is_default"
+                android:layout_width="fill_parent"
+                android:layout_height="?android:attr/listPreferredItemHeightSmall"
+                android:text="@string/is_default"/>
+            <CheckBox android:id="@+id/update_exchange_rate"
+                android:layout_width="fill_parent"
+                android:layout_height="?android:attr/listPreferredItemHeightSmall"
+                android:text="@string/update_exchange_rate"/>
         </LinearLayout>
     </ScrollView>
     <include layout="@layout/ok_cancel_buttons"/>

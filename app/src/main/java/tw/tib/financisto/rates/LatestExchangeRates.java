@@ -8,8 +8,11 @@
 
 package tw.tib.financisto.rates;
 
+import android.content.Context;
+
 import gnu.trove.map.TLongObjectMap;
 import gnu.trove.map.hash.TLongObjectHashMap;
+import tw.tib.financisto.db.DatabaseAdapter;
 import tw.tib.financisto.model.Currency;
 
 import java.util.List;
@@ -21,6 +24,13 @@ import java.util.List;
  */
 public class LatestExchangeRates implements ExchangeRateProvider, ExchangeRatesCollection {
 
+    protected Context context;
+    protected Currency homeCurrency;
+
+    public LatestExchangeRates(Context context) {
+        this.context = context;
+    }
+
     private final TLongObjectMap<TLongObjectMap<ExchangeRate>> rates = new TLongObjectHashMap<TLongObjectMap<ExchangeRate>>();
 
     @Override
@@ -30,10 +40,36 @@ public class LatestExchangeRates implements ExchangeRateProvider, ExchangeRatesC
         }
         TLongObjectMap<ExchangeRate> rateMap = getMapFor(fromCurrency.id);
         ExchangeRate rate = rateMap.get(toCurrency.id);
-        if (rate == null) {
-            rate = ExchangeRate.NA;
-            rateMap.put(toCurrency.id, rate);
+        if (rate != null) {
+            return rate;
         }
+        // estimate from inverse exchange
+        TLongObjectMap<ExchangeRate> rateMapInverse = getMapFor(toCurrency.id);
+        rate = rateMapInverse.get(fromCurrency.id);
+        if (rate != null) {
+            ExchangeRate inverse = rate.flip();
+            rateMap.put(toCurrency.id, inverse);
+            return rate;
+        }
+        // estimate from exchange via home currency
+        if (homeCurrency == null) {
+            homeCurrency = new DatabaseAdapter(context).getHomeCurrency();
+        }
+        ExchangeRate e1 = getRate(fromCurrency, homeCurrency);
+        if (e1 != ExchangeRate.NA) {
+            ExchangeRate e2 = getRate(homeCurrency, toCurrency);
+            if (e2 != ExchangeRate.NA) {
+                rate = new ExchangeRate();
+                rate.fromCurrencyId = fromCurrency.id;
+                rate.toCurrencyId = toCurrency.id;
+                rate.rate = e1.rate * e2.rate;
+                rateMap.put(toCurrency.id, rate);
+                return rate;
+            }
+        }
+        // negative cache
+        rate = ExchangeRate.NA;
+        rateMap.put(toCurrency.id, rate);
         return rate;
     }
 
@@ -43,7 +79,7 @@ public class LatestExchangeRates implements ExchangeRateProvider, ExchangeRatesC
     }
 
     @Override
-    public List<ExchangeRate> getRates(List<Currency> currencies) {
+    public List<ExchangeRate> getRates(Currency homeCurrency, List<Currency> currencies) {
         throw new UnsupportedOperationException();
     }
 

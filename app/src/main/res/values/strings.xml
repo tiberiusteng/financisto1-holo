@@ -191,6 +191,7 @@
     <string name="currency_code">Code</string>
     <string name="currency_code_hint">ISO 4217 code</string>
     <string name="is_default">Is default</string>
+    <string name="update_exchange_rate">Include in exchange rate update</string>
     <string name="is_included_into_totals">Include into totals</string>
     <string name="is_included_into_totals_summary">Include transactions from this account into totals</string>
     <string name="decimals">\nDecimals</string>
@@ -892,6 +893,8 @@
     <string name="exchange_rate_provider_summary">Select provider to download exchange rates</string>
     <string name="openexchangerates_app_id" translatable="false">OpenExchangeRates App ID</string>
     <string name="openexchangerates_app_id_summary">Please register a free account on OpenExchangeRates and provide your App ID</string>
+    <string name="exchange_rate_default_currency_no_rate">Can\'t obtain default currency\'s exchange rate to USD</string>
+    <string name="exchange_rate_set_default_currency">Please set Default Currency (Menu -&gt; Entities -&gt; Currencies)</string>
     <string name="download_all_rates">Download all current rates</string>
     <string name="downloading_rates_result">Downloaded exchange rates</string>
 

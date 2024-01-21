@@ -23,6 +23,6 @@ public interface ExchangeRateProvider {
 
     ExchangeRate getRate(Currency fromCurrency, Currency toCurrency, long atTime);
 
-    List<ExchangeRate> getRates(List<Currency> currencies);
+    List<ExchangeRate> getRates(Currency homeCurrency, List<Currency> currencies);
 
 }

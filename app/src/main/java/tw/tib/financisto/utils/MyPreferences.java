@@ -667,12 +667,11 @@ public class MyPreferences {
 	public static ExchangeRateProvider createExchangeRatesProvider(Context context) {
 		SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(context);
 		ExchangeRateProviderFactory factory = getExchangeRateProviderFactory(sharedPreferences);
-		return factory.createProvider(sharedPreferences);
+		return factory.createProvider(sharedPreferences, context);
 	}
 
 	private static ExchangeRateProviderFactory getExchangeRateProviderFactory(SharedPreferences sharedPreferences) {
 		String provider = sharedPreferences.getString("exchange_rate_provider", ExchangeRateProviderFactory.freeCurrency.name());
-		if ("flowzr".equals(provider)) provider = ExchangeRateProviderFactory.freeCurrency.name();
 		return ExchangeRateProviderFactory.valueOf(provider);
 	}
 

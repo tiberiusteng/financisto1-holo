@@ -1588,17 +1588,8 @@ public class DatabaseAdapter extends MyEntityManager {
 
     private void replaceRateInTransaction(ExchangeRate rate, long originalDate, SQLiteDatabase db) {
         deleteRateInTransaction(rate.fromCurrencyId, rate.toCurrencyId, originalDate, db);
-        saveBothRatesInTransaction(rate, db);
-    }
-
-    private void saveBothRatesInTransaction(ExchangeRate r, SQLiteDatabase db) {
-        r.date = DateUtils.atMidnight(r.date);
-        saveRateInTransaction(db, r);
-        saveRateInTransaction(db, r.flip());
-    }
-
-    private void saveRateInTransaction(SQLiteDatabase db, ExchangeRate r) {
-        db.insert(DatabaseHelper.EXCHANGE_RATES_TABLE, null, r.toValues());
+        rate.date = DateUtils.atMidnight(rate.date);
+        db.insert(DatabaseHelper.EXCHANGE_RATES_TABLE, null, rate.toValues());
     }
 
     public void saveDownloadedRates(List<ExchangeRate> downloadedRates) {
@@ -1644,33 +1635,41 @@ public class DatabaseAdapter extends MyEntityManager {
         return rates;
     }
 
-    public List<ExchangeRate> findRates(tw.tib.financisto.model.Currency fromCurrency, tw.tib.financisto.model.Currency toCurrency) {
+    public List<ExchangeRate> findRates(Currency fromCurrency, Currency toCurrency) {
         List<ExchangeRate> rates = new ArrayList<ExchangeRate>();
-        Cursor c = db().query(DatabaseHelper.EXCHANGE_RATES_TABLE, DatabaseHelper.ExchangeRateColumns.NORMAL_PROJECTION,
+        try (Cursor c = db().query(DatabaseHelper.V_EXCHANGE_RATE, DatabaseHelper.ExchangeRateColumns.NORMAL_PROJECTION,
                 DatabaseHelper.ExchangeRateColumns.from_currency_id + "=? and " + DatabaseHelper.ExchangeRateColumns.to_currency_id + "=?",
                 new String[]{String.valueOf(fromCurrency.id), String.valueOf(toCurrency.id)},
-                null, null, DatabaseHelper.ExchangeRateColumns.rate_date + " desc");
-        try {
+                null, null, DatabaseHelper.ExchangeRateColumns.rate_date + " desc"))
+        {
             while (c.moveToNext()) {
                 rates.add(ExchangeRate.fromCursor(c));
             }
-        } finally {
-            c.close();
         }
         return rates;
     }
 
     public ExchangeRateProvider getLatestRates() {
-        LatestExchangeRates m = new LatestExchangeRates();
-        Cursor c = db().query(DatabaseHelper.EXCHANGE_RATES_TABLE, DatabaseHelper.ExchangeRateColumns.LATEST_RATE_PROJECTION, null, null, DatabaseHelper.ExchangeRateColumns.LATEST_RATE_GROUP_BY, null, null);
-        fillRatesCollection(m, c);
+        LatestExchangeRates m = new LatestExchangeRates(context);
+        try (Cursor c = db().query(DatabaseHelper.EXCHANGE_RATES_TABLE,
+                     DatabaseHelper.ExchangeRateColumns.LATEST_RATE_PROJECTION,
+                     null, null,
+                     DatabaseHelper.ExchangeRateColumns.LATEST_RATE_GROUP_BY,
+                     null, null))
+        {
+            fillRatesCollection(m, c);
+        }
         return m;
     }
 
     public ExchangeRateProvider getHistoryRates() {
-        HistoryExchangeRates m = new HistoryExchangeRates();
-        Cursor c = db().query(DatabaseHelper.EXCHANGE_RATES_TABLE, DatabaseHelper.ExchangeRateColumns.NORMAL_PROJECTION, null, null, null, null, null);
-        fillRatesCollection(m, c);
+        HistoryExchangeRates m = new HistoryExchangeRates(context);
+        try (Cursor c = db().query(DatabaseHelper.EXCHANGE_RATES_TABLE,
+                     DatabaseHelper.ExchangeRateColumns.NORMAL_PROJECTION,
+                     null, null, null, null, null))
+        {
+            fillRatesCollection(m, c);
+        }
         return m;
     }
 
@@ -1704,8 +1703,6 @@ public class DatabaseAdapter extends MyEntityManager {
         long d = DateUtils.atMidnight(date);
         db.delete(DatabaseHelper.EXCHANGE_RATES_TABLE, DatabaseHelper.ExchangeRateColumns.DELETE_CLAUSE,
                 new String[]{String.valueOf(fromCurrencyId), String.valueOf(toCurrencyId), String.valueOf(d)});
-        db.delete(DatabaseHelper.EXCHANGE_RATES_TABLE, DatabaseHelper.ExchangeRateColumns.DELETE_CLAUSE,
-                new String[]{String.valueOf(toCurrencyId), String.valueOf(fromCurrencyId), String.valueOf(d)});
     }
 
     public Total getAccountsTotalInHomeCurrency() {

@@ -50,6 +50,9 @@ public class Currency extends MyEntity {
 	@Column(name = "is_default")
 	public boolean isDefault;
 
+	@Column(name = "update_exchange_rate")
+	public boolean updateExchangeRate;
+
 	@Column(name = "decimals")
 	public int decimals = 2;
 
