@@ -94,7 +94,7 @@ public class CurrencyActivity extends Activity {
 		Button bOk = findViewById(R.id.bOK);
 		bOk.setOnClickListener(view -> {
 			if (checkEditText(title, "title", true, 100)
-					&& checkEditText(name, "code", true, 3)
+					&& checkEditText(name, "code", true, 100)
 					&& checkEditText(symbol, "symbol", true, 3)) {
 				currency.title = text(title);
 				currency.name = text(name);
