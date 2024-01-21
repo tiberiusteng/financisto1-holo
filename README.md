@@ -25,10 +25,10 @@ BE SURE TO BACKUP YOUR DATA!
 * SMS template has been changed to Notification template, supporting other apps' push notification
 
 <p>
-<img alt="Account list" src="docs/screenshots/accounts.png" width="20%" />
-<img alt="Blotter" src="docs/screenshots/blotter.png" width="20%" />
-<img alt="Transaction" src="docs/screenshots/transaction.png" width="20%" />
-<img alt="Entity Autocomplete" src="docs/screenshots/autocomplete.png" width="20%" />
+<img alt="Account list" src="docs/screenshots/accounts.png" width="24%" />
+<img alt="Blotter" src="docs/screenshots/blotter.png" width="24%" />
+<img alt="Transaction" src="docs/screenshots/transaction.png" width="24%" />
+<img alt="Entity Autocomplete" src="docs/screenshots/autocomplete.png" width="24%" />
 </p>
 
 I have some example scripts that can:
