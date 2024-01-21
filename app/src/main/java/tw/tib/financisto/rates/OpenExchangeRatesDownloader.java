@@ -80,7 +80,7 @@ public class OpenExchangeRatesDownloader implements ExchangeRateProvider {
             }
 
             JSONObject jsonRates = json.getJSONObject("rates");
-            long timestamp = json.optLong("timestamp", System.currentTimeMillis());
+            long timestamp = 1000 * json.optLong("timestamp", System.currentTimeMillis() / 1000);
             double homeToUsd;
 
             try {
@@ -166,7 +166,7 @@ public class OpenExchangeRatesDownloader implements ExchangeRateProvider {
         double usdFrom = rates.getDouble(fromCurrency.name);
         double usdTo = rates.getDouble(toCurrency.name);
         exchangeRate.rate = usdTo * (1 / usdFrom);
-        exchangeRate.date = 1000*json.optLong("timestamp", System.currentTimeMillis());
+        exchangeRate.date = 1000*json.optLong("timestamp", System.currentTimeMillis()/1000);
     }
 
     @Override
