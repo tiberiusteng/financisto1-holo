@@ -23,9 +23,7 @@ import tw.tib.financisto.blotter.BlotterFilter;
 import tw.tib.financisto.datetime.DateUtils;
 import tw.tib.financisto.filter.Criteria;
 import tw.tib.financisto.filter.WhereFilter;
-import tw.tib.financisto.model.*;
 import tw.tib.financisto.model.Currency;
-import tw.tib.financisto.rates.*;
 import tw.tib.financisto.utils.ArrUtils;
 import tw.tib.financisto.utils.MyPreferences;
 import tw.tib.financisto.utils.StringUtil;
@@ -741,6 +739,21 @@ public class DatabaseAdapter extends MyEntityManager {
                 return new Category(-1);
             }
         }
+    }
+
+    public List<String> getFullCategoryPath(Category category) {
+        LinkedList<String> result = new LinkedList<>();
+        SQLiteDatabase db = db();
+        try (Cursor c = db.query(DatabaseHelper.V_CATEGORY, new String[]{"title"},
+                "left <= ? AND right >= ? AND _id > 0",
+                new String[]{String.valueOf(category.left), String.valueOf(category.right)},
+                null, null, "left"))
+        {
+            while (c.moveToNext()) {
+                result.add(c.getString(0));
+            }
+        }
+        return result;
     }
 
     public List<Long> getCategoryIdsByLeftIds(List<String> leftIds) {

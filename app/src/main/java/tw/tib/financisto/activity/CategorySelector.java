@@ -18,7 +18,6 @@ import android.widget.*;
 import tw.tib.financisto.R;
 import tw.tib.financisto.db.DatabaseAdapter;
 import tw.tib.financisto.db.DatabaseHelper;
-import tw.tib.financisto.model.*;
 import tw.tib.financisto.model.Attribute;
 import tw.tib.financisto.model.Category;
 import tw.tib.financisto.model.MultiChoiceItem;
@@ -37,7 +36,6 @@ import static java.util.Objects.requireNonNull;
 import static tw.tib.financisto.model.Category.NO_CATEGORY_ID;
 
 public class CategorySelector<A extends AbstractActivity> {
-
     private final A activity;
     private final DatabaseAdapter db;
     private final ActivityLayout x;
@@ -284,7 +282,8 @@ public class CategorySelector<A extends AbstractActivity> {
             if (selectedCategoryId != categoryId) {
                 Category category = db.getCategoryWithParent(categoryId);
                 if (category != null) {
-                    categoryText.setText(Category.getTitle(category.title, category.level));
+                    List<String> tree = db.getFullCategoryPath(category);
+                    categoryText.setText(String.join(" / ", tree));
                     showHideMinusBtn(true);
                 }
                 selectedCategoryId = categoryId;

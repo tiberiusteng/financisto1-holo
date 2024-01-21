@@ -96,7 +96,7 @@ public class TransactionInfoDialog {
         if (ti.payee != null) {
             add(layout, R.string.payee, ti.payee.title);
         }
-        add(layout, R.string.category, ti.category.title);
+        add(layout, R.string.category, String.join(" / ", db.getFullCategoryPath(ti.category)));
         if (ti.originalCurrency != null) {
             TextView amount = add(layout, R.string.original_amount, "");
             u.setAmountText(amount, ti.originalCurrency, ti.originalFromAmount, true);
