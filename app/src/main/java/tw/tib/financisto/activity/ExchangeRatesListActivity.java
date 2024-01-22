@@ -345,7 +345,7 @@ public class ExchangeRatesListActivity extends AbstractListActivity {
         public View getView(int position, View convertView, ViewGroup parent) {
             GenericViewHolder v;
             if (convertView == null) {
-                convertView = inflater.inflate(R.layout.generic_list_item, parent, false);
+                convertView = inflater.inflate(R.layout.exchange_rate_list_item, parent, false);
                 v = GenericViewHolder.createAndTag(convertView);
             } else {
                 v = (GenericViewHolder) convertView.getTag();
