@@ -55,16 +55,18 @@ public class LatestExchangeRates implements ExchangeRateProvider, ExchangeRatesC
         if (homeCurrency == null) {
             homeCurrency = new DatabaseAdapter(context).getHomeCurrency();
         }
-        ExchangeRate e1 = getRate(fromCurrency, homeCurrency);
-        if (e1 != ExchangeRate.NA) {
-            ExchangeRate e2 = getRate(homeCurrency, toCurrency);
-            if (e2 != ExchangeRate.NA) {
-                rate = new ExchangeRate();
-                rate.fromCurrencyId = fromCurrency.id;
-                rate.toCurrencyId = toCurrency.id;
-                rate.rate = e1.rate * e2.rate;
-                rateMap.put(toCurrency.id, rate);
-                return rate;
+        if (!toCurrency.equals(homeCurrency)) {
+            ExchangeRate e1 = getRate(fromCurrency, homeCurrency);
+            if (e1 != ExchangeRate.NA) {
+                ExchangeRate e2 = getRate(homeCurrency, toCurrency);
+                if (e2 != ExchangeRate.NA) {
+                    rate = new ExchangeRate();
+                    rate.fromCurrencyId = fromCurrency.id;
+                    rate.toCurrencyId = toCurrency.id;
+                    rate.rate = e1.rate * e2.rate;
+                    rateMap.put(toCurrency.id, rate);
+                    return rate;
+                }
             }
         }
         // negative cache
