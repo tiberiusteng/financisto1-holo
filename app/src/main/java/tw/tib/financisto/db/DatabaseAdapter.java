@@ -268,6 +268,7 @@ public class DatabaseAdapter extends MyEntityManager {
             transaction.lastRecurrence = now;
             updateTransaction(transaction);
             transaction.id = -1;
+            int sourceIsTemplate = transaction.isTemplate;
             transaction.isTemplate = isTemplate;
 
             if (timestamp == KEEP_DATE_TIME) {
@@ -290,13 +291,21 @@ public class DatabaseAdapter extends MyEntityManager {
             }
 
             transaction.remoteKey = null;
-            if (MyPreferences.isResetCopiedTransactionStatus(context)) {
-                transaction.status = TransactionStatus.UR;
+
+            if (sourceIsTemplate == 2) {
+                // keep scheduled transaction's status
             }
-            if (MyPreferences.isResetCopiedForeignTransactionStatus(context) &&
-                transaction.originalCurrencyId != 0)
-            {
-                transaction.status = TransactionStatus.PN;
+            else {
+                // if configured, set copied transaction's status to unreconciled
+                if (MyPreferences.isResetCopiedTransactionStatus(context)) {
+                    transaction.status = TransactionStatus.UR;
+                }
+                // if configured and transaction is in foreign currency,
+                // set copied transaction's status to pending
+                if (MyPreferences.isResetCopiedForeignTransactionStatus(context) &&
+                        transaction.originalCurrencyId != 0) {
+                    transaction.status = TransactionStatus.PN;
+                }
             }
             if (isTemplate == 0) {
                 transaction.recurrence = null;

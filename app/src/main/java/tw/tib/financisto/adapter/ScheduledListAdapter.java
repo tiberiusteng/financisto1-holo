@@ -13,6 +13,7 @@ package tw.tib.financisto.adapter;
 import static tw.tib.financisto.model.Project.NO_PROJECT_ID;
 
 import android.content.Context;
+import android.content.res.Resources;
 import android.graphics.Color;
 import android.graphics.drawable.Drawable;
 import android.text.format.DateUtils;
@@ -25,6 +26,7 @@ import android.widget.TextView;
 import tw.tib.financisto.R;
 import tw.tib.financisto.model.Currency;
 import tw.tib.financisto.model.TransactionInfo;
+import tw.tib.financisto.model.TransactionStatus;
 import tw.tib.financisto.utils.MyPreferences;
 import tw.tib.financisto.utils.TransactionTitleUtils;
 import tw.tib.financisto.utils.Utils;
@@ -40,6 +42,7 @@ public class ScheduledListAdapter extends BaseAdapter {
 	private final int transferColor;
 	private final int scheduledColor;
 	private final int projectColor;
+	private final int colors[];
 	private final Drawable icBlotterIncome;
 	private final Drawable icBlotterExpense;
 	private final Drawable icBlotterTransfer;	
@@ -60,6 +63,7 @@ public class ScheduledListAdapter extends BaseAdapter {
 		this.transferColor = context.getResources().getColor(R.color.transfer_color);
 		this.scheduledColor = context.getResources().getColor(R.color.scheduled);
 		this.projectColor = context.getResources().getColor(R.color.project_color);
+		this.colors = initializeColors(context);
 		this.icBlotterIncome = context.getResources().getDrawable(R.drawable.ic_blotter_income);
 		this.icBlotterExpense = context.getResources().getDrawable(R.drawable.ic_blotter_expense);
 		this.icBlotterTransfer = context.getResources().getDrawable(R.drawable.ic_blotter_transfer);
@@ -100,11 +104,7 @@ public class ScheduledListAdapter extends BaseAdapter {
 			v = (Holder)convertView.getTag();
 		}
 		TransactionInfo t = getItem(position);
-		if (t.nextDateTime != null && t.nextDateTime.after(now)) {
-			v.indicator.setBackgroundColor(scheduledColor);			
-		} else {
-			v.indicator.setBackgroundColor(Color.TRANSPARENT);			
-		}
+		v.indicator.setBackgroundColor(colors[t.status.ordinal()]);
 		TextView noteView = t.isTemplate == 1 ? v.bottomView : v.centerView;
 		if (t.toAccount != null) {
 			v.topView.setText(R.string.transfer);			
@@ -182,7 +182,11 @@ public class ScheduledListAdapter extends BaseAdapter {
 				} else {
 					v.bottomView.setText("?");					
 				}
-				v.bottomView.setTextColor(v.topView.getTextColors().getDefaultColor());
+				if (t.nextDateTime != null && t.nextDateTime.after(now)) {
+					v.bottomView.setTextColor(scheduledColor);
+				} else {
+					v.bottomView.setTextColor(v.topView.getTextColors().getDefaultColor());
+				}
 			} else {
 				long date = t.dateTime;
 				dt.setTime(date);
@@ -223,5 +227,16 @@ public class ScheduledListAdapter extends BaseAdapter {
         }
 
     }
+
+	private int[] initializeColors(Context context) {
+		Resources r = context.getResources();
+		TransactionStatus[] statuses = TransactionStatus.values();
+		int count = statuses.length;
+		int[] colors = new int[count];
+		for (int i = 0; i < count; i++) {
+			colors[i] = r.getColor(statuses[i].colorId);
+		}
+		return colors;
+	}
 
 }
