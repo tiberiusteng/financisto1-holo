@@ -48,7 +48,7 @@ public class TransactionTitleUtils {
     }
 
     private CharSequence generateTransactionTitleForRegular(boolean isTransfer, String payee, String transfer, String note, String location, String category) {
-        if (this.colorizeItem && Build.VERSION.SDK_INT >= 21) {
+        if (this.colorizeItem) {
             SpannableStringBuilder ssb = new SpannableStringBuilder();
             boolean hasText = false;
 
@@ -104,18 +104,46 @@ public class TransactionTitleUtils {
         return secondPart;
     }
 
-    private String generateTransactionTitleForSplit(String payee, String transfer, String note, String location, String category) {
-        String secondPart = joinAdditionalFields(transfer, note, location);
-        if (isNotEmpty(payee)) {
-            if (isNotEmpty(secondPart)) {
-                return sb.append("[").append(payee).append("...] ").append(secondPart).toString();
+    private CharSequence generateTransactionTitleForSplit(String payee, String transfer, String note, String location, String category) {
+        if (this.colorizeItem) {
+            SpannableStringBuilder ssb = new SpannableStringBuilder();
+
+            if (isNotEmpty(payee)) {
+                ssb.append("[", categorySpan, 0);
+                ssb.append(payee, payeeSpan, 0);
+                ssb.append("...]", categorySpan, 0);
             }
-            return sb.append("[").append(payee).append("...]").toString();
-        } else {
-            if (isNotEmpty(secondPart)) {
-                return sb.append("[...] ").append(secondPart).toString();
+            else {
+                ssb.append("[...]", categorySpan, 0);
             }
-            return category;
+            if (isNotEmpty(location)) {
+                ssb.append(" ");
+                ssb.append(location, locationSpan, 0);
+            }
+            if (isNotEmpty(transfer)) {
+                ssb.append(" ");
+                ssb.append(transfer, transferSpan, 0);
+            }
+            if (isNotEmpty(note)) {
+                ssb.append(" ");
+                ssb.append(note, noteSpan, 0);
+            }
+
+            return ssb;
+        }
+        else {
+            String secondPart = joinAdditionalFields(transfer, note, location);
+            if (isNotEmpty(payee)) {
+                if (isNotEmpty(secondPart)) {
+                    return sb.append("[").append(payee).append("...] ").append(secondPart).toString();
+                }
+                return sb.append("[").append(payee).append("...]").toString();
+            } else {
+                if (isNotEmpty(secondPart)) {
+                    return sb.append("[...] ").append(secondPart).toString();
+                }
+                return category;
+            }
         }
     }
 
