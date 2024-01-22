@@ -149,8 +149,6 @@ public abstract class AbstractTransactionActivity extends AbstractActivity imple
 
 		long t0 = System.currentTimeMillis();
 
-		requestWindowFeature(Window.FEATURE_INDETERMINATE_PROGRESS);
-
 		setContentView(getLayoutId());
 
 		isRememberLastAccount = MyPreferences.isRememberAccount(this);

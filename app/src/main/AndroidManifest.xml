@@ -154,6 +154,18 @@
 			</intent-filter>
 		</activity>
 
+		<activity android:name=".activity.SplitTransactionActivity" android:label="@string/split_transaction"
+			android:icon="@drawable/icon_transaction"
+			android:configChanges="screenSize|smallestScreenSize|orientation|screenLayout|keyboardHidden"
+			android:windowSoftInputMode="stateAlwaysHidden|adjustResize"
+			android:taskAffinity=".TransactionActivity" />
+
+		<activity android:name=".activity.SplitTransferActivity" android:label="@string/split_transfer"
+			android:icon="@drawable/icon_transfer"
+			android:configChanges="screenSize|smallestScreenSize|orientation|screenLayout|keyboardHidden"
+			android:windowSoftInputMode="stateAlwaysHidden|adjustResize"
+			android:taskAffinity=".TransferActivity" />
+
 		<activity android:name=".activity.PinActivity" android:label="@string/enter_pin"
 			android:launchMode="singleTop"
 			android:theme="@style/AppThemeCompat" />
@@ -284,9 +296,6 @@
 		<activity android:name=".activity.ReportPreferencesActivity" android:label="@string/report_preferences"/>
 		<activity android:name=".activity.AboutActivity" android:label="@string/about"
 			android:theme="@style/AppThemeCompat" />
-
-		<activity android:name=".activity.SplitTransactionActivity" android:label="@string/split_transaction" />
-		<activity android:name=".activity.SplitTransferActivity" android:label="@string/split_transfer"/>
 
 		<activity android:name=".dialog.FolderBrowser" android:label="@string/select_folder"/>
 		<activity android:name=".activity.CategorySelectorActivity" android:label="@string/select_category" />
