@@ -138,6 +138,7 @@ public class SmsTemplateListAsyncAdapter extends AsyncAdapter<SmsTemplate, SmsTe
     public void onItemMove(int fromPosition, int toPosition) {
         final SmsTemplate itemSrc = listUtil.getItem(fromPosition);
         final SmsTemplate itemTarget = listUtil.getItem(toPosition);
+        if (itemSrc == null || itemTarget == null) return;
         draggedItemId.set(itemTarget.getId());
         Log.d(TAG, String.format("dragged %s item to %s item", itemSrc.getId(), itemTarget.getId()));
         notifyItemMoved(fromPosition, toPosition);
@@ -148,7 +149,9 @@ public class SmsTemplateListAsyncAdapter extends AsyncAdapter<SmsTemplate, SmsTe
         Log.d (TAG, String.format("swipped %s pos to %s (%s)",
             position, dir == START ? "left" : dir == END ? "right" : "??", dir));
 
-        final long itemId = listUtil.getItem(position).id;
+        final SmsTemplate item = listUtil.getItem(position);
+        if (item == null) return;
+        final long itemId = item.id;
         switch (dir) {
             case START: // left swipe
                 editItem(itemId);
