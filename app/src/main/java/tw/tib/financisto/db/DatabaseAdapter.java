@@ -48,6 +48,7 @@ import tw.tib.financisto.rates.ExchangeRateProvider;
 import tw.tib.financisto.rates.ExchangeRatesCollection;
 import tw.tib.financisto.rates.HistoryExchangeRates;
 import tw.tib.financisto.rates.LatestExchangeRates;
+import tw.tib.orb.EntityManager;
 
 import java.math.BigDecimal;
 import java.util.*;
@@ -1716,7 +1717,12 @@ public class DatabaseAdapter extends MyEntityManager {
 
     public Total getAccountsTotalInHomeCurrency() {
         tw.tib.financisto.model.Currency homeCurrency = getHomeCurrency();
-        return getAccountsTotal(homeCurrency);
+        return getAccountsTotal(homeCurrency, null);
+    }
+
+    public Total getAccountsTotalInHomeCurrencyWithFilter(String filter) {
+        tw.tib.financisto.model.Currency homeCurrency = getHomeCurrency();
+        return getAccountsTotal(homeCurrency, filter);
     }
 
     /**
@@ -1743,9 +1749,9 @@ public class DatabaseAdapter extends MyEntityManager {
     /**
      * Calculates total in home currency for all accounts
      */
-    public Total getAccountsTotal(tw.tib.financisto.model.Currency homeCurrency) {
+    public Total getAccountsTotal(Currency homeCurrency, String filter) {
         ExchangeRateProvider rates = getLatestRates();
-        List<Account> accounts = getAllAccountsList();
+        List<Account> accounts = getAllAccountsListWithFilter(filter);
         BigDecimal total = BigDecimal.ZERO;
         for (Account account : accounts) {
             if (account.shouldIncludeIntoTotals()) {

@@ -39,6 +39,31 @@
 			android:indeterminate="true"/>
 	</FrameLayout>
 
+	<FrameLayout
+		android:id="@+id/search_text_frame"
+		android:layout_width="fill_parent"
+		android:layout_height="wrap_content"
+		android:layout_marginTop="5dp"
+		android:padding="5dp"
+		android:visibility="gone">
+
+		<EditText
+			android:id="@+id/search_text"
+			android:layout_width="fill_parent"
+			android:layout_height="50dp"
+			android:maxLines="1"
+			android:inputType="text" />
+
+		<ImageButton
+			android:id="@+id/search_text_clear"
+			android:layout_width="wrap_content"
+			android:layout_height="wrap_content"
+			android:layout_marginRight="10dp"
+			android:layout_gravity="right|center_vertical"
+			android:visibility="gone"
+			android:background="@android:drawable/ic_delete" />
+	</FrameLayout>
+
 	<TextView
 		android:id="@+id/integrity_error"
 		android:layout_width="fill_parent"
@@ -55,6 +80,11 @@
 			android:id="@+id/bAdd"
 			style="@style/BottomBarButton"
 			android:src="@drawable/actionbar_add_big" />
+
+		<ImageButton
+			android:id="@+id/bSearch"
+			style="@style/BottomBarButton"
+			android:src="@android:drawable/ic_menu_search" />
 
 		<ImageButton
 			android:id="@+id/bMenu"

@@ -230,20 +230,38 @@ public abstract class MyEntityManager extends EntityManager {
 	}
 
 	public Cursor getAccountsForTransaction(Transaction t) {
-		return getAllAccounts(true, t.fromAccountId, t.toAccountId);
+		return getAllAccounts(true, null, t.fromAccountId, t.toAccountId);
 	}
 
 	public Cursor getAllActiveAccounts() {
-		return getAllAccounts(true);
+		return getAllAccounts(true, null);
+	}
+
+	public Cursor getAllActiveAccountsWithFilter(String filter) {
+		return getAllAccounts(true, filter);
 	}
 
 	public Cursor getAllAccounts() {
-		return getAllAccounts(false);
+		return getAllAccounts(false, null);
 	}
 
-	private Cursor getAllAccounts(boolean isActiveOnly, long... includeAccounts) {
+	public Cursor getAllAccountsWithFilter(String filter) {
+		return getAllAccounts(false, filter);
+	}
+
+	private Cursor getAllAccounts(boolean isActiveOnly, String filter, long... includeAccounts) {
 		MyPreferences.AccountSortOrder sortOrder = MyPreferences.getAccountSortOrder(context);
-		Query<Account> q = createQuery(Account.class);
+		Query<AccountForSearch> q = createQuery(AccountForSearch.class);
+		ArrayList<Expression> e = new ArrayList<>();
+
+		if (filter != null && !filter.isEmpty()) {
+			e.add(Expressions.or(
+					Expressions.like("title", String.format("%%%s%%", filter)),
+					Expressions.like("issuer", String.format("%%%s%%", filter)),
+					Expressions.like("note", String.format("%%%s%%", filter)),
+					Expressions.like("currencyName", String.format("%%%s%%", filter))
+			));
+		}
 		if (isActiveOnly) {
 			int count = includeAccounts.length;
 			if (count > 0) {
@@ -252,10 +270,13 @@ public abstract class MyEntityManager extends EntityManager {
 					ee[i] = Expressions.eq("id", includeAccounts[i]);
 				}
 				ee[count] = Expressions.eq("isActive", 1);
-				q.where(Expressions.or(ee));
+				e.add(Expressions.or(ee));
 			} else {
-				q.where(Expressions.eq("isActive", 1));
+				e.add(Expressions.eq("isActive", 1));
 			}
+		}
+		if (e.size() > 0) {
+			q.where(Expressions.and(e.toArray(new Expression[0])));
 		}
 		q.desc("isActive");
 		if (sortOrder.asc) {
@@ -271,8 +292,18 @@ public abstract class MyEntityManager extends EntityManager {
 	}
 
 	public List<Account> getAllAccountsList() {
+		return getAllAccountsListWithFilter(null);
+	}
+
+	public List<Account> getAllAccountsListWithFilter(String filter) {
 		List<Account> list = new ArrayList<>();
-		try (Cursor c = getAllAccounts()) {
+		Cursor c;
+		if (MyPreferences.isHideClosedAccounts(context)) {
+			c = getAllActiveAccountsWithFilter(filter);
+		} else {
+			c = getAllAccountsWithFilter(filter);
+		}
+		try (c) {
 			while (c.moveToNext()) {
 				Account a = EntityManager.loadFromCursor(c, Account.class);
 				list.add(a);

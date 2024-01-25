@@ -162,9 +162,13 @@ public class DatabaseHelper extends DatabaseSchemaEvolution {
         public static final String LAST_ACCOUNT_ID = "last_account_id";
         public static final String CLOSING_DAY = "closing_day";
         public static final String PAYMENT_DAY = "payment_day";
+        public static final String NOTE = "note";
         public static final String IS_INCLUDE_INTO_TOTALS = "is_include_into_totals";
         public static final String IS_ACTIVE = "is_active";
         public static final String LAST_TRANSACTION_DATE = "last_transaction_date";
+
+        // v_account join currency
+        public static final String CURRENCY_NAME = "currency_name";
 
         private AccountColumns() {
         }

@@ -3,13 +3,19 @@ package tw.tib.financisto.activity;
 import android.app.AlertDialog;
 import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.database.Cursor;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
+import android.text.Editable;
+import android.text.TextWatcher;
 import android.util.Log;
 import android.view.MenuInflater;
 import android.view.View;
+import android.view.inputmethod.InputMethodManager;
+import android.widget.EditText;
+import android.widget.FrameLayout;
 import android.widget.ImageButton;
 import android.widget.ListAdapter;
 import android.widget.PopupMenu;
@@ -43,6 +49,9 @@ import tw.tib.financisto.utils.PinProtection;
 import tw.tib.financisto.view.NodeInflater;
 
 public class AccountListFragment extends AbstractListFragment {
+    private static final String TAG = "AccountListFragment";
+
+    private static final String FILTER_PERF = "filter";
 
     private static final int NEW_ACCOUNT_REQUEST = 1;
 
@@ -53,6 +62,8 @@ public class AccountListFragment extends AbstractListFragment {
     private QuickActionWidget accountActionGrid;
     private TextView emptyText;
     private ProgressBar progressBar;
+    private ImageButton bSearch;
+    private String filter;
 
     private long selectedId = -1;
 
@@ -63,22 +74,87 @@ public class AccountListFragment extends AbstractListFragment {
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
-        setupUi();
+        setupUi(view);
         setupMenuButton();
         calculateTotals();
         integrityCheck();
     }
 
-    private void setupUi() {
-        getView().findViewById(R.id.integrity_error).setOnClickListener(v -> v.setVisibility(View.GONE));
-        getListView().setOnItemLongClickListener((parent, view, position, id) -> {
+    private void setupUi(View view) {
+        view.findViewById(R.id.integrity_error).setOnClickListener(v -> v.setVisibility(View.GONE));
+        getListView().setOnItemLongClickListener((parent, child, position, id) -> {
             selectedId = id;
             prepareAccountActionGrid();
-            accountActionGrid.show(view);
+            accountActionGrid.show(child);
             return true;
         });
-        emptyText = getView().findViewById(android.R.id.empty);
-        progressBar = getView().findViewById(android.R.id.progress);
+        emptyText = view.findViewById(android.R.id.empty);
+        progressBar = view.findViewById(android.R.id.progress);
+
+        bSearch = view.findViewById(R.id.bSearch);
+        if (bSearch != null) {
+            loadFilter();
+
+            if (!filter.isEmpty()) {
+                EditText searchText = view.findViewById(R.id.search_text);
+                FrameLayout searchLayout = view.findViewById(R.id.search_text_frame);
+                searchLayout.setVisibility(View.VISIBLE);
+                searchText.setText(filter);
+            }
+
+            bSearch.setOnClickListener(method -> {
+                EditText searchText = view.findViewById(R.id.search_text);
+                FrameLayout searchLayout = view.findViewById(R.id.search_text_frame);
+                ImageButton searchTextClearButton = view.findViewById(R.id.search_text_clear);
+                InputMethodManager imm = (InputMethodManager) getContext().getSystemService(Context.INPUT_METHOD_SERVICE);
+
+                searchText.setOnFocusChangeListener((v, b) -> {
+                    if (!v.hasFocus()) {
+                        imm.hideSoftInputFromWindow(searchLayout.getWindowToken(), 0);
+                    }
+                });
+
+                searchTextClearButton.setOnClickListener(v -> {
+                    searchText.setText("");
+                });
+
+                if (searchLayout.getVisibility() == View.VISIBLE) {
+                    imm.hideSoftInputFromWindow(searchLayout.getWindowToken(), 0);
+                    searchLayout.setVisibility(View.GONE);
+                    return;
+                }
+
+                searchLayout.setVisibility(View.VISIBLE);
+                searchText.requestFocusFromTouch();
+                imm.showSoftInput(searchText, InputMethodManager.SHOW_IMPLICIT);
+
+                searchText.addTextChangedListener(new TextWatcher() {
+                    @Override
+                    public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {
+                    }
+
+                    @Override
+                    public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {
+                    }
+
+                    @Override
+                    public void afterTextChanged(Editable editable) {
+                        ImageButton clearButton = view.findViewById(R.id.search_text_clear);
+                        String text = editable.toString();
+                        filter = text;
+
+                        if (!text.isEmpty()) {
+                            clearButton.setVisibility(View.VISIBLE);
+                        } else {
+                            clearButton.setVisibility(View.GONE);
+                        }
+
+                        recreateCursor();
+                        saveFilter();
+                    }
+                });
+            });
+        }
     }
 
     private void setupMenuButton() {
@@ -183,7 +259,7 @@ public class AccountListFragment extends AbstractListFragment {
         }
         TextView totalText = getView().findViewById(R.id.total);
         totalText.setOnClickListener(view -> showTotals());
-        totalCalculationTask = new AccountTotalsCalculationTask(getContext(), db, totalText);
+        totalCalculationTask = new AccountTotalsCalculationTask(getContext(), db, totalText, filter);
         totalCalculationTask.execute();
     }
 
@@ -195,15 +271,17 @@ public class AccountListFragment extends AbstractListFragment {
     public static class AccountTotalsCalculationTask extends TotalCalculationTask {
 
         private final DatabaseAdapter db;
+        private String filter;
 
-        AccountTotalsCalculationTask(Context context, DatabaseAdapter db, TextView totalText) {
+        AccountTotalsCalculationTask(Context context, DatabaseAdapter db, TextView totalText, String filter) {
             super(context, db, totalText);
             this.db = db;
+            this.filter = filter;
         }
 
         @Override
         public Total getTotalInHomeCurrency() {
-            return db.getAccountsTotalInHomeCurrency();
+            return db.getAccountsTotalInHomeCurrencyWithFilter(filter);
         }
 
         @Override
@@ -237,9 +315,9 @@ public class AccountListFragment extends AbstractListFragment {
         Log.d(this.getClass().getSimpleName(), "createCursor start");
         long t1 = System.currentTimeMillis();
         if (MyPreferences.isHideClosedAccounts(getContext())) {
-            c = db.getAllActiveAccounts();
+            c = db.getAllActiveAccountsWithFilter(filter);
         } else {
-            c = db.getAllAccounts();
+            c = db.getAllAccountsWithFilter(filter);
         }
         c.getCount();
         Log.d(getClass().getSimpleName(), "createCursor: " + (System.currentTimeMillis() - t1) + " ms");
@@ -394,5 +472,17 @@ public class AccountListFragment extends AbstractListFragment {
             Log.d(this.getClass().getSimpleName(), "onResume NOT isUnlocked, hide list");
             getListView().setVisibility(View.INVISIBLE);
         }
+    }
+
+    private void loadFilter() {
+        SharedPreferences preferences = getContext().getSharedPreferences(TAG, 0);
+        filter = preferences.getString(FILTER_PERF, "");
+    }
+
+    private void saveFilter() {
+        SharedPreferences preferences = getContext().getSharedPreferences(TAG, 0);
+        SharedPreferences.Editor e = preferences.edit();
+        e.putString(FILTER_PERF, filter);
+        e.apply();
     }
 }
