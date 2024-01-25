@@ -41,10 +41,18 @@
 
         <ImageButton
             android:id="@+id/rateCalculator"
-            style="@style/CalcButton"
+            style="@style/KeypadButton"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_alignParentRight="true"
+            android:layout_centerVertical="true" />
+
+        <ImageButton
+            android:id="@+id/rateAssign"
+            style="@style/CalcButton"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_toLeftOf="@+id/rateCalculator"
             android:layout_centerVertical="true" />
 
         <ImageButton
@@ -52,7 +60,7 @@
             style="@style/DownloadButton"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_toLeftOf="@+id/rateCalculator"
+            android:layout_toLeftOf="@+id/rateAssign"
             android:layout_centerVertical="true" />
 
         <EditText

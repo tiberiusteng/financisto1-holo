@@ -22,6 +22,7 @@ public interface RateNodeOwner {
     void onAfterRateDownload();
     void onSuccessfulRateDownload();
     void onRateChanged();
+    void onRequestAssign();
 
     Activity getActivity();
 

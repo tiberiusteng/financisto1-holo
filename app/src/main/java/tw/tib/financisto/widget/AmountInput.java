@@ -24,6 +24,7 @@ import android.util.AttributeSet;
 import android.view.KeyEvent;
 import android.view.View;
 import android.widget.EditText;
+import android.widget.ImageButton;
 import android.widget.ImageSwitcher;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
@@ -53,6 +54,9 @@ public class AmountInput extends LinearLayout implements AmountListener {
     public interface OnAmountChangedListener {
         void onAmountChanged(long oldAmount, long newAmount);
     }
+    public interface OnRequestAssignListener {
+        void onRequestAssign();
+    }
 
     private static final AtomicInteger EDIT_AMOUNT_REQUEST = new AtomicInteger(2000);
 
@@ -68,6 +72,8 @@ public class AmountInput extends LinearLayout implements AmountListener {
     protected TextView delimiter;
     @ViewById(R.id.secondary)
     protected EditText secondary;
+    @ViewById(R.id.assign)
+    protected ImageButton assign;
 
     @DimensionPixelSizeRes(R.dimen.select_entry_height_no_label)
     protected int minHeight;
@@ -83,8 +89,10 @@ public class AmountInput extends LinearLayout implements AmountListener {
 
     private int requestId;
     private OnAmountChangedListener onAmountChangedListener;
+    private OnRequestAssignListener onRequestAssignListener;
     private boolean incomeExpenseEnabled = true;
     private boolean isExpense = true;
+    private boolean amountChangeListenerEnabled = true;
 
     protected AmountInput(Context context, AttributeSet attrs) {
         super(context, attrs);
@@ -133,12 +141,26 @@ public class AmountInput extends LinearLayout implements AmountListener {
         this.onAmountChangedListener = onAmountChangedListener;
     }
 
+    public void disableAmountChangedListener() {
+        amountChangeListenerEnabled = false;
+    }
+
+    public void enableAmountChangedListener() {
+        amountChangeListenerEnabled = true;
+    }
+
+    public void setOnRequestAssignListener(
+            OnRequestAssignListener onRequestAssignListener)
+    {
+        this.onRequestAssignListener = onRequestAssignListener;
+    }
+
     private final TextWatcher textWatcher = new TextWatcher() {
         private long oldAmount;
 
         @Override
         public void afterTextChanged(Editable s) {
-            if (onAmountChangedListener != null) {
+            if (onAmountChangedListener != null && amountChangeListenerEnabled) {
                 long amount = getAmount();
                 onAmountChangedListener.onAmountChanged(oldAmount, amount);
                 oldAmount = amount;
@@ -201,6 +223,13 @@ public class AmountInput extends LinearLayout implements AmountListener {
         if (!MyPreferences.isEnterCurrencyDecimalPlaces(getContext())) {
             secondary.setVisibility(GONE);
             delimiter.setVisibility(GONE);
+        }
+    }
+
+    @Click(R.id.assign)
+    protected void onClickAssign() {
+        if (onRequestAssignListener != null) {
+            onRequestAssignListener.onRequestAssign();
         }
     }
 
@@ -380,4 +409,11 @@ public class AmountInput extends LinearLayout implements AmountListener {
         }
     }
 
+    public void hideAssignButton() {
+        assign.setVisibility(View.GONE);
+    }
+
+    public void showAssignButton() {
+        assign.setVisibility(View.VISIBLE);
+    }
 }

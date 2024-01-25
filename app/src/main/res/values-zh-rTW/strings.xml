@@ -588,7 +588,8 @@
   <string name="unsplit_amount">未分割額度</string>
   <string name="unsplit_amount_greater_than_zero">還有額度尚未分割...</string>
   <string name="delete_transaction_parent_confirm">此交易是分割交易的一部分。您要刪除它所屬的整筆交易嗎？</string>
-  <string name="downloading_rate" formatted="false">正在取得 %s/%s 匯率...</string>
+  <string name="downloading_rate">正在取得 %1$s/%2$s 匯率 &#8230;</string>
+  <string name="rate_as_of">%s 時的匯率</string>
   <string name="unsplit_adjust_amount">額度</string>
   <string name="unsplit_adjust_amount_summary">調整額度</string>
   <string name="unsplit_adjust_evenly">平均</string>

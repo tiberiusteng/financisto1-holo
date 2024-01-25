@@ -672,7 +672,8 @@
     <string name="unsplit_amount">Unsplit amount</string>
     <string name="unsplit_amount_greater_than_zero">There is still some amount left un-split…</string>
     <string name="delete_transaction_parent_confirm">This transaction is a part of split. Do you want to delete the parent transaction?</string>
-    <string name="downloading_rate" formatted="false">Downloading %s/%s conversion rate…</string>
+    <string name="downloading_rate">Downloading %1$s/%2$s conversion rate…</string>
+    <string name="rate_as_of">Rate as of %s</string>
     <string name="downloading_rates">Downloading conversion rates for %s…</string>
 
     <string name="unsplit_adjust_amount">Amount</string>

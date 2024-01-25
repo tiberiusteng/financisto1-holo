@@ -14,6 +14,8 @@ import android.content.Context;
 import android.os.AsyncTask;
 import android.text.Editable;
 import android.text.TextWatcher;
+import android.text.format.DateUtils;
+import android.util.Log;
 import android.view.View;
 import android.widget.EditText;
 import android.widget.ImageButton;
@@ -25,14 +27,15 @@ import java.text.DecimalFormat;
 
 import tw.tib.financisto.R;
 import tw.tib.financisto.activity.ActivityLayout;
+import tw.tib.financisto.db.DatabaseAdapter;
 import tw.tib.financisto.model.Currency;
 import tw.tib.financisto.rates.ExchangeRate;
 import tw.tib.financisto.rates.ExchangeRateProvider;
 import tw.tib.financisto.utils.MyPreferences;
 import tw.tib.financisto.utils.Utils;
-import tw.tib.financisto.widget.CalculatorInput_;
 
 public class RateNode {
+    private static final String TAG = "RateNode";
 
     public static final int EDIT_RATE = 112;
 
@@ -41,19 +44,24 @@ public class RateNode {
     private final RateNodeOwner owner;
     private final ActivityLayout x;
     private final LinearLayout layout;
+    private final Context context;
 
     View rateInfoNode;
 
     private TextView rateInfo;
     private EditText rate;
+    private long rateTimestamp;
 
     private ImageButton bCalc;
     private ImageButton bDownload;
+    private ImageButton bAssign;
 
-    public RateNode(RateNodeOwner owner, ActivityLayout x, LinearLayout layout) {
+    public RateNode(RateNodeOwner owner, Context context, ActivityLayout x, LinearLayout layout) {
         this.owner = owner;
         this.x = x;
         this.layout = layout;
+        this.context = context;
+        this.rateTimestamp = 0;
         createUI();
     }
 
@@ -75,7 +83,6 @@ public class RateNode {
             input.setListener(amount -> {
                 try {
                     setRate(Float.parseFloat(amount));
-                    updateRateInfo();
                     owner.onRateChanged();
                 } catch (NumberFormatException ignored) {
                 }
@@ -84,6 +91,8 @@ public class RateNode {
         });
         bDownload = rateInfoNode.findViewById(R.id.rateDownload);
         bDownload.setOnClickListener(v -> new RateDownloadTask().execute());
+        bAssign = rateInfoNode.findViewById(R.id.rateAssign);
+        bAssign.setOnClickListener(v -> owner.onRequestAssign());
     }
 
     public void disableAll() {
@@ -111,10 +120,39 @@ public class RateNode {
         }
     }
 
-    public void setRate(double r) {
+    public void setRate(double r, boolean updateRateInfo) {
+        Log.d(TAG, "setRate");
+        markRateConsistent();
         rate.removeTextChangedListener(rateWatcher);
         rate.setText(nf.format(Math.abs(r)));
         rate.addTextChangedListener(rateWatcher);
+        rateTimestamp = 0;
+        if (updateRateInfo) {
+            updateRateInfo();
+        }
+    }
+
+    public void setRate(double r) {
+        setRate(r, true);
+    }
+
+    public void setRate(ExchangeRate r){
+        setRate(r.rate, false);
+        rateTimestamp = r.date;
+        updateRateInfo();
+    }
+
+    public void checkIfRateConsistent(double r) {
+        if (nf.format(Math.abs(r)).equals(rate.getText().toString())) {
+            markRateConsistent();
+        }
+        else {
+            markRateInconsistent();
+        }
+    }
+
+    public void hideAssignButton() {
+        bAssign.setVisibility(View.GONE);
     }
 
     public void updateRateInfo() {
@@ -126,7 +164,21 @@ public class RateNode {
             sb.append("1").append(currencyFrom.name).append("=").append(nf.format(r)).append(currencyTo.name).append(", ");
             sb.append("1").append(currencyTo.name).append("=").append(nf.format(1.0 / r)).append(currencyFrom.name);
         }
+        if (rateTimestamp != 0) {
+            sb.append("\n");
+            sb.append(context.getString(R.string.rate_as_of,
+                    DateUtils.formatDateTime(context, rateTimestamp,
+                            DateUtils.FORMAT_SHOW_DATE|DateUtils.FORMAT_SHOW_YEAR|DateUtils.FORMAT_NUMERIC_DATE)));
+        }
         rateInfo.setText(sb.toString());
+    }
+
+    public void markRateInconsistent() {
+        rate.setTextColor(context.getResources().getColor(R.color.holo_red_light));
+    }
+
+    public void markRateConsistent() {
+        rate.setTextColor(context.getResources().getColor(android.R.color.primary_text_dark));
     }
 
     private class RateDownloadTask extends AsyncTask<Void, Void, ExchangeRate> {
@@ -167,7 +219,8 @@ public class RateNode {
             owner.onAfterRateDownload();
             if (result != null) {
                 if (result.isOk()) {
-                    setRate(result.rate);
+                    setRate(result);
+                    new DatabaseAdapter(context).saveRate(result);
                     owner.onSuccessfulRateDownload();
                 } else {
                     Toast.makeText(owner.getActivity(), result.getErrorMessage(), Toast.LENGTH_LONG).show();
@@ -184,6 +237,7 @@ public class RateNode {
     private final TextWatcher rateWatcher = new TextWatcher() {
         @Override
         public void afterTextChanged(Editable s) {
+            rateTimestamp = 0;
             owner.onRateChanged();
         }
 

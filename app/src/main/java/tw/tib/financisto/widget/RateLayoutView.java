@@ -1,7 +1,6 @@
 package tw.tib.financisto.widget;
 
 import android.app.Activity;
-import android.util.Log;
 import android.view.View;
 import android.view.WindowManager;
 import android.widget.LinearLayout;
@@ -10,9 +9,11 @@ import android.widget.TextView;
 import tw.tib.financisto.R;
 import tw.tib.financisto.activity.AbstractActivity;
 import tw.tib.financisto.activity.ActivityLayout;
+import tw.tib.financisto.db.DatabaseAdapter;
 import tw.tib.financisto.model.Currency;
+import tw.tib.financisto.rates.ExchangeRate;
+import tw.tib.financisto.rates.ExchangeRateProvider;
 import tw.tib.financisto.utils.MyPreferences;
-import tw.tib.financisto.widget.AmountInput_;
 
 /**
  * Created by IntelliJ IDEA.
@@ -67,10 +68,45 @@ public class RateLayoutView implements RateNodeOwner {
         amountInputTo.setIncome();
         amountToTitleId = toAmountTitleId;
         amountInputToNode = x.addEditNode(layout, toAmountTitleId, amountInputTo);
-        amountInputTo.setOnAmountChangedListener(onAmountToChangedListener);
-        amountInputFrom.setOnAmountChangedListener(onAmountFromChangedListener);
+        amountInputTo.setOnAmountChangedListener((oldAmount, newAmount) -> {
+            checkIfRateConsistent();
+            if (amountToChangeListener != null) {
+                amountToChangeListener.onAmountChanged(oldAmount, newAmount);
+            }
+        });
+        amountInputTo.setOnRequestAssignListener(() -> {
+            double r = rateNode.getRate();
+            long amountFrom = amountInputFrom.getAmount();
+            long amountTo = (long)Math.floor(r*amountFrom);
+            amountInputTo.disableAmountChangedListener();
+            amountInputTo.setAmount(amountTo);
+            amountInputTo.enableAmountChangedListener();
+            rateNode.markRateConsistent();
+        });
+        amountInputFrom.setOnAmountChangedListener((oldAmount, newAmount) -> {
+            checkIfRateConsistent();
+            if (amountInputFrom.isIncomeExpenseEnabled()) {
+                if (amountInputFrom.isExpense()) {
+                    amountInputTo.setExpense();
+                } else {
+                    amountInputTo.setIncome();
+                }
+            }
+            if (amountFromChangeListener != null) {
+                amountFromChangeListener.onAmountChanged(oldAmount, newAmount);
+            }
+        });
+        amountInputFrom.setOnRequestAssignListener(() -> {
+            double r = rateNode.getRate();
+            long amountTo = amountInputTo.getAmount();
+            long amountFrom = (long)Math.floor((1.0/r)*amountTo);
+            amountInputFrom.disableAmountChangedListener();
+            amountInputFrom.setAmount(amountFrom);
+            amountInputFrom.enableAmountChangedListener();
+            rateNode.markRateConsistent();
+        });
         AbstractActivity.setVisibility(amountInputToNode, View.GONE);
-        rateNode = new RateNode(this, x, layout);
+        rateNode = new RateNode(this, activity, x, layout);
         AbstractActivity.setVisibility(rateNode.rateInfoNode, View.GONE);
 
         if (MyPreferences.isSetFocusOnAmountField(activity)) {
@@ -125,12 +161,22 @@ public class RateLayoutView implements RateNodeOwner {
 
     private void checkNeedRate() {
         if (isDifferentCurrencies()) {
+            amountInputFrom.showAssignButton();
             AbstractActivity.setVisibility(rateNode.rateInfoNode, View.VISIBLE);
             AbstractActivity.setVisibility(amountInputToNode, View.VISIBLE);
-            calculateRate();
+            getLatestRate();
         } else {
+            amountInputFrom.hideAssignButton();
             AbstractActivity.setVisibility(rateNode.rateInfoNode, View.GONE);
             AbstractActivity.setVisibility(amountInputToNode, View.GONE);
+        }
+    }
+
+    private void getLatestRate() {
+        ExchangeRateProvider latestExchangeRates = new DatabaseAdapter(activity).getLatestRates();
+        ExchangeRate exchangeRate = latestExchangeRates.getRate(currencyFrom, currencyTo);
+        if (exchangeRate != ExchangeRate.NA) {
+            rateNode.setRate(exchangeRate);
         }
     }
 
@@ -141,7 +187,6 @@ public class RateLayoutView implements RateNodeOwner {
         if (!Float.isNaN(r)) {
             rateNode.setRate(r);
         }
-        rateNode.updateRateInfo();
     }
 
     public long getFromAmount() {
@@ -160,43 +205,6 @@ public class RateLayoutView implements RateNodeOwner {
         return currencyFrom != null && currencyTo != null && currencyFrom.id != currencyTo.id;
     }
 
-    private final AmountInput.OnAmountChangedListener onAmountFromChangedListener = new AmountInput.OnAmountChangedListener(){
-        @Override
-        public void onAmountChanged(long oldAmount, long newAmount) {
-            long amountFrom = amountInputFrom.getAmount();
-            long amountTo = amountInputTo.getAmount();
-            if (amountFrom != 0) {
-                rateNode.setRate(1.0f * amountTo / amountFrom);
-            }
-            if (amountInputFrom.isIncomeExpenseEnabled()) {
-                if (amountInputFrom.isExpense()) {
-                    amountInputTo.setExpense();
-                } else {
-                    amountInputTo.setIncome();
-                }
-            }
-            rateNode.updateRateInfo();
-            if (amountFromChangeListener != null) {
-                amountFromChangeListener.onAmountChanged(oldAmount, newAmount);
-            }
-        }
-    };
-
-    private final AmountInput.OnAmountChangedListener onAmountToChangedListener = new AmountInput.OnAmountChangedListener(){
-        @Override
-        public void onAmountChanged(long oldAmount, long newAmount) {
-            long amountFrom = amountInputFrom.getAmount();
-            long amountTo = amountInputTo.getAmount();
-            if (amountFrom != 0) {
-                rateNode.setRate(1.0f * amountTo / amountFrom);
-            }
-            rateNode.updateRateInfo();
-            if (amountToChangeListener != null) {
-                amountToChangeListener.onAmountChanged(oldAmount, newAmount);
-            }
-        }
-    };
-
     public void setFromAmount(long fromAmount) {
         amountInputFrom.setAmount(fromAmount);
         calculateRate();
@@ -212,10 +220,15 @@ public class RateLayoutView implements RateNodeOwner {
         double r = rateNode.getRate();
         long amountFrom = amountInputFrom.getAmount();
         long amountTo = (long)Math.floor(r*amountFrom);
-        amountInputTo.setOnAmountChangedListener(null);
-        amountInputTo.setAmount(amountTo);
-        rateNode.updateRateInfo();
-        amountInputTo.setOnAmountChangedListener(onAmountToChangedListener);
+        if (amountInputTo.getAmount() == 0) {
+            amountInputTo.disableAmountChangedListener();
+            amountInputTo.setAmount(amountTo);
+            amountInputTo.enableAmountChangedListener();
+        }
+        else {
+            // if there is input, don't overwrite it
+            checkIfRateConsistent();
+        }
     }
 
     public void openFromAmountCalculator() {
@@ -257,7 +270,20 @@ public class RateLayoutView implements RateNodeOwner {
 
     @Override
     public void onRateChanged() {
-        updateToAmountFromRate();
+        checkIfRateConsistent();
+    }
+
+    protected void checkIfRateConsistent() {
+        long amountFrom = amountInputFrom.getAmount();
+        long amountTo = amountInputTo.getAmount();
+        if (amountFrom != 0 && amountTo != 0) {
+            rateNode.checkIfRateConsistent(1.0d * amountTo / amountFrom);
+        }
+    }
+
+    @Override
+    public void onRequestAssign() {
+        calculateRate();
     }
 
     @Override

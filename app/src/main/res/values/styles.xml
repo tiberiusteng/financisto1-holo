@@ -98,13 +98,17 @@
 		<item name="android:src">@drawable/ic_btn_round_bottom</item>
 	</style>
     <style name="UpDownButton">
-        <item name="android:background">@drawable/btn_circle</item>
-        <item name="android:src">@drawable/ic_btn_round_updown</item>
+        <item name="android:background">@drawable/btn_circle2</item>
+        <item name="android:src">@drawable/unfold_more</item>
     </style>
     <style name="CalcButton">
-        <item name="android:background">@drawable/btn_circle</item>
-        <item name="android:src">@drawable/ic_btn_round_calc</item>
+        <item name="android:background">@drawable/btn_circle2</item>
+        <item name="android:src">@drawable/equal</item>
     </style>
+	<style name="KeypadButton">
+		<item name="android:background">@drawable/btn_circle2</item>
+		<item name="android:src">@drawable/apps</item>
+	</style>
 	<style name="DownloadButton" parent="ListButton">
 		<item name="android:src">@drawable/ic_action_download</item>
 	</style>

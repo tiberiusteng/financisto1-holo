@@ -9,7 +9,6 @@
 package tw.tib.financisto.activity;
 
 import android.app.Activity;
-import android.app.AlertDialog;
 import android.app.DatePickerDialog;
 import android.content.Intent;
 import android.os.Bundle;
@@ -91,9 +90,9 @@ public class ExchangeRateActivity extends AbstractActivity implements RateNodeOw
         x.addInfoNode(layout, 0, R.string.rate_from_currency, fromCurrency.name);
         x.addInfoNode(layout, 0, R.string.rate_to_currency, toCurrency.name);
         dateNode = x.addInfoNode(layout, R.id.date, R.string.date, formatRateDate(this, date));
-        rateNode = new RateNode(this, x, layout);
+        rateNode = new RateNode(this, this, x, layout);
+        rateNode.hideAssignButton();
         rateNode.setRate(rate);
-        rateNode.updateRateInfo();
     }
 
     private boolean validateIntent(Intent intent) {
@@ -168,6 +167,11 @@ public class ExchangeRateActivity extends AbstractActivity implements RateNodeOw
     @Override
     public void onRateChanged() {
         rateNode.updateRateInfo();
+    }
+
+    @Override
+    public void onRequestAssign() {
+
     }
 
     @Override
