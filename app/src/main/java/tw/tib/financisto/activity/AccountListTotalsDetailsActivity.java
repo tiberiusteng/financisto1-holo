@@ -17,17 +17,20 @@ import tw.tib.financisto.model.Total;
  * Date: 3/15/12 16:40 PM
  */
 public class AccountListTotalsDetailsActivity extends AbstractTotalsDetailsActivity  {
+    public static final String FILTER = "filter";
 
     public AccountListTotalsDetailsActivity() {
         super(R.string.account_total_in_currency);
     }
 
     protected Total getTotalInHomeCurrency() {
-        return db.getAccountsTotalInHomeCurrency();
+        String filter = getIntent().getStringExtra(FILTER);
+        return db.getAccountsTotalInHomeCurrencyWithFilter(filter);
     }
 
     protected Total[] getTotals() {
-        return db.getAccountsTotal();
+        String filter = getIntent().getStringExtra(FILTER);
+        return db.getAccountsTotalWithFilter(filter);
     }
 
 }

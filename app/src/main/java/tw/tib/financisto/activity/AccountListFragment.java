@@ -265,6 +265,7 @@ public class AccountListFragment extends AbstractListFragment {
 
     private void showTotals() {
         Intent intent = new Intent(getContext(), AccountListTotalsDetailsActivity.class);
+        intent.putExtra(AccountListTotalsDetailsActivity.FILTER, filter);
         startActivityForResult(intent, -1);
     }
 

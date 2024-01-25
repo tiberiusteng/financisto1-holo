@@ -1715,11 +1715,6 @@ public class DatabaseAdapter extends MyEntityManager {
                 new String[]{String.valueOf(fromCurrencyId), String.valueOf(toCurrencyId), String.valueOf(d)});
     }
 
-    public Total getAccountsTotalInHomeCurrency() {
-        tw.tib.financisto.model.Currency homeCurrency = getHomeCurrency();
-        return getAccountsTotal(homeCurrency, null);
-    }
-
     public Total getAccountsTotalInHomeCurrencyWithFilter(String filter) {
         tw.tib.financisto.model.Currency homeCurrency = getHomeCurrency();
         return getAccountsTotal(homeCurrency, filter);
@@ -1728,8 +1723,8 @@ public class DatabaseAdapter extends MyEntityManager {
     /**
      * Calculates total in every currency for all accounts
      */
-    public Total[] getAccountsTotal() {
-        List<Account> accounts = getAllAccountsList();
+    public Total[] getAccountsTotalWithFilter(String filter) {
+        List<Account> accounts = getAllAccountsListWithFilter(filter);
         Map<tw.tib.financisto.model.Currency, Total> totalsMap = new HashMap<tw.tib.financisto.model.Currency, Total>();
         for (Account account : accounts) {
             if (account.shouldIncludeIntoTotals()) {
