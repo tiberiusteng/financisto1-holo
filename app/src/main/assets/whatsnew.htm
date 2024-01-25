@@ -31,6 +31,30 @@
 
 <h2>Changelog</h2>
 
+<p><b>2024-01-25</b></p>
+<dl>
+    <dt><span>[+]</span> Amount input exchange rate revamp</dt>
+    <dd>
+        <ul>
+            <li>The "dots" button opens calculator. The "=" button now updates the field with other two fields.</li>
+            <li>It will get latest exchange rate from downloaded rates.</li>
+            <li>Downloading rate in transaction window will save it to exchange rates.</li>
+            <li>(Will support getting exchange rate from previous transactions/transfers later)</li>
+        </ul>
+    </dd>
+    <dt><span>[+]</span> Search main account list with title, number, issuer, note, currency name</dt>
+    <dd>
+        It's assumed that this feature will be used during situations like foreign travel that keep
+        showing only accounts with a certain currency, therefore back buttons won't clear/dismiss
+        the input like in blotter. Use the X button in the input to clear it, use the looking glass
+        button to toggle input show/hide without clearing the filter.
+    </dd>
+    <dt><span>[*]</span> Blotter text search now includes payee name</dt>
+    <dt><span>[*]</span> Tweak UI (dialog title, split transaction colorize)</dt>
+    <dt><span>[*]</span> Scheduled/recurrence transactions keep their configured status; change list color display</dt>
+    <dt><span>[-]</span> Fix SMS template swipe crash</dt>
+</dl>
+
 <p><b>2024-01-21 a</b></p>
 <dl>
     <dt><span>[+]</span> Allow currency name &gt; 3 characters and excluding from exchange rate update (to ease using custom currency as stock tickers, fund, etc.)</dt>
