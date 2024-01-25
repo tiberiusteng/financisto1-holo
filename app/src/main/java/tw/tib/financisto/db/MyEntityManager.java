@@ -258,6 +258,7 @@ public abstract class MyEntityManager extends EntityManager {
 			e.add(Expressions.or(
 					Expressions.like("title", String.format("%%%s%%", filter)),
 					Expressions.like("issuer", String.format("%%%s%%", filter)),
+					Expressions.like("number", String.format("%%%s%%", filter)),
 					Expressions.like("note", String.format("%%%s%%", filter)),
 					Expressions.like("currencyName", String.format("%%%s%%", filter))
 			));
