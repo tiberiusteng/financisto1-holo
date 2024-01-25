@@ -5,6 +5,8 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.database.Cursor;
+import android.graphics.Color;
+import android.graphics.LightingColorFilter;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
@@ -98,8 +100,11 @@ public class AccountListFragment extends AbstractListFragment {
             if (!filter.isEmpty()) {
                 EditText searchText = view.findViewById(R.id.search_text);
                 FrameLayout searchLayout = view.findViewById(R.id.search_text_frame);
+                ImageButton clearButton = view.findViewById(R.id.search_text_clear);
                 searchLayout.setVisibility(View.VISIBLE);
+                clearButton.setVisibility(View.VISIBLE);
                 searchText.setText(filter);
+                bSearch.setColorFilter(new LightingColorFilter(Color.BLACK, getResources().getColor(R.color.holo_blue_dark)));
             }
 
             bSearch.setOnClickListener(method -> {
@@ -145,8 +150,10 @@ public class AccountListFragment extends AbstractListFragment {
 
                         if (!text.isEmpty()) {
                             clearButton.setVisibility(View.VISIBLE);
+                            bSearch.setColorFilter(new LightingColorFilter(Color.BLACK, getResources().getColor(R.color.holo_blue_dark)));
                         } else {
                             clearButton.setVisibility(View.GONE);
+                            bSearch.setColorFilter(null);
                         }
 
                         recreateCursor();
