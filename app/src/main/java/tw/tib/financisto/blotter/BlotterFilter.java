@@ -22,6 +22,7 @@ public interface BlotterFilter {
 	String CATEGORY_NAME = BlotterColumns.category_title.name();
 	String LOCATION_ID = BlotterColumns.location_id.name();
 	String PROJECT_ID = BlotterColumns.project_id.name();
+	String PAYEE = BlotterColumns.payee.name();
 	String PAYEE_ID = BlotterColumns.payee_id.name();
 	String NOTE = BlotterColumns.note.name();
 	String TEMPLATE_NAME = BlotterColumns.template_name.name();

@@ -330,14 +330,18 @@ public class BlotterFragment extends AbstractListFragment implements BlotterOper
                                             Criteria.btw(BlotterFilter.ORIGINAL_FROM_AMOUNT, "-" + val3, "-" + val2));
                                 }
                             }
+                            String likePattern = String.format("%%%s%%", text);
                             if (amount == null) {
-                                blotterFilter.contains(BlotterFilter.NOTE, text);
+                                blotterFilter.eq(Criteria.or(
+                                        Criteria.like(BlotterFilter.NOTE, likePattern),
+                                        Criteria.like(BlotterFilter.PAYEE, likePattern)
+                                ));
                             }
                             else {
                                 blotterFilter.eq(Criteria.or(
                                         amount,
-                                        Criteria.like(BlotterFilter.NOTE,
-                                                String.format("%%%s%%", text))
+                                        Criteria.like(BlotterFilter.NOTE, likePattern),
+                                        Criteria.like(BlotterFilter.PAYEE, likePattern)
                                 ));
                             }
 
