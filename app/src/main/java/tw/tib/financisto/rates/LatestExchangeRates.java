@@ -49,7 +49,7 @@ public class LatestExchangeRates implements ExchangeRateProvider, ExchangeRatesC
         if (rate != null) {
             ExchangeRate inverse = rate.flip();
             rateMap.put(toCurrency.id, inverse);
-            return rate;
+            return inverse;
         }
         // estimate from exchange via home currency
         if (homeCurrency == null) {
