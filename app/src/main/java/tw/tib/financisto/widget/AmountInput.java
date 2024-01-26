@@ -342,7 +342,7 @@ public class AmountInput extends LinearLayout implements AmountListener {
     public void setAmount(long amount) {
         long absAmount = Math.abs(amount);
 
-        if (MyPreferences.isRoundUpAmount(getContext())) {
+        if (MyPreferences.isRoundUpAmount(getContext()) && currency != null) {
             BigDecimal bd = new BigDecimal(absAmount).setScale(2, RoundingMode.UNNECESSARY);
             BigDecimal hundred = new BigDecimal(100);
 

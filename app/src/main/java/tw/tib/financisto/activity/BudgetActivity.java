@@ -150,7 +150,6 @@ public class BudgetActivity extends AbstractActivity {
 
 	private void editBudget() {
 		titleText.setText(budget.title);
-		amountInput.setAmount(budget.amount);
 		categorySelector.updateCheckedEntities(budget.categories);
 		categorySelector.fillCategoryInUI();
 
@@ -158,6 +157,8 @@ public class BudgetActivity extends AbstractActivity {
 		projectSelector.fillCheckedEntitiesInUI();
 		selectAccount(budget);
 		selectRecur(budget.recur);
+		// after selecting account to facilitate currency based rounding
+		amountInput.setAmount(budget.amount);
 		cbIncludeSubCategories.setChecked(budget.includeSubcategories);
 		cbIncludeCredit.setChecked(budget.includeCredit);
 		cbMode.setChecked(budget.expanded);
