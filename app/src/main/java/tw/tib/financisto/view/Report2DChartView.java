@@ -18,6 +18,7 @@ import android.graphics.drawable.ShapeDrawable;
 import android.graphics.drawable.shapes.OvalShape;
 import android.graphics.drawable.shapes.RectShape;
 import android.util.AttributeSet;
+import android.util.TypedValue;
 import android.view.MotionEvent;
 import android.view.View;
 
@@ -124,7 +125,7 @@ public class Report2DChartView extends View {
    	
     	labelPaint = new Paint();
     	labelPaint.setColor(txtColor);
-    	labelPaint.setTextSize(10);
+    	labelPaint.setTextSize(spToPx(14));
     	labelPaint.setStyle(Paint.Style.FILL);
     	labelPaint.setTextAlign(Align.CENTER);
     	labelPaint.setAntiAlias(true);
@@ -133,18 +134,18 @@ public class Report2DChartView extends View {
 		currencyPaint.setAntiAlias(true);
 		currencyPaint.setColor(txtColor);
 		currencyPaint.setTextAlign(Align.CENTER);
-		currencyPaint.setTextSize(12);
+		currencyPaint.setTextSize(spToPx(16));
     	
 		amountPaint = new Paint();
 		amountPaint.setAntiAlias(true);
 		amountPaint.setColor(txtColor);
 		amountPaint.setTextAlign(Align.LEFT);
-		amountPaint.setTextSize(12);
+		amountPaint.setTextSize(spToPx(16));
 		
 		valuesPaint = new Paint();
     	valuesPaint.setAntiAlias(true);
     	valuesPaint.setTextAlign(Align.CENTER);
-    	valuesPaint.setTextSize(12);
+    	valuesPaint.setTextSize(spToPx(16));
 		
 		pathPaint = new Paint();
 		pathPaint.setColor(pathColor);
@@ -167,6 +168,10 @@ public class Report2DChartView extends View {
     	axis[1].getPaint().setColor(bgChartColor);
 
     }
+
+	private float spToPx(int sp) {
+		return TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_SP, sp, getResources().getDisplayMetrics());
+	}
     
     /**
      * Refresh the view. Call onDraw(canvas).
@@ -253,21 +258,21 @@ public class Report2DChartView extends View {
     		// draw month labels
     		if (points.size()<=12) {
 	    		for (int i=0; i<points.size(); i++) {
-	    			labelPaint.setTextSize(10);
+	    			labelPaint.setTextSize(spToPx(12));
 	    			canvas.drawText(points.get(i).getMonthShortString(this.getContext()), points.get(i).getX(), getHeight()-ySpace-padding+txtHeight, labelPaint);
-	    			labelPaint.setTextSize(9);
+	    			labelPaint.setTextSize(spToPx(10));
 	    			canvas.drawText(points.get(i).getYearString(), points.get(i).getX(), getHeight()-ySpace-padding+2*txtHeight-1, labelPaint);
 	    		}
     		} else {
-    			labelPaint.setTextSize(10);
+    			labelPaint.setTextSize(spToPx(12));
     			canvas.drawText(points.get(0).getMonthShortString(this.getContext()), points.get(0).getX(), getHeight()-ySpace-padding+txtHeight, labelPaint);
     			canvas.drawText(points.get(points.size()-1).getMonthShortString(this.getContext()), points.get(points.size()-1).getX(), getHeight()-ySpace-padding+txtHeight, labelPaint);
     			
-    			labelPaint.setTextSize(9);
+    			labelPaint.setTextSize(spToPx(10));
     			canvas.drawText(points.get(0).getYearString(), points.get(0).getX(), getHeight()-ySpace-padding+2*txtHeight-1, labelPaint);
     			canvas.drawText(points.get(points.size()-1).getYearString(), points.get(points.size()-1).getX(), getHeight()-ySpace-padding+2*txtHeight-1, labelPaint);
     			
-    			labelPaint.setTextSize(12);
+    			labelPaint.setTextSize(spToPx(14));
     			canvas.drawText(getResources().getString(R.string.period), padding+xSpace+(getWidth()-xSpace-2*padding)/2, getHeight()-ySpace-padding/2+txtHeight, labelPaint);
     		}
     	}
@@ -296,7 +301,7 @@ public class Report2DChartView extends View {
 		
 		// Draw point coordinates
 		currencyPaint.setTextAlign(Align.LEFT);
-		currencyPaint.setTextSize(12);
+		currencyPaint.setTextSize(spToPx(12));
 		canvas.drawText("x:", padding, getHeight()-padding, currencyPaint);
 		canvas.drawText("y:", padding+getWidth()/2, getHeight()-padding, currencyPaint);
 		
