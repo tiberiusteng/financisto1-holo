@@ -1647,7 +1647,7 @@ public class DatabaseAdapter extends MyEntityManager {
 
     public List<ExchangeRate> findRates(Currency fromCurrency, Currency toCurrency) {
         List<ExchangeRate> rates = new ArrayList<ExchangeRate>();
-        try (Cursor c = db().query(DatabaseHelper.V_EXCHANGE_RATE, DatabaseHelper.ExchangeRateColumns.NORMAL_PROJECTION,
+        try (Cursor c = db().query(DatabaseHelper.V_EXCHANGE_RATE, DatabaseHelper.ExchangeRateColumns.GENERATED_FLIP_PROJECTION,
                 DatabaseHelper.ExchangeRateColumns.from_currency_id + "=? and " + DatabaseHelper.ExchangeRateColumns.to_currency_id + "=?",
                 new String[]{String.valueOf(fromCurrency.id), String.valueOf(toCurrency.id)},
                 null, null, DatabaseHelper.ExchangeRateColumns.rate_date + " desc"))
@@ -1695,6 +1695,9 @@ public class DatabaseAdapter extends MyEntityManager {
     }
 
     public void deleteRate(ExchangeRate rate) {
+        if (rate.is_flip != 0) {
+            rate = rate.flip();
+        }
         deleteRate(rate.fromCurrencyId, rate.toCurrencyId, rate.date);
     }
 
@@ -1941,6 +1944,17 @@ public class DatabaseAdapter extends MyEntityManager {
     public long getLastRunningBalanceForAccount(Account account) {
         return DatabaseUtils.rawFetchLongValue(this, "select balance from running_balance where account_id=? order by datetime desc, transaction_id desc limit 1",
                 new String[]{String.valueOf(account.id)});
+    }
+
+    public void log(String note) {
+        Cursor c = getAllActiveAccounts();
+        if (c.getCount() < 1) return;
+        c.moveToFirst();
+        Account a = EntityManager.loadFromCursor(c, Account.class);
+        Transaction t = new Transaction();
+        t.fromAccountId = a.id;
+        t.note = note;
+        insertOrUpdate(t);
     }
 }
 

@@ -33,6 +33,9 @@ public class ExchangeRate implements Comparable<ExchangeRate> {
         r.toCurrencyId = c.getLong(DatabaseHelper.ExchangeRateColumns.to_currency_id.ordinal());
         r.date = c.getLong(DatabaseHelper.ExchangeRateColumns.rate_date.ordinal());
         r.rate = c.getFloat(DatabaseHelper.ExchangeRateColumns.rate.ordinal());
+        if (c.getColumnCount() >= 5) {
+            r.is_flip = c.getInt(DatabaseHelper.ExchangeRateColumns.is_flip.ordinal());
+        }
         return r;
     }
 
@@ -49,6 +52,7 @@ public class ExchangeRate implements Comparable<ExchangeRate> {
     public long toCurrencyId;
     public long date;
     public double rate;
+    public int is_flip;
     public String error;
 
     public ExchangeRate flip() {
@@ -57,6 +61,7 @@ public class ExchangeRate implements Comparable<ExchangeRate> {
         r.toCurrencyId = fromCurrencyId;
         r.date = date;
         r.rate = rate == 0 ? 0 : 1.0d/rate;
+        r.is_flip = r.is_flip == 0 ? 1 : 0;
         return r;
     }
 
@@ -75,4 +80,15 @@ public class ExchangeRate implements Comparable<ExchangeRate> {
         return error != null ? error : "";
     }
 
+    @Override
+    public String toString() {
+        return "ExchangeRate{" +
+                "fromCurrencyId=" + fromCurrencyId +
+                ", toCurrencyId=" + toCurrencyId +
+                ", date=" + date +
+                ", rate=" + rate +
+                ", is_flip=" + is_flip +
+                ", error='" + error + '\'' +
+                '}';
+    }
 }

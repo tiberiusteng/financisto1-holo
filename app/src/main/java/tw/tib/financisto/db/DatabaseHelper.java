@@ -204,9 +204,23 @@ public class DatabaseHelper extends DatabaseSchemaEvolution {
         from_currency_id,
         to_currency_id,
         rate_date,
-        rate;
+        rate,
+        is_flip;
 
-        public static String[] NORMAL_PROJECTION = EnumUtils.asStringArray(ExchangeRateColumns.values());
+        public static String[] NORMAL_PROJECTION = new String[]{
+                from_currency_id.name(),
+                to_currency_id.name(),
+                rate_date.name(),
+                rate.name(),
+                "0"
+        };
+        public static String[] GENERATED_FLIP_PROJECTION = new String[]{
+                from_currency_id.name(),
+                to_currency_id.name(),
+                rate_date.name(),
+                rate.name(),
+                "is_flip"
+        };
         /**
          * https://www.sqlite.org/quirks.html#aggregate_queries_can_contain_non_aggregate_result_columns_that_are_not_in_the_group_by_clause
          *
