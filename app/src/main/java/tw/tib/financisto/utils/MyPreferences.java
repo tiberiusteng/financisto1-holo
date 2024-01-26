@@ -233,6 +233,11 @@ public class MyPreferences {
 		return sharedPreferences.getBoolean("ntsl_enter_currency_decimal_places", true);
 	}
 
+	public static boolean isRoundUpAmount(Context context) {
+		SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(context);
+		return sharedPreferences.getBoolean("ntsl_round_up_amount", true);
+	}
+
 	public static int getPayeeOrder(Context context) {
 		SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(context);
 		return Integer.parseInt(sharedPreferences.getString("ntsl_show_payee_order", "1"));

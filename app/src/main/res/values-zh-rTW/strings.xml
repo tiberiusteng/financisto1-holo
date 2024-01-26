@@ -730,6 +730,10 @@
   <string name="split_transfer_not_supported_yet">尚未支援以不同的幣值分割交易</string>
   <string name="show_currency">顯示幣值</string>
   <string name="show_currency_summary">在新交易畫面顯示幣值選項</string>
+  <string name="enter_currency_decimal_places">允許輸入金額小數位</string>
+  <string name="enter_currency_decimal_places_summary">允許輸入某些幣值的小數位 (角, 分)</string>
+  <string name="round_up_amount">自動四捨五入</string>
+  <string name="round_up_amount_summary">自動根據所選幣值設定將金額四捨五入</string>
   <string name="reconcile">對帳</string>
   <string name="permissions">權限</string>
   <string name="permissions_summary">檢視需要手動許可的權限</string>

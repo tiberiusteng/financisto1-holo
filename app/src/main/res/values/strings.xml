@@ -869,6 +869,8 @@
     <string name="show_currency_summary">Show currency selector in new transaction screen</string>
     <string name="enter_currency_decimal_places">Allow enter currency decimal places</string>
     <string name="enter_currency_decimal_places_summary">Allows you to enter decimals for some currencies (cents, etc.)</string>
+    <string name="round_up_amount">Automatically up decimal places</string>
+    <string name="round_up_amount_summary">Round up entered amount value with regarding to selected currency</string>
     <string name="reconcile">Reconcile</string>
 
     <string name="file_import_utf8_warning">Please make sure that the file is in UTF-8</string>

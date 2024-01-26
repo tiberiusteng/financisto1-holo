@@ -39,6 +39,7 @@ import org.androidannotations.annotations.res.DimensionPixelSizeRes;
 import org.androidannotations.annotations.res.DrawableRes;
 
 import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.util.concurrent.atomic.AtomicInteger;
 
 import tw.tib.financisto.R;
@@ -340,6 +341,18 @@ public class AmountInput extends LinearLayout implements AmountListener {
 
     public void setAmount(long amount) {
         long absAmount = Math.abs(amount);
+
+        if (MyPreferences.isRoundUpAmount(getContext())) {
+            BigDecimal bd = new BigDecimal(absAmount).setScale(2, RoundingMode.UNNECESSARY);
+            BigDecimal hundred = new BigDecimal(100);
+
+            bd = bd.divide(hundred, RoundingMode.UNNECESSARY);
+            bd = bd.setScale(currency.decimals, RoundingMode.HALF_UP);
+            bd = bd.multiply(hundred);
+
+            absAmount = bd.longValue();
+        }
+
         long x = absAmount / 100;
         primary.setText(String.valueOf(x));
 
