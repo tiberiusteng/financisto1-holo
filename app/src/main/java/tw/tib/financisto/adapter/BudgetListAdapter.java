@@ -75,7 +75,6 @@ public class BudgetListAdapter extends BaseAdapter {
 			v = (Holder)convertView.getTag();
 		}
 		Budget b = getItem(position);
-		v.bottomView.setText("*/*");
 		v.centerView.setText(b.title);
 		
 		Currency c = b.getBudgetCurrency();
@@ -121,6 +120,7 @@ public class BudgetListAdapter extends BaseAdapter {
                 v.progressBar.setProgress((int)(spent-1));
             }
 		} else {
+			v.bottomView.setText("*/*");
 			v.rightView1.setText(R.string.calculating);
 			v.rightView2.setText(R.string.calculating);
 			v.progressBar.setMax(1);
