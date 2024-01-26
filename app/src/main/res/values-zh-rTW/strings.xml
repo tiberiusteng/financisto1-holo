@@ -802,7 +802,6 @@
   <string name="integrity_fix_summary">檢查並嘗試修復資料庫內容</string>
   <string name="donate_summary">Make a voluntary donation to support the project</string>
   <string name="about_summary">Get more information about the project</string>
-
   <string name="exchange_rate_provider_error">匯率服務回傳錯誤，訊息內容: %s</string>
   <string name="exchange_rate_provider">匯率服務</string>
   <string name="exchange_rate_provider_summary">選擇取得匯率的服務</string>
@@ -810,6 +809,7 @@
   <string name="exchange_rate_default_currency_no_rate">無法取得預設幣值對 USD 的匯率</string>
   <string name="exchange_rate_set_default_currency">請設定預設幣值 (選單 -&gt; 實體 -&gt; 貨幣)</string>
   <string name="downloading_rates_result">已下載匯率</string>
+  <string name="use_exchange_rate_service_with_historical">請選擇有提供歷史匯率的服務，如 OpenExchangeRates.org</string>
 
   <string-array name="attribute_types">
     <item>文字</item>

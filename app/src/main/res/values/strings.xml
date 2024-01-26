@@ -900,6 +900,7 @@
     <string name="exchange_rate_set_default_currency">Please set Default Currency (Menu -&gt; Entities -&gt; Currencies)</string>
     <string name="download_all_rates">Download all current rates</string>
     <string name="downloading_rates_result">Downloaded exchange rates</string>
+    <string name="use_exchange_rate_service_with_historical">Please select an exchange rate service providing historical rates, like OpenExchangeRates.org</string>
 
     <string name="export_splits">Export splits</string>
 

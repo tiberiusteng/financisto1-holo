@@ -8,10 +8,14 @@
 
 package tw.tib.financisto.db;
 
+import android.content.Context;
 import android.database.Cursor;
+import android.os.Handler;
+import android.os.Looper;
 import android.util.Log;
+import android.widget.Toast;
 
-import tw.tib.financisto.blotter.BlotterFilter;
+import tw.tib.financisto.R;
 import tw.tib.financisto.filter.Criteria;
 import tw.tib.financisto.filter.WhereFilter;
 import tw.tib.financisto.model.Currency;
@@ -20,7 +24,9 @@ import tw.tib.financisto.model.TotalError;
 import tw.tib.financisto.model.TransactionInfo;
 import tw.tib.financisto.rates.ExchangeRate;
 import tw.tib.financisto.rates.ExchangeRateProvider;
+import tw.tib.financisto.rates.ExchangeRatesCollection;
 import tw.tib.financisto.utils.CurrencyCache;
+import tw.tib.financisto.utils.MyPreferences;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
@@ -197,12 +203,36 @@ public class TransactionsTotalCalculator {
         } else {
             Currency fromCurrency = CurrencyCache.getCurrency(em, fromCurrencyId);
             ExchangeRate exchangeRate = rates.getRate(fromCurrency, toCurrency, datetime);
-            if (exchangeRate == ExchangeRate.NA) {
-                throw new UnableToCalculateRateException(fromCurrency, toCurrency, datetime);
-            } else {
-                double rate = exchangeRate.rate;
-                return BigDecimal.valueOf(fromAmount).multiply(BigDecimal.valueOf(rate));
+            if (exchangeRate == ExchangeRate.NA && rates instanceof ExchangeRatesCollection) {
+                // Try to update exchange rate online
+                Log.d(TAG, "try update rate online");
+                Context context = em.getContext();
+                ExchangeRateProvider onlineProvider = MyPreferences.createExchangeRatesProvider(context);
+                Log.d(TAG, onlineProvider.toString());
+                try {
+                    ExchangeRate onlineExchangeRate = onlineProvider.getRate(fromCurrency, toCurrency, datetime);
+                    if (onlineExchangeRate.isOk()) {
+                        // provider may return a rate at later of specified time
+                        // but we need it lesser or equal to specified time to work correctly
+                        onlineExchangeRate.date = datetime;
+                        new DatabaseAdapter(context).saveRate(onlineExchangeRate);
+                        ((ExchangeRatesCollection) rates).addRate(onlineExchangeRate);
+                    }
+                    else {
+                        new Handler(Looper.getMainLooper()).post(() -> Toast.makeText(context,
+                                onlineExchangeRate.getErrorMessage(),
+                                Toast.LENGTH_LONG).show());
+                        throw new UnableToCalculateRateException(fromCurrency, toCurrency, datetime);
+                    }
+                } catch (Exception e) {
+                    new Handler(Looper.getMainLooper()).post(() -> Toast.makeText(context,
+                            R.string.use_exchange_rate_service_with_historical,
+                            Toast.LENGTH_LONG).show());
+                    throw new UnableToCalculateRateException(fromCurrency, toCurrency, datetime);
+                }
             }
+            double rate = exchangeRate.rate;
+            return BigDecimal.valueOf(fromAmount).multiply(BigDecimal.valueOf(rate));
         }
     }
 

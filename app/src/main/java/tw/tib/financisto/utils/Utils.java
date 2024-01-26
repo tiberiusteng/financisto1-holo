@@ -307,6 +307,7 @@ public class Utils {
 
     private void setTotalError(TextView totalText) {
         totalText.setText(R.string.not_available);
+        totalText.setTextColor(context.getResources().getColor(R.color.holo_red_light));
         Drawable dr = context.getResources().getDrawable(R.drawable.total_error);
         dr.setBounds(0, 0, dr.getIntrinsicWidth(), dr.getIntrinsicHeight());
         totalText.setError(totalText.getText(), dr);

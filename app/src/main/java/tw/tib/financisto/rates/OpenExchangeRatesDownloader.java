@@ -17,7 +17,9 @@ import android.util.Log;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 import tw.tib.financisto.R;
@@ -35,6 +37,7 @@ public class OpenExchangeRatesDownloader implements ExchangeRateProvider {
 
     private static final String TAG = OpenExchangeRatesDownloader.class.getSimpleName();
     private static final String GET_LATEST = "https://openexchangerates.org/api/latest.json?app_id=";
+    private static final String GET_HISTORICAL = "https://openexchangerates.org/api/historical/%s.json?app_id=%s";
 
     private final String appId;
     private final HttpClientWrapper httpClient;
@@ -171,7 +174,35 @@ public class OpenExchangeRatesDownloader implements ExchangeRateProvider {
 
     @Override
     public ExchangeRate getRate(Currency fromCurrency, Currency toCurrency, long atTime) {
-        throw new UnsupportedOperationException("Not yet implemented");
+        String date = new SimpleDateFormat("yyyy-MM-dd").format(new Date(atTime));
+        Log.d(TAG, "getRate "+fromCurrency.name+"->"+toCurrency.name + " at " + date);
+
+        ExchangeRate result = new ExchangeRate();
+        try {
+            String historicalUrl = String.format(GET_HISTORICAL, date, appId);
+            JSONObject json = httpClient.getAsJson(historicalUrl);
+
+            if (json.optBoolean("error", false)) {
+                result.error = json.optString("description", "");
+                return result;
+            }
+
+            JSONObject jsonRates = json.getJSONObject("rates");
+            long timestamp = 1000 * json.optLong("timestamp", System.currentTimeMillis() / 1000);
+            double fromToUsd;
+
+            fromToUsd = 1.0d / jsonRates.getDouble(fromCurrency.name);
+
+            double usdTo = jsonRates.getDouble(toCurrency.name);
+            result.fromCurrencyId = fromCurrency.id;
+            result.toCurrencyId = toCurrency.id;
+            result.rate = fromToUsd * usdTo;
+            result.date = timestamp;
+
+        } catch (Exception e) {
+            result.error = e.getMessage();
+        }
+        return result;
     }
 
 }
