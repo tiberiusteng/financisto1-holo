@@ -137,6 +137,7 @@ public class RateLayoutView implements RateNodeOwner {
     }
 
     public void selectCurrencyFrom(Currency currency) {
+        if (currencyFrom != null && currencyFrom.id == currency.id) return;
         currencyFrom = currency;
         amountInputFrom.setCurrency(currencyFrom);
         updateTitle(amountInputFromNode, amountFromTitleId, currencyFrom);
@@ -144,6 +145,7 @@ public class RateLayoutView implements RateNodeOwner {
     }
 
     public void selectCurrencyTo(Currency currency) {
+        if (currencyTo != null && currencyTo.id == currency.id) return;
         currencyTo = currency;
         amountInputTo.setCurrency(currencyTo);
         updateTitle(amountInputToNode, amountToTitleId, currencyTo);
