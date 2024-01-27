@@ -137,7 +137,7 @@ TND,Tunisian dinar,TND,3,PERIOD,COMMA
 TOP,Tongan paʻanga,TOP,2,PERIOD,COMMA
 TRY,Turkish lira,TL,2,COMMA,SPACE
 TTD,Trinidad and Tobago dollar,TT$,2,PERIOD,COMMA
-TWD,New Taiwan dollar,NT$,2,PERIOD,COMMA
+TWD,New Taiwan dollar,NT$,0,PERIOD,COMMA
 TZS,Tanzanian shilling,TZS,2,PERIOD,COMMA
 UAH,Ukrainian hryvnia,₴,2,COMMA,SPACE
 UGX,Ugandan shilling,USh,0,PERIOD,COMMA
