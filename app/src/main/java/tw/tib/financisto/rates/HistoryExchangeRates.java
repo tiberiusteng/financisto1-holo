@@ -75,7 +75,10 @@ public class HistoryExchangeRates implements ExchangeRateProvider, ExchangeRates
         if (homeCurrency == null) {
             homeCurrency = new DatabaseAdapter(context).getHomeCurrency();
         }
-        if (!toCurrency.equals(homeCurrency)) {
+        if (!homeCurrency.equals(Currency.EMPTY) &&
+            !fromCurrency.equals(homeCurrency) &&
+            !toCurrency.equals(homeCurrency))
+        {
             ExchangeRate e1 = getRate(fromCurrency, homeCurrency, atTime);
             if (e1 != ExchangeRate.NA) {
                 ExchangeRate e2 = getRate(homeCurrency, toCurrency, atTime);
