@@ -43,6 +43,7 @@ import tw.tib.financisto.utils.MyPreferences;
 import static tw.tib.financisto.utils.Utils.formatRateDate;
 
 public class ExchangeRatesListActivity extends AbstractListActivity {
+    private static final String TAG = "ExRateListActivity";
 
     private static final int ADD_RATE = 1;
     private static final int EDIT_RATE = 1;
@@ -73,7 +74,7 @@ public class ExchangeRatesListActivity extends AbstractListActivity {
             toCurrencySpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
                 @Override
                 public void onItemSelected(AdapterView<?> adapterView, View view, int i, long l) {
-                    updateAdapter();
+                    recreateCursor();
                 }
 
                 @Override
@@ -158,16 +159,6 @@ public class ExchangeRatesListActivity extends AbstractListActivity {
         }
     }
 
-    private void updateAdapter() {
-        Currency fromCurrency = (Currency) fromCurrencySpinner.getSelectedItem();
-        Currency toCurrency = (Currency) toCurrencySpinner.getSelectedItem();
-        if (fromCurrency != null && toCurrency != null) {
-            List<ExchangeRate> rates = db.findRates(fromCurrency, toCurrency);
-            ListAdapter adapter = new ExchangeRateListAdapter(this, rates);
-            setListAdapter(adapter);
-        }
-    }
-
     @Override
     protected void addItem() {
         long fromCurrencyId = fromCurrencySpinner.getSelectedItemId();
@@ -181,20 +172,18 @@ public class ExchangeRatesListActivity extends AbstractListActivity {
     }
 
     @Override
-    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-        super.onActivityResult(requestCode, resultCode, data);
-        if (resultCode == RESULT_OK) {
-            updateAdapter();
-        }
-    }
-
-    @Override
     protected Cursor createCursor() {
         return null;
     }
 
     @Override
     protected ListAdapter createAdapter(Cursor cursor) {
+        Currency fromCurrency = (Currency) fromCurrencySpinner.getSelectedItem();
+        Currency toCurrency = (Currency) toCurrencySpinner.getSelectedItem();
+        if (fromCurrency != null && toCurrency != null) {
+            List<ExchangeRate> rates = db.findRates(fromCurrency, toCurrency);
+            return new ExchangeRateListAdapter(this, rates);
+        }
         return null;
     }
 
@@ -202,7 +191,7 @@ public class ExchangeRatesListActivity extends AbstractListActivity {
     protected void deleteItem(View v, int position, long id) {
         ExchangeRate rate = (ExchangeRate) getListAdapter().getItem(position);
         db.deleteRate(rate);
-        updateAdapter();
+        recreateCursor();
     }
 
     @Override
@@ -284,7 +273,7 @@ public class ExchangeRatesListActivity extends AbstractListActivity {
             progressDialog.dismiss();
             if (result != null) {
                 showResult(result);
-                updateAdapter();
+                recreateCursor();
             }
         }
 
