@@ -1,10 +1,16 @@
 package tw.tib.financisto.widget;
 
 import android.app.Activity;
+import android.os.Handler;
+import android.os.Looper;
+import android.util.Log;
 import android.view.View;
 import android.view.WindowManager;
 import android.widget.LinearLayout;
 import android.widget.TextView;
+
+import java.sql.Date;
+import java.util.concurrent.Executors;
 
 import tw.tib.financisto.R;
 import tw.tib.financisto.activity.AbstractActivity;
@@ -21,6 +27,7 @@ import tw.tib.financisto.utils.MyPreferences;
  * Date: 6/24/11 6:45 PM
  */
 public class RateLayoutView implements RateNodeOwner {
+    private static final String TAG = "RateLayoutView";
 
     private final AbstractActivity activity;
     private final ActivityLayout x;
@@ -175,11 +182,16 @@ public class RateLayoutView implements RateNodeOwner {
     }
 
     private void getLatestRate() {
-        ExchangeRateProvider latestExchangeRates = new DatabaseAdapter(activity).getLatestRates();
-        ExchangeRate exchangeRate = latestExchangeRates.getRate(currencyFrom, currencyTo);
-        if (exchangeRate != ExchangeRate.NA) {
-            rateNode.setRate(exchangeRate);
-        }
+        Executors.newSingleThreadExecutor().execute(() -> {
+            ExchangeRateProvider latestExchangeRates = new DatabaseAdapter(activity).getLatestRates();
+            //ExchangeRateProvider latestExchangeRates = new LatestExchangeRatesFromTransactions(activity);
+            ExchangeRate exchangeRate = latestExchangeRates.getRate(currencyFrom, currencyTo);
+            Log.d(TAG, "getLatestRate " + currencyFrom.name + "->" + currencyTo.name + " " +
+                    exchangeRate.rate + " " + exchangeRate.is_flip + " " + (new Date(exchangeRate.date)));
+            if (exchangeRate != ExchangeRate.NA) {
+                new Handler(Looper.getMainLooper()).post(() -> rateNode.setRate(exchangeRate));
+            }
+        });
     }
 
     private void calculateRate() {
