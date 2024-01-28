@@ -53,6 +53,7 @@ public class ExchangeRatesListActivity extends AbstractListActivity {
     private Spinner fromCurrencySpinner;
     private Spinner toCurrencySpinner;
     private List<Currency> currencies;
+    private List<ExchangeRate> rates;
 
     private long lastSelectedCurrencyId;
 
@@ -173,15 +174,17 @@ public class ExchangeRatesListActivity extends AbstractListActivity {
 
     @Override
     protected Cursor createCursor() {
+        Currency fromCurrency = (Currency) fromCurrencySpinner.getSelectedItem();
+        Currency toCurrency = (Currency) toCurrencySpinner.getSelectedItem();
+        if (fromCurrency != null && toCurrency != null) {
+            this.rates = db.findRates(fromCurrency, toCurrency);
+        }
         return null;
     }
 
     @Override
     protected ListAdapter createAdapter(Cursor cursor) {
-        Currency fromCurrency = (Currency) fromCurrencySpinner.getSelectedItem();
-        Currency toCurrency = (Currency) toCurrencySpinner.getSelectedItem();
-        if (fromCurrency != null && toCurrency != null) {
-            List<ExchangeRate> rates = db.findRates(fromCurrency, toCurrency);
+        if (rates != null) {
             return new ExchangeRateListAdapter(this, rates);
         }
         return null;
