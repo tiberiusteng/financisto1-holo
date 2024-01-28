@@ -2,5 +2,5 @@
 <adaptive-icon xmlns:android="http://schemas.android.com/apk/res/android">
     <background android:drawable="@mipmap/launcher_background" />
     <foreground android:drawable="@mipmap/a_icon" />
-    <monochrome android:drawable="@mipmap/a_icon_f" />
+    <monochrome android:drawable="@drawable/a_icon_f" />
 </adaptive-icon>
