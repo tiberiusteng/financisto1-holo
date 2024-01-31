@@ -124,7 +124,7 @@ public class RateNode {
         Log.d(TAG, "setRate");
         markRateConsistent();
         rate.removeTextChangedListener(rateWatcher);
-        rate.setText(nf.format(Math.abs(r)));
+        rate.setText(formatRate(Math.abs(r)));
         rate.addTextChangedListener(rateWatcher);
         rateTimestamp = 0;
         if (updateRateInfo) {
@@ -142,8 +142,12 @@ public class RateNode {
         updateRateInfo();
     }
 
+    public String formatRate(double r) {
+        return nf.format(Math.abs(r));
+    }
+
     public String checkIfRateConsistent(double r) {
-        String rateInfo = nf.format(Math.abs(r));
+        String rateInfo = formatRate(r);
         if (rateInfo.equals(rate.getText().toString())) {
             markRateConsistent();
         }
@@ -168,7 +172,7 @@ public class RateNode {
                             DateUtils.FORMAT_SHOW_DATE|DateUtils.FORMAT_SHOW_YEAR|DateUtils.FORMAT_NUMERIC_DATE)));
         }
         if (currencyFrom != null && currencyTo != null) {
-            sb.append(context.getString(R.string.rate_info, currencyTo.name, nf.format(1.0 / r), currencyFrom.name));
+            sb.append(context.getString(R.string.rate_info, currencyTo.name, formatRate(1.0 / r), currencyFrom.name));
         }
         rateInfo.setText(sb.toString());
     }

@@ -173,10 +173,12 @@ public class RateLayoutView implements RateNodeOwner {
             amountInputFrom.showAssignButton();
             AbstractActivity.setVisibility(rateNode.rateInfoNode, View.VISIBLE);
             AbstractActivity.setVisibility(amountInputToNode, View.VISIBLE);
+            amountInputFrom.showRateInfo();
             amountInputTo.showRateInfo();
             getLatestRate();
         } else {
             amountInputFrom.hideAssignButton();
+            amountInputFrom.hideRateInfo();
             AbstractActivity.setVisibility(rateNode.rateInfoNode, View.GONE);
             AbstractActivity.setVisibility(amountInputToNode, View.GONE);
         }
@@ -297,9 +299,12 @@ public class RateLayoutView implements RateNodeOwner {
         if (amountFrom != 0 && amountTo != 0) {
             double rate = 1.0d * amountTo / amountFrom;
             String rateInfo = rateNode.checkIfRateConsistent(rate);
-            amountInputTo.setRateInfo(activity.getString(R.string.rate_info, currencyFrom.name, rateInfo, currencyTo.name));
+            amountInputFrom.setRateInfo(activity.getString(R.string.rate_info, currencyFrom.name, rateInfo, currencyTo.name));
+            String inverseRateInfo = rateNode.formatRate(1.0d / rate);
+            amountInputTo.setRateInfo(activity.getString(R.string.rate_info, currencyTo.name, inverseRateInfo, currencyFrom.name));
         }
         else {
+            amountInputFrom.setRateInfo("");
             amountInputTo.setRateInfo("");
         }
     }
