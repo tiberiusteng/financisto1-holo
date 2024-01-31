@@ -11,6 +11,7 @@ package tw.tib.financisto.dialog;
 import android.content.Context;
 import android.preference.DialogPreference;
 import android.util.AttributeSet;
+import android.view.ContextThemeWrapper;
 import android.view.View;
 import android.widget.TimePicker;
 import tw.tib.financisto.R;
@@ -40,7 +41,7 @@ public class TimePreference extends DialogPreference implements TimePicker.OnTim
 
     @Override
     protected View onCreateDialogView() {
-        Context context = getContext();
+        Context context = new ContextThemeWrapper(getContext(), android.R.style.Theme_DeviceDefault_Dialog_Alert);
         TimePicker timePicker = new TimePicker(context);
         timePicker.setIs24HourView(DateUtils.is24HourFormat(context));
         timePicker.setOnTimeChangedListener(this);

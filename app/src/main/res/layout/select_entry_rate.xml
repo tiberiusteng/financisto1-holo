@@ -70,6 +70,7 @@
             android:layout_alignLeft="@+id/label"
             android:layout_below="@+id/label"
             android:layout_toLeftOf="@+id/rateDownload"
+            android:gravity="right"
             android:digits="0123456789.,"
             android:inputType="number|numberDecimal" />
 
@@ -80,7 +81,7 @@
             android:layout_alignLeft="@+id/rate"
             android:layout_below="@+id/rate"
             android:duplicateParentState="true"
-            android:maxLines="2"
+            android:maxLines="1"
             android:textAppearance="?android:attr/textAppearanceSmall" />
 
     </RelativeLayout>

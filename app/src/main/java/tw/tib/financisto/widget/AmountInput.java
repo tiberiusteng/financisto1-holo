@@ -76,6 +76,8 @@ public class AmountInput extends LinearLayout implements AmountListener {
     @ViewById(R.id.assign)
     protected ImageButton assign;
 
+    @ViewById(R.id.rate_info)
+    protected TextView rate_info;
     @DimensionPixelSizeRes(R.dimen.select_entry_height_no_label)
     protected int minHeight;
 
@@ -428,5 +430,17 @@ public class AmountInput extends LinearLayout implements AmountListener {
 
     public void showAssignButton() {
         assign.setVisibility(View.VISIBLE);
+    }
+
+    public void hideRateInfo() {
+        rate_info.setVisibility(View.GONE);
+    }
+
+    public void showRateInfo() {
+        rate_info.setVisibility(View.VISIBLE);
+    }
+
+    public void setRateInfo(CharSequence info) {
+        rate_info.setText(info);
     }
 }

@@ -173,6 +173,7 @@ public class RateLayoutView implements RateNodeOwner {
             amountInputFrom.showAssignButton();
             AbstractActivity.setVisibility(rateNode.rateInfoNode, View.VISIBLE);
             AbstractActivity.setVisibility(amountInputToNode, View.VISIBLE);
+            amountInputTo.showRateInfo();
             getLatestRate();
         } else {
             amountInputFrom.hideAssignButton();
@@ -189,7 +190,10 @@ public class RateLayoutView implements RateNodeOwner {
             Log.d(TAG, "getLatestRate " + currencyFrom.name + "->" + currencyTo.name + " " +
                     exchangeRate.rate + " " + exchangeRate.is_flip + " " + (new Date(exchangeRate.date)));
             if (exchangeRate != ExchangeRate.NA) {
-                new Handler(Looper.getMainLooper()).post(() -> rateNode.setRate(exchangeRate));
+                new Handler(Looper.getMainLooper()).post(() -> {
+                    rateNode.setRate(exchangeRate);
+                    checkIfRateConsistent();
+                });
             }
         });
     }
@@ -291,7 +295,12 @@ public class RateLayoutView implements RateNodeOwner {
         long amountFrom = amountInputFrom.getAmount();
         long amountTo = amountInputTo.getAmount();
         if (amountFrom != 0 && amountTo != 0) {
-            rateNode.checkIfRateConsistent(1.0d * amountTo / amountFrom);
+            double rate = 1.0d * amountTo / amountFrom;
+            String rateInfo = rateNode.checkIfRateConsistent(rate);
+            amountInputTo.setRateInfo(activity.getString(R.string.rate_info, currencyFrom.name, rateInfo, currencyTo.name));
+        }
+        else {
+            amountInputTo.setRateInfo("");
         }
     }
 

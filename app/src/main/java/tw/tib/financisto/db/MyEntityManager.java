@@ -53,6 +53,10 @@ public abstract class MyEntityManager extends EntityManager {
 		this.context = context;
 	}
 
+	public Context getContext() {
+		return context;
+	}
+
 	public <T extends MyEntity> Cursor filterActiveEntities(Class<T> clazz, String titleLike) {
 		return queryEntities(clazz, titleLike, false, true);
 	}

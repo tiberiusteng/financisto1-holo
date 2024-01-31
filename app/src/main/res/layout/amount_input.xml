@@ -8,16 +8,18 @@
   Contributors:
       Denis Solonenko - initial API and implementation
 -->
-<merge xmlns:android="http://schemas.android.com/apk/res/android"
-    android:layout_width="fill_parent"
-    android:layout_height="wrap_content">
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
 
     <ImageSwitcher
         android:id="@+id/signSwitcher"
         style="@style/ListButton"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_gravity="center_vertical"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
         android:inAnimation="@android:anim/slide_in_left"
         android:outAnimation="@android:anim/slide_out_right" />
 
@@ -25,8 +27,10 @@
         android:id="@+id/primary"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:layout_weight="1"
-        android:gravity="right|center_vertical"
+        app:layout_constraintStart_toEndOf="@id/signSwitcher"
+        app:layout_constraintEnd_toStartOf="@id/delimiter"
+        app:layout_constraintTop_toTopOf="parent"
+        android:gravity="right"
         android:inputType="numberDecimal"
         android:maxLength="16"
         android:singleLine="true"
@@ -37,7 +41,8 @@
         android:id="@+id/delimiter"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:gravity="bottom"
+        app:layout_constraintEnd_toStartOf="@id/secondary"
+        app:layout_constraintTop_toTopOf="parent"
         android:text="."
         android:textSize="30sp"
         android:textStyle="bold" />
@@ -46,7 +51,8 @@
         android:id="@+id/secondary"
         android:layout_width="50dp"
         android:layout_height="wrap_content"
-        android:gravity="left|center_vertical"
+        app:layout_constraintEnd_toStartOf="@id/amount_input"
+        app:layout_constraintTop_toTopOf="parent"
         android:inputType="number"
         android:maxLength="2"
         android:singleLine="true"
@@ -58,20 +64,34 @@
         style="@style/UpDownButton"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_gravity="center_vertical" />
+        app:layout_constraintEnd_toStartOf="@id/assign"
+        app:layout_constraintTop_toTopOf="parent" />
 
     <ImageButton
         android:id="@+id/assign"
         style="@style/CalcButton"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_gravity="center_vertical" />
+        app:layout_constraintEnd_toStartOf="@id/calculator"
+        app:layout_constraintTop_toTopOf="parent" />
 
     <ImageButton
         android:id="@+id/calculator"
         style="@style/KeypadButton"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_gravity="center_vertical" />
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
 
-</merge>
+    <TextView
+        android:id="@+id/rate_info"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:layout_constraintEnd_toEndOf="@id/primary"
+        app:layout_constraintTop_toBottomOf="@id/primary"
+        android:duplicateParentState="true"
+        android:maxLines="1"
+        android:visibility="gone"
+        android:textAppearance="?android:attr/textAppearanceSmall" />
+
+</androidx.constraintlayout.widget.ConstraintLayout>

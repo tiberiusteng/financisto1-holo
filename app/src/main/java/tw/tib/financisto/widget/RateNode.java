@@ -142,13 +142,15 @@ public class RateNode {
         updateRateInfo();
     }
 
-    public void checkIfRateConsistent(double r) {
-        if (nf.format(Math.abs(r)).equals(rate.getText().toString())) {
+    public String checkIfRateConsistent(double r) {
+        String rateInfo = nf.format(Math.abs(r));
+        if (rateInfo.equals(rate.getText().toString())) {
             markRateConsistent();
         }
         else {
             markRateInconsistent();
         }
+        return rateInfo;
     }
 
     public void hideAssignButton() {
@@ -160,15 +162,13 @@ public class RateNode {
         StringBuilder sb = new StringBuilder();
         Currency currencyFrom = owner.getCurrencyFrom();
         Currency currencyTo = owner.getCurrencyTo();
-        if (currencyFrom != null && currencyTo != null) {
-            sb.append("1").append(currencyFrom.name).append("=").append(nf.format(r)).append(currencyTo.name).append(", ");
-            sb.append("1").append(currencyTo.name).append("=").append(nf.format(1.0 / r)).append(currencyFrom.name);
-        }
         if (rateTimestamp != 0) {
-            sb.append("\n");
             sb.append(context.getString(R.string.rate_as_of,
                     DateUtils.formatDateTime(context, rateTimestamp,
                             DateUtils.FORMAT_SHOW_DATE|DateUtils.FORMAT_SHOW_YEAR|DateUtils.FORMAT_NUMERIC_DATE)));
+        }
+        if (currencyFrom != null && currencyTo != null) {
+            sb.append(context.getString(R.string.rate_info, currencyTo.name, nf.format(1.0 / r), currencyFrom.name));
         }
         rateInfo.setText(sb.toString());
     }
