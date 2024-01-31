@@ -817,7 +817,7 @@ public class BlotterFragment extends AbstractListFragment implements BlotterOper
 
     @Override
     public void integrityCheck() {
-        new IntegrityCheckTask(getActivity()).execute(new IntegrityCheckRunningBalance(getContext(), db));
+        new IntegrityCheckTask(this).execute(new IntegrityCheckRunningBalance(getContext(), db));
     }
 
     public boolean onBackPressed()

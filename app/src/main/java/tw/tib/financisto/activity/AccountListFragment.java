@@ -463,7 +463,7 @@ public class AccountListFragment extends AbstractListFragment {
 
     @Override
     public void integrityCheck() {
-        new IntegrityCheckTask(getActivity()).execute(new IntegrityCheckAutobackup(getContext(), TimeUnit.DAYS.toMillis(7)));
+        new IntegrityCheckTask(this).execute(new IntegrityCheckAutobackup(getContext(), TimeUnit.DAYS.toMillis(7)));
     }
 
     @Override

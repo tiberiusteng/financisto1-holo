@@ -13,6 +13,8 @@ import android.os.AsyncTask;
 import android.view.View;
 import android.widget.TextView;
 
+import androidx.fragment.app.Fragment;
+
 import tw.tib.financisto.R;
 import tw.tib.financisto.utils.IntegrityCheck;
 
@@ -23,10 +25,10 @@ import tw.tib.financisto.utils.IntegrityCheck;
  */
 public class IntegrityCheckTask extends AsyncTask<IntegrityCheck, Void, IntegrityCheck.Result> {
 
-    private final Activity activity;
+    private final Fragment fragment;
 
-    public IntegrityCheckTask(Activity activity) {
-        this.activity = activity;
+    public IntegrityCheckTask(Fragment fragment) {
+        this.fragment = fragment;
     }
 
     @Override
@@ -46,8 +48,8 @@ public class IntegrityCheckTask extends AsyncTask<IntegrityCheck, Void, Integrit
                 textView.setVisibility(View.GONE);
             } else {
                 textView.setVisibility(View.VISIBLE);
-                textView.setBackgroundColor(activity.getResources().getColor(colorForLevel(result.level)));
-                textView.setText(activity.getString(R.string.integrity_error_message, result.message));
+                textView.setBackgroundColor(fragment.getResources().getColor(colorForLevel(result.level)));
+                textView.setText(fragment.getString(R.string.integrity_error_message, result.message));
             }
         }
     }
@@ -64,7 +66,7 @@ public class IntegrityCheckTask extends AsyncTask<IntegrityCheck, Void, Integrit
     }
 
     private TextView getResultView() {
-        return activity.findViewById(R.id.integrity_error);
+        return fragment.getView().findViewById(R.id.integrity_error);
     }
 
 }
