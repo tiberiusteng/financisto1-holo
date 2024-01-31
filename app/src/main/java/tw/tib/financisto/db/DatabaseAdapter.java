@@ -1661,7 +1661,7 @@ public class DatabaseAdapter extends MyEntityManager {
 
     public ExchangeRateProvider getLatestRates() {
         LatestExchangeRates m = new LatestExchangeRates(context);
-        try (Cursor c = db().query(DatabaseHelper.EXCHANGE_RATES_TABLE,
+        try (Cursor c = db().query(DatabaseHelper.V_EXCHANGE_RATE,
                      DatabaseHelper.ExchangeRateColumns.LATEST_RATE_PROJECTION,
                      null, null,
                      DatabaseHelper.ExchangeRateColumns.LATEST_RATE_GROUP_BY,
@@ -1674,7 +1674,7 @@ public class DatabaseAdapter extends MyEntityManager {
 
     public ExchangeRateProvider getHistoryRates() {
         HistoryExchangeRates m = new HistoryExchangeRates(context);
-        try (Cursor c = db().query(DatabaseHelper.EXCHANGE_RATES_TABLE,
+        try (Cursor c = db().query(DatabaseHelper.V_EXCHANGE_RATE,
                      DatabaseHelper.ExchangeRateColumns.NORMAL_PROJECTION,
                      null, null, null, null, null))
         {
