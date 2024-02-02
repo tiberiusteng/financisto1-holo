@@ -10,6 +10,8 @@
  ******************************************************************************/
 package tw.tib.financisto.service;
 
+import static tw.tib.financisto.db.DatabaseAdapter.ALREADY_RECURRED;
+
 import android.content.Context;
 import android.util.Log;
 
@@ -60,6 +62,9 @@ public class RecurrenceScheduler {
         TransactionInfo transaction = db.getTransactionInfo(scheduledTransactionId);
         if (transaction != null) {
             long transactionId = duplicateTransactionFromTemplate(transaction, timestamp);
+            if (transactionId == ALREADY_RECURRED) {
+                return null;
+            }
             boolean hasBeenRescheduled = rescheduleTransaction(context, transaction, timestamp);
             if (!hasBeenRescheduled) {
                 deleteTransactionIfNeeded(transaction);

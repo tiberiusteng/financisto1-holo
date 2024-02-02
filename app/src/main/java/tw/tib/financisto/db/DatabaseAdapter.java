@@ -61,6 +61,8 @@ public class DatabaseAdapter extends MyEntityManager {
     public static long KEEP_TIME_IN_DAY = -2;
     public static long KEEP_DATE_TIME = -3;
 
+    public static long ALREADY_RECURRED = -1;
+
     private boolean updateAccountBalance = true;
 
     public DatabaseAdapter(Context context) {
@@ -225,30 +227,30 @@ public class DatabaseAdapter extends MyEntityManager {
     }
 
     public long duplicateTransaction(long id) {
-        return duplicateTransaction(id, 0, 1, CURRENT_TIMESTAMP);
+        return duplicateTransaction(id, 0, 1, CURRENT_TIMESTAMP, false);
     }
 
     public long duplicateTransactionKeepTimeInDay(long id) {
-        return duplicateTransaction(id, 0, 1, KEEP_TIME_IN_DAY);
+        return duplicateTransaction(id, 0, 1, KEEP_TIME_IN_DAY, false);
     }
 
     public long duplicateTransactionKeepDateTime(long id) {
-        return duplicateTransaction(id, 0, 1, KEEP_DATE_TIME);
+        return duplicateTransaction(id, 0, 1, KEEP_DATE_TIME, false);
     }
 
     public long duplicateTransactionWithTimestamp(long id, long timestamp) {
-        return duplicateTransaction(id, 0, 1, timestamp);
+        return duplicateTransaction(id, 0, 1, timestamp, true);
     }
 
     public long duplicateTransactionWithMultiplier(long id, int multiplier) {
-        return duplicateTransaction(id, 0, multiplier, CURRENT_TIMESTAMP);
+        return duplicateTransaction(id, 0, multiplier, CURRENT_TIMESTAMP, false);
     }
 
     public long duplicateTransactionAsTemplate(long id) {
-        return duplicateTransaction(id, 1, 1, CURRENT_TIMESTAMP);
+        return duplicateTransaction(id, 1, 1, CURRENT_TIMESTAMP, false);
     }
 
-    private long duplicateTransaction(long id, int isTemplate, int multiplier, long timestamp) {
+    private long duplicateTransaction(long id, int isTemplate, int multiplier, long timestamp, boolean skipDuplicatedRecurrence) {
         SQLiteDatabase db = db();
         db.beginTransaction();
         try {
@@ -265,6 +267,9 @@ public class DatabaseAdapter extends MyEntityManager {
             if (transaction.isSplitChild()) {
                 id = transaction.parentId;
                 transaction = getTransaction(id);
+            }
+            if (skipDuplicatedRecurrence && transaction.lastRecurrence >= now) {
+                return ALREADY_RECURRED;
             }
             transaction.lastRecurrence = now;
             updateTransaction(transaction);
