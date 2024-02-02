@@ -256,20 +256,20 @@ public class CalculatorInput extends DialogFragment {
         String valOne = stack.pop();
         switch (lastOp) {
             case '+':
-                stack.push(new BigDecimal(valOne).add(new BigDecimal(valTwo)).toPlainString());
+                stack.push(new BigDecimal(valOne).add(new BigDecimal(valTwo)).stripTrailingZeros().toPlainString());
                 break;
             case '-':
-                stack.push(new BigDecimal(valOne).subtract(new BigDecimal(valTwo)).toPlainString());
+                stack.push(new BigDecimal(valOne).subtract(new BigDecimal(valTwo)).stripTrailingZeros().toPlainString());
                 break;
             case '*':
-                stack.push(new BigDecimal(valOne).multiply(new BigDecimal(valTwo)).toPlainString());
+                stack.push(new BigDecimal(valOne).multiply(new BigDecimal(valTwo)).stripTrailingZeros().toPlainString());
                 break;
             case '/':
                 BigDecimal d2 = new BigDecimal(valTwo);
                 if (d2.intValue() == 0) {
                     stack.push("0.0");
                 } else {
-                    stack.push(new BigDecimal(valOne).divide(d2, 2, BigDecimal.ROUND_HALF_UP).toPlainString());
+                    stack.push(new BigDecimal(valOne).divide(d2, 2, BigDecimal.ROUND_HALF_UP).stripTrailingZeros().toPlainString());
                 }
                 break;
             default:
