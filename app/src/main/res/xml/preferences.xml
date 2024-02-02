@@ -450,11 +450,6 @@
             android:summary="@string/pin_protection_haptic_feedback_summary"
             android:title="@string/pin_protection_haptic_feedback" />
         <CheckBoxPreference
-            android:defaultValue="false"
-            android:key="include_transfers_into_reports"
-            android:summary="@string/include_transfers_into_reports_summary"
-            android:title="@string/include_transfers_into_reports" />
-        <CheckBoxPreference
             android:defaultValue="true"
             android:key="restore_missed_scheduled_transactions"
             android:summary="@string/restore_missed_scheduled_transactions_summary"

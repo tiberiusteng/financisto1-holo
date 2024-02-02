@@ -53,7 +53,6 @@ public class CategoryReport extends Report {
         if (c != null) {
             filter.put(c);
         }
-        filterTransfers(filter);
         Category category = db.getCategory(id);
         filter.put(Criteria.gte("left", String.valueOf(category.left)));
         filter.put(Criteria.lte("right", String.valueOf(category.right)));

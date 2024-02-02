@@ -17,6 +17,7 @@ import tw.tib.financisto.R;
 import tw.tib.financisto.datetime.DateUtils;
 import tw.tib.financisto.datetime.Period;
 import tw.tib.financisto.blotter.BlotterFilter;
+import tw.tib.financisto.db.DatabaseHelper.ReportColumns;
 import tw.tib.financisto.filter.Criteria;
 import tw.tib.financisto.filter.DateTimeCriteria;
 import tw.tib.financisto.filter.WhereFilter;
@@ -25,6 +26,7 @@ import tw.tib.financisto.model.Currency;
 import tw.tib.financisto.model.MyLocation;
 import tw.tib.financisto.model.TransactionStatus;
 import tw.tib.financisto.utils.EnumUtils;
+import tw.tib.financisto.utils.LocalizableEnum;
 import tw.tib.financisto.utils.TransactionUtils;
 
 import java.text.DateFormat;
@@ -32,6 +34,23 @@ import java.util.Date;
 
 public class ReportFilterActivity extends FilterAbstractActivity {
 
+    private enum FilterTransfer implements LocalizableEnum {
+        NO_FILTER(R.string.no_filter),
+        EXCLUDE(R.string.filter_transfer_exclude);
+
+        public final int titleId;
+
+        FilterTransfer(int titleId) {
+            this.titleId = titleId;
+        }
+
+        @Override
+        public int getTitleId() {
+            return titleId;
+        }
+    }
+
+    private static final FilterTransfer[] filterTransfer = FilterTransfer.values();
     private static final TransactionStatus[] statuses = TransactionStatus.values();
 
     private TextView period;
@@ -39,6 +58,7 @@ public class ReportFilterActivity extends FilterAbstractActivity {
     private TextView currency;
     private TextView location;
     private TextView status;
+    private TextView transfer;
 
     private DateFormat df;
     private String filterValueNotFound;
@@ -61,6 +81,7 @@ public class ReportFilterActivity extends FilterAbstractActivity {
         initProjectSelector(layout);
         location = x.addFilterNodeMinus(layout, R.id.location, R.id.location_clear, R.string.location, R.string.no_filter);
         status = x.addFilterNodeMinus(layout, R.id.status, R.id.status_clear, R.string.transaction_status, R.string.no_filter);
+        transfer = x.addFilterNodeMinus(layout, R.id.transfer, R.id.transfer_clear, R.string.filter_transfer, R.string.no_filter);
 
         Button bOk = findViewById(R.id.bOK);
         bOk.setOnClickListener(v -> {
@@ -93,6 +114,7 @@ public class ReportFilterActivity extends FilterAbstractActivity {
             updatePayeeFromFilter();
             updateLocationFromFilter();
             updateStatusFromFilter();
+            updateTransferFromFilter();
         }
 
     }
@@ -143,6 +165,17 @@ public class ReportFilterActivity extends FilterAbstractActivity {
         } else {
             status.setText(R.string.no_filter);
             hideMinusButton(status);
+        }
+    }
+
+    private void updateTransferFromFilter() {
+        Criteria c = filter.get(ReportColumns.IS_TRANSFER);
+        if (c != null) {
+            transfer.setText(getString(R.string.filter_transfer_exclude));
+            showMinusButton(transfer);
+        } else {
+            transfer.setText(R.string.no_filter);
+            hideMinusButton(transfer);
         }
     }
 
@@ -197,8 +230,17 @@ public class ReportFilterActivity extends FilterAbstractActivity {
                 int selectedPos = c != null ? TransactionStatus.valueOf(c.getStringValue()).ordinal() : -1;
                 x.selectPosition(this, R.id.status, R.string.transaction_status, adapter, selectedPos);
             } break;
+            case R.id.transfer: {
+                ArrayAdapter<String> adapter = EnumUtils.createDropDownAdapter(this, filterTransfer);
+                Criteria c = filter.get(ReportColumns.IS_TRANSFER);
+                int selectedPos = c != null ? FilterTransfer.valueOf(c.getStringValue()).ordinal() : -1;
+                x.selectPosition(this, R.id.transfer, R.string.filter_transfer, adapter, selectedPos);
+            } break;
             case R.id.status_clear:
                 clear(BlotterFilter.STATUS, status);
+                break;
+            case R.id.transfer_clear:
+                clear(ReportColumns.IS_TRANSFER, transfer);
                 break;
         }
     }
@@ -229,6 +271,15 @@ public class ReportFilterActivity extends FilterAbstractActivity {
             case R.id.status:
                 filter.put(Criteria.eq(BlotterFilter.STATUS, statuses[selectedPos].name()));
                 updateStatusFromFilter();
+                break;
+            case R.id.transfer:
+                if (selectedPos == 0) {
+                    filter.remove(ReportColumns.IS_TRANSFER);
+                }
+                else {
+                    filter.put(Criteria.eq(ReportColumns.IS_TRANSFER, "0"));
+                }
+                updateTransferFromFilter();
                 break;
         }
     }

@@ -430,11 +430,6 @@ public class MyPreferences {
 		return sharedPreferences.getBoolean("enable_widget", true);
 	}
 
-	public static boolean isIncludeTransfersIntoReports(Context context) {
-		SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(context);
-		return sharedPreferences.getBoolean("include_transfers_into_reports", false);
-	}
-
 	public static boolean isTreatTransferToCCardAsPayment(Context context) {
 		SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(context);
 		return sharedPreferences.getBoolean("treat_transfer_to_ccard_as_payment", true);

@@ -67,6 +67,8 @@
 	<item name="notification_led" type="id" />
 	<item name="include_credit" type="id" />
 	<item name="status_clear" type="id" />
+	<item name="transfer" type="id" />
+	<item name="transfer_clear" type="id" />
 	<item name="attach_picture" type="id" />
 	<item name="delete_picture" type="id" />
 	<item name="negative_opening_amount" type="id" />

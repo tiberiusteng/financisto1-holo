@@ -59,7 +59,6 @@ public class SubCategoryReport extends Report {
 
     @Override
     public ReportData getReport(final DatabaseAdapter db, WhereFilter filter) {
-        filterTransfers(filter);
         Cursor c = db.db().query(V_REPORT_SUB_CATEGORY, DatabaseHelper.SubCategoryReportColumns.NORMAL_PROJECTION,
                 filter.getSelection(), filter.getSelectionArgs(), null, null,
                 DatabaseHelper.SubCategoryReportColumns.LEFT);
@@ -109,7 +108,7 @@ public class SubCategoryReport extends Report {
                 roots.add(u);
                 lastId = a.id;
             }
-            u.addAmount(a.amount, skipTransfers && a.isTransfer != 0);
+            u.addAmount(a.amount, false);
             if (a.hasChildren()) {
                 u.setChildren(createTree(a.children, level+1));
                 u = null;

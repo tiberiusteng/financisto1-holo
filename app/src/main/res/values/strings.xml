@@ -177,6 +177,8 @@
     <string name="report_no_account">There is no account available for filtering in the report.</string>
     <string name="report_no_location">There is no location available for filtering in the report.</string>
     <string name="no_account">No account</string>
+    <string name="filter_transfer">Transfer</string>
+    <string name="filter_transfer_exclude">Exclude</string>
 
     <string name="period_today">Today</string>
     <string name="period_yesterday">Yesterday</string>

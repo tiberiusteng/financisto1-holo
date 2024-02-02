@@ -812,6 +812,9 @@
   <string name="downloading_rates_result">已下載匯率</string>
   <string name="use_exchange_rate_service_with_historical">請選擇有提供歷史匯率的服務，如 OpenExchangeRates.org</string>
 
+  <string name="filter_transfer">移轉</string>
+  <string name="filter_transfer_exclude">排除移轉</string>
+
   <string-array name="attribute_types">
     <item>文字</item>
     <item>數值</item>

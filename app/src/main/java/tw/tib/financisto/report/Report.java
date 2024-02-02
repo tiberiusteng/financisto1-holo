@@ -38,15 +38,14 @@ import tw.tib.financisto.model.Currency;
 import tw.tib.financisto.model.Total;
 import tw.tib.financisto.model.TotalError;
 import tw.tib.financisto.rates.ExchangeRateProvider;
-import tw.tib.financisto.utils.MyPreferences;
 
 public abstract class Report {
+    private static final String TAG = "Report";
 
     public final GraphStyle style;
     public final ReportType reportType;
 
     protected final Context context;
-    protected final boolean skipTransfers;
     protected final Currency currency;
 
     protected IncomeExpense incomeExpense = IncomeExpense.BOTH;
@@ -54,7 +53,6 @@ public abstract class Report {
     public Report(ReportType reportType, Context context, Currency currency) {
         this.reportType = reportType;
         this.context = context;
-        this.skipTransfers = !MyPreferences.isIncludeTransfersIntoReports(context);
         this.style = new GraphStyle.Builder(context).build();
         this.currency = currency;
     }
@@ -74,18 +72,11 @@ public abstract class Report {
     }
 
     protected ReportData queryReport(DatabaseAdapter db, String table, WhereFilter filter) {
-        filterTransfers(filter);
         Cursor c = db.db().query(table, DatabaseHelper.ReportColumns.NORMAL_PROJECTION,
                 filter.getSelection(), filter.getSelectionArgs(), null, null, "_id");
         ArrayList<GraphUnit> units = getUnitsFromCursor(db, c);
         Total total = calculateTotal(units);
         return new ReportData(units, total);
-    }
-
-    protected void filterTransfers(WhereFilter filter) {
-        if (skipTransfers) {
-            filter.put(Criteria.eq(ReportColumns.IS_TRANSFER, "0"));
-        }
     }
 
     protected ArrayList<GraphUnit> getUnitsFromCursor(DatabaseAdapter db, Cursor c) {
@@ -112,7 +103,7 @@ public abstract class Report {
                     amount = BigDecimal.ZERO;
                     u.error = TotalError.atDateRateError(e.fromCurrency, e.datetime);
                 }
-                u.addAmount(amount, skipTransfers && isTransfer != 0);
+                u.addAmount(amount, false);
             }
             if (u != null) {
                 units.add(u);

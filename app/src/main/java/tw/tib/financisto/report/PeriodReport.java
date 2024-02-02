@@ -49,7 +49,6 @@ public class PeriodReport extends Report {
 		if (criteria != null) {
 			newFilter.put(criteria);
 		}
-		filterTransfers(newFilter);
 		ArrayList<GraphUnit> units = new ArrayList<GraphUnit>();
         for (Period p : periods) {
             currentPeriod = p;
