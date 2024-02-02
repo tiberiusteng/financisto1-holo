@@ -12,6 +12,8 @@ package tw.tib.financisto.widget;
 
 import android.app.Dialog;
 import android.app.DialogFragment;
+import android.content.Context;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.os.Vibrator;
 import androidx.core.content.ContextCompat;
@@ -50,7 +52,8 @@ public class CalculatorInput extends DialogFragment {
     @ViewsById({R.id.b0, R.id.b1, R.id.b2, R.id.b3,
             R.id.b4, R.id.b5, R.id.b6, R.id.b7, R.id.b8, R.id.b9, R.id.bAdd,
             R.id.bSubtract, R.id.bDivide, R.id.bMultiply, R.id.bPercent,
-            R.id.bPlusMinus, R.id.bDot, R.id.bResult, R.id.bClear, R.id.bDelete})
+            R.id.bPlusMinus, R.id.bDot, R.id.bResult, R.id.bClear, R.id.bDelete,
+            R.id.bSTO, R.id.bX, R.id.bY, R.id.bZ, R.id.bT})
     protected List<Button> buttons;
 
     @SystemService
@@ -63,8 +66,10 @@ public class CalculatorInput extends DialogFragment {
     private String result = "0";
     private boolean isRestart = true;
     private boolean isInEquals = false;
+    private boolean isInStore = false;
     private char lastOp = '\0';
     private AmountListener listener;
+    private SharedPreferences prefs;
 
     public void setListener(AmountListener listener) {
         this.listener = listener;
@@ -72,7 +77,7 @@ public class CalculatorInput extends DialogFragment {
 
     @AfterInject
     public void init() {
-
+        prefs = getActivity().getPreferences(Context.MODE_PRIVATE);
     }
 
     @AfterViews
@@ -93,7 +98,8 @@ public class CalculatorInput extends DialogFragment {
     @Click({R.id.b0, R.id.b1, R.id.b2, R.id.b3,
             R.id.b4, R.id.b5, R.id.b6, R.id.b7, R.id.b8, R.id.b9, R.id.bAdd,
             R.id.bSubtract, R.id.bDivide, R.id.bMultiply, R.id.bPercent,
-            R.id.bPlusMinus, R.id.bDot, R.id.bResult, R.id.bClear, R.id.bDelete})
+            R.id.bPlusMinus, R.id.bDot, R.id.bResult, R.id.bClear, R.id.bDelete,
+            R.id.bSTO, R.id.bX, R.id.bY, R.id.bZ, R.id.bT})
     public void onButtonClick(View v) {
         Button b = (Button) v;
         char c = b.getText().charAt(0);
@@ -133,6 +139,13 @@ public class CalculatorInput extends DialogFragment {
             case '<':
                 doBackspace();
                 break;
+            case 'S':
+            case 'X':
+            case 'Y':
+            case 'Z':
+            case 'T':
+                doMemories(c);
+                break;
             default:
                 doButton(c);
                 break;
@@ -159,7 +172,28 @@ public class CalculatorInput extends DialogFragment {
         setDisplay(newDisplay);
     }
 
+    private void doMemories(char c) {
+        if (c == 'S') {
+                isInStore = !isInStore;
+        } else {
+            if (isInStore) {
+                prefs.edit().putString("M" + c, result).apply();
+                isInStore = false;
+            } else {
+                setDisplay(prefs.getString("M" + c, "0"));
+            }
+        }
+
+        if (isInStore) {
+            tvOp.setText("STO");
+        } else {
+            tvOp.setText("");
+        }
+    }
+
     private void doButton(char c) {
+        isInStore = false;
+
         if (Character.isDigit(c) || c == '.') {
             addChar(c);
         } else {

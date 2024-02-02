@@ -27,6 +27,41 @@
 		android:layout_width="wrap_content" android:layout_gravity="center"
 		android:layout_marginTop="3dp">
 		<Button android:layout_width="wrap_content"
+			android:backgroundTint="#ff909090"
+			android:layout_height="wrap_content" android:text="STO"
+			android:minWidth="@dimen/calculator_button_width" android:minHeight="@dimen/calculator_button_height"
+			android:textSize="24sp" android:id="@+id/bSTO" android:layout_margin="@dimen/calculator_button_margin"
+			android:padding="@dimen/calculator_button_padding" />
+		<Button android:layout_width="wrap_content"
+			android:backgroundTint="#ff909090"
+			android:layout_height="wrap_content" android:minWidth="@dimen/calculator_button_width"
+			android:minHeight="@dimen/calculator_button_height" android:textSize="24sp"
+			android:id="@+id/bX" android:text="X" android:layout_margin="@dimen/calculator_button_margin"
+			android:padding="@dimen/calculator_button_padding"/>
+		<Button android:layout_width="wrap_content"
+			android:backgroundTint="#ff909090"
+			android:layout_height="wrap_content" android:minWidth="@dimen/calculator_button_width"
+			android:minHeight="@dimen/calculator_button_height" android:textSize="24sp"
+			android:text="Y" android:id="@+id/bY" android:layout_margin="@dimen/calculator_button_margin"
+			android:padding="@dimen/calculator_button_padding"/>
+		<Button android:layout_width="wrap_content"
+			android:backgroundTint="#ff909090"
+			android:layout_height="wrap_content" android:minWidth="@dimen/calculator_button_width"
+			android:minHeight="@dimen/calculator_button_height" android:textSize="24sp"
+			android:text="Z" android:id="@+id/bZ" android:layout_margin="@dimen/calculator_button_margin"
+			android:padding="@dimen/calculator_button_padding"/>
+		<Button android:layout_width="wrap_content"
+			android:backgroundTint="#ff909090"
+			android:layout_height="wrap_content" android:minWidth="@dimen/calculator_button_width"
+			android:minHeight="@dimen/calculator_button_height" android:textSize="24sp"
+			android:text="T" android:id="@+id/bT" android:textStyle="bold"
+			android:layout_margin="@dimen/calculator_button_margin"
+			android:padding="@dimen/calculator_button_padding"/>
+	</LinearLayout>
+	<LinearLayout android:layout_height="wrap_content"
+		android:layout_width="wrap_content" android:layout_gravity="center"
+		android:layout_marginTop="3dp">
+		<Button android:layout_width="wrap_content"
 			android:layout_height="wrap_content" android:text="7"
 			android:minWidth="@dimen/calculator_button_width" android:minHeight="@dimen/calculator_button_height"
 			android:textSize="24sp" android:id="@+id/b7" android:layout_margin="@dimen/calculator_button_margin"
