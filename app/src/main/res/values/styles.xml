@@ -108,6 +108,7 @@
 	<style name="KeypadButton">
 		<item name="android:background">@drawable/btn_circle2</item>
 		<item name="android:src">@drawable/apps</item>
+		<item name="android:tint">#ff5c5c5c</item>
 	</style>
 	<style name="DownloadButton" parent="ListButton">
 		<item name="android:src">@drawable/material_download</item>
@@ -118,7 +119,7 @@
 	</style>
 
 	<style name="BottomBarButton">
-		<item name="android:background">@color/holo_gray_bright</item>
+		<item name="android:background">@color/holo_light_button</item>
 		<item name="android:textColor">@android:color/primary_text_light</item>
 		<item name="android:layout_width">@dimen/action_button_size</item>
 		<item name="android:layout_height">@dimen/action_button_size</item>
