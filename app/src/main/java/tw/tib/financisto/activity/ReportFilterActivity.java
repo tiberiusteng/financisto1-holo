@@ -233,7 +233,7 @@ public class ReportFilterActivity extends FilterAbstractActivity {
             case R.id.transfer: {
                 ArrayAdapter<String> adapter = EnumUtils.createDropDownAdapter(this, filterTransfer);
                 Criteria c = filter.get(ReportColumns.IS_TRANSFER);
-                int selectedPos = c != null ? FilterTransfer.valueOf(c.getStringValue()).ordinal() : -1;
+                int selectedPos = c != null ? 1 : 0;
                 x.selectPosition(this, R.id.transfer, R.string.filter_transfer, adapter, selectedPos);
             } break;
             case R.id.status_clear:
