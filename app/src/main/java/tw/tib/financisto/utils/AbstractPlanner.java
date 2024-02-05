@@ -61,7 +61,7 @@ public abstract class AbstractPlanner {
 
     protected abstract Cursor getRegularTransactions();
 
-    private List<TransactionInfo> getScheduledTransactions() {
+    protected List<TransactionInfo> getScheduledTransactions() {
         return db.getAllScheduledTransactions();
     }
 
@@ -152,7 +152,7 @@ public abstract class AbstractPlanner {
         };
     }
 
-    private List<TransactionInfo> asTransactionList(Cursor cursor) {
+    protected List<TransactionInfo> asTransactionList(Cursor cursor) {
         try {
             List<TransactionInfo> transactions = new ArrayList<TransactionInfo>(cursor.getCount());
             while (cursor.moveToNext()) {

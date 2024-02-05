@@ -95,10 +95,9 @@ public class PlannerActivity extends AbstractListActivity {
     }
 
     private void showFilter() {
-        Intent intent = new Intent(this, DateFilterActivity.class);
-        intent.putExtra(DateFilterActivity.EXTRA_FILTER_DONT_SHOW_NO_FILTER, true);
-        intent.putExtra(DateFilterActivity.EXTRA_FILTER_SHOW_PLANNER, true);
+        Intent intent = new Intent(this, BlotterFilterActivity.class);
         filter.toIntent(intent);
+        intent.putExtra(BlotterFilterActivity.IS_PLANNER_FILTER, true);
         startActivityForResult(intent, 1);
     }
 
@@ -135,7 +134,8 @@ public class PlannerActivity extends AbstractListActivity {
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         if (resultCode == RESULT_OK) {
-            DateTimeCriteria c = WhereFilter.dateTimeFromIntent(data);
+            filter = WhereFilter.fromIntent(data);
+            DateTimeCriteria c = filter.getDateTime();
             applyDateTimeCriteria(c);
             saveFilter();
             retrieveData();

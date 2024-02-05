@@ -5,11 +5,13 @@
   android:layout_height="wrap_content" android:paddingRight="5dp">
   
   <TextView android:id="@+id/list_date"
+  android:textAppearance="?android:attr/textAppearanceMedium"
   android:layout_width="wrap_content"
   android:layout_height="wrap_content"
   android:padding="3px" />
   
   <TextView android:id="@+id/list_note"
+  android:textAppearance="?android:attr/textAppearanceMedium"
   android:layout_width="fill_parent"
   android:layout_height="wrap_content"
   android:gravity="left" 
@@ -17,6 +19,7 @@
   android:padding="3px" />
   
   <TextView android:id="@+id/list_value"
+  android:textAppearance="?android:attr/textAppearanceMedium"
   android:layout_width="wrap_content"
   android:layout_height="wrap_content"
   android:gravity="right" 
