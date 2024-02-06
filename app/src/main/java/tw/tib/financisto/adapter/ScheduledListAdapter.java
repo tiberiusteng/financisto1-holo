@@ -152,15 +152,6 @@ public class ScheduledListAdapter extends BaseAdapter {
             noteView.setText(text);
 			noteView.setTextColor(Color.WHITE);
 
-			if (t.project == null || t.project.id == NO_PROJECT_ID || !showProject) {
-				v.top2View.setVisibility(View.INVISIBLE);
-			}
-			else {
-				v.top2View.setVisibility(View.VISIBLE);
-				v.top2View.setTextColor(projectColor);
-				v.top2View.setText(t.project.title);
-			}
-
 			long amount = t.fromAmount;
 			sb.setLength(0);
 			u.setAmountText(sb, v.rightCenterView, t.fromAccount.currency, amount, true);
@@ -170,6 +161,16 @@ public class ScheduledListAdapter extends BaseAdapter {
 				v.iconView.setImageDrawable(icBlotterExpense);
 			}
 		}
+
+		if (t.project == null || t.project.id == NO_PROJECT_ID || !showProject) {
+			v.top2View.setVisibility(View.INVISIBLE);
+		}
+		else {
+			v.top2View.setVisibility(View.VISIBLE);
+			v.top2View.setTextColor(projectColor);
+			v.top2View.setText(t.project.title);
+		}
+
 		if (t.isTemplate == 1) {
 			v.centerView.setText(t.templateName);
 		} else {			
