@@ -119,7 +119,7 @@
 	</style>
 
 	<style name="BottomBarButton">
-		<item name="android:background">@color/holo_light_button</item>
+		<item name="android:background">@drawable/holo_light_button_background</item>
 		<item name="android:textColor">@android:color/primary_text_light</item>
 		<item name="android:layout_width">@dimen/action_button_size</item>
 		<item name="android:layout_height">@dimen/action_button_size</item>
