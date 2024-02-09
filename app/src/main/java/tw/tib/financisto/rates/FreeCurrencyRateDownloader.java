@@ -96,7 +96,8 @@ public class FreeCurrencyRateDownloader implements ExchangeRateProvider {
                 }
                 else {
                     Log.d(TAG, "new JSONObject", e);
-                    handler.post(() -> new AlertDialog.Builder(context).setMessage(e.toString()).show());
+                    String message = e + ", " + result;
+                    handler.post(() -> new AlertDialog.Builder(context).setMessage(message).show());
                     return null;
                 }
             }
