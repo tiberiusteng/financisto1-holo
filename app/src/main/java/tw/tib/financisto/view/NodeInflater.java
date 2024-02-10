@@ -59,6 +59,11 @@ public class NodeInflater {
 			this.v = v;
 		}
 
+		public Builder withId(int id) {
+			v.setId(id);
+			return this;
+		}
+
 		public Builder withId(int id, OnClickListener listener) {
 			v.setId(id);
 			v.setOnClickListener(listener);
@@ -162,6 +167,48 @@ public class NodeInflater {
 				} else {
 					Utils.closeSoftKeyboard(autoCompleteTxt, layout.getContext());
 				}
+			});
+
+			return this;
+		}
+
+		public ListBuilder withAutoCompleteFilterShowHideView(OnClickListener listener, int hideViewId, int showListId, int createEntityId) {
+			final AutoCompleteTextView autoCompleteTxt = v.findViewById(R.id.autocomplete_filter);
+			autoCompleteTxt.setFocusableInTouchMode(true);
+
+			View showListButton = v.findViewById(R.id.show_list);
+			View clearButton = v.findViewById(R.id.hide_filter);
+			View createEntityButton = v.findViewById(R.id.create_entity);
+
+			showListButton.setId(showListId);
+			showListButton.setOnClickListener(listener);
+
+			createEntityButton.setId(createEntityId);
+			createEntityButton.setOnClickListener(listener);
+
+			v.setOnClickListener(v1 -> {
+				Log.d("AutoComplete", "onClickListener" );
+				listener.onClick(v1);
+
+				autoCompleteTxt.setVisibility(VISIBLE);
+				showListButton.setVisibility(GONE);
+				clearButton.setVisibility(VISIBLE);
+				createEntityButton.setVisibility(VISIBLE);
+				v.findViewById(R.id.list_node_row).setVisibility(GONE);
+				autoCompleteTxt.setText("");
+				Utils.openSoftKeyboard(autoCompleteTxt, layout.getContext());
+			});
+
+			clearButton.setId(hideViewId);
+			clearButton.setOnClickListener(v1 -> {
+				listener.onClick(v1);
+
+				autoCompleteTxt.setVisibility(GONE);
+				showListButton.setVisibility(VISIBLE);
+				clearButton.setVisibility(GONE);
+				createEntityButton.setVisibility(GONE);
+				v.findViewById(R.id.list_node_row).setVisibility(VISIBLE);
+				Utils.closeSoftKeyboard(autoCompleteTxt, layout.getContext());
 			});
 
 			return this;

@@ -19,9 +19,13 @@
 	<item name="project" type="id" />
 	<item name="project_clear" type="id" />
 	<item name="project_add" type="id" />
+	<item name="project_create" type="id" />
+	<item name="project_show_list" type="id" />
 	<item name="payee" type="id" />
 	<item name="payee_clear" type="id" />
 	<item name="payee_add" type="id" />
+	<item name="payee_create" type="id" />
+	<item name="payee_show_list" type="id" />
 	<item name="payee_filter_toggle" type="id" />
 	<item name="note" type="id" />
 	<item name="note_clear" type="id" />
@@ -41,6 +45,8 @@
 	<item name="location" type="id" />
 	<item name="location_clear" type="id" />
 	<item name="location_add" type="id" />
+	<item name="location_create" type="id" />
+	<item name="location_show_list" type="id" />
 	<item name="location_filter_toggle" type="id" />
 	<item name="project_filter_toggle" type="id" />
 	<item name="attributes" type="id" />

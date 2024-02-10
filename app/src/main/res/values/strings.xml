@@ -1063,4 +1063,5 @@
     <string name="set_focus_on_amount_field_summary">Automatically set focus on amount field for new transactions</string>
 
     <string name="notification_channel_name">Financisto</string>
+    <string name="confirm_create_entity">Create "%s" ?</string>
 </resources>

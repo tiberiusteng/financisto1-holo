@@ -204,6 +204,33 @@ public class ActivityLayout {
 		return Pair.create(textView, filterTxt);
 	}
 
+	public Pair<TextView, AutoCompleteTextView> addListNodeWithButtonsAndFilterSearchFirst(
+			LinearLayout layout, int nodeLayoutId, int id, int actBtnId, int clearBtnId, int labelId,
+			int defaultValueResId, int hideFilterId, int showListId, int createEntityId)
+	{
+		ListBuilder b = inflater.new ListBuilder(layout, nodeLayoutId);
+		final View v = b.withButtonId(actBtnId, listener)
+				.withClearButtonId(clearBtnId, listener)
+				.withAutoCompleteFilterShowHideView(listener, hideFilterId, showListId, createEntityId)
+				.withId(id)
+				.withLabel(labelId)
+				.withData(defaultValueResId)
+				.create();
+
+		if (actBtnId > 0) {
+			showButton(v, actBtnId);
+		}
+
+		AutoCompleteTextView filterTxt = v.findViewById(R.id.autocomplete_filter);
+		View hideButton = v.findViewById(hideFilterId);
+		filterTxt.setTag(hideButton);
+
+		TextView textView = v.findViewById(R.id.data);
+		textView.setTag(R.id.bMinus, v.findViewById(clearBtnId));
+		textView.setTag(v);
+		return Pair.create(textView, filterTxt);
+	}
+
 	public Pair<TextView, AutoCompleteTextView> addListNodeCategory(LinearLayout layout, int filterToggleId) {
 		ListBuilder b = inflater.new ListBuilder(layout, R.layout.select_entry_category);
 		View v = b.withButtonId(R.id.category_add, listener)

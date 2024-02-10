@@ -62,6 +62,9 @@
 		<item name="android:focusableInTouchMode">false</item>
 		<item name="android:tint">@color/colorPrimary</item>
 	</style>
+	<style name="WhiteListButton" parent="ListButton">
+		<item name="android:tint">@color/holo_gray_light</item>
+	</style>
 	<style name="MinusButton">
 		<item name="android:background">@drawable/btn_circle</item>
 		<item name="android:src">@drawable/ic_btn_round_minus</item>

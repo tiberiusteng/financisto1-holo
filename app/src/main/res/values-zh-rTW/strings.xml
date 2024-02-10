@@ -815,6 +815,8 @@
   <string name="filter_transfer">移轉</string>
   <string name="filter_transfer_exclude">排除移轉</string>
 
+  <string name="confirm_create_entity">確定新建「%s」？</string>
+
   <string-array name="attribute_types">
     <item>文字</item>
     <item>數值</item>

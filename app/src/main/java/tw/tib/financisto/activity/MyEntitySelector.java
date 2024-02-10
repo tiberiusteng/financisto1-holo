@@ -9,12 +9,15 @@
 package tw.tib.financisto.activity;
 
 import android.app.Activity;
+import android.app.AlertDialog;
 import android.content.Intent;
 import androidx.core.util.Pair;
 import android.text.InputType;
+import android.util.Log;
 import android.view.View;
 import android.widget.*;
 import tw.tib.financisto.R;
+import tw.tib.financisto.db.DatabaseAdapter;
 import tw.tib.financisto.db.DatabaseHelper;
 import tw.tib.financisto.db.MyEntityManager;
 import tw.tib.financisto.model.MultiChoiceItem;
@@ -33,12 +36,14 @@ import java.util.List;
  * Date: 7/2/12 9:25 PM
  */
 public abstract class MyEntitySelector<T extends MyEntity, A extends AbstractActivity> {
+    private static final String TAG = "MyEntitySelector";
 
+    protected final Class<T> entityClass;
     protected final A activity;
     protected final MyEntityManager em;
     private final ActivityLayout x;
     private final boolean isShow;
-    private final int layoutId, actBtnId, clearBtnId, labelResId, defaultValueResId, filterToggleId;
+    private final int layoutId, actBtnId, clearBtnId, labelResId, defaultValueResId, filterToggleId, showListId, createEntityId;
 
     private View node;
     private TextView text;
@@ -47,10 +52,12 @@ public abstract class MyEntitySelector<T extends MyEntity, A extends AbstractAct
     private List<T> entities = Collections.emptyList();
     private ListAdapter adapter;
     private boolean multiSelect;
+    private boolean useSearchAsPrimary;
 
     private long selectedEntityId = 0;
 
-    public MyEntitySelector(A activity,
+    public MyEntitySelector(Class<T> entityClass,
+                            A activity,
                             MyEntityManager em,
                             ActivityLayout x,
                             boolean isShow,
@@ -59,7 +66,10 @@ public abstract class MyEntitySelector<T extends MyEntity, A extends AbstractAct
                             int clearBtnId,
                             int labelResId,
                             int defaultValueResId,
-                            int filterToggleId) {
+                            int filterToggleId,
+                            int showListId,
+                            int createEntityId) {
+        this.entityClass = entityClass;
         this.activity = activity;
         this.em = em;
         this.x = x;
@@ -70,6 +80,8 @@ public abstract class MyEntitySelector<T extends MyEntity, A extends AbstractAct
         this.labelResId = labelResId;
         this.defaultValueResId = defaultValueResId;
         this.filterToggleId = filterToggleId;
+        this.showListId = showListId;
+        this.createEntityId = createEntityId;
     }
 
     protected abstract Class getEditActivityClass();
@@ -96,12 +108,24 @@ public abstract class MyEntitySelector<T extends MyEntity, A extends AbstractAct
     protected abstract SimpleCursorAdapter createFilterAdapter();
 
     public TextView createNode(LinearLayout layout) {
-        return createNode(layout, R.layout.select_entry_with_2btn_and_filter);
+        if (useSearchAsPrimary) {
+            return createNode(layout, R.layout.select_entry_with_2btn_and_list_filter);
+        } else {
+            return createNode(layout, R.layout.select_entry_with_2btn_and_filter);
+        }
     }
 
     public TextView createNode(LinearLayout layout, int nodeLayoutId) {
         if (isShow) {
-            final Pair<TextView, AutoCompleteTextView> views = x.addListNodeWithButtonsAndFilter(layout, nodeLayoutId, layoutId, actBtnId, clearBtnId, labelResId, defaultValueResId, filterToggleId);
+            final Pair<TextView, AutoCompleteTextView> views;
+            if (useSearchAsPrimary) {
+                views = x.addListNodeWithButtonsAndFilterSearchFirst(layout, nodeLayoutId, layoutId,
+                        actBtnId, clearBtnId, labelResId, defaultValueResId,
+                        filterToggleId, showListId, createEntityId);
+            } else {
+                views = x.addListNodeWithButtonsAndFilter(layout, nodeLayoutId, layoutId, actBtnId,
+                        clearBtnId, labelResId, defaultValueResId, filterToggleId);
+            }
             text = views.first;
             autoCompleteFilter = views.second;
             node = (View) text.getTag();
@@ -124,19 +148,32 @@ public abstract class MyEntitySelector<T extends MyEntity, A extends AbstractAct
         });
         filterTxt.setOnItemClickListener((parent, view, position, id) -> {
             activity.onSelectedId(layoutId, id);
-            ToggleButton toggleBtn = (ToggleButton) filterTxt.getTag();
+            View toggleBtn = (View) filterTxt.getTag();
             toggleBtn.performClick();
         });
     }
 
     public void onClick(int id) {
         if (id == layoutId) {
-            pickEntity();
+            Log.d(TAG, "onClick Layout");
+            if (useSearchAsPrimary) {
+                if (filterAdapter == null) initAutoCompleteFilter(autoCompleteFilter);
+            } else {
+                pickEntity();
+            }
         } else if (id == actBtnId) {
             Intent intent = new Intent(activity, getEditActivityClass());
             activity.startActivityForResult(intent, actBtnId);
         } else if (id == filterToggleId) {
             if (filterAdapter == null) initAutoCompleteFilter(autoCompleteFilter);
+        } else if (id == showListId) {
+            pickEntity();
+        } else if (id == createEntityId) {
+            new AlertDialog.Builder(activity)
+                    .setMessage(activity.getString(R.string.confirm_create_entity, autoCompleteFilter.getText()))
+                    .setPositiveButton(R.string.yes, (arg0, arg1) -> createNewEntityFromSearch())
+                    .setNegativeButton(R.string.no, null)
+                    .show();
         } else if (id == clearBtnId) {
             clearSelection();
         }
@@ -275,6 +312,25 @@ public abstract class MyEntitySelector<T extends MyEntity, A extends AbstractAct
         }
     }
 
+    private void createNewEntityFromSearch() {
+        try {
+            T entity = entityClass.newInstance();
+            entity.title = autoCompleteFilter.getText().toString();
+
+            DatabaseAdapter db = new DatabaseAdapter(activity);
+            long id = db.saveOrUpdate(entity);
+
+            View hideSearch = (View) autoCompleteFilter.getTag();
+            hideSearch.performClick();
+
+            fetchEntities();
+            selectEntity(id);
+
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
+    }
+
     private void onNewEntity(Intent data) {
         fetchEntities();
         long entityId = data.getLongExtra(DatabaseHelper.EntityColumns.ID, -1);
@@ -304,6 +360,14 @@ public abstract class MyEntitySelector<T extends MyEntity, A extends AbstractAct
     public void initMultiSelect() {
         this.multiSelect = true;
         fetchEntities();
+    }
+
+    public void setUseSearchAsPrimary(boolean val) {
+        this.useSearchAsPrimary = val;
+    }
+
+    public boolean isUseSearchAsPrimary() {
+        return useSearchAsPrimary;
     }
 
     public static <T extends MyEntity> List<T> merge(List<T> oldList, List<T> newList) {

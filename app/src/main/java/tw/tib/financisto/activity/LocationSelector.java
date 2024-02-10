@@ -28,8 +28,9 @@ import tw.tib.financisto.utils.TransactionUtils;
 public class LocationSelector<A extends AbstractActivity> extends MyEntitySelector<MyLocation, A> {
 
     public LocationSelector(A activity, MyEntityManager em, ActivityLayout x) {
-        super(activity, em, x, MyPreferences.isShowLocation(activity),
-                R.id.location, R.id.location_add, R.id.location_clear, R.string.location, R.string.current_location, R.id.location_filter_toggle);
+        super(MyLocation.class, activity, em, x, MyPreferences.isShowLocation(activity),
+                R.id.location, R.id.location_add, R.id.location_clear, R.string.location, R.string.current_location,
+                R.id.location_filter_toggle, R.id.location_show_list, R.id.location_create);
     }
 
     @Override
