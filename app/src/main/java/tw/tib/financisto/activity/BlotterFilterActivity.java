@@ -41,6 +41,7 @@ import static tw.tib.financisto.blotter.BlotterFilter.FROM_ACCOUNT_ID;
 public class BlotterFilterActivity extends FilterAbstractActivity {
 
 	public static final String IS_ACCOUNT_FILTER = "IS_ACCOUNT_FILTER";
+	public static final String IS_PLANNER_FILTER = "IS_PLANNER_FILTER";
 	private static final TransactionStatus[] statuses = TransactionStatus.values();
 
 	private static final int REQUEST_DATE_FILTER = 1;
@@ -59,6 +60,7 @@ public class BlotterFilterActivity extends FilterAbstractActivity {
 
 	private long accountId;
 	private boolean isAccountFilter;
+	private boolean isPlannerFilter;
 
 
 	@Override
@@ -66,6 +68,11 @@ public class BlotterFilterActivity extends FilterAbstractActivity {
 		super.onCreate(savedInstanceState);
 		requestWindowFeature(Window.FEATURE_NO_TITLE);
 		setContentView(R.layout.blotter_filter);
+
+		Intent intent = getIntent();
+		if (intent != null) {
+			isPlannerFilter = intent.getBooleanExtra(IS_PLANNER_FILTER, false);
+		}
 
 		df = DateUtils.getShortDateFormat(this);
 		sortBlotterEntries = getResources().getStringArray(R.array.sort_blotter_entries);
@@ -81,7 +88,9 @@ public class BlotterFilterActivity extends FilterAbstractActivity {
 		note = x.addFilterNodeMinus(layout, R.id.note, R.id.note_clear, R.string.note, R.string.no_filter);
 		location = x.addFilterNodeMinus(layout, R.id.location, R.id.location_clear, R.string.location, R.string.no_filter);
 		status = x.addFilterNodeMinus(layout, R.id.status, R.id.status_clear, R.string.transaction_status, R.string.no_filter);
-		sortOrder = x.addFilterNodeMinus(layout, R.id.sort_order, R.id.sort_order_clear, R.string.sort_order, 0, sortBlotterEntries[0]);
+		if (!isPlannerFilter) {
+			sortOrder = x.addFilterNodeMinus(layout, R.id.sort_order, R.id.sort_order_clear, R.string.sort_order, 0, sortBlotterEntries[0]);
+		}
 
 		Button bOk = findViewById(R.id.bOK);
 		bOk.setOnClickListener(v -> {
@@ -110,7 +119,6 @@ public class BlotterFilterActivity extends FilterAbstractActivity {
 			}
 		});
 
-		Intent intent = getIntent();
 		if (intent != null) {
 			filter = WhereFilter.fromIntent(intent);
 			getAccountIdFromFilter(intent);
@@ -144,6 +152,7 @@ public class BlotterFilterActivity extends FilterAbstractActivity {
 	}
 
 	private void updateSortOrderFromFilter() {
+		if (sortOrder == null) return;
 		String s = filter.getSortOrder();
 		if (BlotterFilter.SORT_OLDER_TO_NEWER.equals(s)) {
 			sortOrder.setText(sortBlotterEntries[1]);
@@ -175,9 +184,13 @@ public class BlotterFilterActivity extends FilterAbstractActivity {
 			} else {
 				period.setText(p.type.titleId);
 			}
-			showMinusButton(period);
+			if (!isPlannerFilter) {
+				showMinusButton(period);
+			}
 		} else {
-			clear(BlotterFilter.DATETIME, period);
+			if (!isPlannerFilter) {
+				clear(BlotterFilter.DATETIME, period);
+			}
 		}
 	}
 
@@ -222,6 +235,10 @@ public class BlotterFilterActivity extends FilterAbstractActivity {
 			case R.id.period:
 				intent = new Intent(this, DateFilterActivity.class);
 				filter.toIntent(intent);
+				if (isPlannerFilter) {
+					intent.putExtra(DateFilterActivity.EXTRA_FILTER_DONT_SHOW_NO_FILTER, true);
+					intent.putExtra(DateFilterActivity.EXTRA_FILTER_SHOW_PLANNER, true);
+				}
 				startActivityForResult(intent, REQUEST_DATE_FILTER);
 				break;
 			case R.id.period_clear:
