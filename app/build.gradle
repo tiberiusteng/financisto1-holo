@@ -28,7 +28,10 @@ android {
 
         javaCompileOptions {
             annotationProcessorOptions {
-                arguments = ["androidManifestFile": "$projectDir/src/main/AndroidManifest.xml".toString()]
+                argument "androidManifestFile", "$projectDir/src/main/AndroidManifest.xml".toString()
+                argument "logLevel", "TRACE"
+                argument "logAppenderConsole", "true"
+                argument "eventBusIndex", "tw.tib.financisto.MyEventBusIndex"
             }
         }
     }
@@ -46,8 +49,8 @@ android {
     }
 
     compileOptions {
-        sourceCompatibility JavaVersion.VERSION_11
-        targetCompatibility JavaVersion.VERSION_11
+        sourceCompatibility JavaVersion.VERSION_17
+        targetCompatibility JavaVersion.VERSION_17
     }
     buildFeatures {
         buildConfig true
@@ -56,6 +59,7 @@ android {
 
 final SUPPORT_LIB_VER = '27.0.2'
 def AAVersion = '4.8.0'
+def eventbus_version = '3.3.1'
 
 configurations.all {
     resolutionStrategy {
@@ -72,7 +76,7 @@ dependencies {
     //implementation 'com.android.support:support-v4:25.1.1'
     implementation 'com.google.api-client:google-api-client:1.26.0'
     implementation 'com.google.api-client:google-api-client-android:1.26.0'
-    implementation 'com.google.apis:google-api-services-drive:v2-rev252-1.20.0'
+    implementation 'com.google.apis:google-api-services-drive:v3-rev136-1.25.0'
     implementation 'com.google.http-client:google-http-client:1.26.0'
     implementation 'com.google.http-client:google-http-client-android:1.26.0'
     implementation 'com.google.http-client:google-http-client-gson:1.26.0'
@@ -86,9 +90,6 @@ dependencies {
     implementation "com.google.android.gms:play-services-plus:17.0.0"
 
     implementation 'com.google.android.gms:play-services-auth:20.7.0'
-    implementation 'com.google.http-client:google-http-client-gson:1.26.0'
-    implementation 'com.google.api-client:google-api-client-android:1.26.0'
-    implementation 'com.google.apis:google-api-services-drive:v3-rev136-1.25.0'
 
     implementation 'com.google.android.material:material:1.9.0'
 
@@ -125,7 +126,9 @@ dependencies {
     implementation files('libs/rfc2445-no-joda.jar')
     implementation files('libs/trove-3.0.2-long.jar')
 
-    implementation 'org.greenrobot:eventbus:3.0.0'
+    implementation "org.greenrobot:eventbus:$eventbus_version"
+    annotationProcessor "org.greenrobot:eventbus-annotation-processor:$eventbus_version"
+
     implementation 'commons-io:commons-io:2.5'
 
     androidTestImplementation 'androidx.test.espresso:espresso-core:3.6.0-alpha02'

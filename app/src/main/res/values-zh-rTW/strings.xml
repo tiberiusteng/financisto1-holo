@@ -817,6 +817,8 @@
 
   <string name="confirm_create_entity">確定新建「%s」？</string>
 
+  <string name="transaction_show_in_account_blotter">前往帳戶交易清單</string>
+
   <string-array name="attribute_types">
     <item>文字</item>
     <item>數值</item>

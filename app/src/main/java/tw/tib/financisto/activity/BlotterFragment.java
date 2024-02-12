@@ -36,6 +36,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.activity.OnBackPressedCallback;
 import androidx.core.view.MenuProvider;
 import androidx.lifecycle.Lifecycle;
+import androidx.loader.content.Loader;
 
 import java.util.List;
 import java.util.regex.Matcher;
@@ -68,6 +69,7 @@ public class BlotterFragment extends AbstractListFragment implements BlotterOper
     private static final String TAG = "BlotterFragment";
     public static final String SAVE_FILTER = "saveFilter";
     public static final String EXTRA_FILTER_ACCOUNTS = "filterAccounts";
+    public static final String GO_TO_TRANSACTION = "goToTransaction";
 
     private static final int NEW_TRANSACTION_REQUEST = 1;
     private static final int NEW_TRANSFER_REQUEST = 3;
@@ -78,6 +80,7 @@ public class BlotterFragment extends AbstractListFragment implements BlotterOper
     protected static final int FILTER_REQUEST = 6;
     private static final int MENU_DUPLICATE = MENU_ADD + 1;
     private static final int MENU_SAVE_AS_TEMPLATE = MENU_ADD + 2;
+    private static final int MENU_SHOW_IN_ACCOUNT_BLOTTER = MENU_ADD + 3;
 
     protected TextView totalText;
     protected TextView emptyText;
@@ -570,6 +573,7 @@ public class BlotterFragment extends AbstractListFragment implements BlotterOper
             List<MenuItemInfo> menus = super.createContextMenus(id);
             menus.add(new MenuItemInfo(MENU_DUPLICATE, R.string.duplicate));
             menus.add(new MenuItemInfo(MENU_SAVE_AS_TEMPLATE, R.string.save_as_template));
+            menus.add(new MenuItemInfo(MENU_SHOW_IN_ACCOUNT_BLOTTER, R.string.transaction_show_in_account_blotter));
             return menus;
         }
     }
@@ -584,6 +588,16 @@ public class BlotterFragment extends AbstractListFragment implements BlotterOper
                 case MENU_SAVE_AS_TEMPLATE:
                     new BlotterOperations(getContext(), this, db, id).duplicateAsTemplate();
                     Toast.makeText(getContext(), R.string.save_as_template_success, Toast.LENGTH_SHORT).show();
+                    return true;
+                case MENU_SHOW_IN_ACCOUNT_BLOTTER:
+                    Transaction t = db.getTransaction(id);
+                    Account a = db.getAccount(t.fromAccountId);
+                    Intent intent = new Intent(getContext(), BlotterActivity.class);
+                    Criteria.eq(BlotterFilter.FROM_ACCOUNT_ID, String.valueOf(a.id))
+                            .toIntent(a.title, intent);
+                    intent.putExtra(BlotterFilterActivity.IS_ACCOUNT_FILTER, true);
+                    intent.putExtra(GO_TO_TRANSACTION, id);
+                    startActivity(intent);
                     return true;
             }
         }
@@ -705,6 +719,27 @@ public class BlotterFragment extends AbstractListFragment implements BlotterOper
         progressBar.setVisibility(View.GONE);
         Log.d(TAG, "createAdapter: " + (System.currentTimeMillis() - t1) + " ms");
         return a;
+    }
+
+    @Override
+    public void onLoadFinished(@NonNull Loader<Cursor> loader, Cursor data) {
+        super.onLoadFinished(loader, data);
+
+        Bundle args = getArguments();
+        if (args == null) return;
+
+        long txId = args.getLong(GO_TO_TRANSACTION, -1);
+        args.remove(GO_TO_TRANSACTION);
+
+        if (txId != -1) {
+            int pos = 0;
+            data.moveToFirst();
+            while (data.getLong(0) != txId && !data.isAfterLast()) {
+                data.moveToNext();
+                pos += 1;
+            }
+            setSelection(pos);
+        }
     }
 
     @Override

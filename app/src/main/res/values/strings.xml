@@ -1064,4 +1064,6 @@
 
     <string name="notification_channel_name">Financisto</string>
     <string name="confirm_create_entity">Create "%s" ?</string>
+
+    <string name="transaction_show_in_account_blotter">Show in account blotter</string>
 </resources>
