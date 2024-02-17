@@ -42,6 +42,7 @@ public class Utils {
 
     private Context context = null;
     private final StringBuilder sb = new StringBuilder();
+    private static final StringBuilder sb2 = new StringBuilder();
 
     public int positiveColor = 0;
     public int negativeColor = 0;
@@ -89,9 +90,10 @@ public class Utils {
     }
 
     public static StringBuilder amountToString(StringBuilder sb, Currency c, BigDecimal amount, boolean addPlus) {
+        sb2.setLength(0);
         if (amount.compareTo(BigDecimal.ZERO) > 0) {
             if (addPlus) {
-                sb.append("+");
+                sb2.append("+");
             }
         }
         if (c == null) {
@@ -101,14 +103,15 @@ public class Utils {
         if (s.endsWith(".")) {
             s = s.substring(0, s.length()-1);
         }
-        sb.append(s);
+        sb2.append(s);
         if (isNotEmpty(c.symbol)) {
             if (c.symbolFormat != null) {
-                c.symbolFormat.appendSymbol(sb, c.symbol);
+                c.symbolFormat.appendSymbol(sb2, c.symbol);
             } else {
-                sb.append(" ").append(c.symbol);
+                sb2.append(" ").append(c.symbol);
             }
         }
+        sb.append(sb2);
         return sb;
     }
 
