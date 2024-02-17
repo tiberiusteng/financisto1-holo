@@ -15,7 +15,7 @@ import android.content.Intent;
 
 import tw.tib.financisto.activity.ReportActivity;
 import tw.tib.financisto.blotter.BlotterFilter;
-import tw.tib.financisto.activity.ReportsListActivity;
+import tw.tib.financisto.activity.ReportsListFragment;
 import tw.tib.financisto.filter.WhereFilter;
 import tw.tib.financisto.filter.Criteria;
 import tw.tib.financisto.db.DatabaseAdapter;
@@ -42,7 +42,7 @@ public class CategoryReport extends Report {
         WhereFilter filter = createFilterForSubCategory(db, parentFilter, id);
 		Intent intent = new Intent(context, ReportActivity.class);
 		filter.toIntent(intent);
-		intent.putExtra(ReportsListActivity.EXTRA_REPORT_TYPE, ReportType.BY_SUB_CATEGORY.name());
+		intent.putExtra(ReportsListFragment.EXTRA_REPORT_TYPE, ReportType.BY_SUB_CATEGORY.name());
         intent.putExtra(ReportActivity.FILTER_INCOME_EXPENSE, incomeExpense.name());
 		return intent;
 	}

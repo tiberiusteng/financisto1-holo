@@ -193,8 +193,6 @@
 			
 		<activity android:name=".activity.NotificationOptionsActivity" android:label="@string/notification"
 			android:theme="@style/AppDialog" android:configChanges="screenSize|smallestScreenSize|orientation|screenLayout|keyboardHidden"/>
-
-		<activity android:name=".activity.ReportsListActivity" android:label="@string/reports"/>
 		
 		<activity android:name=".activity.CurrencyListActivity" android:label="@string/currencies"/>
 
