@@ -23,7 +23,6 @@ import tw.tib.financisto.filter.DateTimeCriteria;
 import tw.tib.financisto.filter.WhereFilter;
 import tw.tib.financisto.model.Account;
 import tw.tib.financisto.model.Currency;
-import tw.tib.financisto.model.MyLocation;
 import tw.tib.financisto.model.TransactionStatus;
 import tw.tib.financisto.utils.EnumUtils;
 import tw.tib.financisto.utils.LocalizableEnum;
@@ -58,7 +57,6 @@ public class ReportFilterActivity extends FilterAbstractActivity {
     private TextView period;
     private TextView account;
     private TextView currency;
-    private TextView location;
     private TextView status;
     private TextView transfer;
 
@@ -90,7 +88,7 @@ public class ReportFilterActivity extends FilterAbstractActivity {
         initCategorySelector(layout);
         initPayeeSelector(layout);
         initProjectSelector(layout);
-        location = x.addFilterNodeMinus(layout, R.id.location, R.id.location_clear, R.string.location, R.string.no_filter);
+        initLocationSelector(layout);
         status = x.addFilterNodeMinus(layout, R.id.status, R.id.status_clear, R.string.transaction_status, R.string.no_filter);
         transfer = x.addFilterNodeMinus(layout, R.id.transfer, R.id.transfer_clear, R.string.filter_transfer, R.string.no_filter);
 
@@ -129,18 +127,6 @@ public class ReportFilterActivity extends FilterAbstractActivity {
             updateTransferFromFilter();
         }
 
-    }
-
-    private void updateLocationFromFilter() {
-        Criteria c = filter.get(BlotterFilter.LOCATION_ID);
-        if (c != null) {
-            MyLocation loc = db.get(MyLocation.class, c.getLongValue1());
-            location.setText(loc != null ? loc.name : filterValueNotFound);
-            showMinusButton(location);
-        } else {
-            location.setText(R.string.no_filter);
-            hideMinusButton(location);
-        }
     }
 
     private void updatePeriodFromFilter() {
@@ -225,17 +211,6 @@ public class ReportFilterActivity extends FilterAbstractActivity {
             case R.id.currency_clear:
                 clear(BlotterFilter.FROM_ACCOUNT_CURRENCY_ID, currency);
                 break;
-            case R.id.location: {
-                Cursor cursor = db.getAllLocations(false);
-                startManagingCursor(cursor);
-                ListAdapter adapter = TransactionUtils.createLocationAdapter(this, cursor);
-                Criteria c = filter.get(BlotterFilter.LOCATION_ID);
-                long selectedId = c != null ? c.getLongValue1() : -1;
-                x.select(this, R.id.location, R.string.location, cursor, adapter, "_id", selectedId);
-            } break;
-            case R.id.location_clear:
-                clear(BlotterFilter.LOCATION_ID, location);
-                break;
             case R.id.status: {
                 ArrayAdapter<String> adapter = EnumUtils.createDropDownAdapter(this, statuses);
                 Criteria c = filter.get(BlotterFilter.STATUS);
@@ -268,10 +243,6 @@ public class ReportFilterActivity extends FilterAbstractActivity {
             case R.id.currency:
                 filter.put(Criteria.eq(BlotterFilter.FROM_ACCOUNT_CURRENCY_ID, String.valueOf(selectedId)));
                 updateCurrencyFromFilter();
-                break;
-            case R.id.location:
-                filter.put(Criteria.eq(BlotterFilter.LOCATION_ID, String.valueOf(selectedId)));
-                updateLocationFromFilter();
                 break;
         }
     }

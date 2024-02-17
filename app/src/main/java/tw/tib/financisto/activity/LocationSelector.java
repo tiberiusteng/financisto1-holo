@@ -8,17 +8,10 @@
 
 package tw.tib.financisto.activity;
 
-import android.app.Activity;
-import android.widget.ListAdapter;
-import android.widget.SimpleCursorAdapter;
-
-import java.util.List;
-
 import tw.tib.financisto.R;
 import tw.tib.financisto.db.MyEntityManager;
 import tw.tib.financisto.model.MyLocation;
 import tw.tib.financisto.utils.MyPreferences;
-import tw.tib.financisto.utils.TransactionUtils;
 
 /**
  * Created by IntelliJ IDEA.
@@ -28,9 +21,14 @@ import tw.tib.financisto.utils.TransactionUtils;
 public class LocationSelector<A extends AbstractActivity> extends MyEntitySelector<MyLocation, A> {
 
     public LocationSelector(A activity, MyEntityManager em, ActivityLayout x) {
+        this(activity, em, x, R.id.location_add, R.id.location_clear, R.string.current_location);
+    }
+
+    public LocationSelector(A activity, MyEntityManager em, ActivityLayout x, int actBtnId, int clearBtnId, int emptyId) {
         super(MyLocation.class, activity, em, x, MyPreferences.isShowLocation(activity),
-                R.id.location, R.id.location_add, R.id.location_clear, R.string.location, R.string.current_location,
+                R.id.location, actBtnId, clearBtnId, R.string.location, emptyId,
                 R.id.location_filter_toggle, R.id.location_show_list, R.id.location_create);
+        setUseSearchAsPrimary(true);
     }
 
     @Override

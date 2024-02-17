@@ -56,6 +56,9 @@ public abstract class MyEntitySelector<T extends MyEntity, A extends AbstractAct
 
     private long selectedEntityId = 0;
 
+    long[] includeEntityIds;
+    boolean fetchAllEntities = false;
+
     public MyEntitySelector(Class<T> entityClass,
                             A activity,
                             MyEntityManager em,
@@ -94,6 +97,14 @@ public abstract class MyEntitySelector<T extends MyEntity, A extends AbstractAct
         this.entities = entities;
     }
 
+    public void setIncludeEntityIds(long... includeEntityIds) {
+        this.includeEntityIds = includeEntityIds;
+    }
+
+    public void setFetchAllEntities(boolean fetchAllEntities) {
+        this.fetchAllEntities = fetchAllEntities;
+    }
+
     public void fetchEntities() {
         entities = fetchEntities(em);
         if (!multiSelect) {
@@ -101,7 +112,14 @@ public abstract class MyEntitySelector<T extends MyEntity, A extends AbstractAct
         }
     }
 
-    protected abstract List<T> fetchEntities(MyEntityManager em);
+    protected List<T> fetchEntities(MyEntityManager em) {
+        if (fetchAllEntities) {
+            return em.getAllEntitiesList(entityClass, !isMultiSelect(), false);
+        }
+        else {
+            return em.getAllEntitiesList(entityClass, !isMultiSelect(), true, includeEntityIds);
+        }
+    }
 
     protected abstract ListAdapter createAdapter(Activity activity, List<T> entities);
 

@@ -21,12 +21,7 @@ import java.util.List;
 public class LocationsListActivity extends MyEntityListActivity<MyLocation> {
 
 	public LocationsListActivity() {
-		super(MyLocation.class, R.layout.location_list, R.string.no_locations);
-	}
-
-	@Override
-	protected List<MyLocation> loadEntities() {
-		return db.getAllLocationsList(false);
+		super(MyLocation.class, R.string.no_locations);
 	}
 
 	@Override
@@ -37,12 +32,6 @@ public class LocationsListActivity extends MyEntityListActivity<MyLocation> {
 	@Override
 	protected Criteria createBlotterCriteria(MyLocation location) {
 		return Criteria.eq(BlotterFilter.LOCATION_ID, String.valueOf(location.id));
-	}
-
-	@Override
-	protected void deleteItem(View v, int position, long id) {
-		db.deleteLocation(id);
-		recreateCursor();
 	}
 
 }

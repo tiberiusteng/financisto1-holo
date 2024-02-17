@@ -55,9 +55,6 @@ public class Account extends MyEntity {
 
 	@Column(name = DEF_SORT_COL)
 	public int sortOrder;
-	
-	@Column(name = "is_active")
-	public boolean isActive = true; 
 
 	@Column(name = "is_include_into_totals")
 	public boolean isIncludeIntoTotals = true; 

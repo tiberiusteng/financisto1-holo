@@ -346,10 +346,10 @@ public class ExchangeRatesListActivity extends AbstractListActivity {
             v.lineView.setText(formatRateDate(context, rate.date));
             v.amountView.setText(nf.format(rate.rate));
             if (rate.is_flip == 0) {
-                v.lineView.setTextColor(context.getResources().getColor(android.R.color.primary_text_dark));
+                v.lineView.setEnabled(true);
             }
             else if (rate.is_flip == 1) {
-                v.lineView.setTextColor(context.getResources().getColor(android.R.color.secondary_text_dark));
+                v.lineView.setEnabled(false);
             }
             return convertView;
         }

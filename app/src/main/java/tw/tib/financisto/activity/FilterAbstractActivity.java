@@ -22,10 +22,10 @@ import tw.tib.financisto.R;
 import tw.tib.financisto.blotter.BlotterFilter;
 import tw.tib.financisto.filter.Criteria;
 import tw.tib.financisto.filter.WhereFilter;
-import tw.tib.financisto.model.*;
 import tw.tib.financisto.model.Category;
 import tw.tib.financisto.model.MultiChoiceItem;
 import tw.tib.financisto.model.MyEntity;
+import tw.tib.financisto.model.MyLocation;
 import tw.tib.financisto.model.Payee;
 import tw.tib.financisto.model.Project;
 import tw.tib.financisto.utils.ArrUtils;
@@ -35,7 +35,6 @@ import java.util.LinkedList;
 import java.util.List;
 
 import static tw.tib.financisto.activity.CategorySelector.SelectorType.FILTER;
-import static tw.tib.financisto.blotter.BlotterFilter.*;
 import static tw.tib.financisto.filter.WhereFilter.Operation.BTW;
 import static tw.tib.financisto.filter.WhereFilter.Operation.IN;
 
@@ -46,9 +45,11 @@ public abstract class FilterAbstractActivity extends AbstractActivity implements
 	protected ProjectSelector<FilterAbstractActivity> projectSelector;
 	protected PayeeSelector<FilterAbstractActivity> payeeSelector;
 	protected CategorySelector<FilterAbstractActivity> categorySelector;
+	protected LocationSelector<FilterAbstractActivity> locationSelector;
 
 	protected TextView project;
 	protected TextView payee;
+	protected TextView location;
 	protected TextView categoryTxt;
 
 	protected String noFilterValue;
@@ -60,15 +61,24 @@ public abstract class FilterAbstractActivity extends AbstractActivity implements
 
 	protected void initPayeeSelector(LinearLayout layout) {
 		payeeSelector = new PayeeSelector<>(this, db, x, 0, R.id.payee_clear, R.string.no_filter);
+		payeeSelector.setFetchAllEntities(true);
 		payeeSelector.initMultiSelect();
 		payee = payeeSelector.createNode(layout);
 	}
 
 	protected void initProjectSelector(LinearLayout layout) {
 		projectSelector = new ProjectSelector<>(this, db, x, 0, R.id.project_clear, R.string.no_filter);
-		projectSelector.setFetchAllProjects(true);
+		projectSelector.setFetchAllEntities(true);
 		projectSelector.initMultiSelect();
 		project = projectSelector.createNode(layout);
+	}
+
+	protected void initLocationSelector(LinearLayout layout) {
+		locationSelector = new LocationSelector<>(this, db, x, 0, R.id.location_clear, R.string.current_location);
+		locationSelector.setFetchAllEntities(true);
+		locationSelector.setEnableCreate(false);
+		locationSelector.initMultiSelect();
+		location = locationSelector.createNode(layout);
 	}
 
 	protected void initCategorySelector(LinearLayout layout) {
@@ -85,7 +95,7 @@ public abstract class FilterAbstractActivity extends AbstractActivity implements
 	}
 
 	protected void clearCategory() {
-		clear(CATEGORY_LEFT, categoryTxt);
+		clear(BlotterFilter.CATEGORY_LEFT, categoryTxt);
 	}
 
 	@Override
@@ -99,18 +109,20 @@ public abstract class FilterAbstractActivity extends AbstractActivity implements
 				categorySelector.onClick(id);
 				clearCategory();
 				break;
+
 			case R.id.project: {
-				Criteria c = filter.get(PROJECT_ID);
+				Criteria c = filter.get(BlotterFilter.PROJECT_ID);
 				if (c != null) projectSelector.updateCheckedEntities(c.getValues());
 				projectSelector.onClick(id);
 			} break;
 			case R.id.project_clear:
-				clear(PROJECT_ID, project);
+				clear(BlotterFilter.PROJECT_ID, project);
 				projectSelector.onClick(id);
 				break;
 			case R.id.project_filter_toggle:
 				projectSelector.onClick(id);
 				break;
+
 			case R.id.payee: {
 				Criteria c = filter.get(BlotterFilter.PAYEE_ID);
 				if (c != null) projectSelector.updateCheckedEntities(c.getValues());
@@ -123,6 +135,20 @@ public abstract class FilterAbstractActivity extends AbstractActivity implements
 			case R.id.payee_filter_toggle:
 				payeeSelector.onClick(id);
 				break;
+
+			case R.id.location: {
+				Criteria c = filter.get(BlotterFilter.LOCATION_ID);
+				if (c != null) locationSelector.updateCheckedEntities(c.getValues());
+				locationSelector.onClick(id);
+			} break;
+			case R.id.location_clear:
+				clear(BlotterFilter.LOCATION_ID, location);
+				locationSelector.onClick(id);
+				break;
+			case R.id.location_filter_toggle:
+			case R.id.location_show_list:
+				locationSelector.onClick(id);
+				break;
 		}
 	}
 
@@ -131,7 +157,7 @@ public abstract class FilterAbstractActivity extends AbstractActivity implements
 		switch (id) {
 			case R.id.project:
 				projectSelector.onSelectedId(id, selectedId);
-				filter.put(Criteria.in(PROJECT_ID, projectSelector.getCheckedIds()));
+				filter.put(Criteria.in(BlotterFilter.PROJECT_ID, projectSelector.getCheckedIds()));
 				updateProjectFromFilter();
 				break;
 			case R.id.payee:
@@ -142,6 +168,11 @@ public abstract class FilterAbstractActivity extends AbstractActivity implements
 					filter.put(Criteria.in(BlotterFilter.PAYEE_ID, payeeSelector.getCheckedIds()));
 				}
 				updatePayeeFromFilter();
+				break;
+			case R.id.location:
+				locationSelector.onSelectedId(id, selectedId);
+				filter.put(Criteria.in(BlotterFilter.LOCATION_ID, locationSelector.getCheckedIds()));
+				updateLocationFromFilter();
 				break;
 			case R.id.category:
 				categorySelector.onSelectedId(id, selectedId, false);
@@ -158,26 +189,33 @@ public abstract class FilterAbstractActivity extends AbstractActivity implements
 				if (ArrUtils.isEmpty(categorySelector.getCheckedCategoryLeafs())) {
 					clearCategory();
 				} else {
-					filter.put(Criteria.btw(CATEGORY_LEFT, categorySelector.getCheckedCategoryLeafs()));
+					filter.put(Criteria.btw(BlotterFilter.CATEGORY_LEFT, categorySelector.getCheckedCategoryLeafs()));
 					updateCategoryFromFilter();
 				}
 				break;
 			case R.id.project:
 				if (ArrUtils.isEmpty(projectSelector.getCheckedIds())) {
-					clear(PROJECT_ID, project);
+					clear(BlotterFilter.PROJECT_ID, project);
 				} else {
-					filter.put(Criteria.in(PROJECT_ID, projectSelector.getCheckedIds()));
+					filter.put(Criteria.in(BlotterFilter.PROJECT_ID, projectSelector.getCheckedIds()));
 					updateProjectFromFilter();
 				}
 				break;
 			case R.id.payee:
 				if (ArrUtils.isEmpty(payeeSelector.getCheckedIds())) {
-					clear(PAYEE_ID, payee);
+					clear(BlotterFilter.PAYEE_ID, payee);
 				} else {
-					filter.put(Criteria.in(PAYEE_ID, payeeSelector.getCheckedIds()));
+					filter.put(Criteria.in(BlotterFilter.PAYEE_ID, payeeSelector.getCheckedIds()));
 					updatePayeeFromFilter();
 				}
 				break;
+			case R.id.location:
+				if (ArrUtils.isEmpty(locationSelector.getCheckedIds())) {
+					clear(BlotterFilter.LOCATION_ID, location);
+				} else {
+					filter.put(Criteria.in(BlotterFilter.LOCATION_ID, locationSelector.getCheckedIds()));
+					updateLocationFromFilter();
+				}
 		}
 	}
 
@@ -186,23 +224,28 @@ public abstract class FilterAbstractActivity extends AbstractActivity implements
 		switch (id) {
 			case R.id.project:
 				projectSelector.onSelectedPos(id, selectedPos);
-				filter.put(Criteria.eq(PROJECT_ID, String.valueOf(projectSelector.getSelectedEntityId())));
+				filter.put(Criteria.eq(BlotterFilter.PROJECT_ID, String.valueOf(projectSelector.getSelectedEntityId())));
 				updateProjectFromFilter();
 				break;
 			case R.id.payee:
 				payeeSelector.onSelectedPos(id, selectedPos);
-				filter.put(Criteria.eq(PAYEE_ID, String.valueOf(payeeSelector.getSelectedEntityId())));
+				filter.put(Criteria.eq(BlotterFilter.PAYEE_ID, String.valueOf(payeeSelector.getSelectedEntityId())));
 				updatePayeeFromFilter();
+				break;
+			case R.id.location:
+				locationSelector.onSelectedPos(id, selectedPos);
+				filter.put(Criteria.in(BlotterFilter.LOCATION_ID, String.valueOf(locationSelector.getSelectedEntityId())));
+				updateLocationFromFilter();
 				break;
 		}
 	}
 
 	protected void updateCategoryFromFilter() {
-		Criteria c = filter.get(CATEGORY_LEFT);
+		Criteria c = filter.get(BlotterFilter.CATEGORY_LEFT);
 		if (c != null) {
 			if (c.operation != BTW) { // todo.mb: only for backward compatibility, just remove in next releases
 				Log.i(getClass().getSimpleName(), "Found category filter with deprecated op: " + c.operation);
-				filter.remove(CATEGORY_LEFT);
+				filter.remove(BlotterFilter.CATEGORY_LEFT);
 				return;
 			}
 
@@ -258,18 +301,18 @@ public abstract class FilterAbstractActivity extends AbstractActivity implements
 	@Override
 	public void onCategorySelected(Category cat, boolean selectLast) {
 		clearCategory();
-		filter.remove(CATEGORY_ID);
+		filter.remove(BlotterFilter.CATEGORY_ID);
 		if (categorySelector.isMultiSelect()) {
 			String categories[] = categorySelector.getCheckedCategoryLeafs();
 			if (categories.length > 0) {
-				filter.put(Criteria.btw(CATEGORY_LEFT, categories));
+				filter.put(Criteria.btw(BlotterFilter.CATEGORY_LEFT, categories));
 			}
 			else {
-				filter.put(Criteria.eq(CATEGORY_ID, "0"));
+				filter.put(Criteria.eq(BlotterFilter.CATEGORY_ID, "0"));
 			}
 		} else {
 			if (cat.id > 0) {
-				filter.put(Criteria.btw(CATEGORY_LEFT, String.valueOf(cat.left), String.valueOf(cat.right)));
+				filter.put(Criteria.btw(BlotterFilter.CATEGORY_LEFT, String.valueOf(cat.left), String.valueOf(cat.right)));
 			} else {
 				clearCategory();
 			}
@@ -278,20 +321,27 @@ public abstract class FilterAbstractActivity extends AbstractActivity implements
 	}
 
 	protected void updateProjectFromFilter() {
-		if (projectSelector.isShow()) updateEntityFromFilter(PROJECT_ID, Project.class, project);
+		if (projectSelector.isShow()) updateEntityFromFilter(BlotterFilter.PROJECT_ID, Project.class, project);
 	}
 
 	protected void updatePayeeFromFilter() {
 		if (payeeSelector.isShow()) updateEntityFromFilter(BlotterFilter.PAYEE_ID, Payee.class, payee);
 	}
 
+	protected void updateLocationFromFilter() {
+		if (locationSelector.isShow()) updateEntityFromFilter(BlotterFilter.LOCATION_ID, MyLocation.class, location);
+	}
+
 	protected String getSelectedTitles(Criteria c, String filterCriteriaName) {
-		if (filterCriteriaName.equals(PROJECT_ID)) {
+		if (filterCriteriaName.equals(BlotterFilter.PROJECT_ID)) {
 			projectSelector.updateCheckedEntities(c.getValues());
 			return projectSelector.getCheckedTitles();
-		} else if (filterCriteriaName.equals(PAYEE_ID)) {
+		} else if (filterCriteriaName.equals(BlotterFilter.PAYEE_ID)) {
 			payeeSelector.updateCheckedEntities(c.getValues());
 			return payeeSelector.getCheckedTitles();
+		} else if (filterCriteriaName.equals(BlotterFilter.LOCATION_ID)) {
+			locationSelector.updateCheckedEntities(c.getValues());
+			return locationSelector.getCheckedTitles();
 		}
 		throw new UnsupportedOperationException(filterCriteriaName + ": titles not implemented");
 	}
@@ -315,6 +365,7 @@ public abstract class FilterAbstractActivity extends AbstractActivity implements
 		if (payeeSelector != null) payeeSelector.onDestroy();
 		if (projectSelector != null) projectSelector.onDestroy();
 		if (categorySelector != null) categorySelector.onDestroy();
+		if (locationSelector != null) locationSelector.onDestroy();
 		super.onDestroy();
 	}
 }

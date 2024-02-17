@@ -57,8 +57,8 @@ public abstract class MyEntityManager extends EntityManager {
 		return context;
 	}
 
-	public <T extends MyEntity> Cursor filterActiveEntities(Class<T> clazz, String titleLike) {
-		return queryEntities(clazz, titleLike, false, true);
+	public <T extends MyEntity> Cursor filterActiveEntities(Class<T> clazz, String titleLike, long... includeEntityIds) {
+		return queryEntities(clazz, StringUtil.emptyIfNull(titleLike), false, true, includeEntityIds);
 	}
 
 	public <T extends MyEntity> Cursor queryEntities(Class<T> clazz, String titleLike, boolean include0, boolean onlyActive, long... includeEntityIds) {

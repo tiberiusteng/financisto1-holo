@@ -53,18 +53,6 @@ public class TransactionUtils {
         return new CategoryListAdapter(db, context, android.R.layout.simple_list_item_multiple_choice, categoryCursor);
     }
 
-    public static ListAdapter createProjectAdapter(Context context, List<Project> projects) {
-        return new MyEntityAdapter<>(context, android.R.layout.simple_list_item_activated_1, android.R.id.text1, projects);
-    }
-
-    public static ListAdapter createLocationAdapter(Context context, List<MyLocation> locations) {
-        return new MyEntityAdapter<>(context, android.R.layout.simple_list_item_activated_1, android.R.id.text1, locations);
-    }
-
-    public static ListAdapter createPayeeAdapter(Context context, List<Payee> payees) {
-        return new MyEntityAdapter<>(context, android.R.layout.simple_list_item_activated_1, android.R.id.text1, payees);
-    }
-
     public static ListAdapter createCurrencyAdapter(Context context, List<Currency> currencies) {
         return new MyEntityAdapter<>(context, android.R.layout.simple_list_item_activated_1, android.R.id.text1, currencies);
     }
@@ -72,40 +60,6 @@ public class TransactionUtils {
     public static ListAdapter createLocationAdapter(Context context, Cursor cursor) {
         return new SimpleCursorAdapter(context, android.R.layout.simple_list_item_activated_1, cursor,
                 new String[]{"e_name"}, new int[]{android.R.id.text1});
-    }
-
-    public static SimpleCursorAdapter createPayeeAutoCompleteAdapter(Context context, final MyEntityManager db) {
-        return new FilterSimpleCursorAdapter<MyEntityManager, Payee>(context, db, Payee.class) {
-            @Override
-            Cursor filterRows(CharSequence constraint) {
-                return db.filterAllEntities(Payee.class, constraint.toString());
-            }
-
-            @Override
-            Cursor getAllRows() {
-                return db.filterAllEntities(Payee.class, null);
-            }
-        };
-    }
-
-    public static SimpleCursorAdapter createProjectAutoCompleteAdapter(Context context, final MyEntityManager db) {
-        FilterSimpleCursorAdapter adapter = new FilterSimpleCursorAdapter<>(context, db, Project.class);
-        adapter.setIncludeAllRecords(true);
-        return adapter;
-    }
-
-    public static SimpleCursorAdapter createLocationAutoCompleteAdapter(Context context, final MyEntityManager db) {
-        return new FilterSimpleCursorAdapter<MyEntityManager, MyLocation>(context, db, MyLocation.class){
-            @Override
-            Cursor filterRows(CharSequence constraint) {
-                return db.filterAllEntities(MyLocation.class, constraint.toString());
-            }
-
-            @Override
-            Cursor getAllRows() {
-                return db.getAllLocations(false);
-            }
-        };
     }
 
     public static SimpleCursorAdapter createCategoryFilterAdapter(Context context, final DatabaseAdapter db) {
@@ -122,22 +76,25 @@ public class TransactionUtils {
         };
     }
 
-    static class FilterSimpleCursorAdapter<T extends MyEntityManager, E extends MyEntity> extends SimpleCursorAdapter {
+    public static class FilterSimpleCursorAdapter<T extends MyEntityManager, E extends MyEntity> extends SimpleCursorAdapter {
         private final T db;
         private final String filterColumn;
         private final Class<E> entityClass;
 
         private boolean includeAllRecords = false;
 
-        FilterSimpleCursorAdapter(Context context, final T db, Class<E> entityClass) {
-            this(context, db, entityClass, "e_title");
+        private long[] includeEntityIds;
+
+        public FilterSimpleCursorAdapter(Context context, final T db, Class<E> entityClass, long... includeEntityIds) {
+            this(context, db, entityClass, "e_title", includeEntityIds);
         }
 
-        FilterSimpleCursorAdapter(Context context, final T db, Class<E> entityClass, String filterColumn) {
+        FilterSimpleCursorAdapter(Context context, final T db, Class<E> entityClass, String filterColumn, long... includeEntityIds) {
             super(context, android.R.layout.simple_dropdown_item_1line, null, new String[]{filterColumn}, new int[]{android.R.id.text1});
             this.db = db;
             this.filterColumn = filterColumn;
             this.entityClass = entityClass;
+            this.includeEntityIds = includeEntityIds;
         }
 
         public void setIncludeAllRecords(boolean includeAllRecords) {
@@ -163,7 +120,7 @@ public class TransactionUtils {
                 return db.filterAllEntities(entityClass, constraint.toString());
             }
             else {
-                return db.filterActiveEntities(entityClass, constraint.toString());
+                return db.filterActiveEntities(entityClass, constraint.toString(), includeEntityIds);
             }
         }
 
@@ -172,7 +129,7 @@ public class TransactionUtils {
                 return db.filterAllEntities(entityClass, null);
             }
             else {
-                return db.filterActiveEntities(entityClass, null);
+                return db.filterActiveEntities(entityClass, null, includeEntityIds);
             }
         }
     }

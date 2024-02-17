@@ -257,11 +257,14 @@ public abstract class AbstractTransactionActivity extends AbstractActivity imple
 		rateView = new RateLayoutView(this, x, layout);
 
 		locationSelector = new LocationSelector<>(this, db, x);
+		if (transaction.locationId != CURRENT_LOCATION_ID) {
+			locationSelector.setIncludeEntityIds(transaction.locationId);
+		}
 		locationSelector.fetchEntities();
 
 		projectSelector = new ProjectSelector<>(this, db, x);
 		if (transaction.projectId != NO_PROJECT_ID) {
-			projectSelector.setIncludeProjectIds(transaction.projectId);
+			projectSelector.setIncludeEntityIds(transaction.projectId);
 		}
 		projectSelector.fetchEntities();
 
@@ -356,6 +359,9 @@ public abstract class AbstractTransactionActivity extends AbstractActivity imple
 
 	protected void createPayeeNode(LinearLayout layout) {
 		payeeSelector = new PayeeSelector<>(this, db, x);
+		if (transaction.payeeId != Payee.EMPTY.id) {
+			payeeSelector.setIncludeEntityIds(transaction.payeeId);
+		}
 		payeeSelector.fetchEntities();
 		payeeSelector.createNode(layout);
 	}

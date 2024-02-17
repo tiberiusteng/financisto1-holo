@@ -43,7 +43,7 @@ public abstract class MyEntityListActivity<T extends MyEntity> extends AbstractL
 	protected volatile String titleFilter;
 
 	public MyEntityListActivity(Class<T> clazz, int emptyResId) {
-		this(clazz, R.layout.project_list, emptyResId);
+		this(clazz, R.layout.entity_list, emptyResId);
 	}
 
 	public MyEntityListActivity(Class<T> clazz, int layoutId, int emptyResId) {
@@ -60,7 +60,6 @@ public abstract class MyEntityListActivity<T extends MyEntity> extends AbstractL
 	@Override
 	protected void internalOnCreate(Bundle savedInstanceState) {
 		super.internalOnCreate(savedInstanceState);
-		entities = loadEntities();
 		((TextView) findViewById(android.R.id.empty)).setText(emptyResId);
 
 		searchFilter = findViewById(R.id.searchFilter);
@@ -100,15 +99,8 @@ public abstract class MyEntityListActivity<T extends MyEntity> extends AbstractL
 
 	@Override
 	protected Cursor createCursor() {
-		return null;
-	}
-
-	@Override
-	public void recreateCursor() {
 		entities = loadEntities();
-		@SuppressWarnings("unchecked")
-		EntityListAdapter<T> a = (EntityListAdapter<T>) adapter;
-		a.setEntities(entities);
+		return null;
 	}
 
 	@Override

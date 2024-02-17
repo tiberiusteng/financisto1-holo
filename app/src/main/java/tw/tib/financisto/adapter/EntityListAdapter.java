@@ -21,7 +21,7 @@ import android.view.ViewGroup;
 import android.widget.BaseAdapter;
 
 public class EntityListAdapter<T extends MyEntity> extends BaseAdapter {
-	
+
 	private final LayoutInflater inflater;
 	
 	private List<T> entities;
@@ -65,6 +65,12 @@ public class EntityListAdapter<T extends MyEntity> extends BaseAdapter {
 		
 		MyEntity e = getItem(position);
 		v.lineView.setText(e.title);
+		if (e.isActive) {
+			v.lineView.setEnabled(true);
+		}
+		else {
+			v.lineView.setEnabled(false);
+		}
 		return convertView;
 	}
 

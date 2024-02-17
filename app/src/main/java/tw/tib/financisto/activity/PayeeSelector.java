@@ -38,18 +38,13 @@ public class PayeeSelector<A extends AbstractActivity> extends MyEntitySelector<
     }
 
     @Override
-    protected List<Payee> fetchEntities(MyEntityManager em) {
-        return em.getAllPayeeList();
-    }
-
-    @Override
     protected ListAdapter createAdapter(Activity activity, List<Payee> entities) {
         return TransactionUtils.createPayeeAdapter(activity, entities);
     }
 
     @Override
     protected SimpleCursorAdapter createFilterAdapter() {
-        return TransactionUtils.createPayeeAutoCompleteAdapter(activity, em);
+        return TransactionUtils.createPayeeAutoCompleteAdapter(activity, em, includeEntityIds);
     }
 
 }

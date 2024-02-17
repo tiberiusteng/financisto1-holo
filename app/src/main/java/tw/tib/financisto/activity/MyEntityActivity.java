@@ -16,8 +16,8 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
+import android.widget.CheckBox;
 import android.widget.EditText;
-import android.widget.TextView;
 
 import tw.tib.financisto.R;
 import tw.tib.financisto.db.DatabaseAdapter;
@@ -53,7 +53,10 @@ public abstract class MyEntityActivity<T extends MyEntity> extends Activity {
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
-		setContentView(R.layout.entity_title);
+		setContentView(R.layout.edit_entity);
+
+		CheckBox activityCheckBox = findViewById(R.id.isActive);
+		activityCheckBox.setChecked(true);
 
 		db = new DatabaseAdapter(this);
 		db.open();
@@ -62,6 +65,7 @@ public abstract class MyEntityActivity<T extends MyEntity> extends Activity {
 		bOK.setOnClickListener(arg0 -> {
 			EditText title = findViewById(R.id.title);
 			entity.title = title.getText().toString();
+			entity.isActive = activityCheckBox.isChecked();
 			updateEntity(entity);
 			long id = db.saveOrUpdate(entity);
 			Intent intent = new Intent();
@@ -80,7 +84,9 @@ public abstract class MyEntityActivity<T extends MyEntity> extends Activity {
 		if (intent != null) {
 			long id = intent.getLongExtra(ENTITY_ID_EXTRA, -1);
 			if (id != -1) {
-				TextView create = findViewById(R.id.create);
+				View editActive = findViewById(R.id.editActive);
+				View create = findViewById(R.id.create);
+				editActive.setVisibility(View.VISIBLE);
 				create.setVisibility(View.GONE);
 				entity = db.load(clazz, id);
 				editEntity();
@@ -96,12 +102,9 @@ public abstract class MyEntityActivity<T extends MyEntity> extends Activity {
 	private void editEntity() {
 		EditText title = findViewById(R.id.title);
 		title.setText(entity.title);
-	}
 
-	@Override
-	protected void onDestroy() {
-		db.close();
-		super.onDestroy();
+		CheckBox activityCheckBox = findViewById(R.id.isActive);
+		activityCheckBox.setChecked(entity.isActive);
 	}
 
 	@Override
