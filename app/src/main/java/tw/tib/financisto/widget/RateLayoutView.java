@@ -225,6 +225,10 @@ public class RateLayoutView implements RateNodeOwner {
         return currencyFrom != null && currencyTo != null && currencyFrom.id != currencyTo.id;
     }
 
+    public void clearFromAmount() {
+        amountInputFrom.clearAmount();
+    }
+
     public void setFromAmount(long fromAmount) {
         amountInputFrom.setAmount(fromAmount);
         calculateRate();
@@ -265,6 +269,10 @@ public class RateLayoutView implements RateNodeOwner {
     @Override
     public Currency getCurrencyFrom() {
         return currencyFrom;
+    }
+
+    public long getCurrencyFromId() {
+        return currencyFrom != null ? currencyFrom.id : 0;
     }
 
     @Override

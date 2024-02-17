@@ -433,6 +433,7 @@ public class TransactionActivity extends AbstractTransactionActivity {
     }
 
     private void selectOriginalCurrency(long selectedId) {
+        long prevCurrencyFromId = rateView.getCurrencyFromId();
         selectedOriginCurrencyId = selectedId;
         if (selectedId == -1) {
             if (selectedAccount != null) {
@@ -442,6 +443,7 @@ public class TransactionActivity extends AbstractTransactionActivity {
             }
             selectAccountCurrency();
         } else {
+            long fromAmount = rateView.getFromAmount();
             long toAmount = rateView.getToAmount();
             Currency currency = CurrencyCache.getCurrency(db, selectedId);
             rateView.selectCurrencyFrom(currency);
@@ -452,6 +454,12 @@ public class TransactionActivity extends AbstractTransactionActivity {
                     }
                     selectAccountCurrency();
                     return;
+                }
+                else {
+                    if (prevCurrencyFromId == selectedAccount.currency.id) {
+                        rateView.clearFromAmount();
+                        rateView.setToAmount(fromAmount);
+                    }
                 }
                 rateView.selectCurrencyTo(selectedAccount.currency);
             }

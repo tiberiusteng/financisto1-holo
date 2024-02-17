@@ -341,6 +341,11 @@ public class AmountInput extends LinearLayout implements AmountListener {
         this.owner = owner;
     }
 
+    public void clearAmount() {
+        primary.setText("");
+        secondary.setText("");
+    }
+
     public void setAmount(long amount) {
         long absAmount = Math.abs(amount);
 
