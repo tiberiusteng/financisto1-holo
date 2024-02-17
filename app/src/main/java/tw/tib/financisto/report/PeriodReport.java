@@ -30,7 +30,20 @@ import static tw.tib.financisto.db.DatabaseHelper.V_REPORT_PERIOD;
 
 public class PeriodReport extends Report {
 
-    private final PeriodType[] periodTypes = new PeriodType[]{PeriodType.TODAY, PeriodType.YESTERDAY, PeriodType.THIS_WEEK, PeriodType.LAST_WEEK, PeriodType.THIS_AND_LAST_WEEK, PeriodType.THIS_MONTH, PeriodType.LAST_MONTH, PeriodType.THIS_AND_LAST_MONTH};
+    private final PeriodType[] periodTypes = new PeriodType[]{
+            PeriodType.TODAY,
+            PeriodType.YESTERDAY,
+            PeriodType.THIS_WEEK,
+            PeriodType.LAST_WEEK,
+            PeriodType.THIS_AND_LAST_WEEK,
+            PeriodType.THIS_MONTH,
+            PeriodType.LAST_MONTH,
+            PeriodType.THIS_AND_LAST_MONTH,
+            PeriodType.THIS_YEAR,
+            PeriodType.LAST_YEAR,
+            PeriodType.THIS_AND_LAST_YEAR
+    };
+
 	private final Period[] periods = new Period[periodTypes.length];
 
     private Period currentPeriod;
@@ -44,11 +57,7 @@ public class PeriodReport extends Report {
 
 	@Override
 	public ReportData getReport(DatabaseAdapter db, WhereFilter filter) {
-		WhereFilter newFilter = WhereFilter.empty();
-		Criteria criteria = filter.get(ReportColumns.FROM_ACCOUNT_CURRENCY_ID);
-		if (criteria != null) {
-			newFilter.put(criteria);
-		}
+		WhereFilter newFilter = WhereFilter.copyOf(filter);
 		ArrayList<GraphUnit> units = new ArrayList<GraphUnit>();
         for (Period p : periods) {
             currentPeriod = p;

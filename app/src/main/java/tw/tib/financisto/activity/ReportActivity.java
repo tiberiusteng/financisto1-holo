@@ -87,6 +87,9 @@ public class ReportActivity extends ListActivity implements RefreshSupportedActi
         bFilter.setOnClickListener(v -> {
             Intent intent = new Intent(ReportActivity.this, ReportFilterActivity.class);
             filter.toIntent(intent);
+            if (currentReport instanceof PeriodReport) {
+                intent.putExtra(ReportFilterActivity.HIDE_PERIOD, true);
+            }
             startActivityForResult(intent, FILTER_REQUEST);
         });
 
@@ -198,7 +201,7 @@ public class ReportActivity extends ListActivity implements RefreshSupportedActi
     private void applyFilter() {
         TextView tv = findViewById(R.id.period);
         if (currentReport instanceof PeriodReport) {
-            disableFilter();
+            enableFilter();
             tv.setVisibility(View.GONE);
         } else {
             Criteria c = filter.get(ReportColumns.DATETIME);

@@ -169,6 +169,10 @@ public abstract class Report {
         if (c != null) {
             filter.put(c);
         }
+        c = parentFilter.get(ReportColumns.IS_TRANSFER);
+        if (c != null) {
+            filter.put(c);
+        }
         c = getCriteriaForId(db, id);
         if (c != null) {
             filter.put(c);

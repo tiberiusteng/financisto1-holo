@@ -34,6 +34,8 @@ import java.util.Date;
 
 public class ReportFilterActivity extends FilterAbstractActivity {
 
+    public static final String HIDE_PERIOD = "hide_period";
+
     private enum FilterTransfer implements LocalizableEnum {
         NO_FILTER(R.string.no_filter),
         EXCLUDE(R.string.filter_transfer_exclude);
@@ -63,6 +65,8 @@ public class ReportFilterActivity extends FilterAbstractActivity {
     private DateFormat df;
     private String filterValueNotFound;
 
+    private boolean hidePeriod = false;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -72,8 +76,15 @@ public class ReportFilterActivity extends FilterAbstractActivity {
         df = DateUtils.getShortDateFormat(this);
         filterValueNotFound = getString(R.string.filter_value_not_found);
 
+        Intent intent = getIntent();
+        if (intent != null) {
+            hidePeriod = intent.getBooleanExtra(HIDE_PERIOD, false);
+        }
+
         LinearLayout layout = findViewById(R.id.layout);
-        period = x.addFilterNodeMinus(layout, R.id.period, R.id.period_clear, R.string.period, R.string.no_filter);
+        if (!hidePeriod) {
+            period = x.addFilterNodeMinus(layout, R.id.period, R.id.period_clear, R.string.period, R.string.no_filter);
+        }
         account = x.addFilterNodeMinus(layout, R.id.account, R.id.account_clear, R.string.account, R.string.no_filter);
         currency = x.addFilterNodeMinus(layout, R.id.currency, R.id.currency_clear, R.string.currency, R.string.no_filter);
         initCategorySelector(layout);
@@ -103,10 +114,11 @@ public class ReportFilterActivity extends FilterAbstractActivity {
             finish();
         });
 
-        Intent intent = getIntent();
         if (intent != null) {
             filter = WhereFilter.fromIntent(intent);
-            updatePeriodFromFilter();
+            if (!hidePeriod) {
+                updatePeriodFromFilter();
+            }
             updateAccountFromFilter();
             updateCurrencyFromFilter();
             updateCategoryFromFilter();
