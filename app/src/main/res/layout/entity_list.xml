@@ -17,6 +17,7 @@
     
     <ListView
         a:id="@android:id/list"
+        a:fastScrollEnabled="true"
         a:layout_width="fill_parent"
         a:layout_height="wrap_content"
         a:layout_weight="1" />
