@@ -37,14 +37,4 @@ public class PayeeSelector<A extends AbstractActivity> extends MyEntitySelector<
         return PayeeActivity.class;
     }
 
-    @Override
-    protected ListAdapter createAdapter(Activity activity, List<Payee> entities) {
-        return TransactionUtils.createPayeeAdapter(activity, entities);
-    }
-
-    @Override
-    protected SimpleCursorAdapter createFilterAdapter() {
-        return TransactionUtils.createPayeeAutoCompleteAdapter(activity, em, includeEntityIds);
-    }
-
 }

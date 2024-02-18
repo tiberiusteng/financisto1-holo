@@ -206,12 +206,12 @@ public class ActivityLayout {
 
 	public Pair<TextView, AutoCompleteTextView> addListNodeWithButtonsAndFilterSearchFirst(
 			LinearLayout layout, int nodeLayoutId, int id, int actBtnId, int clearBtnId, int labelId,
-			int defaultValueResId, int hideFilterId, int showListId, int createEntityId)
+			int defaultValueResId, int hideFilterId, int showListId, int createEntityId, boolean showCreateEntity)
 	{
 		ListBuilder b = inflater.new ListBuilder(layout, nodeLayoutId);
 		final View v = b.withButtonId(actBtnId, listener)
 				.withClearButtonId(clearBtnId, listener)
-				.withAutoCompleteFilterShowHideView(listener, hideFilterId, showListId, createEntityId)
+				.withAutoCompleteFilterShowHideView(listener, hideFilterId, showListId, createEntityId, showCreateEntity)
 				.withId(id)
 				.withLabel(labelId)
 				.withData(defaultValueResId)

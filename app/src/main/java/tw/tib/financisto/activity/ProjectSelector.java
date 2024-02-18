@@ -41,14 +41,4 @@ public class ProjectSelector<A extends AbstractActivity> extends MyEntitySelecto
         return ProjectActivity.class;
     }
 
-    @Override
-    protected ListAdapter createAdapter(Activity activity, List<Project> entities) {
-        return TransactionUtils.createProjectAdapter(activity, entities);
-    }
-
-    @Override
-    protected SimpleCursorAdapter createFilterAdapter() {
-        return TransactionUtils.createProjectAutoCompleteAdapter(activity, em);
-    }
-
 }

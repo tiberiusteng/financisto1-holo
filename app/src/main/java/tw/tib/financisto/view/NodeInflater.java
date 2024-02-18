@@ -172,7 +172,7 @@ public class NodeInflater {
 			return this;
 		}
 
-		public ListBuilder withAutoCompleteFilterShowHideView(OnClickListener listener, int hideViewId, int showListId, int createEntityId) {
+		public ListBuilder withAutoCompleteFilterShowHideView(OnClickListener listener, int hideViewId, int showListId, int createEntityId, boolean showCreateEntity) {
 			final AutoCompleteTextView autoCompleteTxt = v.findViewById(R.id.autocomplete_filter);
 			autoCompleteTxt.setFocusableInTouchMode(true);
 
@@ -193,7 +193,9 @@ public class NodeInflater {
 				autoCompleteTxt.setVisibility(VISIBLE);
 				showListButton.setVisibility(GONE);
 				clearButton.setVisibility(VISIBLE);
-				createEntityButton.setVisibility(VISIBLE);
+				if (showCreateEntity) {
+					createEntityButton.setVisibility(VISIBLE);
+				}
 				v.findViewById(R.id.list_node_row).setVisibility(GONE);
 				autoCompleteTxt.setText("");
 				Utils.openSoftKeyboard(autoCompleteTxt, layout.getContext());

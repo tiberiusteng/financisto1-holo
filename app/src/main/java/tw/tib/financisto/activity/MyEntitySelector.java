@@ -17,12 +17,14 @@ import android.util.Log;
 import android.view.View;
 import android.widget.*;
 import tw.tib.financisto.R;
+import tw.tib.financisto.adapter.MyEntityAdapter;
 import tw.tib.financisto.db.DatabaseAdapter;
 import tw.tib.financisto.db.DatabaseHelper;
 import tw.tib.financisto.db.MyEntityManager;
 import tw.tib.financisto.model.MultiChoiceItem;
 import tw.tib.financisto.model.MyEntity;
 import tw.tib.financisto.utils.ArrUtils;
+import tw.tib.financisto.utils.TransactionUtils;
 import tw.tib.financisto.utils.Utils;
 
 import java.util.Collections;
@@ -58,6 +60,7 @@ public abstract class MyEntitySelector<T extends MyEntity, A extends AbstractAct
 
     long[] includeEntityIds;
     boolean fetchAllEntities = false;
+    boolean enableCreate = true;
 
     public MyEntitySelector(Class<T> entityClass,
                             A activity,
@@ -105,6 +108,10 @@ public abstract class MyEntitySelector<T extends MyEntity, A extends AbstractAct
         this.fetchAllEntities = fetchAllEntities;
     }
 
+    public void setEnableCreate(boolean enableCreate) {
+        this.enableCreate = enableCreate;
+    }
+
     public void fetchEntities() {
         entities = fetchEntities(em);
         if (!multiSelect) {
@@ -121,9 +128,13 @@ public abstract class MyEntitySelector<T extends MyEntity, A extends AbstractAct
         }
     }
 
-    protected abstract ListAdapter createAdapter(Activity activity, List<T> entities);
+    protected ListAdapter createAdapter(Activity activity, List<T> entities) {
+        return new MyEntityAdapter<>(activity, android.R.layout.simple_list_item_activated_1, android.R.id.text1, entities);
+    }
 
-    protected abstract SimpleCursorAdapter createFilterAdapter();
+    protected SimpleCursorAdapter createFilterAdapter() {
+        return new TransactionUtils.FilterSimpleCursorAdapter<>(activity, em, entityClass, includeEntityIds);
+    }
 
     public TextView createNode(LinearLayout layout) {
         if (useSearchAsPrimary) {
@@ -139,7 +150,7 @@ public abstract class MyEntitySelector<T extends MyEntity, A extends AbstractAct
             if (useSearchAsPrimary) {
                 views = x.addListNodeWithButtonsAndFilterSearchFirst(layout, nodeLayoutId, layoutId,
                         actBtnId, clearBtnId, labelResId, defaultValueResId,
-                        filterToggleId, showListId, createEntityId);
+                        filterToggleId, showListId, createEntityId, enableCreate);
             } else {
                 views = x.addListNodeWithButtonsAndFilter(layout, nodeLayoutId, layoutId, actBtnId,
                         clearBtnId, labelResId, defaultValueResId, filterToggleId);

@@ -36,19 +36,4 @@ public class LocationSelector<A extends AbstractActivity> extends MyEntitySelect
         return LocationActivity.class;
     }
 
-    @Override
-    protected List<MyLocation> fetchEntities(MyEntityManager em) {
-        return em.getAllLocationsList(true);
-    }
-
-    @Override
-    protected ListAdapter createAdapter(Activity activity, List<MyLocation> entities) {
-        return TransactionUtils.createLocationAdapter(activity, entities);
-    }
-
-    @Override
-    protected SimpleCursorAdapter createFilterAdapter() {
-        return TransactionUtils.createLocationAutoCompleteAdapter(activity, em);
-    }
-
 }

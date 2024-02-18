@@ -62,6 +62,7 @@ public abstract class FilterAbstractActivity extends AbstractActivity implements
 	protected void initPayeeSelector(LinearLayout layout) {
 		payeeSelector = new PayeeSelector<>(this, db, x, 0, R.id.payee_clear, R.string.no_filter);
 		payeeSelector.setFetchAllEntities(true);
+		payeeSelector.setEnableCreate(false);
 		payeeSelector.initMultiSelect();
 		payee = payeeSelector.createNode(layout);
 	}
@@ -133,6 +134,7 @@ public abstract class FilterAbstractActivity extends AbstractActivity implements
 				payeeSelector.onClick(id);
 				break;
 			case R.id.payee_filter_toggle:
+			case R.id.payee_show_list:
 				payeeSelector.onClick(id);
 				break;
 
