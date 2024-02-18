@@ -731,6 +731,9 @@
     <item>6 个月</item>
     <item>9 个月</item>
     <item>1 年</item>
+    <item>2 年</item>
+    <item>5 年</item>
+    <item>10 年</item>
   </string-array>
   <string-array name="lock_time_entities">
     <item>关闭</item>

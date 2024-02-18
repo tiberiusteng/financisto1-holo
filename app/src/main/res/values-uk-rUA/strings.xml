@@ -731,6 +731,9 @@
     <item>6 місяців</item>
     <item>9 місяців</item>
     <item>1 рік</item>
+    <item>2 роки</item>
+    <item>5 років</item>
+    <item>10 років</item>
   </string-array>
   <string-array name="lock_time_entities">
     <item>Викл.</item>

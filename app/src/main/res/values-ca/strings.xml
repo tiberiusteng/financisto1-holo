@@ -731,6 +731,9 @@
     <item>6 mesos</item>
     <item>9 mesos</item>
     <item>1 any</item>
+    <item>2 anys</item>
+    <item>5 anys</item>
+    <item>10 anys</item>
   </string-array>
   <string-array name="lock_time_entities">
     <item>Desactivar</item>

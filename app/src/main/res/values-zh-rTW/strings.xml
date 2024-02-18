@@ -379,6 +379,7 @@
   <string name="report_reference_currency">基準幣值</string>
   <string name="report_reference_currency_summary">定義取得報告資料時使用的幣值。</string>
   <string name="report_last_n_months">前 $n 個月</string>
+  <string name="report_last_n_years">前 $n 年</string>
   <string name="report_n_months_var">$n</string>
   <string name="month_jan">一月</string>
   <string name="month_feb">二月</string>
@@ -865,6 +866,9 @@
     <item>6 個月</item>
     <item>9 個月</item>
     <item>1 年</item>
+    <item>2 年</item>
+    <item>5 年</item>
+    <item>10 年</item>
   </string-array>
   <string-array name="lock_time_entities">
     <item>關閉</item>

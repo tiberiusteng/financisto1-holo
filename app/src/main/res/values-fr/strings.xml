@@ -672,6 +672,8 @@
     <item>Par ordre (Croissant)</item>
     <item>Par ordre (Décroissant)</item>
     <item>Par nom</item>
+    <item>Par dernière transaction (Croissant)</item>
+    <item>Par dernière transaction (Décroissant)</item>
   </string-array>
   <string-array name="sort_locations_entities">
     <item>Par nom</item>
@@ -694,7 +696,10 @@
     <item>3 mois</item>
     <item>6 mois</item>
     <item>9 mois</item>
-    <item>1 année</item>
+    <item>1 an</item>
+    <item>2 ans</item>
+    <item>5 années</item>
+    <item>10 années</item>
   </string-array>
   <string-array name="lock_time_entities">
     <item>Off</item>

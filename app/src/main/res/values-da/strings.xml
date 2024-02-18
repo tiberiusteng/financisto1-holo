@@ -672,6 +672,8 @@
     <item>Efter Rækkefølge  (Op)</item>
     <item>Efter Rækkefølge (Ned)</item>
     <item>Efter Navn</item>
+    <item>Ved sidste transaktion  (Op)</item>
+    <item>Ved sidste transaktion (Ned)</item>
   </string-array>
   <string-array name="sort_locations_entities">
     <item>Efter Navn</item>
@@ -695,6 +697,9 @@
     <item>6 måneder</item>
     <item>9 måneder</item>
     <item>1 år</item>
+    <item>2 år</item>
+    <item>5 år</item>
+    <item>10 år</item>
   </string-array>
   <string-array name="lock_time_entities">
     <item>Off</item>

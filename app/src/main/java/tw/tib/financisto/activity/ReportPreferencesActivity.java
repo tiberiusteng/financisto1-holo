@@ -21,6 +21,7 @@ import tw.tib.financisto.utils.MyPreferences;
 import tw.tib.financisto.utils.PinProtection;
 import android.app.AlertDialog;
 import android.app.Dialog;
+import android.content.Context;
 import android.content.DialogInterface;
 import android.os.Bundle;
 import android.preference.EditTextPreference;
@@ -40,6 +41,11 @@ public class ReportPreferencesActivity extends PreferenceActivity {
 	 * The index of the selected currency
 	 */
 	private int selectedCurrenceIndex;
+
+	@Override
+	protected void attachBaseContext(Context base) {
+		super.attachBaseContext(MyPreferences.switchLocale(base));
+	}
 			
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {

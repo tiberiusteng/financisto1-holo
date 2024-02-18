@@ -731,6 +731,9 @@
     <item>6 hónap</item>
     <item>9 hónap</item>
     <item>1 év</item>
+    <item>2 év</item>
+    <item>5 év</item>
+    <item>10 év</item>
   </string-array>
   <string-array name="lock_time_entities">
     <item>Kikapcsolva</item>

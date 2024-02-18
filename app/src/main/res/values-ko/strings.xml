@@ -672,6 +672,8 @@
     <item>정렬 번호 순 (오름차순)</item>
     <item>정렬 번호 순 (내림차순)</item>
     <item>이름 순</item>
+    <item>마지막 거래 기준 (오름차순)</item>
+    <item>마지막 거래 기준 (내림차순)</item>
   </string-array>
   <string-array name="sort_locations_entities">
     <item>이름 순</item>
@@ -695,6 +697,9 @@
     <item>6 개월</item>
     <item>9 개월</item>
     <item>1 년</item>
+    <item>2 년</item>
+    <item>5 년</item>
+    <item>10 년</item>
   </string-array>
   <string-array name="lock_time_entities">
     <item>Off</item>

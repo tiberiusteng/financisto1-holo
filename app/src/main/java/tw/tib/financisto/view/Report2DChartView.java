@@ -256,14 +256,23 @@ public class Report2DChartView extends View {
     		}
     		
     		// draw month labels
-    		if (points.size()<=12) {
-	    		for (int i=0; i<points.size(); i++) {
+    		if (points.size()<=600) {
+				int step;
+				if (points.size() <= 12) {
+					step = 1;
+				}
+				else {
+					step = points.size() / 12;
+				}
+	    		for (int i=0; i<points.size(); i += step) {
 	    			labelPaint.setTextSize(spToPx(14));
 	    			canvas.drawText(points.get(i).getMonthShortString(this.getContext()), points.get(i).getX(), getHeight()-ySpace-padding+txtHeight, labelPaint);
 	    			labelPaint.setTextSize(spToPx(12));
 	    			canvas.drawText(points.get(i).getYearString(), points.get(i).getX(), getHeight()-ySpace-padding+2*txtHeight-1, labelPaint);
 	    		}
     		} else {
+				// unused for now
+				// only draws fist - "period" - last
     			labelPaint.setTextSize(spToPx(14));
     			canvas.drawText(points.get(0).getMonthShortString(this.getContext()), points.get(0).getX(), getHeight()-ySpace-padding+txtHeight, labelPaint);
     			canvas.drawText(points.get(points.size()-1).getMonthShortString(this.getContext()), points.get(points.size()-1).getX(), getHeight()-ySpace-padding+txtHeight, labelPaint);

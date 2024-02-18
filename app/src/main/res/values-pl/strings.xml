@@ -672,6 +672,8 @@
     <item>Według kolejności (rosnąco)</item>
     <item>Według kolejności (malejąco)</item>
     <item>Według nazwy</item>
+    <item>Według ostatniej transakcji (rosnąco)</item>
+    <item>Według ostatniej transakcji (malejąco)</item>
   </string-array>
   <string-array name="sort_locations_entities">
     <item>Według nazwy</item>
@@ -695,6 +697,9 @@
     <item>6 miesięcy</item>
     <item>9 miesięcy</item>
     <item>1 rok</item>
+    <item>2 lata</item>
+    <item>5 lat</item>
+    <item>10 lat</item>
   </string-array>
   <string-array name="lock_time_entities">
     <item>Od</item>

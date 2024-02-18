@@ -1,5 +1,6 @@
 package tw.tib.financisto.report;
 
+import java.sql.Array;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.List;
@@ -19,27 +20,13 @@ import android.content.Context;
  */
 public class ProjectByPeriodReport extends Report2DChart {
 	
-	/**
-	 * Default constructor.
-	 * @param dbAdapter
-	 * @param context
-	 * @param periodLength
-	 * @param currency
-	 */
-	public ProjectByPeriodReport(Context context, MyEntityManager em, int periodLength, Currency currency) {
-		super(context, em, periodLength, currency);
-	}
-	
-	/**
-	 * Default constructor.
-	 * @param context
-	 * @param dbAdapter
-	 * @param startPeriod
-	 * @param periodLength
-	 * @param currency
-	 */
 	public ProjectByPeriodReport(Context context, MyEntityManager em, Calendar startPeriod, int periodLength, Currency currency) {
 		super(context, em, startPeriod, periodLength, currency);
+	}
+
+	@Override
+	public int getFilterItemTypeName() {
+		return R.string.project;
 	}
 
 	/* (non-Javadoc)
@@ -47,14 +34,8 @@ public class ProjectByPeriodReport extends Report2DChart {
 	 */
 	@Override
 	public String getFilterName() {
-		if (filterIds.size()>0) {
-			long projectId = filterIds.get(currentFilterOrder);
-			Project project = em.getProject(projectId);
-			if (project!=null) {
-				return project.getTitle();
-			} else {
-				return context.getString(R.string.no_project);
-			}
+		if (filterTitles.size()>0) {
+			return filterTitles.get(currentFilterOrder);
 		} else {
 			// no project
 			return context.getString(R.string.no_project);
@@ -66,27 +47,18 @@ public class ProjectByPeriodReport extends Report2DChart {
 		return null;
 	}
 
-	/* (non-Javadoc)
-	 * @see tw.tib.financisto.graph.ReportGraphic2D#setFilterIds()
-	 */
 	@Override
-	public void setFilterIds() {
-		boolean includeNoProject = MyPreferences.includeNoFilterInReport(context);
-		filterIds = new ArrayList<Long>();
-		currentFilterOrder = 0;
-		ArrayList<Project> projects = em.getAllProjectsList(includeNoProject);
-		if (projects.size()>0) {
-			Project p;
-			for (int i=0; i<projects.size(); i++) {
-				p = projects.get(i);
-				filterIds.add(p.getId());
-			}
-		}
-	}
-
-	@Override
-	protected void setColumnFilter() {
+	protected void createFilter() {
 		columnFilter = TransactionColumns.project_id.name();
+		boolean includeNoProject = MyPreferences.includeNoFilterInReport(context);
+		filterIds = new ArrayList<>();
+		filterTitles = new ArrayList<>();
+		currentFilterOrder = 0;
+		List<Project> projects = em.getAllProjectsList(includeNoProject);
+		for (Project p : projects) {
+			filterIds.add(p.id);
+			filterTitles.add(p.title);
+		}
 	}
 
 	@Override

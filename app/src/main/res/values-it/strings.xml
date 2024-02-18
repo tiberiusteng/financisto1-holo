@@ -730,7 +730,10 @@
     <item>3 mesi</item>
     <item>6 mesi</item>
     <item>9 mesi</item>
-    <item>1 anni</item>
+    <item>1 anno</item>
+    <item>2 anni</item>
+    <item>5 anni</item>
+    <item>10 anni</item>
   </string-array>
   <string-array name="lock_time_entities">
     <item>Disattivo</item>

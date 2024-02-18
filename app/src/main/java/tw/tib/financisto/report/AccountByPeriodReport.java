@@ -17,25 +17,7 @@ import android.content.Context;
  * @author Abdsandryk
  */
 public class AccountByPeriodReport extends Report2DChart {
-	
-	/**
-	 * Default constructor.
-	 * @param dbAdapter
-	 * @param context
-	 * @param periodLength
-	 * @param currency
-	 */
-	public AccountByPeriodReport(Context context, MyEntityManager em, int periodLength, Currency currency) {
-		super(context, em, periodLength, currency);
-	}
-	
-	/**
-	 * Default constructor.
-	 * @param dbAdapter
-	 * @param context
-	 * @param periodLength
-	 * @param currency
-	 */
+
 	public AccountByPeriodReport(Context context, MyEntityManager em, Calendar startPeriod, int periodLength, Currency currency) {
 		super(context, em, startPeriod, periodLength, currency);
 	}
@@ -48,47 +30,37 @@ public class AccountByPeriodReport extends Report2DChart {
 		return null;
 	}
 
+	@Override
+	public int getFilterItemTypeName() {
+		return R.string.account;
+	}
+
 	/* (non-Javadoc)
 	 * @see tw.tib.financisto.graph.ReportGraphic2D#getFilterName()
 	 */
 	@Override
 	public String getFilterName() {
-		if (filterIds.size()>0) {
-			long accountId = filterIds.get(currentFilterOrder);
-			Account a = em.getAccount(accountId);
-			if (a != null) {
-				return a.title;
-			} else {
-				return context.getString(R.string.no_account);
-			}
+		if (filterTitles.size()>0) {
+			return filterTitles.get(currentFilterOrder);
 		} else {
-			// no category
 			return context.getString(R.string.no_account);
 		}
 	}
 
-	/* (non-Javadoc)
-	 * @see tw.tib.financisto.graph.ReportGraphic2D#setFilterIds()
-	 */
 	@Override
-	public void setFilterIds() {
-		filterIds = new ArrayList<Long>();
+	protected void createFilter() {
+		columnFilter = TransactionColumns.from_account_id.name();
+
+		filterIds = new ArrayList<>();
+		filterTitles = new ArrayList<>();
 		currentFilterOrder = 0;
 		List<Account> accounts = em.getAllAccountsList();
-		if (accounts.size() > 0) {
-			Account a;
-			for (int i=0; i<accounts.size(); i++) {
-				a = accounts.get(i);
-				filterIds.add(a.id);
-			}
+		for (Account a: accounts) {
+			filterIds.add(a.id);
+			filterTitles.add(a.title);
 		}
 	}
 
-	@Override
-	protected void setColumnFilter() {
-		columnFilter = TransactionColumns.from_account_id.name();
-	}
-	
 	@Override
 	public String getNoFilterMessage(Context context) {
 		return context.getString(R.string.report_no_account);

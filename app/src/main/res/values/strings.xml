@@ -439,10 +439,14 @@
         <item>6 months</item>
         <item>9 months</item>
         <item>1 year</item>
+        <item>2 years</item>
+        <item>5 years</item>
+        <item>10 years</item>
     </string-array>
     <string name="report_reference_currency">Reference Currency</string>
     <string name="report_reference_currency_summary">Define the reference currency to be considered when request data for report charts</string>
     <string name="report_last_n_months">Last $n months</string>
+    <string name="report_last_n_years">Last $n years</string>
     <string name="report_n_months_var">$n</string>
     <string name="month_jan">JAN</string>
     <string name="month_feb">FEB</string>

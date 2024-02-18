@@ -34,15 +34,14 @@ public class CategoryByPeriodReport extends Report2DChart {
 	}
 
 	@Override
+	public int getFilterItemTypeName() {
+		return R.string.category;
+	}
+
+	@Override
 	public String getFilterName() {
-		if (filterIds.size()>0) {
-			long categoryId = filterIds.get(currentFilterOrder);
-			Category category = em.getCategory(categoryId);
-			if (category!=null) {
-				return category.getTitle();
-			} else {
-				return context.getString(R.string.no_category);
-			}
+		if (filterTitles.size()>0) {
+			return filterTitles.get(currentFilterOrder);
 		} else {
 			// no category
 			return context.getString(R.string.no_category);
@@ -60,33 +59,29 @@ public class CategoryByPeriodReport extends Report2DChart {
 	}
 
 	@Override
-	public void setFilterIds() {
+	protected void createFilter() {
+		columnFilter = TransactionColumns.category_id.name();
 		boolean includeSubCategories = MyPreferences.includeSubCategoriesInReport(context);
 		boolean includeNoCategory = MyPreferences.includeNoFilterInReport(context);
-		filterIds = new ArrayList<Long>();
+		filterIds = new ArrayList<>();
+		filterTitles = new ArrayList<>();
 		currentFilterOrder = 0;
 		List<Category> categories = em.getAllCategoriesList(includeNoCategory);
-		if (categories.size()>0) {
-			Category c;
-            for (Category category : categories) {
-                if (includeSubCategories) {
-                    filterIds.add(category.getId());
-                } else {
-                    // do not include sub categories
-                    if (category.level == 1) {
-                        // filter root categories only
-                        filterIds.add(category.getId());
-                    }
-                }
-            }
+		for (Category c : categories) {
+			if (includeSubCategories) {
+				filterIds.add(c.id);
+				filterTitles.add(c.title);
+			} else {
+				// do not include sub categories
+				if (c.level == 1) {
+					// filter root categories only
+					filterIds.add(c.id);
+					filterTitles.add(c.title);
+				}
+			}
 		}
 	}
 
-	@Override
-	protected void setColumnFilter() {
-		columnFilter = TransactionColumns.category_id.name();
-	}
-	
 	/**
 	 * Request data and fill data objects (list of points, max, min, etc.)
 	 */
@@ -102,20 +97,20 @@ public class CategoryByPeriodReport extends Report2DChart {
 				String where = CategoryColumns.left+" BETWEEN ? AND ?";
 				String[] pars = new String[]{String.valueOf(parent.left), String.valueOf(parent.right)};
 				cursor = db.query(DatabaseHelper.CATEGORY_TABLE, new String[]{CategoryColumns._id.name()}, where, pars, null, null, null);
-				int[] categories = new int[cursor.getCount()+1];
+				long[] categories = new long[cursor.getCount()+1];
 				int i=0;
 				while (cursor.moveToNext()) {
 					categories[i] = (int)cursor.getInt(0);
 					i++;
 				}
-				categories[i] = filterIds.get(currentFilterOrder).intValue();
+				categories[i] = filterIds.get(currentFilterOrder);
 				data = new ReportDataByPeriod(context, startPeriod, periodLength, currency, columnFilter, categories, em);
 			} finally {
 				if (cursor!=null) cursor.close();
 			}
 		} else {
 			// only root category
-			data = new ReportDataByPeriod(context, startPeriod, periodLength, currency, columnFilter, filterIds.get(currentFilterOrder).intValue(), em);
+			data = new ReportDataByPeriod(context, startPeriod, periodLength, currency, columnFilter, filterIds.get(currentFilterOrder), em);
 		}
 		
 		points = new ArrayList<Report2DPoint>();

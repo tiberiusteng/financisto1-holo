@@ -731,6 +731,9 @@
     <item>6 luni</item>
     <item>9 luni</item>
     <item>1 an</item>
+    <item>2 ani</item>
+    <item>5 ani</item>
+    <item>10 ani</item>
   </string-array>
   <string-array name="lock_time_entities">
     <item>Off</item>

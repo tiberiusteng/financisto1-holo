@@ -23,15 +23,14 @@ public class PayeeByPeriodReport extends Report2DChart {
 	}
 
 	@Override
+	public int getFilterItemTypeName() {
+		return R.string.payee;
+	}
+
+	@Override
 	public String getFilterName() {
-		if (filterIds.size()>0) {
-			long payeeId = filterIds.get(currentFilterOrder);
-			Payee payee = em.get(Payee.class, payeeId);
-			if (payee != null) {
-				return payee.getTitle();
-			} else {
-				return context.getString(R.string.no_payee);
-			}
+		if (filterTitles.size()>0) {
+			return filterTitles.get(currentFilterOrder);
 		} else {
 			// no payee
 			return context.getString(R.string.no_payee);
@@ -44,20 +43,16 @@ public class PayeeByPeriodReport extends Report2DChart {
 	}
 
 	@Override
-	public void setFilterIds() {
-		filterIds = new ArrayList<Long>();
+	protected void createFilter() {
+		columnFilter = TransactionColumns.payee_id.name();
+		filterIds = new ArrayList<>();
+		filterTitles = new ArrayList<>();
 		currentFilterOrder = 0;
 		List<Payee> payees = em.getAllPayeeList();
-		if (payees.size() > 0) {
-            for (Payee p : payees) {
-                filterIds.add(p.getId());
-            }
+		for (Payee p : payees) {
+			filterIds.add(p.id);
+			filterTitles.add(p.title);
 		}
-	}
-
-	@Override
-	protected void setColumnFilter() {
-		columnFilter = TransactionColumns.payee_id.name();
 	}
 
 	@Override

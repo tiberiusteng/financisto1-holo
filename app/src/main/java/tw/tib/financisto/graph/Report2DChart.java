@@ -13,6 +13,8 @@ import tw.tib.financisto.model.ReportDataByPeriod;
 
 import android.content.Context;
 
+import androidx.annotation.StringRes;
+
 public abstract class Report2DChart {
 	
 	public static final String REPORT_TYPE = "report_type";
@@ -31,6 +33,7 @@ public abstract class Report2DChart {
 	protected int currentFilterOrder;
 	protected String columnFilter;
 	protected List<Long> filterIds;
+	protected List<String> filterTitles;
 	protected String noFilterMessage;
 	protected Currency currency;
 	
@@ -136,16 +139,15 @@ public abstract class Report2DChart {
 		this.periodLength = periodLength;
 		this.currency = currency;
 		
-		periods = new int[22];
-    	periodStrings = new String[22];
+		periods = new int[598];
+    	periodStrings = new String[598];
 
-    	for (int i=3; i<=24; i++) {
+    	for (int i=3; i<=600; i++) {
     		periods[i-3] = i;
     	}
 		
 		// classes shall implement to determine query filters
-		setFilterIds();
-		setColumnFilter();
+		createFilter();
 
 		if (filterIds!=null && filterIds.size()>0) {
 			// get data 
@@ -206,11 +208,18 @@ public abstract class Report2DChart {
 	public boolean isRoot() {
 		return level==0;
 	}
-	
-	/**
-	 * @return
-	 */
+
+	public abstract @StringRes int getFilterItemTypeName();
+
 	public abstract String getFilterName();
+
+	public int getSelectedFilter() {
+		return currentFilterOrder;
+	}
+
+	public List<String> getFilterItemTitles() {
+		return filterTitles;
+	}
 	
 	/**
 	 * Move the cursor to next element of filters list, if not the last element.
@@ -231,6 +240,16 @@ public abstract class Report2DChart {
 	public boolean previousFilter() {
 		if (currentFilterOrder>0) {
 			currentFilterOrder--;
+			build();
+			return true;
+		} else {
+			return false;
+		}
+	}
+
+	public boolean selectFilter(int seq) {
+		if (seq >= 0 && seq < filterIds.size()) {
+			currentFilterOrder = seq;
 			build();
 			return true;
 		} else {
@@ -306,7 +325,7 @@ public abstract class Report2DChart {
 	 * Request data and fill data objects (list of points, max, min, etc.)
 	 */
 	protected void build() {
-		data = new ReportDataByPeriod(context, startPeriod, periodLength, currency, columnFilter, filterIds.get(currentFilterOrder).intValue(),em);
+		data = new ReportDataByPeriod(context, startPeriod, periodLength, currency, columnFilter, filterIds.get(currentFilterOrder), em);
 		points = new ArrayList<Report2DPoint>();
 		List<PeriodValue> pvs = data.getPeriodValues();
 
@@ -314,18 +333,18 @@ public abstract class Report2DChart {
 			points.add(new Report2DPoint(pvs.get(i)));
 		}
 	}
-	
+
 	/**
+	 * Create filter entries for current chart
+	 *
+	 * perform functions of previous setColumnFilter(), setFilterIds()
+	 *
 	 * Set the name of Transaction column to filter on chart
-	 */
-	protected abstract void setColumnFilter();
-	
-	/**
 	 * Fill filterIds with the list of Filter Object ids.
 	 * Ex.: In Category report, fill with category ids.
 	 */
-	public abstract void setFilterIds();
-	
+	protected abstract void createFilter();
+
 	/**
 	 * Required when displaying a chart and its sub-elements.
 	 * Ex.: Category - level 0 (root). Sub-categories - level 1..n (children charts).
@@ -412,7 +431,12 @@ public abstract class Report2DChart {
 			return context.getString(R.string.report_last_year);
 		default:
 			String n = context.getString(R.string.report_n_months_var);
-			return context.getString(R.string.report_last_n_months).replace(n, Integer.toString(months));
+			if (months < 12) {
+				return context.getString(R.string.report_last_n_months).replace(n, Integer.toString(months));
+			}
+			else {
+				return context.getString(R.string.report_last_n_years).replace(n, Integer.toString(months / 12));
+			}
 		}
 	}
 }

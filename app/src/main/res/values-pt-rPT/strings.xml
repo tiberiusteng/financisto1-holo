@@ -731,6 +731,9 @@
     <item>6 meses</item>
     <item>9 meses</item>
     <item>1 ano</item>
+    <item>2 anos</item>
+    <item>5 anos</item>
+    <item>10 anos</item>
   </string-array>
   <string-array name="lock_time_entities">
     <item>Desligado</item>

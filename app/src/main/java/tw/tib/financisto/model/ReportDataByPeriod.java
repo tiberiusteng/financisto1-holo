@@ -110,9 +110,9 @@ public class ReportDataByPeriod {
 	 * @param currency The report reference currency
 	 * @param filterColumn The report filtering column in transactions table 
 	 * @param filterId The report filtering id in transactions table 
-	 * @param dbAdapter Database adapter to query data
+	 * @param em Database adapter to query data
 	 */
-	public ReportDataByPeriod(Context context, int periodLength, Currency currency, String filterColumn, int[] filterId, MyEntityManager em) {
+	public ReportDataByPeriod(Context context, int periodLength, Currency currency, String filterColumn, long[] filterId, MyEntityManager em) {
 		Calendar startPeriod = Report2DChart.getDefaultStartPeriod(periodLength);
 		init(context, startPeriod, periodLength, currency, filterColumn, filterId, em);
 	}
@@ -123,11 +123,11 @@ public class ReportDataByPeriod {
 	 * @param currency The report reference currency
 	 * @param filterColumn The report filtering column in transactions table 
 	 * @param filterId The report filtering id in transactions table 
-	 * @param dbAdapter Database adapter to query data
+	 * @param em Database adapter to query data
 	 */
-	public ReportDataByPeriod(Context context, int periodLength, Currency currency, String filterColumn, int filterId, MyEntityManager em) {
+	public ReportDataByPeriod(Context context, int periodLength, Currency currency, String filterColumn, long filterId, MyEntityManager em) {
 		Calendar startPeriod = Report2DChart.getDefaultStartPeriod(periodLength);
-		init(context, startPeriod, periodLength, currency, filterColumn, new int[]{filterId}, em);
+		init(context, startPeriod, periodLength, currency, filterColumn, new long[]{filterId}, em);
 	}
 
 	/**
@@ -137,9 +137,9 @@ public class ReportDataByPeriod {
 	 * @param currency The report reference currency
 	 * @param filterColumn The report filtering column in transactions table 
 	 * @param filterId The report filtering id in transactions table 
-	 * @param dbAdapter Database adapter to query data
+	 * @param em Database adapter to query data
 	 */
-	public ReportDataByPeriod(Context context, Calendar startDate, int periodLength, Currency currency, String filterColumn, int[] filterId, MyEntityManager em) {
+	public ReportDataByPeriod(Context context, Calendar startDate, int periodLength, Currency currency, String filterColumn, long[] filterId, MyEntityManager em) {
 		init(context, startDate, periodLength, currency, filterColumn, filterId, em);
 	}
 	
@@ -150,10 +150,10 @@ public class ReportDataByPeriod {
 	 * @param currency The report reference currency
 	 * @param filterColumn The report filtering column in transactions table 
 	 * @param filterId The report filtering id in transactions table 
-	 * @param dbAdapter Database adapter to query data
+	 * @param em Database adapter to query data
 	 */
-	public ReportDataByPeriod(Context context, Calendar startDate, int periodLength, Currency currency, String filterColumn, int filterId, MyEntityManager em) {
-		init(context, startDate, periodLength, currency, filterColumn, new int[]{filterId}, em);
+	public ReportDataByPeriod(Context context, Calendar startDate, int periodLength, Currency currency, String filterColumn, long filterId, MyEntityManager em) {
+		init(context, startDate, periodLength, currency, filterColumn, new long[]{filterId}, em);
 	}
 	
 	/**
@@ -163,9 +163,9 @@ public class ReportDataByPeriod {
 	 * @param currency The report reference currency
 	 * @param filterColumn The report filtering column in transactions table 
 	 * @param filterId The report filtering id in transactions table 
-	 * @param dbAdapter Database adapter to query data
+	 * @param em Database adapter to query data
 	 */
-	private void init(Context context, Calendar startDate, int periodLength, Currency currency, String filterColumn, int[] filterId, MyEntityManager em) {
+	private void init(Context context, Calendar startDate, int periodLength, Currency currency, String filterColumn, long[] filterId, MyEntityManager em) {
 		this.context = context;
 		this.periodLength = periodLength;
 		startDate.set(startDate.get(Calendar.YEAR), startDate.get(Calendar.MONTH), 01, 00, 00, 00);
@@ -206,7 +206,7 @@ public class ReportDataByPeriod {
 	 * @param filterColumn The report filter (account, category, location or project)
 	 * @param accounts List of account ids for which the reference currency is the report reference currency.
 	 * */
-	private String getWhereClause(String filterColumn, int[] filterId, int[] accounts) {
+	private String getWhereClause(String filterColumn, long[] filterId, int[] accounts) {
 		StringBuffer accountsWhere = new StringBuffer();
 		// no templates and scheduled transactions
 		accountsWhere.append(TransactionColumns.is_template +"=0");
@@ -247,7 +247,7 @@ public class ReportDataByPeriod {
 	 * @param filterId The id of the filtering column (account, category, location or project)
 	 * @param accounts The ids of accounts to be considered in this query
 	 * */
-	private String[] getWherePars(Calendar startDate, int periodLength, int[] filterId, int[] accounts) {
+	private String[] getWherePars(Calendar startDate, int periodLength, long[] filterId, int[] accounts) {
 		String[] pars = new String[filterId.length + 2 + accounts.length];
 
 		// The id of the filtered column

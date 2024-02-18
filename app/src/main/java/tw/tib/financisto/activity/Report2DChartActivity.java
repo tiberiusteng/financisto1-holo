@@ -153,6 +153,21 @@ public class Report2DChartActivity extends Activity {
             }
         });
 
+        TextView reportFilterName = findViewById(R.id.report_filter_name);
+        reportFilterName.setOnClickListener((v) -> {
+            new AlertDialog.Builder(this)
+                    .setSingleChoiceItems(reportData.getFilterItemTitles().toArray(new String[0]),
+                            reportData.getSelectedFilter(),
+                            (dialog, which) -> {
+                                dialog.cancel();
+                                if (reportData.selectFilter(which)) {
+                                    refreshView();
+                                }
+                            })
+                    .setTitle(reportData.getFilterItemTypeName())
+                    .show();
+        });
+
         // prefs
         ImageButton bPrefs = (ImageButton) findViewById(R.id.bt_preferences);
         bPrefs.setOnClickListener(new OnClickListener() {
