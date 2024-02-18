@@ -34,9 +34,9 @@ public class Report2DChartView extends View {
     private ShapeDrawable[] pointsShapes;
     
     // graphics configuration
-    private int padding = 10;
-    private int graphPadding = 10;
-    private int txtHeight = 12;
+    private int padding = (int) spToPx(10);
+    private int graphPadding = (int) spToPx(10);
+    private int txtHeight = (int) spToPx(14);
     private int selected = -1;
     
     // List of points to be drawn
@@ -69,9 +69,9 @@ public class Report2DChartView extends View {
     private boolean absoluteCalculation = true;
     
     // space to draw labels vertically
-	private int xSpace = 16;
+	private int xSpace = (int) spToPx(18);
 	// space to draw labels and information bellow the chart
-    private int ySpace = 44;
+    private int ySpace = (int) spToPx(48);
     
     // Colors
     private int bgColor = 0xFF010101;
@@ -258,21 +258,21 @@ public class Report2DChartView extends View {
     		// draw month labels
     		if (points.size()<=12) {
 	    		for (int i=0; i<points.size(); i++) {
-	    			labelPaint.setTextSize(spToPx(12));
+	    			labelPaint.setTextSize(spToPx(14));
 	    			canvas.drawText(points.get(i).getMonthShortString(this.getContext()), points.get(i).getX(), getHeight()-ySpace-padding+txtHeight, labelPaint);
-	    			labelPaint.setTextSize(spToPx(10));
+	    			labelPaint.setTextSize(spToPx(12));
 	    			canvas.drawText(points.get(i).getYearString(), points.get(i).getX(), getHeight()-ySpace-padding+2*txtHeight-1, labelPaint);
 	    		}
     		} else {
-    			labelPaint.setTextSize(spToPx(12));
+    			labelPaint.setTextSize(spToPx(14));
     			canvas.drawText(points.get(0).getMonthShortString(this.getContext()), points.get(0).getX(), getHeight()-ySpace-padding+txtHeight, labelPaint);
     			canvas.drawText(points.get(points.size()-1).getMonthShortString(this.getContext()), points.get(points.size()-1).getX(), getHeight()-ySpace-padding+txtHeight, labelPaint);
     			
-    			labelPaint.setTextSize(spToPx(10));
+    			labelPaint.setTextSize(spToPx(12));
     			canvas.drawText(points.get(0).getYearString(), points.get(0).getX(), getHeight()-ySpace-padding+2*txtHeight-1, labelPaint);
     			canvas.drawText(points.get(points.size()-1).getYearString(), points.get(points.size()-1).getX(), getHeight()-ySpace-padding+2*txtHeight-1, labelPaint);
     			
-    			labelPaint.setTextSize(spToPx(14));
+    			labelPaint.setTextSize(spToPx(16));
     			canvas.drawText(getResources().getString(R.string.period), padding+xSpace+(getWidth()-xSpace-2*padding)/2, getHeight()-ySpace-padding/2+txtHeight, labelPaint);
     		}
     	}
