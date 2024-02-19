@@ -465,6 +465,11 @@ public class MyPreferences {
 		return sharedPreferences.getBoolean("reset_copied_foreign_transaction_status", false);
 	}
 
+	public static boolean isColorizeWeekendDate(Context context) {
+		SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(context);
+		return sharedPreferences.getBoolean("colorize_weekend_date", true);
+	}
+
 	private static final String DEFAULT = "default";
 
 	public static Context switchLocale(Context context) {

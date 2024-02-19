@@ -531,6 +531,8 @@
   <string name="header_expenses">支出</string>
   <string name="ui_language">Locales / 語言</string>
   <string name="ui_language_summary">Set language of user interface (requires restart!) / 設定使用者介面的語言 (需要重新啟動!)</string>
+  <string name="ui_theme">色調主題</string>
+  <string name="ui_theme_summary">設定使用者界面的主題 (需要重新啟動!)</string>
   <string name="enter_pin">輸入 PIN</string>
   <string name="mass_operations">大量編輯</string>
   <string name="card_issuer_unionpay">UnionPay</string>
@@ -577,6 +579,8 @@
   <string name="reset_copied_transaction_status_summary">將複製的交易設為「未對帳」</string>
   <string name="reset_copied_foreign_transaction_status">複製外幣交易時重設狀態</string>
   <string name="reset_copied_foreign_transaction_status_summary">將複製的外幣交易設為「擱置」</string>
+  <string name="colorize_weekend_date">彩色標記週末日期</string>
+  <string name="colorize_weekend_date_summary">將週六、週日的日期時間以紅色顯示</string>
   <string name="new_currency">新幣值 ...</string>
   <string name="lock_time">鎖定時間</string>
   <string name="lock_time_summary">主畫面在自動鎖定前的顯示時間</string>
@@ -895,4 +899,8 @@
   <string name="fingerprint_unavailable_enrolled_fingerprints">必須至少登記一個指紋</string>
   <string name="fingerprint_unavailable_unknown">不支援本裝置</string>
   <string name="fingerprint_unavailable">無法取用: %s</string>
+  <string-array name="ui_theme_entities">
+    <item>深色</item>
+    <item>淺色</item>
+  </string-array>
 </resources>

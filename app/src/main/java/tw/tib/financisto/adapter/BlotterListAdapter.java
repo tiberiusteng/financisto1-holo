@@ -64,6 +64,7 @@ public class BlotterListAdapter extends ResourceCursorAdapter {
 
     private final boolean showRunningBalance;
     private final boolean showProject;
+    private final boolean colorizeWeekendDate;
 
     public BlotterListAdapter(Context context, DatabaseAdapter db, Cursor c) {
         this(context, db, R.layout.blotter_list_item, c, false);
@@ -84,6 +85,7 @@ public class BlotterListAdapter extends ResourceCursorAdapter {
         this.projectColor = context.getResources().getColor(R.color.project_color);
         this.showRunningBalance = MyPreferences.isShowRunningBalance(context);
         this.showProject = MyPreferences.isShowProjectInBlotter(context);
+        this.colorizeWeekendDate = MyPreferences.isColorizeWeekendDate(context);
         this.transactionTitleUtils = new TransactionTitleUtils(context, MyPreferences.isColorizeBlotterItem(context));
         this.db = db;
     }
@@ -236,7 +238,7 @@ public class BlotterListAdapter extends ResourceCursorAdapter {
                     Calendar cal = Calendar.getInstance();
                     cal.setTimeInMillis(date);
                     int dayOfWeek = cal.get(Calendar.DAY_OF_WEEK);
-                    if (dayOfWeek == Calendar.SUNDAY || dayOfWeek == Calendar.SATURDAY) {
+                    if (colorizeWeekendDate && (dayOfWeek == Calendar.SUNDAY || dayOfWeek == Calendar.SATURDAY)) {
                         v.bottomView.setTextColor(Color.rgb(224, 112, 112));
                     } else {
                         v.bottomView.setTextColor(v.topView.getTextColors().getDefaultColor());

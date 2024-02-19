@@ -110,6 +110,11 @@
                 android:key="reset_copied_foreign_transaction_status"
                 android:summary="@string/reset_copied_foreign_transaction_status_summary"
                 android:title="@string/reset_copied_foreign_transaction_status" />
+            <CheckBoxPreference
+                android:defaultValue="true"
+                android:key="colorize_weekend_date"
+                android:summary="@string/colorize_weekend_date_summary"
+                android:title="@string/colorize_weekend_date" />
         </PreferenceScreen>
         <PreferenceScreen
             android:summary="@string/transaction_screen_summary"
