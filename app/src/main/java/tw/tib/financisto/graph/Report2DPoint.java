@@ -1,8 +1,8 @@
 package tw.tib.financisto.graph;
 
+import java.text.SimpleDateFormat;
 import java.util.Calendar;
 
-import tw.tib.financisto.R;
 import tw.tib.financisto.model.PeriodValue;
 
 import android.content.Context;
@@ -43,19 +43,7 @@ public class Report2DPoint {
 	 * @return The complete string representing the month.
 	 */
 	public String getMonthLongString(Context context) {
-		String[] monthName = {context.getResources().getString(R.string.month_x_jan),
-							  context.getResources().getString(R.string.month_x_feb),
-							  context.getResources().getString(R.string.month_x_mar),
-							  context.getResources().getString(R.string.month_x_apr),
-							  context.getResources().getString(R.string.month_x_mai),
-							  context.getResources().getString(R.string.month_x_jun),
-							  context.getResources().getString(R.string.month_x_jul),
-							  context.getResources().getString(R.string.month_x_aug),
-							  context.getResources().getString(R.string.month_x_sep),
-							  context.getResources().getString(R.string.month_x_oct),
-							  context.getResources().getString(R.string.month_x_nov),
-							  context.getResources().getString(R.string.month_x_dec)};
-		return monthName[pointData.getMonth().get(Calendar.MONTH)];
+		return new SimpleDateFormat("MMMM").format(pointData.getMonth().getTime());
 	}
 	
 	/**
@@ -65,19 +53,7 @@ public class Report2DPoint {
 	 * @return The short string representing the month.
 	 */
 	public String getMonthShortString(Context context) {
-		String[] monthName = {context.getResources().getString(R.string.month_jan),
-							  context.getResources().getString(R.string.month_feb),
-							  context.getResources().getString(R.string.month_mar),
-							  context.getResources().getString(R.string.month_apr),
-							  context.getResources().getString(R.string.month_mai),
-							  context.getResources().getString(R.string.month_jun),
-							  context.getResources().getString(R.string.month_jul),
-							  context.getResources().getString(R.string.month_aug),
-							  context.getResources().getString(R.string.month_sep),
-							  context.getResources().getString(R.string.month_oct),
-							  context.getResources().getString(R.string.month_nov),
-							  context.getResources().getString(R.string.month_dec)};
-		return monthName[pointData.getMonth().get(Calendar.MONTH)];
+		return new SimpleDateFormat("MMM").format(pointData.getMonth().getTime());
 	}
 	
 	/**
