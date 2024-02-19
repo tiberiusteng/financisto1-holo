@@ -83,6 +83,10 @@ public class AccountListFragment extends AbstractListFragment {
     }
 
     private void setupUi(View view) {
+        EditText searchText = view.findViewById(R.id.search_text);
+        FrameLayout searchLayout = view.findViewById(R.id.search_text_frame);
+        ImageButton clearButton = view.findViewById(R.id.search_text_clear);
+
         view.findViewById(R.id.integrity_error).setOnClickListener(v -> v.setVisibility(View.GONE));
         getListView().setOnItemLongClickListener((parent, child, position, id) -> {
             selectedId = id;
@@ -98,9 +102,6 @@ public class AccountListFragment extends AbstractListFragment {
             loadFilter();
 
             if (!filter.isEmpty()) {
-                EditText searchText = view.findViewById(R.id.search_text);
-                FrameLayout searchLayout = view.findViewById(R.id.search_text_frame);
-                ImageButton clearButton = view.findViewById(R.id.search_text_clear);
                 searchLayout.setVisibility(View.VISIBLE);
                 clearButton.setVisibility(View.VISIBLE);
                 searchText.setText(filter);
@@ -108,9 +109,6 @@ public class AccountListFragment extends AbstractListFragment {
             }
 
             bSearch.setOnClickListener(method -> {
-                EditText searchText = view.findViewById(R.id.search_text);
-                FrameLayout searchLayout = view.findViewById(R.id.search_text_frame);
-                ImageButton searchTextClearButton = view.findViewById(R.id.search_text_clear);
                 InputMethodManager imm = (InputMethodManager) getContext().getSystemService(Context.INPUT_METHOD_SERVICE);
 
                 searchText.setOnFocusChangeListener((v, b) -> {
