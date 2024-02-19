@@ -15,6 +15,7 @@ import tw.tib.financisto.graph.Report2DChart;
 import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
+import android.util.Log;
 
 /**
  * Report data builder that considers filters in a given period.
@@ -22,7 +23,11 @@ import android.database.sqlite.SQLiteDatabase;
  * @author Abdsandryk
  */
 public class ReportDataByPeriod {
-	
+	private static final String TAG = "ReportDataByPeriod";
+
+	private static final int RESULT_AMOUNT_COLUMN = 1;
+	private static final int RESULT_DATETIME_COLUMN = 2;
+
 	protected Context context;
 	
 	/*
@@ -177,6 +182,7 @@ public class ReportDataByPeriod {
 		fillEmptyList(startDate, periodLength);
 
 		try {
+			long t0 = System.nanoTime();
 			// search accounts for which the reference currency is the given currency
 			int[] accounts = getAccountsByCurrency(currency, db);
 			if (accounts.length==0) {
@@ -187,12 +193,15 @@ public class ReportDataByPeriod {
 			
 			// prepare query based on given report parameters
 			String where = getWhereClause(filterColumn, filterId, accounts);
-			String[] pars = getWherePars(startDate, periodLength, filterId, accounts);
+			String[] args = getWhereArgs(startDate, periodLength, filterId, accounts);
 			// query data
-			cursor = db.query(TRANSACTION_TABLE, new String[]{filterColumn, TransactionColumns.from_amount.name(), TransactionColumns.datetime.name(), TransactionColumns.datetime.name()},
-					   where, pars, null, null, TransactionColumns.datetime.name());
+			cursor = db.query(TRANSACTION_TABLE, new String[]{filterColumn, TransactionColumns.from_amount.name(), TransactionColumns.datetime.name()},
+					   where, args, null, null, TransactionColumns.datetime.name());
+			long t1 = System.nanoTime();
 			// extract data and fill statistics
-			extractData(cursor); 
+			extractData(cursor);
+			long t2 = System.nanoTime();
+			Log.d(TAG, "query=" + (t1-t0) + " ns, extract=" + (t2-t1) + " ns");
 
 		} finally {
 			if (cursor!=null) cursor.close();
@@ -209,7 +218,8 @@ public class ReportDataByPeriod {
 	private String getWhereClause(String filterColumn, long[] filterId, int[] accounts) {
 		StringBuffer accountsWhere = new StringBuffer();
 		// no templates and scheduled transactions
-		accountsWhere.append(TransactionColumns.is_template +"=0");
+		// don't include transfer to other accounts (transfers to this account is inherently not included)
+		accountsWhere.append(TransactionColumns.is_template + "=0 and " + TransactionColumns.to_account_id + "=0");
 		
 		// report filtering (account, category, location or project)
 		accountsWhere.append(" and (");
@@ -239,7 +249,7 @@ public class ReportDataByPeriod {
 	}
 	
 	/**
-	 * Build the parameters of the where clause based on the following format:
+	 * Build the arguments of the where clause based on the following format:
 	 * <filteredColumn>=? and (datetime>=? and datetime<=?) and (from_account_id=? or from_account_id=? ...)
 	 * 
 	 * @param startDate The first month of the report period
@@ -247,29 +257,29 @@ public class ReportDataByPeriod {
 	 * @param filterId The id of the filtering column (account, category, location or project)
 	 * @param accounts The ids of accounts to be considered in this query
 	 * */
-	private String[] getWherePars(Calendar startDate, int periodLength, long[] filterId, int[] accounts) {
-		String[] pars = new String[filterId.length + 2 + accounts.length];
+	private String[] getWhereArgs(Calendar startDate, int periodLength, long[] filterId, int[] accounts) {
+		String[] args = new String[filterId.length + 2 + accounts.length];
 
 		// The id of the filtered column
 		int i=0;
 		for (i=0; i<filterId.length ;i++)
-			pars[i] = Long.toString(filterId[i]);
+			args[i] = Long.toString(filterId[i]);
 		
 		// The first month of the period in time millis
-		pars[i] = String.valueOf(startDate.getTimeInMillis());
+		args[i] = String.valueOf(startDate.getTimeInMillis());
 		
 		// The last month of the period in time millis
 		i++;
 		Calendar endDate = new GregorianCalendar(startDate.get(Calendar.YEAR), startDate.get(Calendar.MONTH), 1, 0, 0, 0);
 		endDate.add(Calendar.MONTH, periodLength);
-		pars[i] = String.valueOf(endDate.getTimeInMillis());
+		args[i] = String.valueOf(endDate.getTimeInMillis());
 		
 		// Account ids to be considered in this query due the report reference currency
 		for (int j=0; j<accounts.length; j++) {
-			pars[j+i+1] = Long.toString(accounts[j]);
+			args[j+i+1] = Long.toString(accounts[j]);
 		}
 		
-		return pars;
+		return args;
 	}
 
 	/**
@@ -315,7 +325,7 @@ public class ReportDataByPeriod {
  					stepMonth = true;
 					break;
 				}
- 				result += c.getDouble(c.getColumnIndex(TransactionColumns.from_amount.name()));
+ 				result += c.getDouble(RESULT_AMOUNT_COLUMN);
 			} while(c.moveToNext());
 			
 			// If step month, get back to transaction of the new month in cursor.
@@ -380,7 +390,7 @@ public class ReportDataByPeriod {
 	 */
 	private Calendar getMonthInTransaction(Cursor c) {
 		Calendar month = new GregorianCalendar();
-		month.setTimeInMillis(c.getLong(c.getColumnIndex(TransactionColumns.datetime.name())));
+		month.setTimeInMillis(c.getLong(RESULT_DATETIME_COLUMN));
 		month.set(month.get(Calendar.YEAR), month.get(Calendar.MONTH), 1, 0, 0, 0);
 		month.set(Calendar.MILLISECOND, 0);
 		return month;

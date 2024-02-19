@@ -6,8 +6,10 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.view.View.OnClickListener;
+import android.widget.ArrayAdapter;
 import android.widget.ImageButton;
 import android.widget.TextView;
 
@@ -38,6 +40,7 @@ import tw.tib.financisto.view.Report2DChartView;
  * @author Abdsandryk
  */
 public class Report2DChartActivity extends Activity {
+    private static final String TAG = "Report2DChartActivity";
 
     // activity result identifier to get results back
     public static final int REPORT_PREFERENCES = 1;
@@ -156,7 +159,10 @@ public class Report2DChartActivity extends Activity {
         TextView reportFilterName = findViewById(R.id.report_filter_name);
         reportFilterName.setOnClickListener((v) -> {
             new AlertDialog.Builder(this)
-                    .setSingleChoiceItems(reportData.getFilterItemTitles().toArray(new String[0]),
+                    .setSingleChoiceItems(new ArrayAdapter<>(this,
+                                    android.R.layout.simple_list_item_activated_1,
+                                    android.R.id.text1,
+                                    reportData.getFilterItemTitles()),
                             reportData.getSelectedFilter(),
                             (dialog, which) -> {
                                 dialog.cancel();
