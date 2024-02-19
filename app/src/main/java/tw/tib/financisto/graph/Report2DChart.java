@@ -39,9 +39,7 @@ public abstract class Report2DChart {
 	
 	protected Calendar startPeriod;
 	protected int periodLength;
-	private String[] periodStrings;
-	private int[] periods;
-	
+
 	protected ReportDataByPeriod data;
 	protected List<Report2DPoint> points;
 	protected int selectedPoint;
@@ -138,14 +136,7 @@ public abstract class Report2DChart {
 		this.startPeriod = startPeriod;
 		this.periodLength = periodLength;
 		this.currency = currency;
-		
-		periods = new int[598];
-    	periodStrings = new String[598];
 
-    	for (int i=3; i<=600; i++) {
-    		periods[i-3] = i;
-    	}
-		
 		// classes shall implement to determine query filters
 		createFilter();
 
@@ -393,26 +384,7 @@ public abstract class Report2DChart {
 			return false;
 		}
 	}
-	
-	/**
-	 * The array of strings representing the periods.
-	 * @param context The activity context.
-	 * @return The array of strings representing the periods.
-	 */
-	public String[] getPeriodStrings(Context context) {
-    	for (int i=3; i<=24; i++) {
-    		periodStrings[i-3] = getPeriodString(context, i);
-    	}
-		return periodStrings;
-	}
-	
-	/**
-	 * @return The array of period options.
-	 */
-	public int[] getPeriodOptions() {
-		return periods;
-	}
-	
+
 	/**
 	 * Get the string that represents the periods.
 	 * @param context The activity context.

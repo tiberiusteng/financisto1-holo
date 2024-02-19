@@ -49,6 +49,7 @@ public class Report2DChartActivity extends Activity {
     private Report2DChart reportData;
     private DatabaseAdapter db;
 
+    private int[] periods;
     private int selectedPeriod;
     private Currency currency;
     private Calendar startPeriod;
@@ -81,7 +82,21 @@ public class Report2DChartActivity extends Activity {
         if (intent != null) {
             reportType = ReportType.valueOf(intent.getStringExtra(Report2DChart.REPORT_TYPE));
         }
+
+        String[] r = getResources().getStringArray(R.array.report_reference_period_values);
+        periods = new int[r.length];
+        for (int i=0; i<r.length; ++i) {
+            periods[i] = Integer.parseInt(r[i]);
+        }
+
         init();
+    }
+
+    private int selectPeriodFromLength(int months) {
+        for (int i=0; i<periods.length; ++i) {
+            if (periods[i] == months) return i;
+        }
+        return 0;
     }
 
     /**
@@ -97,7 +112,7 @@ public class Report2DChartActivity extends Activity {
         currency = getReferenceCurrency();
         // Period of Reference
         int periodLength = getPeriodOfReference();
-        selectedPeriod = periodLength - 3;
+        selectedPeriod = selectPeriodFromLength(periodLength);
 
         // check report preferences for reference month different of current month
         setStartPeriod(periodLength);
@@ -248,19 +263,19 @@ public class Report2DChartActivity extends Activity {
     private void changePeriodLength(final int previousPeriod) {
         final Context context = this;
         new AlertDialog.Builder(this)
-                .setTitle(R.string.period)
+                .setTitle(R.string.report_reference_period)
                 .setPositiveButton(R.string.ok, new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
                         processPeriodLengthChange(previousPeriod, true);
                     }
                 })
-                .setSingleChoiceItems(reportData.getPeriodStrings(context), selectedPeriod, new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialog, int which) {
-                        selectedPeriod = which;
-                    }
-                })
+                .setSingleChoiceItems(
+                        new ArrayAdapter<>(this, android.R.layout.simple_list_item_activated_1,
+                                android.R.id.text1,
+                                getResources().getStringArray(R.array.report_reference_period_entities)),
+                        selectedPeriod,
+                        (dialog, which) -> selectedPeriod = which)
                 .show();
     }
 
@@ -272,8 +287,8 @@ public class Report2DChartActivity extends Activity {
      */
     private void processPeriodLengthChange(int previousPeriod, boolean refresh) {
         if (previousPeriod != selectedPeriod) {
-            reportData.changePeriodLength(reportData.getPeriodOptions()[selectedPeriod]);
-            setStartPeriod(reportData.getPeriodOptions()[selectedPeriod]);
+            reportData.changePeriodLength(periods[selectedPeriod]);
+            setStartPeriod(periods[selectedPeriod]);
             reportData.changeStartPeriod(startPeriod);
             if (refresh) refreshView();
         }
@@ -409,7 +424,7 @@ public class Report2DChartActivity extends Activity {
             boolean changed = preferencesChanged(initialPrefs, MyPreferences.getReportPreferences(this));
             if (changed) {
                 // rebuild data
-                reportData.rebuild(this, db, startPeriod, reportData.getPeriodOptions()[selectedPeriod], currency);
+                reportData.rebuild(this, db, startPeriod, periods[selectedPeriod], currency);
                 refreshView();
             }
         }
@@ -436,13 +451,13 @@ public class Report2DChartActivity extends Activity {
             // change period length to the one set in report preferences
             int refPeriodLength = getPeriodOfReference();
             int previousPeriod = selectedPeriod;
-            selectedPeriod = refPeriodLength - 3;
+            selectedPeriod = selectPeriodFromLength(refPeriodLength);
             processPeriodLengthChange(previousPeriod, false);
             changed = true;
         }
         // 2 reference month
         if (!initial[2].equals(actual[2])) {
-            setStartPeriod(reportData.getPeriodOptions()[selectedPeriod]);
+            setStartPeriod(periods[selectedPeriod]);
             changed = true;
         }
         // 3 consider nulls in statistics (affects statistics only > recalculate)
