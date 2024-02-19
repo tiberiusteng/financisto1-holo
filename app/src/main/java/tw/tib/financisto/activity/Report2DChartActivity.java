@@ -3,24 +3,39 @@ package tw.tib.financisto.activity;
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.Context;
-import android.content.DialogInterface;
 import android.content.Intent;
+import android.graphics.Color;
 import android.os.Bundle;
-import android.util.Log;
+import android.text.format.DateUtils;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.ArrayAdapter;
 import android.widget.ImageButton;
 import android.widget.TextView;
 
+import com.github.mikephil.charting.charts.LineChart;
+import com.github.mikephil.charting.components.XAxis;
+import com.github.mikephil.charting.components.YAxis;
+import com.github.mikephil.charting.data.Entry;
+import com.github.mikephil.charting.data.LineData;
+import com.github.mikephil.charting.data.LineDataSet;
+import com.github.mikephil.charting.formatter.ValueFormatter;
+import com.github.mikephil.charting.highlight.Highlight;
+import com.github.mikephil.charting.interfaces.datasets.ILineDataSet;
+import com.github.mikephil.charting.listener.OnChartValueSelectedListener;
+
+import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Collection;
 import java.util.GregorianCalendar;
+import java.util.List;
 
 import tw.tib.financisto.R;
 import tw.tib.financisto.db.DatabaseAdapter;
 import tw.tib.financisto.graph.Report2DChart;
+import tw.tib.financisto.graph.Report2DPoint;
 import tw.tib.financisto.model.Currency;
+import tw.tib.financisto.model.PeriodValue;
 import tw.tib.financisto.model.ReportDataByPeriod;
 import tw.tib.financisto.report.AccountByPeriodReport;
 import tw.tib.financisto.report.CategoryByPeriodReport;
@@ -32,14 +47,13 @@ import tw.tib.financisto.utils.CurrencyCache;
 import tw.tib.financisto.utils.MyPreferences;
 import tw.tib.financisto.utils.PinProtection;
 import tw.tib.financisto.utils.Utils;
-import tw.tib.financisto.view.Report2DChartView;
 
 /**
  * Activity to display 2D Reports.
  *
  * @author Abdsandryk
  */
-public class Report2DChartActivity extends Activity {
+public class Report2DChartActivity extends Activity implements OnChartValueSelectedListener {
     private static final String TAG = "Report2DChartActivity";
 
     // activity result identifier to get results back
@@ -54,6 +68,19 @@ public class Report2DChartActivity extends Activity {
     private Currency currency;
     private Calendar startPeriod;
     private ReportType reportType;
+
+    private LineChart chart;
+    private List<Entry> vals;
+    private LineDataSet ds;
+    private ArrayList<ILineDataSet> dss;
+
+    private TextView pointDate;
+    private TextView pointAmount;
+
+    private int positive;
+    private int negative;
+
+    public static final int meanColor = 0xFF206DED;
 
     // array of string report preferences to identify changes
     String[] initialPrefs;
@@ -136,6 +163,8 @@ public class Report2DChartActivity extends Activity {
                 break;
         }
 
+        initChart();
+
         if (reportData.hasFilter()) {
             refreshView();
             built = true;
@@ -208,6 +237,61 @@ public class Report2DChartActivity extends Activity {
         });
         findViewById(R.id.report_period).setFocusable(true);
 
+        pointDate = findViewById(R.id.point_date);
+        pointAmount = findViewById(R.id.point_amount);
+
+        positive = getResources().getColor(R.color.positive_amount);
+        negative = getResources().getColor(R.color.negative_amount);
+    }
+
+    private void initChart() {
+        chart = findViewById(R.id.report_2d_chart);
+
+        chart.setBackgroundColor(Color.parseColor("#ff111111"));
+        chart.setTouchEnabled(true);
+        chart.setOnChartValueSelectedListener(this);
+
+        chart.setDragEnabled(true);
+        chart.setScaleEnabled(true);
+        chart.setPinchZoom(true);
+
+        YAxis yAxis = chart.getAxisLeft();
+        yAxis.setTextColor(Color.WHITE);
+        yAxis.setTextSize(12f);
+        yAxis.setPosition(YAxis.YAxisLabelPosition.INSIDE_CHART);
+        yAxis.enableGridDashedLine(10.0f, 10.0f, 0.0f);
+
+        XAxis xAxis = chart.getXAxis();
+        xAxis.setValueFormatter(new ValueFormatter() {
+            @Override
+            public String getFormattedValue(float value) {
+                return DateUtils.formatDateTime(Report2DChartActivity.this, (long) value,
+                        DateUtils.FORMAT_ABBREV_MONTH | DateUtils.FORMAT_NO_MONTH_DAY);
+            }
+        });
+        xAxis.setTextColor(Color.WHITE);
+        xAxis.setTextSize(12f);
+        xAxis.setPosition(XAxis.XAxisPosition.BOTTOM);
+        xAxis.enableGridDashedLine(10.0f, 10.0f, 0.0f);
+
+        chart.getAxisRight().setEnabled(false);
+
+        chart.getLegend().setEnabled(false);
+
+        vals = new ArrayList<>();
+
+        ds = new LineDataSet(vals, "");
+
+        ds.setColor(Color.YELLOW);
+        ds.setCircleColor(Color.YELLOW);
+        ds.setLineWidth(1f);
+        ds.setCircleRadius(2f);
+        ds.setDrawValues(false);
+
+        dss = new ArrayList<>();
+        dss.add(ds);
+
+        chart.setData(new LineData(dss));
     }
 
     /**
@@ -264,18 +348,16 @@ public class Report2DChartActivity extends Activity {
         final Context context = this;
         new AlertDialog.Builder(this)
                 .setTitle(R.string.report_reference_period)
-                .setPositiveButton(R.string.ok, new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialog, int which) {
-                        processPeriodLengthChange(previousPeriod, true);
-                    }
-                })
                 .setSingleChoiceItems(
                         new ArrayAdapter<>(this, android.R.layout.simple_list_item_activated_1,
                                 android.R.id.text1,
                                 getResources().getStringArray(R.array.report_reference_period_entities)),
                         selectedPeriod,
-                        (dialog, which) -> selectedPeriod = which)
+                        (dialog, which) -> {
+                            dialog.cancel();
+                            selectedPeriod = which;
+                            processPeriodLengthChange(previousPeriod, true);
+                        })
                 .show();
     }
 
@@ -301,17 +383,20 @@ public class Report2DChartActivity extends Activity {
         // set data to plot
         if (reportData.hasDataToPlot()) {
             findViewById(R.id.report_empty).setVisibility(View.GONE);
-            Report2DChartView view = ((Report2DChartView) findViewById(R.id.report_2d_chart));
-            view.setDataToPlot(reportData.getPoints(),
-                    reportData.getDataBuilder().getMaxValue(),
-                    reportData.getDataBuilder().getMinValue(),
-                    reportData.getDataBuilder().getAbsoluteMaxValue(),
-                    reportData.getDataBuilder().getAbsoluteMinValue(),
-                    reportData.getDataBuilder().getMeanExcludingNulls());
-            ((Report2DChartView) findViewById(R.id.report_2d_chart)).setCurrency(currency);
-            findViewById(R.id.report_2d_chart).setVisibility(View.VISIBLE);
-            // set labels
-            view.refresh();
+
+            chart.setVisibility(View.VISIBLE);
+
+            vals.clear();
+            for (Report2DPoint p : reportData.getPoints()) {
+                PeriodValue v = p.getPointData();
+                vals.add(new Entry(v.getMonthTimeInMillis(), (float) v.getValue() / 100.0f));
+            }
+
+            ds.notifyDataSetChanged();
+            chart.getData().notifyDataChanged();
+            chart.notifyDataSetChanged();
+            chart.invalidate();
+
         } else {
             findViewById(R.id.report_empty).setVisibility(View.VISIBLE);
             findViewById(R.id.report_2d_chart).setVisibility(View.GONE);
@@ -369,7 +454,7 @@ public class Report2DChartActivity extends Activity {
         ((TextView) findViewById(R.id.report_min_result)).setText(Utils.amountToString(reportData.getCurrency(), min.longValue()));
         // sum and mean
         ((TextView) findViewById(R.id.report_mean_result)).setText(Utils.amountToString(reportData.getCurrency(), mean.longValue()));
-        ((TextView) findViewById(R.id.report_mean_result)).setTextColor(Report2DChartView.meanColor);
+        ((TextView) findViewById(R.id.report_mean_result)).setTextColor(meanColor);
         ((TextView) findViewById(R.id.report_sum_result)).setText(Utils.amountToString(reportData.getCurrency(), sum.longValue()));
     }
 
@@ -530,5 +615,18 @@ public class Report2DChartActivity extends Activity {
     protected void onResume() {
         super.onResume();
         PinProtection.unlock(this);
+    }
+
+    @Override
+    public void onValueSelected(Entry e, Highlight h) {
+        pointDate.setText(DateUtils.formatDateTime(this, (long) e.getX(), DateUtils.FORMAT_NO_MONTH_DAY));
+        pointAmount.setText(Utils.amountToString(currency, (long) e.getY() * 100));
+        pointAmount.setTextColor(e.getY() >= 0 ? positive : negative);
+    }
+
+    @Override
+    public void onNothingSelected() {
+        pointDate.setText("");
+        pointAmount.setText("");
     }
 }

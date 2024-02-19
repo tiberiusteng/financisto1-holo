@@ -126,6 +126,8 @@ dependencies {
     implementation files('libs/rfc2445-no-joda.jar')
     implementation files('libs/trove-3.0.2-long.jar')
 
+    implementation 'com.github.PhilJay:MPAndroidChart:3.1.0'
+
     implementation "org.greenrobot:eventbus:$eventbus_version"
     annotationProcessor "org.greenrobot:eventbus-annotation-processor:$eventbus_version"
 

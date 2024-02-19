@@ -19,7 +19,6 @@ import android.os.AsyncTask;
 import android.os.Bundle;
 import android.text.format.DateUtils;
 import android.view.View;
-import android.view.Window;
 import android.view.animation.AlphaAnimation;
 import android.view.animation.Animation;
 import android.view.animation.AnimationSet;
@@ -29,12 +28,11 @@ import android.widget.ImageButton;
 import android.widget.ListView;
 import android.widget.TextView;
 
-import org.achartengine.ChartFactory;
-import org.achartengine.model.CategorySeries;
-import org.achartengine.renderer.DefaultRenderer;
-import org.achartengine.renderer.SimpleSeriesRenderer;
+import com.github.mikephil.charting.data.PieEntry;
+import com.google.gson.Gson;
 
 import java.math.BigDecimal;
+import java.util.ArrayList;
 
 import tw.tib.financisto.R;
 import tw.tib.financisto.adapter.ReportAdapter;
@@ -330,43 +328,26 @@ public class ReportActivity extends ListActivity implements RefreshSupportedActi
         }
 
         private Intent createPieChart() {
-            DefaultRenderer renderer = new DefaultRenderer();
-            renderer.setLabelsTextSize(getResources().getDimension(R.dimen.report_labels_text_size));
-            renderer.setLegendTextSize(getResources().getDimension(R.dimen.report_legend_text_size));
-            renderer.setMargins(new int[] { 0, 0, 0, 0 });
             ReportData report = currentReport.getReportForChart(db, WhereFilter.copyOf(filter));
-            CategorySeries series = new CategorySeries("AAA");
-            long total = Math.abs(report.total.amount)+Math.abs(report.total.balance);
-            int[] colors = generateColors(2*report.units.size());
-            int i = 0;
+
+            ArrayList<PieEntry> entries = new ArrayList<>();
+
             for (GraphUnit unit : report.units) {
-                addSeries(series, renderer, unit.name, unit.getIncomeExpense().income, total, colors[i++]);
-                addSeries(series, renderer, unit.name, unit.getIncomeExpense().expense, total, colors[i++]);
+                BigDecimal v = unit.getIncomeExpense().income;
+                if (!v.equals(BigDecimal.ZERO)) {
+                    entries.add(new PieEntry(Math.abs(v.floatValue()), "+" + unit.name));
+                }
+                v = unit.getIncomeExpense().expense;
+                if (!v.equals(BigDecimal.ZERO)) {
+                    entries.add(new PieEntry(Math.abs(v.floatValue()), "-" + unit.name));
+                }
             }
-            renderer.setZoomButtonsVisible(true);
-            renderer.setZoomEnabled(true);
-            renderer.setChartTitleTextSize(20);
-            return ChartFactory.getPieChartIntent(ReportActivity.this, series, renderer, getString(R.string.report));
+
+            Intent intent = new Intent(ReportActivity.this, ReportPieChartActivity.class);
+            intent.putExtra(ReportPieChartActivity.PIE_CHART_DATA, new Gson().toJson(entries));
+            return intent;
         }
 
-        public int[] generateColors(int n) {
-            int[] colors = new int[n];
-            for (int i = 0; i < n; i++) {
-                colors[i] = Color.HSVToColor(new float[]{360*(float)i/(float)n, .75f, .85f});
-            }
-            return colors;
-        }
-
-        private void addSeries(CategorySeries series, DefaultRenderer renderer, String name, BigDecimal expense, long total, int color) {
-            long amount = expense.longValue();
-            if (amount != 0 && total != 0) {
-                long percentage = 100*Math.abs(amount)/total;
-                series.add((amount > 0 ? "+" : "-") + name + "(" + percentage + "%)", percentage);
-                SimpleSeriesRenderer r = new SimpleSeriesRenderer();
-                r.setColor(color);
-                renderer.addSeriesRenderer(r);
-            }
-        }
 
         @Override
         protected void onPostExecute(Intent intent) {

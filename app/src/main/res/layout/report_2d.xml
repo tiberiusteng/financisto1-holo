@@ -54,10 +54,28 @@
         android:textColor="#FFF"
         android:textStyle="bold" />
 
-    <tw.tib.financisto.view.Report2DChartView
-        android:id="@+id/report_2d_chart"
+    <TableLayout
         android:layout_width="fill_parent"
-        android:layout_height="wrap_content"
+        android:layout_height="wrap_content">
+        <TableRow>
+            <TextView
+                android:id="@+id/point_date"
+                android:layout_width="wrap_content"
+                android:layout_weight="5"
+                android:gravity="center" />
+
+            <TextView
+                android:id="@+id/point_amount"
+                android:layout_width="wrap_content"
+                android:layout_weight="5"
+                android:gravity="center" />
+        </TableRow>
+    </TableLayout>
+
+    <com.github.mikephil.charting.charts.LineChart
+        android:id="@+id/report_2d_chart"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
         android:layout_weight="1"
         android:background="#111111"
         android:visibility="gone" />
