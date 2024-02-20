@@ -677,7 +677,13 @@ public class MyPreferences {
 
 	private static ExchangeRateProviderFactory getExchangeRateProviderFactory(SharedPreferences sharedPreferences) {
 		String provider = sharedPreferences.getString("exchange_rate_provider", ExchangeRateProviderFactory.freeCurrency.name());
-		return ExchangeRateProviderFactory.valueOf(provider);
+		ExchangeRateProviderFactory r;
+		try {
+			r = ExchangeRateProviderFactory.valueOf(provider);
+		} catch (IllegalArgumentException e) {
+			return ExchangeRateProviderFactory.freeCurrency;
+		}
+		return r;
 	}
 
 	public static boolean isOpenExchangeRatesProviderSelected(Context context) {
