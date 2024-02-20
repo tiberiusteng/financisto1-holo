@@ -17,7 +17,7 @@ SELECT
 	p._id as project_id,
 	p.title as project,
 	loc._id as location_id,
-	loc.name as location,
+	loc.title as location,
 	pp._id as payee_id,
 	pp.title as payee,
 	t.note as note,

@@ -101,7 +101,7 @@ public class QifImport extends FullDatabaseImport {
 
     private void insertPayees(Set<String> payees) {
         for (String payee : payees) {
-            Payee p = dbAdapter.findOrInsertPayee(payee);
+            Payee p = dbAdapter.findOrInsertEntityByTitle(Payee.class, payee);
             payeeToId.put(payee, p.getId());
         }
     }

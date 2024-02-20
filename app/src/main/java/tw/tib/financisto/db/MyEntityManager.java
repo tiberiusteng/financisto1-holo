@@ -535,18 +535,32 @@ public abstract class MyEntityManager extends EntityManager {
 		return getAllEntitiesList(Category.class, includeNoCategory, false);
 	}
 
-	public Payee findOrInsertPayee(String payee) {
-		if (Utils.isEmpty(payee)) {
-			return Payee.EMPTY;
+	public <T extends MyEntity> T findOrInsertEntityByTitle(Class<T> entityClass, String title) {
+		if (Utils.isEmpty(title)) {
+			return newEntity(entityClass);
 		} else {
-			Payee p = getPayee(payee);
-			if (p == null) {
-				p = new Payee();
-				p.title = payee;
-				p.id = saveOrUpdate(p);
+			T e = findEntityByTitle(entityClass, title);
+			if (e == null) {
+				e = newEntity(entityClass);
+				e.title = title;
+				e.id = saveOrUpdate(e);
 			}
-			return p;
+			return e;
 		}
+	}
+
+	private <T extends MyEntity> T newEntity(Class<T> entityClass) {
+		try {
+			return entityClass.newInstance();
+		} catch (ReflectiveOperationException e) {
+			throw new IllegalArgumentException(e);
+		}
+	}
+
+	public <T extends MyEntity> T findEntityByTitle(Class<T> entityClass, String title) {
+		Query<T> q = createQuery(entityClass);
+		q.where(Expressions.eq("title", title));
+		return q.uniqueResult();
 	}
 
 	public Payee getPayee(String payee) {

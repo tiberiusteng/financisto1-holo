@@ -113,6 +113,8 @@ public abstract class AbstractTransactionActivity extends AbstractActivity imple
 	protected boolean isRememberLastCategory;
 	protected boolean isRememberLastLocation;
 	protected boolean isRememberLastProject;
+	protected boolean isShowLocation;
+	protected boolean isShowProject;
 	protected boolean isShowNote;
 	protected boolean isShowTakePicture = false;
 	protected boolean isShowIsCCardPayment;
@@ -155,6 +157,8 @@ public abstract class AbstractTransactionActivity extends AbstractActivity imple
 		isRememberLastCategory = isRememberLastAccount && MyPreferences.isRememberCategory(this);
 		isRememberLastLocation = isRememberLastCategory && MyPreferences.isRememberLocation(this);
 		isRememberLastProject = isRememberLastCategory && MyPreferences.isRememberProject(this);
+		isShowLocation = MyPreferences.isShowLocation(this);
+		isShowProject = MyPreferences.isShowProject(this);
 		isShowNote = MyPreferences.isShowNote(this);
 		//isShowTakePicture = MyPreferences.isShowTakePicture(this);
 		isShowIsCCardPayment = MyPreferences.isShowIsCCardPayment(this);
@@ -675,6 +679,19 @@ public abstract class AbstractTransactionActivity extends AbstractActivity imple
 	private void setIsCCardPayment(int isCCardPaymentValue) {
 		transaction.isCCardPayment = isCCardPaymentValue;
 		ccardPayment.setChecked(isCCardPaymentValue == 1);
+	}
+
+	protected boolean checkSelectedEntities() {
+		if (isShowPayee) {
+			payeeSelector.autoCreateNewEntityFromSearch();
+		}
+		if (isShowLocation) {
+			locationSelector.autoCreateNewEntityFromSearch();
+		}
+		if (isShowProject) {
+			projectSelector.autoCreateNewEntityFromSearch();
+		}
+		return true;
 	}
 
 	protected void updateTransactionFromUI(Transaction transaction) {

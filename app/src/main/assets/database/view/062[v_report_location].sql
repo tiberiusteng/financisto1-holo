@@ -1,7 +1,7 @@
 create view v_report_location AS 
 select 
 	   l._id as _id,
-       l.name as name,    
+       l.title as name,
        t.datetime as datetime,
        t.from_account_currency_id as from_account_currency_id,
        t.from_amount as from_amount,

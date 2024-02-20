@@ -171,10 +171,10 @@ public class TransactionInfoDialog {
         }
 
         MyLocation location = ti.location;
-        String locationName;
+        String locationTitle;
         if (location != null && location.id > 0) {
-            locationName = location.name + (location.resolvedAddress != null ? " (" + location.resolvedAddress + ")" : "");
-            add(layout, R.string.location, locationName);
+            locationTitle = location.title + (location.resolvedAddress != null ? " (" + location.resolvedAddress + ")" : "");
+            add(layout, R.string.location, locationTitle);
         }
     }
 

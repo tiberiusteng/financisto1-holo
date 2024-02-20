@@ -41,7 +41,7 @@ public class LocationListAdapter  extends ResourceCursorAdapter {
 	public void bindView(View view, Context context, Cursor cursor) {
 		GenericViewHolder v = (GenericViewHolder)view.getTag();
 		MyLocation loc = EntityManager.loadFromCursor(cursor, MyLocation.class);
-		v.lineView.setText(loc.name);
+		v.lineView.setText(loc.title);
 		if (loc.resolvedAddress != null) {
 			v.labelView.setText(loc.resolvedAddress);
 		} else {

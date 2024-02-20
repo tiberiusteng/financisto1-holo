@@ -141,7 +141,7 @@ public class SmsTransactionProcessor {
         TransactionStatus status) {
         Transaction res = null;
         long accountId = findAccount(accountDigits, smsTemplate.accountId);
-        Payee payee = db.getPayee(payeeText);
+        Payee payee = db.findEntityByTitle(Payee.class, payeeText);
         if (price.compareTo(ZERO) > 0 && accountId > 0) {
             res = new Transaction();
             res.isTemplate = 0;

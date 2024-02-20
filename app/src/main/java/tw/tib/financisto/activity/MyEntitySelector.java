@@ -200,7 +200,7 @@ public abstract class MyEntitySelector<T extends MyEntity, A extends AbstractAct
         } else if (id == createEntityId) {
             new AlertDialog.Builder(activity)
                     .setMessage(activity.getString(R.string.confirm_create_entity, autoCompleteFilter.getText()))
-                    .setPositiveButton(R.string.yes, (arg0, arg1) -> createNewEntityFromSearch())
+                    .setPositiveButton(R.string.yes, (arg0, arg1) -> manualCreateNewEntityFromSearch())
                     .setNegativeButton(R.string.no, null)
                     .show();
         } else if (id == clearBtnId) {
@@ -341,22 +341,25 @@ public abstract class MyEntitySelector<T extends MyEntity, A extends AbstractAct
         }
     }
 
-    private void createNewEntityFromSearch() {
-        try {
-            T entity = entityClass.newInstance();
-            entity.title = autoCompleteFilter.getText().toString();
+    private void manualCreateNewEntityFromSearch() {
+        String title = autoCompleteFilter.getText().toString();
+        T e = em.findOrInsertEntityByTitle(entityClass, title);
 
-            DatabaseAdapter db = new DatabaseAdapter(activity);
-            long id = db.saveOrUpdate(entity);
+        View hideSearch = (View) autoCompleteFilter.getTag();
+        hideSearch.performClick();
 
-            View hideSearch = (View) autoCompleteFilter.getTag();
-            hideSearch.performClick();
+        fetchEntities();
+        selectEntity(e);
+    }
 
-            fetchEntities();
-            selectEntity(id);
-
-        } catch (Exception e) {
-            throw new RuntimeException(e);
+    protected void autoCreateNewEntityFromSearch() {
+        if (autoCompleteFilter != null
+                && autoCompleteFilter.getVisibility() == View.VISIBLE
+                && selectedEntityId == 0)
+        {
+            String title = autoCompleteFilter.getText().toString();
+            T e = em.findOrInsertEntityByTitle(entityClass, title);
+            selectEntity(e);
         }
     }
 

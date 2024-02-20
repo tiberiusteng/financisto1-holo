@@ -18,9 +18,4 @@ public class LocationActivity extends MyEntityActivity<MyLocation> {
         super(MyLocation.class);
     }
 
-    @Override
-    protected void updateEntity(MyLocation entity) {
-        entity.name = entity.title;
-    }
-
 }

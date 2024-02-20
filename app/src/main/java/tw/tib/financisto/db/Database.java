@@ -14,6 +14,6 @@ public interface Database {
 
 	String DATABASE_NAME = "financisto.db";
 
-	int DATABASE_VERSION = 224;
+	int DATABASE_VERSION = 226;
 
 }

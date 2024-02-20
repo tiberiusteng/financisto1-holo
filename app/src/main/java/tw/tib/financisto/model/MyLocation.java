@@ -26,13 +26,10 @@ public class MyLocation extends MyEntity implements SortableEntity {
 	public static MyLocation currentLocation() {
 		MyLocation location = new MyLocation();
 		location.id = CURRENT_LOCATION_ID;
-		location.name = "<CURRENT_LOCATION>";
+		location.title = "<CURRENT_LOCATION>";
 		location.provider = location.resolvedAddress = "?";
 		return location;
 	}
-
-	@Column(name = "name")
-	public String name;
 
 	@Column(name = "provider")
 	public String provider;
@@ -45,9 +42,6 @@ public class MyLocation extends MyEntity implements SortableEntity {
 
 	@Column(name = "latitude")
 	public double latitude;
-
-	@Column(name = "is_payee")
-	public boolean isPayee;
 
 	@Column(name = "resolved_address")
 	public String resolvedAddress;

@@ -108,8 +108,11 @@ public class TransferActivity extends AbstractTransactionActivity {
 			Toast.makeText(this, R.string.select_to_account_differ_from_to_account, Toast.LENGTH_SHORT).show();
 			return false;
 		}
-		updateTransferFromUI();
-		return true;
+		if (checkSelectedEntities()) {
+			updateTransferFromUI();
+			return true;
+		}
+		return false;
 	}
 
 	private void updateTransferFromUI() {
