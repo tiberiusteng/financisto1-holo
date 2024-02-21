@@ -99,8 +99,7 @@ public class ScheduleTxWorker extends Worker {
 
         var builder = new NotificationCompat.Builder(context, NotificationChannelService.TRANSACTIONS_CHANNEL)
                 .setContentIntent(contentIntent)
-                .setSmallIcon(t.getNotificationIcon())
-                .setLargeIcon(BitmapFactory.decodeResource(context.getResources(), R.drawable.icon))
+                .setSmallIcon(R.mipmap.a_icon_notify)
                 .setWhen(System.currentTimeMillis())
                 .setTicker(tickerText)
                 .setContentText(text)

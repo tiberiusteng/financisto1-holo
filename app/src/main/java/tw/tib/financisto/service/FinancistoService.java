@@ -138,7 +138,7 @@ public class FinancistoService extends JobIntentService {
 
         return new NotificationCompat.Builder(this, NotificationChannelService.TRANSACTIONS_CHANNEL)
                 .setContentIntent(contentIntent)
-                .setSmallIcon(R.drawable.notification_icon_transaction)
+                .setSmallIcon(R.mipmap.a_icon_notify)
                 .setWhen(when)
                 .setTicker(text)
                 .setContentText(text)
@@ -163,8 +163,7 @@ public class FinancistoService extends JobIntentService {
 
         var builder = new NotificationCompat.Builder(this, NotificationChannelService.TRANSACTIONS_CHANNEL)
                 .setContentIntent(contentIntent)
-                .setSmallIcon(t.getNotificationIcon())
-                .setLargeIcon(BitmapFactory.decodeResource(getResources(), R.drawable.icon))
+                .setSmallIcon(R.mipmap.a_icon_notify)
                 .setWhen(System.currentTimeMillis())
                 .setTicker(tickerText)
                 .setContentText(text)
