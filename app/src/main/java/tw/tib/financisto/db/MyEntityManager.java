@@ -129,8 +129,8 @@ public abstract class MyEntityManager extends EntityManager {
 		} else {
 			q.desc(sortOrder.property);
 		}
-		if (sortOrder != MyPreferences.LocationsSortOrder.NAME) {
-			q.asc(MyPreferences.LocationsSortOrder.NAME.property);
+		if (sortOrder != MyPreferences.LocationsSortOrder.TITLE) {
+			q.asc(MyPreferences.LocationsSortOrder.TITLE.property);
 		}
 		return q.execute();
 	}
