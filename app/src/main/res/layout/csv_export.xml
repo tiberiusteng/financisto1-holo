@@ -35,11 +35,14 @@
                 </TableRow>
                 <TableRow>
                     <Spinner android:id="@+id/spinnerDecimals"
-                             android:entries="@array/decimals"/>
+                        android:theme="@style/Monospaced"
+                        android:entries="@array/decimals"/>
                     <Spinner android:id="@+id/spinnerDecimalSeparators"
-                             android:entries="@array/decimal_separators"/>
+                        android:theme="@style/Monospaced"
+                        android:entries="@array/decimal_separators"/>
                     <Spinner android:id="@+id/spinnerGroupSeparators"
-                             android:entries="@array/group_separators"/>
+                        android:theme="@style/Monospaced"
+                        android:entries="@array/group_separators"/>
                 </TableRow>
                 <include layout="@layout/list_divider"/>
                 <TableRow>
@@ -52,7 +55,8 @@
                 </TableRow>
                 <TableRow>
                     <Spinner android:id="@+id/spinnerFieldSeparator"
-                             android:entries="@array/field_separators"/>
+                        android:theme="@style/Monospaced"
+                        android:entries="@array/field_separators"/>
                     <CheckBox android:id="@+id/checkboxIncludeHeader" android:checked="true"/>
                     <CheckBox android:id="@+id/checkboxUploadToDropbox" android:checked="false"/>
                 </TableRow>
