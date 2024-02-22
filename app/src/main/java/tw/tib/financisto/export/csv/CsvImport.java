@@ -231,9 +231,7 @@ public class CsvImport {
                                     }
                                 }
                             } catch (IllegalArgumentException e) {
-                                throw new Exception("IllegalArgumentException");
-                            } catch (ParseException e) {
-                                throw new Exception("ParseException", e);
+                                throw e;
                             }
                         }
                     }

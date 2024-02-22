@@ -125,7 +125,9 @@ public abstract class ImportExportAsyncTask extends AsyncTask<Uri, String, Objec
             }
 
             if (exception.cause != null) {
-                sb.append(" : ").append(exception.cause);
+                StackTraceElement stack[] = exception.getStackTrace();
+                sb.append(" : ").append(exception.cause).append("\n").append(
+                        " (" + stack[0].getFileName() + ":" + stack[0].getLineNumber() + ")");
             }
             new AlertDialog.Builder(context)
                     .setTitle(R.string.fail)

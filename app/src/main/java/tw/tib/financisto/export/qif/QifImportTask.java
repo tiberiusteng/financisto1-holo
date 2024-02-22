@@ -41,7 +41,7 @@ public class QifImportTask extends ImportExportAsyncTask {
             return null;
         } catch (Exception e) {
             Log.e("Financisto", "Qif import error", e);
-            throw new ImportExportException(R.string.qif_import_error);
+            throw new ImportExportException(R.string.qif_import_error, e);
         }
     }
 

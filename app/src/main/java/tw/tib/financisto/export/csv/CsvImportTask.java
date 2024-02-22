@@ -51,7 +51,7 @@ public class CsvImportTask extends ImportExportAsyncTask {
                 throw e;
             String message = e.getMessage();
             if (message == null)
-                throw new ImportExportException(R.string.csv_import_error);
+                throw new ImportExportException(R.string.csv_import_error, e);
             else if (message.equals("Import file not found"))
                 throw new ImportExportException(R.string.import_file_not_found);
             else if (message.equals("Unknown category in import line"))
@@ -67,7 +67,7 @@ public class CsvImportTask extends ImportExportAsyncTask {
             else if (e instanceof SecurityException)
                 throw new ImportExportException(R.string.file_import_permission);
             else
-                throw new ImportExportException(R.string.csv_import_error);
+                throw new ImportExportException(R.string.csv_import_error, e);
         }
 
     }
