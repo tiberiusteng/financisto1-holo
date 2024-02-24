@@ -2,6 +2,7 @@ package tw.tib.financisto.service;
 
 import android.util.Log;
 import tw.tib.financisto.db.DatabaseAdapter;
+import tw.tib.financisto.model.Account;
 import tw.tib.financisto.model.Payee;
 import tw.tib.financisto.model.SmsTemplate;
 import tw.tib.financisto.model.Transaction;
@@ -43,6 +44,8 @@ public class SmsTransactionProcessor {
                 Log.d(TAG, format("Found template \"%s\" with matches \"%s\"", template, Arrays.toString(match)));
 
                 String account = match[ACCOUNT.ordinal()];
+                String account_name = match[ACCOUNT_NAME.ordinal()];
+                String transfer_to_account_name = match[TRANSFER_TO_ACCOUNT_NAME.ordinal()];
                 String parsedPrice = match[PRICE.ordinal()];
                 String text = match[TEXT.ordinal()];
                 String greedy_text = match[GREEDY_TEXT.ordinal()];
@@ -65,7 +68,8 @@ public class SmsTransactionProcessor {
                 }
                 try {
                     BigDecimal price = toBigDecimal(parsedPrice);
-                    return createNewTransaction(template, price, account, payeeText, note, status);
+                    return createNewTransaction(template, price, account, account_name,
+                            transfer_to_account_name, payeeText, note, status);
                 } catch (Exception e) {
                     Log.e(TAG, format("Failed to parse price value: \"%s\"", parsedPrice), e);
                 }
@@ -136,11 +140,26 @@ public class SmsTransactionProcessor {
 
     private Transaction createNewTransaction(SmsTemplate smsTemplate, BigDecimal price,
         String accountDigits,
+        String accountName,
+        String transferToAccountName,
         String payeeText,
         String note,
         TransactionStatus status) {
         Transaction res = null;
-        long accountId = findAccount(accountDigits, smsTemplate.accountId);
+        long accountId = 0;
+        long transferToAccountId = 0;
+        if (accountName != null) {
+            accountId = db.getEntityIdByTitle(Account.class, accountName);
+        }
+        if (accountId == 0) {
+            accountId = findAccount(accountDigits, smsTemplate.accountId);
+        }
+        if (transferToAccountName != null) {
+            transferToAccountId = db.getEntityIdByTitle(Account.class, transferToAccountName);
+        }
+        if (transferToAccountId == 0 && smsTemplate.toAccountId != -1) {
+            transferToAccountId = smsTemplate.toAccountId;
+        }
         Payee payee = db.findEntityByTitle(Payee.class, payeeText);
         if (price.compareTo(ZERO) > 0 && accountId > 0) {
             res = new Transaction();
@@ -151,8 +170,8 @@ public class SmsTransactionProcessor {
                 res.categoryId = payee.lastCategoryId;
             }
             res.fromAmount = (smsTemplate.isIncome ? 1 : -1) * Math.abs(price.multiply(HUNDRED).longValue());
-            if (smsTemplate.toAccountId != -1) {
-                res.toAccountId = smsTemplate.toAccountId;
+            if (transferToAccountId != 0) {
+                res.toAccountId = transferToAccountId;
                 res.toAmount = (smsTemplate.isIncome ? -1 : 1) * Math.abs(price.multiply(HUNDRED).longValue());
             }
             res.note = note;
@@ -282,11 +301,13 @@ public class SmsTransactionProcessor {
         ANY("<::>", ".*?", "{{*}}"),
         ACCOUNT("<:A:>", "\\s{0,3}(\\d{4})\\s{0,3}", "{{a}}"),
         BALANCE("<:B:>", "\\s{0,3}([\\d\\.,\\-\\+\\']+(?:[\\d \\.,]+?)*)\\s{0,3}", "{{b}}"),
+        ACCOUNT_NAME("<:C:>", "(\\w+?)", "{{c}}"),
         DATE("<:D:>", "\\s{0,3}(\\d[\\d\\. /:-]{12,14}\\d)\\s*?", "{{d}}"),
         PAYEE("<:E:>", "(\\w+?)", "{{e}}"),
         PRICE("<:P:>", BALANCE.regexp, "{{p}}"),
         TEXT("<:T:>", "(.*?)", "{{t}}"),
-        GREEDY_TEXT("<:U:>", "(.*)", "{{u}}");
+        GREEDY_TEXT("<:U:>", "(.*)", "{{u}}"),
+        TRANSFER_TO_ACCOUNT_NAME("<:X:>", "(\\w+?)", "{{x}}");
 
         public String code;
         public String regexp;

@@ -10,6 +10,7 @@
  ******************************************************************************/
 package tw.tib.financisto.db;
 
+import android.annotation.SuppressLint;
 import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
@@ -562,6 +563,20 @@ public abstract class MyEntityManager extends EntityManager {
 		Query<T> q = createQuery(entityClass);
 		q.where(Expressions.eq("title", title));
 		return q.uniqueResult();
+	}
+
+	@SuppressLint("Range")
+	public <T extends MyEntity> long getEntityIdByTitle(Class<T> entityClass, String title) {
+		Query<T> q = createQuery(entityClass);
+		q.where(Expressions.eq("title", title));
+		try (Cursor c = q.execute()) {
+			if (c.moveToFirst()) {
+				return c.getLong(c.getColumnIndex("e__id"));
+			}
+			else {
+				return 0;
+			}
+		}
 	}
 
 	public Payee getPayee(String payee) {
