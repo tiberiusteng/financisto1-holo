@@ -59,8 +59,6 @@ public class TransferActivity extends AbstractTransactionActivity {
 	protected void createListNodes(LinearLayout layout) {
 		accountFromText = x.addListNode(layout, R.id.account_from, R.string.account_from, R.string.select_account);
 		accountToText = x.addListNode(layout, R.id.account_to, R.string.account_to, R.string.select_account);
-		// amounts
-		rateView.createTransferUI();
 		// payee
 		isShowPayee = MyPreferences.isShowPayeeInTransfers(this);
 		if (isShowPayee) {
@@ -72,6 +70,8 @@ public class TransferActivity extends AbstractTransactionActivity {
 		} else {
 			categorySelector.createDummyNode();
 		}
+		// amounts
+		rateView.createTransferUI();
 	}
 
 	@Override
