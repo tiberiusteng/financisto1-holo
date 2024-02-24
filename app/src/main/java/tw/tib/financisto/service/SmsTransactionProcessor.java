@@ -160,7 +160,7 @@ public class SmsTransactionProcessor {
         if (transferToAccountId == 0 && smsTemplate.toAccountId != -1) {
             transferToAccountId = smsTemplate.toAccountId;
         }
-        Payee payee = db.findEntityByTitle(Payee.class, payeeText);
+        Payee payee = db.findOrInsertEntityByTitle(Payee.class, payeeText);
         if (price.compareTo(ZERO) > 0 && accountId > 0) {
             res = new Transaction();
             res.isTemplate = 0;
