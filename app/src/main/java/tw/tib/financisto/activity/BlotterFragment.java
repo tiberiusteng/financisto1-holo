@@ -130,28 +130,21 @@ public class BlotterFragment extends AbstractListFragment implements BlotterOper
         this.saveFilter = saveFilter;
     }
 
-    protected void calculateTotals() {
+    protected void calculateTotals(WhereFilter filter) {
         if (calculationTask != null) {
             calculationTask.stop();
             calculationTask.cancel(true);
         }
-        calculationTask = createTotalCalculationTask();
+        calculationTask = createTotalCalculationTask(filter);
         calculationTask.execute();
     }
 
-    protected TotalCalculationTask createTotalCalculationTask() {
-        WhereFilter filter = WhereFilter.copyOf(blotterFilter);
+    protected TotalCalculationTask createTotalCalculationTask(WhereFilter filter) {
         if (filter.getAccountId() > 0) {
             return new AccountTotalCalculationTask(getContext(), db, filter, totalText);
         } else {
             return new BlotterTotalCalculationTask(getContext(), db, filter, totalText);
         }
-    }
-
-    @Override
-    public void recreateCursor() {
-        super.recreateCursor();
-        calculateTotals();
     }
 
     @Override
@@ -371,7 +364,6 @@ public class BlotterFragment extends AbstractListFragment implements BlotterOper
         }
 
         applyFilter();
-        calculateTotals();
         prepareTransactionActionGrid();
         prepareAddButtonActionGrid();
 
@@ -682,6 +674,7 @@ public class BlotterFragment extends AbstractListFragment implements BlotterOper
         new Handler(Looper.getMainLooper()).post(()-> {
             emptyText.setVisibility(View.GONE);
             progressBar.setVisibility(View.VISIBLE);
+            calculateTotals(blotterFilterCopy);
         });
 
         long t1 = System.nanoTime();

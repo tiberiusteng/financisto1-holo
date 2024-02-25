@@ -12,6 +12,8 @@ package tw.tib.financisto.activity;
 
 import android.database.Cursor;
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.Looper;
 import android.view.View;
 import android.widget.ListAdapter;
 
@@ -22,6 +24,7 @@ import androidx.core.os.BuildCompat;
 import tw.tib.financisto.adapter.TransactionsListAdapter;
 import tw.tib.financisto.blotter.BlotterTotalCalculationTask;
 import tw.tib.financisto.blotter.TotalCalculationTask;
+import tw.tib.financisto.filter.WhereFilter;
 
 public class SplitsBlotterFragment extends BlotterFragment {
 
@@ -33,6 +36,9 @@ public class SplitsBlotterFragment extends BlotterFragment {
 
     @Override
     protected Cursor createCursor() {
+        new Handler(Looper.getMainLooper()).post(()-> {
+            calculateTotals(blotterFilter);
+        });
         return db.getBlotterForAccountWithSplits(blotterFilter);
     }
 
@@ -42,8 +48,8 @@ public class SplitsBlotterFragment extends BlotterFragment {
     }
 
     @Override
-    protected TotalCalculationTask createTotalCalculationTask() {
-        return new BlotterTotalCalculationTask(getContext(), db, blotterFilter, totalText);
+    protected TotalCalculationTask createTotalCalculationTask(WhereFilter filter) {
+        return new BlotterTotalCalculationTask(getContext(), db, filter, totalText);
     }
 
 }

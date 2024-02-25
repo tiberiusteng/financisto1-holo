@@ -13,6 +13,8 @@ package tw.tib.financisto.activity;
 import android.annotation.SuppressLint;
 import android.database.Cursor;
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.Looper;
 import android.util.Log;
 import android.view.View;
 import android.widget.ListAdapter;
@@ -25,6 +27,7 @@ import java.util.Map;
 
 import tw.tib.financisto.adapter.TransactionsListAdapter;
 import tw.tib.financisto.blotter.TotalCalculationTask;
+import tw.tib.financisto.filter.WhereFilter;
 import tw.tib.financisto.model.Budget;
 import tw.tib.financisto.model.Category;
 import tw.tib.financisto.model.MyEntity;
@@ -53,6 +56,7 @@ public class BudgetBlotterFragment extends BlotterFragment {
     @Override
     protected Cursor createCursor() {
         long budgetId = blotterFilter.getBudgetId();
+        new Handler(Looper.getMainLooper()).post(()-> calculateTotals(blotterFilter));
         return getBlotterForBudget(budgetId);
     }
 
@@ -69,7 +73,7 @@ public class BudgetBlotterFragment extends BlotterFragment {
 
     @Override
     @SuppressLint("StaticFieldLeak")
-    protected TotalCalculationTask createTotalCalculationTask() {
+    protected TotalCalculationTask createTotalCalculationTask(WhereFilter filter) {
         return new TotalCalculationTask(getContext(), db, totalText) {
 
             @Override
@@ -77,7 +81,7 @@ public class BudgetBlotterFragment extends BlotterFragment {
                 long t0 = System.currentTimeMillis();
                 try {
                     try {
-                        long budgetId = blotterFilter.getBudgetId();
+                        long budgetId = filter.getBudgetId();
                         Budget b = db.load(Budget.class, budgetId);
                         Total total = new Total(b.getBudgetCurrency());
                         total.balance = db.fetchBudgetBalance(categories, projects, b);

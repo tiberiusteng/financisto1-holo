@@ -37,7 +37,7 @@ public class TemplatesListFragment extends BlotterFragment {
     }
 
     @Override
-    protected void calculateTotals() {
+    protected void calculateTotals(WhereFilter filter) {
         // do nothing
     }
 
