@@ -13,6 +13,7 @@ import android.os.Handler;
 import android.os.Looper;
 import android.text.Editable;
 import android.text.TextWatcher;
+import android.text.format.DateUtils;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -53,6 +54,7 @@ import tw.tib.financisto.blotter.BlotterTotalCalculationTask;
 import tw.tib.financisto.blotter.TotalCalculationTask;
 import tw.tib.financisto.dialog.TransactionInfoDialog;
 import tw.tib.financisto.filter.Criteria;
+import tw.tib.financisto.filter.DateTimeCriteria;
 import tw.tib.financisto.filter.WhereFilter;
 import tw.tib.financisto.db.DatabaseAdapter;
 import tw.tib.financisto.model.Account;
@@ -84,6 +86,7 @@ public class BlotterFragment extends AbstractListFragment implements BlotterOper
 
     protected TextView totalText;
     protected TextView emptyText;
+    protected TextView period;
     protected ProgressBar progressBar;
 
     protected ImageButton bFilter;
@@ -215,6 +218,7 @@ public class BlotterFragment extends AbstractListFragment implements BlotterOper
         }
 
         emptyText = view.findViewById(android.R.id.empty);
+        period = view.findViewById(R.id.period);
         progressBar = view.findViewById(android.R.id.progress);
 
         Bundle args = getArguments();
@@ -815,6 +819,16 @@ public class BlotterFragment extends AbstractListFragment implements BlotterOper
                 actionBar.setTitle(title);
                 actionBar.setSubtitle(R.string.blotter);
             }
+        }
+        DateTimeCriteria c = blotterFilter.getDateTime();
+        if (c != null) {
+            period.setVisibility(View.VISIBLE);
+            period.setText(DateUtils.formatDateRange(getContext(), c.getLongValue1(), c.getLongValue2(),
+                    DateUtils.FORMAT_SHOW_DATE | DateUtils.FORMAT_SHOW_TIME | DateUtils.FORMAT_ABBREV_MONTH));
+        }
+        else {
+            period.setText(R.string.no_filter);
+            period.setVisibility(View.GONE);
         }
         updateFilterImage();
     }
