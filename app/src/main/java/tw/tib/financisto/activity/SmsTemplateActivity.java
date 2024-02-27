@@ -270,7 +270,11 @@ public class SmsTemplateActivity extends AbstractActivity {
                     else if (p == SmsTransactionProcessor.Placeholder.PRICE) {
                         // price will be converted to big decimal
                         // show converted result instead of raw input
-                        sb.append(SmsTransactionProcessor.toBigDecimal(matches[p.ordinal()]));
+                        try {
+                            sb.append(SmsTransactionProcessor.toBigDecimal(matches[p.ordinal()]));
+                        } catch (Exception e) {
+                            sb.append(getString(R.string.tpl_failed_to_parse, matches[p.ordinal()]));
+                        }
                     }
                     else {
                         sb.append(matches[p.ordinal()]);

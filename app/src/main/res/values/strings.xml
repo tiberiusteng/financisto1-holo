@@ -1006,6 +1006,7 @@
     <string name="tpl_not_transfer">Not transfer</string>
     <string name="tpl_parse_result">Example notification process result</string>
     <string name="tpl_parse_not_found">(Not found)</string>
+    <string name="tpl_failed_to_parse">(Failed to parse \'%s\' as decimal)</string>
     <string name="pref_tpl">Notification Template</string>
     <string name="pref_tpl_transaction_status_title">Transaction Status</string>
     <string name="pref_tpl_transaction_status">Status of transaction created from template: %s</string>

@@ -786,6 +786,7 @@
   <string name="tpl_not_transfer">不轉帳</string>
   <string name="tpl_parse_result">範例處理結果</string>
   <string name="tpl_parse_not_found">(未找到)</string>
+  <string name="tpl_failed_to_parse">(無法將 \'%s\' 解讀成數字)</string>
   <string name="pref_tpl">通知模板</string>
   <string name="pref_tpl_transaction_status_title">交易狀態</string>
   <string name="pref_tpl_transaction_status">從模板自動產生的交易狀態: %s</string>
