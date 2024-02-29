@@ -81,6 +81,9 @@ public class ScheduledListAdapter extends BaseAdapter {
 
 	@Override
 	public int getCount() {
+		if (transactions == null) {
+			return 0;
+		}
 		return transactions.size();
 	}
 
