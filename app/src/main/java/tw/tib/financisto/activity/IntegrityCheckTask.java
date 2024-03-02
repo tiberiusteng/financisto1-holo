@@ -66,7 +66,11 @@ public class IntegrityCheckTask extends AsyncTask<IntegrityCheck, Void, Integrit
     }
 
     private TextView getResultView() {
-        return fragment.getView().findViewById(R.id.integrity_error);
+        View v = fragment.getView();
+        if (v == null) {
+            return null;
+        }
+        return v.findViewById(R.id.integrity_error);
     }
 
 }
