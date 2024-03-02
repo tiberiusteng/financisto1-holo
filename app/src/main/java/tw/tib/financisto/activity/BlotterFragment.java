@@ -39,6 +39,7 @@ import androidx.core.view.MenuProvider;
 import androidx.lifecycle.Lifecycle;
 import androidx.loader.content.Loader;
 
+import java.util.Calendar;
 import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -105,6 +106,7 @@ public class BlotterFragment extends AbstractListFragment implements BlotterOper
 
     protected static final long BEFORE_INITIAL_LOAD = -1;
     protected long lastTxId = BEFORE_INITIAL_LOAD;
+    protected long lastDay = BEFORE_INITIAL_LOAD;
 
     protected boolean isAccountBlotter = false;
     protected boolean showAllBlotterButtons = true;
@@ -673,6 +675,7 @@ public class BlotterFragment extends AbstractListFragment implements BlotterOper
     @Override
     protected Cursor createCursor() {
         Cursor c;
+        blotterFilter.recalculatePeriod();
         WhereFilter blotterFilterCopy = WhereFilter.copyOf(blotterFilter);
 
         new Handler(Looper.getMainLooper()).post(()-> {
@@ -687,6 +690,7 @@ public class BlotterFragment extends AbstractListFragment implements BlotterOper
             db.open();
         }
         this.lastTxId = db.getLastTransactionId();
+        this.lastDay = Calendar.getInstance().get(Calendar.DAY_OF_YEAR);
         long t2 = System.nanoTime();
         Log.d(TAG, "getLastTransactionId() = " + lastTxId + ", " + String.format("%,d", (t2 - t1)) + " ns");
         long accountId = blotterFilterCopy.getAccountId();
@@ -715,7 +719,23 @@ public class BlotterFragment extends AbstractListFragment implements BlotterOper
         }
         progressBar.setVisibility(View.GONE);
         Log.d(TAG, "createAdapter: " + (System.currentTimeMillis() - t1) + " ms");
+
+        updatePeriodDisplay();
+
         return a;
+    }
+
+    protected void updatePeriodDisplay() {
+        DateTimeCriteria c = blotterFilter.getDateTime();
+        if (c != null) {
+            period.setVisibility(View.VISIBLE);
+            period.setText(DateUtils.formatDateRange(getContext(), c.getLongValue1(), c.getLongValue2(),
+                    DateUtils.FORMAT_SHOW_DATE | DateUtils.FORMAT_SHOW_TIME | DateUtils.FORMAT_ABBREV_MONTH));
+        }
+        else {
+            period.setText(R.string.no_filter);
+            period.setVisibility(View.GONE);
+        }
     }
 
     @Override
@@ -820,16 +840,6 @@ public class BlotterFragment extends AbstractListFragment implements BlotterOper
                 actionBar.setSubtitle(R.string.blotter);
             }
         }
-        DateTimeCriteria c = blotterFilter.getDateTime();
-        if (c != null) {
-            period.setVisibility(View.VISIBLE);
-            period.setText(DateUtils.formatDateRange(getContext(), c.getLongValue1(), c.getLongValue2(),
-                    DateUtils.FORMAT_SHOW_DATE | DateUtils.FORMAT_SHOW_TIME | DateUtils.FORMAT_ABBREV_MONTH));
-        }
-        else {
-            period.setText(R.string.no_filter);
-            period.setVisibility(View.GONE);
-        }
         updateFilterImage();
     }
 
@@ -881,8 +891,10 @@ public class BlotterFragment extends AbstractListFragment implements BlotterOper
             long t1 = System.nanoTime();
             long currentLastTxId = db.getLastTransactionId();
             Log.d(TAG, "getLastTransactionId() = " + lastTxId + ", " + String.format("%,d", System.nanoTime() - t1) + " ns");
-            if (currentLastTxId != lastTxId) {
-                Log.d(TAG, "lastTxId " + lastTxId + " != " + currentLastTxId + ", recreating cursor");
+            long currentDay = Calendar.getInstance().get(Calendar.DAY_OF_YEAR);
+            if (currentLastTxId != lastTxId || currentDay != lastDay) {
+                Log.d(TAG, "lastTxId " + lastTxId + " != " + currentLastTxId +
+                        " || lastDay " + lastDay + " != " + currentDay + ", recreating cursor");
                 recreateCursor();
             }
         }

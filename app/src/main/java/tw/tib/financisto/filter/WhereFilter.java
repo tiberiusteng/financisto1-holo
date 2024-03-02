@@ -390,6 +390,16 @@ public class WhereFilter {
 		remove(BlotterFilter.DATETIME);
 	}
 
+	public void recalculatePeriod() {
+		DateTimeCriteria c = getDateTime();
+		if (c != null) {
+			PeriodType t = c.getPeriod().type;
+			if (t != PeriodType.CUSTOM) {
+				put(new DateTimeCriteria(t));
+			}
+		}
+	}
+
 	public static DateTimeCriteria dateTimeFromIntent(Intent data) {
 		String periodType = data.getStringExtra(DateFilterActivity.EXTRA_FILTER_PERIOD_TYPE);
 		PeriodType p = PeriodType.valueOf(periodType);
