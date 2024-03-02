@@ -70,6 +70,7 @@ public abstract class FilterAbstractActivity extends AbstractActivity implements
 	protected void initProjectSelector(LinearLayout layout) {
 		projectSelector = new ProjectSelector<>(this, db, x, 0, R.id.project_clear, R.string.no_filter);
 		projectSelector.setFetchAllEntities(true);
+		projectSelector.setEnableCreate(false);
 		projectSelector.initMultiSelect();
 		project = projectSelector.createNode(layout);
 	}
@@ -121,6 +122,7 @@ public abstract class FilterAbstractActivity extends AbstractActivity implements
 				projectSelector.onClick(id);
 				break;
 			case R.id.project_filter_toggle:
+			case R.id.project_show_list:
 				projectSelector.onClick(id);
 				break;
 
