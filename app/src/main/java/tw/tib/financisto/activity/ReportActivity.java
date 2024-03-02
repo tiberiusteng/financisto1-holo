@@ -101,6 +101,7 @@ public class ReportActivity extends ListActivity implements RefreshSupportedActi
         if (intent != null) {
             currentReport = ReportsListFragment.createReport(this, db, intent.getExtras());
             filter = WhereFilter.fromIntent(intent);
+            filter.recalculatePeriod();
             if (intent.hasExtra(FILTER_INCOME_EXPENSE)) {
                 incomeExpenseState = IncomeExpense.valueOf(intent.getStringExtra(FILTER_INCOME_EXPENSE));
             }
@@ -202,6 +203,7 @@ public class ReportActivity extends ListActivity implements RefreshSupportedActi
             enableFilter();
             tv.setVisibility(View.GONE);
         } else {
+            filter.recalculatePeriod();
             Criteria c = filter.get(ReportColumns.DATETIME);
             if (c != null) {
                 tv.setText(DateUtils.formatDateRange(this, c.getLongValue1(), c.getLongValue2(),
