@@ -129,10 +129,14 @@ public class PinActivity extends AppCompatActivity implements PinView.PinListene
         TextView status = findViewById(R.id.fingerprint_status);
         ImageView icon = findViewById(R.id.fingerprint_icon);
         int color = getResources().getColor(colorResId);
-        status.setText(messageResId);
-        status.setTextColor(color);
-        icon.setImageResource(iconResId);
-        icon.setColorFilter(color);
+        if (status != null) {
+            status.setText(messageResId);
+            status.setTextColor(color);
+        }
+        if (icon != null) {
+            icon.setImageResource(iconResId);
+            icon.setColorFilter(color);
+        }
     }
 
     @Override
