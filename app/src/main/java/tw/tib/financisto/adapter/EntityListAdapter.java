@@ -38,6 +38,9 @@ public class EntityListAdapter<T extends MyEntity> extends BaseAdapter {
 
 	@Override
 	public int getCount() {
+		if (entities == null) {
+			return 0;
+		}
 		return entities.size();
 	}
 
