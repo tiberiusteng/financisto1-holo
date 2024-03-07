@@ -11,6 +11,7 @@
 package tw.tib.financisto.activity;
 
 import android.app.Activity;
+import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
@@ -22,6 +23,7 @@ import tw.tib.financisto.datetime.Period;
 import tw.tib.financisto.datetime.PeriodType;
 import tw.tib.financisto.filter.WhereFilter;
 import tw.tib.financisto.filter.DateTimeCriteria;
+import tw.tib.financisto.utils.MyPreferences;
 import tw.tib.financisto.utils.PinProtection;
 
 import java.text.DateFormat;
@@ -39,7 +41,12 @@ public abstract class AbstractExportActivity extends Activity {
         this.layoutId = layoutId;
     }
 
-    @Override
+	@Override
+	protected void attachBaseContext(Context base) {
+		super.attachBaseContext(MyPreferences.switchLocale(base));
+	}
+
+	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(layoutId);
