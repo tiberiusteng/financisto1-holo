@@ -125,9 +125,10 @@ public abstract class ImportExportAsyncTask extends AsyncTask<Uri, String, Objec
             }
 
             if (exception.cause != null) {
-                StackTraceElement stack[] = exception.getStackTrace();
-                sb.append(" : ").append(exception.cause).append("\n").append(
-                        " (" + stack[0].getFileName() + ":" + stack[0].getLineNumber() + ")");
+                StackTraceElement[] stack = exception.getStackTrace();
+                sb.append(" : ").append(exception.cause).append("\n (")
+                        .append(stack[0].getFileName()).append(":")
+                        .append(stack[0].getLineNumber()).append(")");
             }
             new AlertDialog.Builder(context)
                     .setTitle(R.string.fail)
@@ -136,13 +137,12 @@ public abstract class ImportExportAsyncTask extends AsyncTask<Uri, String, Objec
                     .show();
             return;
         }
-
-        if (result instanceof UserRecoverableAuthIOException) {
+        else if (result instanceof UserRecoverableAuthIOException) {
             context.startActivity(((UserRecoverableAuthIOException)result).getIntent());
         }
-
-        if (result instanceof Exception)
-            return;
+        else if (result instanceof Exception) {
+            throw new RuntimeException((Exception) result);
+        }
 
         String message = getSuccessMessage(result);
 
