@@ -298,13 +298,17 @@ public abstract class MyEntityManager extends EntityManager {
 	}
 
 	public List<Account> getAllAccountsList() {
-		return getAllAccountsListWithFilter(null);
+		return getAllAccountsListWithFilter(null, true);
 	}
 
-	public List<Account> getAllAccountsListWithFilter(String filter) {
+	public List<Account> getAllAccountsListWithClosed() {
+		return getAllAccountsListWithFilter(null, false);
+	}
+
+	public List<Account> getAllAccountsListWithFilter(String filter, boolean canHideClosed) {
 		List<Account> list = new ArrayList<>();
 		Cursor c;
-		if (MyPreferences.isHideClosedAccounts(context)) {
+		if (canHideClosed && MyPreferences.isHideClosedAccounts(context)) {
 			c = getAllActiveAccountsWithFilter(filter);
 		} else {
 			c = getAllAccountsWithFilter(filter);
@@ -320,7 +324,7 @@ public abstract class MyEntityManager extends EntityManager {
 
 	public Map<Long, Account> getAllAccountsMap() {
 		Map<Long, Account> accountsMap = new HashMap<>();
-		List<Account> list = getAllAccountsList();
+		List<Account> list = getAllAccountsListWithClosed();
 		for (Account account : list) {
 			accountsMap.put(account.id, account);
 		}

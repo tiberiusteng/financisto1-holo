@@ -1732,7 +1732,7 @@ public class DatabaseAdapter extends MyEntityManager {
      * Calculates total in every currency for all accounts
      */
     public Total[] getAccountsTotalWithFilter(String filter) {
-        List<Account> accounts = getAllAccountsListWithFilter(filter);
+        List<Account> accounts = getAllAccountsListWithFilter(filter, true);
         Map<tw.tib.financisto.model.Currency, Total> totalsMap = new HashMap<tw.tib.financisto.model.Currency, Total>();
         for (Account account : accounts) {
             if (account.shouldIncludeIntoTotals()) {
@@ -1754,7 +1754,7 @@ public class DatabaseAdapter extends MyEntityManager {
      */
     public Total getAccountsTotal(Currency homeCurrency, String filter) {
         ExchangeRateProvider rates = getLatestRates();
-        List<Account> accounts = getAllAccountsListWithFilter(filter);
+        List<Account> accounts = getAllAccountsListWithFilter(filter, true);
         BigDecimal total = BigDecimal.ZERO;
         for (Account account : accounts) {
             if (account.shouldIncludeIntoTotals()) {
