@@ -6,7 +6,6 @@ import static android.app.Activity.RESULT_OK;
 import android.app.AlertDialog;
 import android.content.Intent;
 import android.content.SharedPreferences;
-import android.database.Cursor;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Handler;
@@ -30,13 +29,12 @@ import tw.tib.financisto.filter.Criteria;
 import tw.tib.financisto.filter.DateTimeCriteria;
 import tw.tib.financisto.filter.WhereFilter;
 import tw.tib.financisto.db.BudgetsTotalCalculator;
-import tw.tib.financisto.db.DatabaseAdapter;
 import tw.tib.financisto.model.Budget;
 import tw.tib.financisto.model.Total;
 import tw.tib.financisto.utils.RecurUtils;
 import tw.tib.financisto.utils.Utils;
 
-public class BudgetListFragment extends AbstractListFragment {
+public class BudgetListFragment extends AbstractListFragment<ArrayList<Budget>> {
     private static final int NEW_BUDGET_REQUEST = 1;
     private static final int EDIT_BUDGET_REQUEST = 2;
     private static final int VIEW_BUDGET_REQUEST = 3;
@@ -50,7 +48,6 @@ public class BudgetListFragment extends AbstractListFragment {
         super(R.layout.budget_list);
     }
 
-    private ArrayList<Budget> budgets;
     private Handler handler;
 
     @Override
@@ -118,26 +115,26 @@ public class BudgetListFragment extends AbstractListFragment {
     }
 
     @Override
-    protected ListAdapter createAdapter(Cursor cursor) {
-        calculateTotals();
+    protected ListAdapter createAdapter(ArrayList<Budget> budgets) {
+        calculateTotals(budgets);
         return new BudgetListAdapter(getContext(), budgets);
     }
 
     @Override
-    protected Cursor createCursor() {
-        budgets = db.getAllBudgets(filter);
-        return null;
+    protected ArrayList<Budget> createCursor() {
+        filter.recalculatePeriod();
+        return db.getAllBudgets(filter);
     }
 
     private BudgetListFragment.BudgetTotalsCalculationTask totalCalculationTask;
 
-    private void calculateTotals() {
+    private void calculateTotals(ArrayList<Budget> budgets) {
         if (totalCalculationTask != null) {
             totalCalculationTask.stop();
             totalCalculationTask.cancel(true);
         }
         TextView totalText = getView().findViewById(R.id.total);
-        totalCalculationTask = new BudgetListFragment.BudgetTotalsCalculationTask(totalText);
+        totalCalculationTask = new BudgetListFragment.BudgetTotalsCalculationTask(totalText, budgets);
         totalCalculationTask.execute((Void[]) null);
     }
 
@@ -203,8 +200,10 @@ public class BudgetListFragment extends AbstractListFragment {
         private volatile boolean isRunning = true;
 
         private final TextView totalText;
+        private ArrayList<Budget> budgets;
 
-        public BudgetTotalsCalculationTask(TextView totalText) {
+        public BudgetTotalsCalculationTask(TextView totalText, ArrayList<Budget> budgets) {
+            this.budgets = budgets;
             this.totalText = totalText;
         }
 

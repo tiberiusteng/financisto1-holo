@@ -4,7 +4,6 @@ import static android.app.Activity.RESULT_OK;
 
 import android.annotation.SuppressLint;
 import android.content.Intent;
-import android.database.Cursor;
 import android.os.Bundle;
 import android.os.Parcelable;
 import android.util.Log;
@@ -21,7 +20,7 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.ListFragment;
 import androidx.loader.app.LoaderManager;
-import androidx.loader.content.CursorLoader;
+import androidx.loader.content.AsyncTaskLoader;
 import androidx.loader.content.Loader;
 
 import java.util.LinkedList;
@@ -32,8 +31,8 @@ import tw.tib.financisto.db.DatabaseAdapter;
 import tw.tib.financisto.utils.MenuItemInfo;
 import tw.tib.financisto.utils.PinProtection;
 
-abstract public class AbstractListFragment extends ListFragment
-        implements RefreshSupportedActivity, LoaderManager.LoaderCallbacks<Cursor>
+abstract public class AbstractListFragment<D> extends ListFragment
+        implements RefreshSupportedActivity, LoaderManager.LoaderCallbacks<D>
 {
     protected static final int MENU_VIEW = Menu.FIRST + 1;
     protected static final int MENU_EDIT = Menu.FIRST + 2;
@@ -66,9 +65,9 @@ abstract public class AbstractListFragment extends ListFragment
         return view;
     }
 
-    protected abstract Cursor createCursor();
+    protected abstract D createCursor();
 
-    protected abstract ListAdapter createAdapter(Cursor cursor);
+    protected abstract ListAdapter createAdapter(D cursor);
 
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
@@ -182,17 +181,38 @@ abstract public class AbstractListFragment extends ListFragment
 
     @SuppressLint("StaticFieldLeak")
     @Override
-    public Loader<Cursor> onCreateLoader(int id, @Nullable Bundle args) {
-        return new CursorLoader(getContext()) {
+    public Loader<D> onCreateLoader(int id, @Nullable Bundle args) {
+        return new AsyncTaskLoader<D>(getContext()) {
+            D data;
+
             @Override
-            public Cursor loadInBackground() {
+            protected void onStartLoading() {
+                if (data != null) {
+                    deliverResult(data);
+                }
+                if (takeContentChanged() || data == null) {
+                    forceLoad();
+                }
+            }
+
+            @Override
+            public void deliverResult(D data) {
+                this.data = data;
+
+                if (isStarted()) {
+                    super.deliverResult(data);
+                }
+            }
+
+            @Override
+            public D loadInBackground() {
                 return createCursor();
             }
         };
     }
 
     @Override
-    public void onLoadFinished(@NonNull Loader<Cursor> loader, Cursor data) {
+    public void onLoadFinished(@NonNull Loader<D> loader, D data) {
         adapter = createAdapter(data);
         long t1 = System.nanoTime();
         Parcelable listViewState = getListView().onSaveInstanceState();
@@ -205,6 +225,6 @@ abstract public class AbstractListFragment extends ListFragment
     }
 
     @Override
-    public void onLoaderReset(@NonNull Loader<Cursor> loader) {
+    public void onLoaderReset(@NonNull Loader<D> loader) {
     }
 }

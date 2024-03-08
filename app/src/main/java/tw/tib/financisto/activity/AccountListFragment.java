@@ -50,7 +50,7 @@ import tw.tib.financisto.utils.MyPreferences;
 import tw.tib.financisto.utils.PinProtection;
 import tw.tib.financisto.view.NodeInflater;
 
-public class AccountListFragment extends AbstractListFragment {
+public class AccountListFragment extends AbstractListFragment<Cursor> {
     private static final String TAG = "AccountListFragment";
 
     private static final String FILTER_PERF = "filter";

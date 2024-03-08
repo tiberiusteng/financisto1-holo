@@ -68,7 +68,7 @@ import tw.tib.financisto.utils.MyPreferences;
 import tw.tib.financisto.utils.PinProtection;
 import tw.tib.financisto.view.NodeInflater;
 
-public class BlotterFragment extends AbstractListFragment implements BlotterOperations.BlotterOperationsCallback {
+public class BlotterFragment extends AbstractListFragment<Cursor> implements BlotterOperations.BlotterOperationsCallback {
     private static final String TAG = "BlotterFragment";
     public static final String SAVE_FILTER = "saveFilter";
     public static final String EXTRA_FILTER_ACCOUNTS = "filterAccounts";
