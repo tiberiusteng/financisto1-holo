@@ -121,7 +121,7 @@ public class BudgetListFragment extends AbstractListFragment<ArrayList<Budget>> 
     }
 
     @Override
-    protected ArrayList<Budget> createCursor() {
+    protected ArrayList<Budget> loadInBackground() {
         filter.recalculatePeriod();
         return db.getAllBudgets(filter);
     }

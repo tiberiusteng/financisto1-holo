@@ -32,7 +32,7 @@ import tw.tib.financisto.adapter.CategoryListAdapter2;
 import tw.tib.financisto.model.Category;
 import tw.tib.financisto.model.CategoryTree;
 
-public class CategoryListActivity2 extends AbstractListActivity {
+public class CategoryListActivity2 extends AbstractListActivity<Cursor> {
 
 	private static final int NEW_CATEGORY_REQUEST = 1;
 	private static final int EDIT_CATEGORY_REQUEST = 2;
@@ -47,8 +47,6 @@ public class CategoryListActivity2 extends AbstractListActivity {
 	@Override
 	protected void internalOnCreate(Bundle savedInstanceState) {
 		super.internalOnCreate(savedInstanceState);
-		categories = db.getCategoriesTree(false);
-		attributes = db.getAllAttributesMap();
 		ImageButton b = findViewById(R.id.bAttributes);
 		b.setOnClickListener(v -> {
 			Intent intent = new Intent(CategoryListActivity2.this, AttributeListActivity.class);
@@ -65,7 +63,7 @@ public class CategoryListActivity2 extends AbstractListActivity {
 	}
 
 	private void sortByTitle() {
-		if (categories.sortByTitle()) {
+		if (categories != null && categories.sortByTitle()) {
 			db.updateCategoryTree(categories);
 			recreateCursor();
 		}
@@ -90,24 +88,13 @@ public class CategoryListActivity2 extends AbstractListActivity {
 	}
 
 	@Override
-	protected Cursor createCursor() {
-		return null;
-	}
-
-	@Override
-	public void recreateCursor() {
+	protected Cursor loadInBackground() {
 		long t0 = System.currentTimeMillis();
 		categories = db.getCategoriesTree(false);
 		attributes = db.getAllAttributesMap();
-		updateAdapter();
 		long t1 = System.currentTimeMillis();
 		Log.d("CategoryListActivity2", "Requery in " + (t1 - t0) + "ms");
-	}
-
-	private void updateAdapter() {
-		((CategoryListAdapter2) adapter).setCategories(categories);
-		((CategoryListAdapter2) adapter).setAttributes(attributes);
-		notifyDataSetChanged();
+		return null;
 	}
 
 	@Override

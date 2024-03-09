@@ -54,7 +54,7 @@ public class BudgetBlotterFragment extends BlotterFragment {
     }
 
     @Override
-    protected Cursor createCursor() {
+    protected Cursor loadInBackground() {
         long budgetId = blotterFilter.getBudgetId();
         new Handler(Looper.getMainLooper()).post(()-> calculateTotals(blotterFilter));
         return getBlotterForBudget(budgetId);

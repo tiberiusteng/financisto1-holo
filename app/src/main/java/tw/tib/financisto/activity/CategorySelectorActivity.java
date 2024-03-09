@@ -22,7 +22,7 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 
-public class CategorySelectorActivity extends AbstractListActivity {
+public class CategorySelectorActivity extends AbstractListActivity<Cursor> {
 
     public static final String SELECTED_CATEGORY_ID = "SELECTED_CATEGORY_ID";
     public static final String EXCLUDED_SUB_TREE_ID = "EXCLUDED_SUB_TREE_ID";
@@ -47,34 +47,14 @@ public class CategorySelectorActivity extends AbstractListActivity {
         this.incomeColor = resources.getColor(R.color.category_type_income);
         this.expenseColor = resources.getColor(R.color.category_type_expense);
 
-        long excTreeId = -1;
-        if (getIntent() != null) {
-            excTreeId = getIntent().getLongExtra(EXCLUDED_SUB_TREE_ID, -1);
-        }
-        navigator = new CategoryTreeNavigator(db, excTreeId);
-        if (MyPreferences.isSeparateIncomeExpense(this)) {
-            navigator.separateIncomeAndExpense();
-        }
-        attributes = db.getAllAttributesMap();
-
         bBack = findViewById(R.id.bBack);
         bBack.setOnClickListener(view -> {
-            if (navigator.goBack()) {
-                recreateAdapter();
+            if (navigator != null && navigator.goBack()) {
+                setListAdapter(createAdapter(null));
             }
         });
         Button bSelect = findViewById(R.id.bSelect);
         bSelect.setOnClickListener(view -> confirmSelection());
-        
-        Intent intent = getIntent();
-        if (intent != null) {
-            boolean includeSplit = intent.getBooleanExtra(INCLUDE_SPLIT_CATEGORY, false);
-            if (includeSplit) {
-                navigator.addSplitCategoryToTheTop();
-            }
-            navigator.selectCategory(intent.getLongExtra(SELECTED_CATEGORY_ID, 0));
-        }
-        
     }
 
     private void confirmSelection() {
@@ -90,7 +70,27 @@ public class CategorySelectorActivity extends AbstractListActivity {
     }
 
     @Override
-    protected Cursor createCursor() {
+    protected Cursor loadInBackground() {
+        long excTreeId = -1;
+        Intent intent = getIntent();
+
+        if (intent != null) {
+            excTreeId = intent.getLongExtra(EXCLUDED_SUB_TREE_ID, -1);
+        }
+        navigator = new CategoryTreeNavigator(db, excTreeId);
+        if (MyPreferences.isSeparateIncomeExpense(this)) {
+            navigator.separateIncomeAndExpense();
+        }
+        attributes = db.getAllAttributesMap();
+
+        if (intent != null) {
+            boolean includeSplit = intent.getBooleanExtra(INCLUDE_SPLIT_CATEGORY, false);
+            if (includeSplit) {
+                navigator.addSplitCategoryToTheTop();
+            }
+            navigator.selectCategory(intent.getLongExtra(SELECTED_CATEGORY_ID, 0));
+        }
+
         return null;
     }
 
@@ -111,7 +111,7 @@ public class CategorySelectorActivity extends AbstractListActivity {
     @Override
     protected void viewItem(View v, int position, long id) {
         if (navigator.navigateTo(id)) {
-            recreateAdapter();
+            setListAdapter(createAdapter(null));
         } else {
             if (MyPreferences.isAutoSelectChildCategory(this)) {
                 confirmSelection();

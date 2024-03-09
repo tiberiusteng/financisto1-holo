@@ -49,7 +49,7 @@ public class ScheduledListFragment extends BlotterFragment {
     }
 
     @Override
-    protected Cursor createCursor() {
+    protected Cursor loadInBackground() {
         if (pendingReschedule == false) {
             transactions = scheduler.getSortedSchedules(System.currentTimeMillis());
         }

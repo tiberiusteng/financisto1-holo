@@ -35,7 +35,7 @@ public class SplitsBlotterFragment extends BlotterFragment {
     }
 
     @Override
-    protected Cursor createCursor() {
+    protected Cursor loadInBackground() {
         new Handler(Looper.getMainLooper()).post(()-> {
             calculateTotals(blotterFilter);
         });

@@ -14,17 +14,15 @@ import android.annotation.SuppressLint;
 import android.app.ListActivity;
 import android.app.LoaderManager;
 import android.content.Context;
-import android.content.CursorLoader;
+import android.content.AsyncTaskLoader;
 import android.content.Loader;
 import android.content.Intent;
-import android.database.Cursor;
 import android.os.Bundle;
 import android.os.Parcelable;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.View;
-import android.view.Window;
 import android.widget.ImageButton;
 import android.widget.ListAdapter;
 import android.widget.ListView;
@@ -41,8 +39,8 @@ import tw.tib.financisto.utils.MenuItemInfo;
 import tw.tib.financisto.utils.MyPreferences;
 import tw.tib.financisto.utils.PinProtection;
 
-public abstract class AbstractListActivity extends ListActivity
-		implements RefreshSupportedActivity, LoaderManager.LoaderCallbacks<Cursor>
+public abstract class AbstractListActivity<D> extends ListActivity
+		implements RefreshSupportedActivity, LoaderManager.LoaderCallbacks<D>
 {
 
 	protected static final int MENU_VIEW = Menu.FIRST + 1;
@@ -100,13 +98,9 @@ public abstract class AbstractListActivity extends ListActivity
 		});
 	}
 
-	protected void recreateAdapter() {
-		recreateCursor();
-	}
+	protected abstract D loadInBackground();
 
-	protected abstract Cursor createCursor();
-
-	protected abstract ListAdapter createAdapter(Cursor cursor);
+	protected abstract ListAdapter createAdapter(D cursor);
 
 	protected void internalOnCreate(Bundle savedInstanceState) {
 		bAdd = findViewById(R.id.bAdd);
@@ -196,17 +190,30 @@ public abstract class AbstractListActivity extends ListActivity
 
 	@SuppressLint("StaticFieldLeak")
 	@Override
-	public Loader<Cursor> onCreateLoader(int id, Bundle args) {
-		return new CursorLoader(this) {
+	public Loader<D> onCreateLoader(int id, Bundle args) {
+		return new AsyncTaskLoader<>(this) {
 			@Override
-			public Cursor loadInBackground() {
-				return createCursor();
+			protected void onStartLoading() {
+				forceLoad();
+			}
+
+			@Override
+			public void deliverResult(D data) {
+				if (isStarted()) {
+					super.deliverResult(data);
+				}
+			}
+
+			@Override
+			public D loadInBackground() {
+				return AbstractListActivity.this.loadInBackground();
 			}
 		};
 	}
 
 	@Override
-	public void onLoadFinished(@NonNull Loader<Cursor> loader, Cursor data) {
+	public void onLoadFinished(@NonNull Loader<D> loader, D data) {
+		// This will always be called from the process's main thread.
 		adapter = createAdapter(data);
 		long t1 = System.currentTimeMillis();
 		setListAdapter(adapter);
@@ -221,6 +228,6 @@ public abstract class AbstractListActivity extends ListActivity
 	}
 
 	@Override
-	public void onLoaderReset(@NonNull Loader<Cursor> loader) {
+	public void onLoaderReset(@NonNull Loader<D> loader) {
 	}
 }

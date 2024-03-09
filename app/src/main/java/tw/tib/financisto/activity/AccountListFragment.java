@@ -310,7 +310,7 @@ public class AccountListFragment extends AbstractListFragment<Cursor> {
     }
 
     @Override
-    protected Cursor createCursor() {
+    protected Cursor loadInBackground() {
         Cursor c;
 
         new Handler(Looper.getMainLooper()).post(()-> {

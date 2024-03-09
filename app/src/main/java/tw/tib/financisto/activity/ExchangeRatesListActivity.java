@@ -42,7 +42,7 @@ import tw.tib.financisto.utils.MyPreferences;
 
 import static tw.tib.financisto.utils.Utils.formatRateDate;
 
-public class ExchangeRatesListActivity extends AbstractListActivity {
+public class ExchangeRatesListActivity extends AbstractListActivity<List<ExchangeRate>> {
     private static final String TAG = "ExRateListActivity";
 
     private static final int ADD_RATE = 1;
@@ -53,7 +53,6 @@ public class ExchangeRatesListActivity extends AbstractListActivity {
     private Spinner fromCurrencySpinner;
     private Spinner toCurrencySpinner;
     private List<Currency> currencies;
-    private List<ExchangeRate> rates;
 
     private long lastSelectedCurrencyId;
 
@@ -173,17 +172,17 @@ public class ExchangeRatesListActivity extends AbstractListActivity {
     }
 
     @Override
-    protected Cursor createCursor() {
+    protected List<ExchangeRate> loadInBackground() {
         Currency fromCurrency = (Currency) fromCurrencySpinner.getSelectedItem();
         Currency toCurrency = (Currency) toCurrencySpinner.getSelectedItem();
         if (fromCurrency != null && toCurrency != null) {
-            this.rates = db.findRates(fromCurrency, toCurrency);
+            return db.findRates(fromCurrency, toCurrency);
         }
         return null;
     }
 
     @Override
-    protected ListAdapter createAdapter(Cursor cursor) {
+    protected ListAdapter createAdapter(List<ExchangeRate> rates) {
         if (rates != null) {
             return new ExchangeRateListAdapter(this, rates);
         }

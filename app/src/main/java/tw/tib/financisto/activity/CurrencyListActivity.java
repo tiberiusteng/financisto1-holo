@@ -25,7 +25,7 @@ import tw.tib.financisto.adapter.CurrencyListAdapter;
 import tw.tib.financisto.model.Currency;
 import tw.tib.financisto.utils.MenuItemInfo;
 
-public class CurrencyListActivity extends AbstractListActivity {
+public class CurrencyListActivity extends AbstractListActivity<Cursor> {
 
 	private static final int NEW_CURRENCY_REQUEST = 1;
 	private static final int EDIT_CURRENCY_REQUEST = 2;
@@ -95,7 +95,7 @@ public class CurrencyListActivity extends AbstractListActivity {
 	}
 
 	@Override
-	protected Cursor createCursor() {
+	protected Cursor loadInBackground() {
 		return db.getAllCurrencies("name");
 	}
 

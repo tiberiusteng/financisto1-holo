@@ -42,7 +42,7 @@ public class TemplatesListFragment extends BlotterFragment {
     }
 
     @Override
-    protected Cursor createCursor() {
+    protected Cursor loadInBackground() {
         String sortOrder = BlotterFilter.SORT_NEWER_TO_OLDER;
 
         switch (MyPreferences.getTemplatessSortOrder(getContext())) {

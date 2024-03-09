@@ -39,7 +39,7 @@ import java.util.Date;
  * User: denis.solonenko
  * Date: 10/20/12 2:22 PM
  */
-public class PlannerActivity extends AbstractListActivity {
+public class PlannerActivity extends AbstractListActivity<TransactionList> {
 
     private TextView totalText;
     private TextView filterText;
@@ -109,14 +109,17 @@ public class PlannerActivity extends AbstractListActivity {
     }
 
     @Override
-    protected Cursor createCursor() {
-        retrieveData();
-        return null;
+    protected TransactionList loadInBackground() {
+        FuturePlanner planner = new FuturePlanner(db, filter, new Date());
+        return planner.getPlannedTransactionsWithTotals();
     }
 
     @Override
-    protected ListAdapter createAdapter(Cursor cursor) {
-        return null;
+    protected ListAdapter createAdapter(TransactionList data) {
+        ScheduledListAdapter adapter = new ScheduledListAdapter(PlannerActivity.this, data.transactions);
+        setTotals(data.totals);
+        updateFilterText(filter);
+        return adapter;
     }
 
     @Override
@@ -138,42 +141,8 @@ public class PlannerActivity extends AbstractListActivity {
             DateTimeCriteria c = filter.getDateTime();
             applyDateTimeCriteria(c);
             saveFilter();
-            retrieveData();
+            recreateCursor();
         }
-    }
-
-    private PlannerTask task;
-
-    private void retrieveData() {
-        if (task != null) {
-            task.cancel(true);
-        }
-        task = new PlannerTask(filter);
-        task.execute();
-    }
-
-    private class PlannerTask extends AsyncTask<Void, Void, TransactionList> {
-
-        private final WhereFilter filter;
-
-        private PlannerTask(WhereFilter filter) {
-            this.filter = WhereFilter.copyOf(filter);
-        }
-
-        @Override
-        protected TransactionList doInBackground(Void... voids) {
-            FuturePlanner planner = new FuturePlanner(db, filter, new Date());
-            return planner.getPlannedTransactionsWithTotals();
-        }
-
-        @Override
-        protected void onPostExecute(TransactionList data) {
-            ScheduledListAdapter adapter = new ScheduledListAdapter(PlannerActivity.this, data.transactions);
-            setListAdapter(adapter);
-            setTotals(data.totals);
-            updateFilterText(filter);
-        }
-
     }
 
     private void updateFilterText(WhereFilter filter) {

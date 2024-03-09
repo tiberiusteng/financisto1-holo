@@ -28,7 +28,7 @@ import tw.tib.financisto.widget.SearchFilterTextWatcherListener;
 
 import java.util.List;
 
-public abstract class MyEntityListActivity<T extends MyEntity> extends AbstractListActivity {
+public abstract class MyEntityListActivity<T extends MyEntity> extends AbstractListActivity<List<T>> {
 
 	private static final int NEW_ENTITY_REQUEST = 1;
 	private static final int EDIT_ENTITY_REQUEST = 2;
@@ -38,7 +38,6 @@ public abstract class MyEntityListActivity<T extends MyEntity> extends AbstractL
 	private final Class<T> clazz;
 	private final int emptyResId;
 
-	private List<T> entities;
 	private EditText searchFilter;
 	protected volatile String titleFilter;
 
@@ -80,10 +79,6 @@ public abstract class MyEntityListActivity<T extends MyEntity> extends AbstractL
 		}
 	}
 
-	protected List<T> loadEntities() {
-		return db.getAllEntitiesList(clazz, false, false, titleFilter);
-	}
-
 	@Override
 	protected void addItem() {
 		Intent intent = new Intent(MyEntityListActivity.this, getEditActivityClass());
@@ -93,14 +88,13 @@ public abstract class MyEntityListActivity<T extends MyEntity> extends AbstractL
 	protected abstract Class<? extends MyEntityActivity> getEditActivityClass();
 
 	@Override
-	protected ListAdapter createAdapter(Cursor cursor) {
+	protected ListAdapter createAdapter(List<T> entities) {
 		return new EntityListAdapter<>(this, entities);
 	}
 
 	@Override
-	protected Cursor createCursor() {
-		entities = loadEntities();
-		return null;
+	protected List<T> loadInBackground() {
+		return db.getAllEntitiesList(clazz, false, false, titleFilter);
 	}
 
 	@Override

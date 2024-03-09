@@ -23,7 +23,7 @@ import android.content.Intent;
 import android.database.Cursor;
 import android.widget.ListAdapter;
 
-public class AttributeListActivity extends AbstractListActivity {
+public class AttributeListActivity extends AbstractListActivity<Cursor> {
 
 	public AttributeListActivity() {
 		super(R.layout.attributes_list);
@@ -53,7 +53,7 @@ public class AttributeListActivity extends AbstractListActivity {
 	}
 
 	@Override
-	protected Cursor createCursor() {
+	protected Cursor loadInBackground() {
 		return db.getAllAttributes();
 	}
 

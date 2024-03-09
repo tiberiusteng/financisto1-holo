@@ -65,7 +65,7 @@ abstract public class AbstractListFragment<D> extends ListFragment
         return view;
     }
 
-    protected abstract D createCursor();
+    protected abstract D loadInBackground();
 
     protected abstract ListAdapter createAdapter(D cursor);
 
@@ -197,7 +197,7 @@ abstract public class AbstractListFragment<D> extends ListFragment
 
             @Override
             public D loadInBackground() {
-                return createCursor();
+                return AbstractListFragment.this.loadInBackground();
             }
         };
     }
