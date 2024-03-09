@@ -43,6 +43,7 @@ public class CsvImport {
     private char decimalSeparator;
     private char groupSeparator;
     private ProgressListener progressListener;
+    private String noProject;
 
     public CsvImport(Context context, DatabaseAdapter db, CsvImportOptions options) {
         this.context = context;
@@ -51,6 +52,7 @@ public class CsvImport {
         this.account = db.getAccount(options.selectedAccountId);
         this.decimalSeparator = options.currency.decimalSeparator.charAt(1);
         this.groupSeparator = options.currency.groupSeparator.charAt(1);
+        this.noProject = context.getString(R.string.no_project);
     }
 
     public Object doImport() throws Exception {
@@ -95,7 +97,7 @@ public class CsvImport {
     }
 
     private boolean isNewProject(Map<String, Project> map, String project) {
-        return Utils.isNotEmpty(project) && !"No project".equals(project) && !map.containsKey(project);
+        return Utils.isNotEmpty(project) && !noProject.equals(project) && !map.containsKey(project);
     }
 
     public Map<String, Payee> collectAndInsertPayees(List<CsvTransaction> transactions) {

@@ -99,7 +99,7 @@ public class CsvExport extends Export {
             accountsMap = db.getAllAccountsMap();
             categoriesMap = db.getAllCategoriesMap();
             payeeMap = db.getAllPayeeByIdMap();
-            projectMap = db.getAllProjectsByIdMap(true);
+            projectMap = db.getAllProjectsByIdMap(false);
             locationMap = db.getAllLocationsByIdMap(false);
             try (Cursor c = db.getBlotter(options.filter)) {
                 while (c.moveToNext()) {
