@@ -183,22 +183,13 @@ abstract public class AbstractListFragment<D> extends ListFragment
     @Override
     public Loader<D> onCreateLoader(int id, @Nullable Bundle args) {
         return new AsyncTaskLoader<D>(getContext()) {
-            D data;
-
             @Override
             protected void onStartLoading() {
-                if (data != null) {
-                    deliverResult(data);
-                }
-                if (takeContentChanged() || data == null) {
-                    forceLoad();
-                }
+                forceLoad();
             }
 
             @Override
             public void deliverResult(D data) {
-                this.data = data;
-
                 if (isStarted()) {
                     super.deliverResult(data);
                 }
