@@ -117,7 +117,7 @@ public class AccountListFragment extends AbstractListFragment<Cursor> {
                     }
                 });
 
-                searchTextClearButton.setOnClickListener(v -> {
+                clearButton.setOnClickListener(v -> {
                     searchText.setText("");
                 });
 
