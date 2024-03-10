@@ -281,11 +281,15 @@
 		<activity android:name=".activity.SelectTemplateActivity" android:label="@string/transaction_templates"
 			android:theme="@style/AppDialogCompat" android:configChanges="screenSize|smallestScreenSize|orientation|screenLayout|keyboardHidden"/>
 
-		<activity android:name=".activity.CsvExportActivity" android:label="@string/csv_export" />
-		<activity android:name=".activity.CsvImportActivity" android:label="@string/csv_import" />
+		<activity android:name=".activity.CsvExportActivity" android:label="@string/csv_export"
+			android:theme="@style/AppThemeCompat" />
+		<activity android:name=".activity.CsvImportActivity" android:label="@string/csv_import"
+			android:theme="@style/AppThemeCompat" />
 
-		<activity android:name=".activity.QifExportActivity" android:label="@string/qif_export"/>
-		<activity android:name=".activity.QifImportActivity" android:label="@string/qif_import"/>
+		<activity android:name=".activity.QifExportActivity" android:label="@string/qif_export"
+			android:theme="@style/AppThemeCompat" />
+		<activity android:name=".activity.QifImportActivity" android:label="@string/qif_import"
+			android:theme="@style/AppThemeCompat" />
 
 		<activity android:name=".activity.MonthlyViewActivity" android:label="@string/monthly_view"/>
 		<activity android:name=".activity.CCardStatementClosingDayActivity" android:label="@string/closing_day" />

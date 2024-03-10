@@ -16,10 +16,13 @@ import android.provider.DocumentsContract;
 import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.Toast;
+
+import androidx.appcompat.app.AppCompatActivity;
+
 import tw.tib.financisto.R;
 import tw.tib.financisto.utils.PinProtection;
 
-public abstract class AbstractImportActivity extends Activity {
+public abstract class AbstractImportActivity extends AppCompatActivity {
 
     public static final int IMPORT_FILENAME_REQUESTCODE = 0xff;
 

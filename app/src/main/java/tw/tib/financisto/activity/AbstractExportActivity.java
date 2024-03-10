@@ -10,13 +10,15 @@
  ******************************************************************************/
 package tw.tib.financisto.activity;
 
-import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.Button;
+
+import androidx.appcompat.app.AppCompatActivity;
+
 import tw.tib.financisto.R;
 import tw.tib.financisto.datetime.DateUtils;
 import tw.tib.financisto.datetime.Period;
@@ -29,7 +31,7 @@ import tw.tib.financisto.utils.PinProtection;
 import java.text.DateFormat;
 import java.util.Date;
 
-public abstract class AbstractExportActivity extends Activity {
+public abstract class AbstractExportActivity extends AppCompatActivity {
 
     private final int layoutId;
 	private final WhereFilter filter = WhereFilter.empty();
