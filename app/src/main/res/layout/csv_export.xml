@@ -11,79 +11,128 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
               android:layout_width="fill_parent" android:layout_height="fill_parent"
               android:orientation="vertical" android:padding="3dp">
-    <ScrollView android:layout_width="fill_parent" android:layout_height="0dp" android:layout_weight="1">
+
+    <ScrollView
+        android:layout_width="fill_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1">
+
         <LinearLayout
-                android:layout_width="fill_parent" android:layout_height="0dp"
-                android:orientation="vertical">
-            <TextView android:layout_height="wrap_content"
-                      android:layout_width="fill_parent" android:layout_marginLeft="3dp"
-                      android:text="@string/period"/>
-            <Button android:layout_height="wrap_content" android:id="@+id/bPeriod"
-                    android:layout_width="fill_parent"
-                    style="@style/DarkButton" />
-            <include layout="@layout/list_divider"/>
-            <TableLayout android:layout_height="wrap_content"
-                         android:layout_width="fill_parent"
-                         android:stretchColumns="*">
-                <TableRow>
-                    <TextView android:layout_marginLeft="3dp"
-                              android:text="@string/decimals"/>
-                    <TextView android:layout_marginLeft="3dp"
-                              android:text="@string/decimal_separator"/>
-                    <TextView android:layout_marginLeft="3dp"
-                              android:text="@string/group_separator"/>
-                </TableRow>
-                <TableRow>
-                    <Spinner android:id="@+id/spinnerDecimals"
-                        android:theme="@style/Monospaced"
-                        android:entries="@array/decimals"/>
-                    <Spinner android:id="@+id/spinnerDecimalSeparators"
-                        android:theme="@style/Monospaced"
-                        android:entries="@array/decimal_separators"/>
-                    <Spinner android:id="@+id/spinnerGroupSeparators"
-                        android:theme="@style/Monospaced"
-                        android:entries="@array/group_separators"/>
-                </TableRow>
-                <include layout="@layout/list_divider"/>
-                <TableRow>
-                    <TextView android:layout_marginLeft="3dp"
-                              android:text="@string/field_separator"/>
-                    <TextView android:layout_marginLeft="3dp"
-                              android:text="@string/include_header"/>
-                    <TextView android:layout_marginLeft="3dp"
-                              android:text="@string/upload_to_dropbox"/>
-                </TableRow>
-                <TableRow>
-                    <Spinner android:id="@+id/spinnerFieldSeparator"
-                        android:theme="@style/Monospaced"
-                        android:entries="@array/field_separators"/>
-                    <CheckBox android:id="@+id/checkboxIncludeHeader" android:checked="true"/>
-                    <CheckBox android:id="@+id/checkboxUploadToDropbox" android:checked="false"/>
-                </TableRow>
-                <TableRow>
-                    <TextView android:layout_marginLeft="3dp"
-                        android:text="@string/include_tx_status"/>
-                    <androidx.legacy.widget.Space/>
-                    <TextView android:layout_marginLeft="3dp"
-                        android:text="@string/upload_to_gdrive"/>
-                </TableRow>
-                <TableRow>
-                    <CheckBox android:id="@+id/checkboxIncludeTxStatus" android:checked="false"/>
-                    <androidx.legacy.widget.Space/>
-                    <CheckBox android:id="@+id/checkboxUploadToGDrive" android:checked="false"/>
-                </TableRow>
-                <include layout="@layout/list_divider"/>
-                <!--
-                <TableRow>
-                    <TextView android:layout_marginLeft="3dp"
-                              android:text="@string/export_splits"/>
-                </TableRow>
-                <TableRow>
-                    <CheckBox android:id="@+id/checkboxExportSplits" android:checked="false"/>
-                </TableRow>
-                -->
-            </TableLayout>
+            android:layout_width="fill_parent"
+            android:layout_height="0dp"
+            android:orientation="vertical">
+
+            <TextView
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="3dp"
+                android:text="@string/period" />
+
+            <Button
+                android:id="@+id/bPeriod"
+                style="@style/DarkButton"
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content" />
+
+            <include layout="@layout/list_divider" />
+
+            <GridLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:columnCount="3"
+                android:useDefaultMargins="true">
+
+                <TextView
+                    android:layout_columnWeight="1"
+                    android:text="@string/decimals" />
+
+                <TextView
+                    android:layout_columnWeight="1"
+                    android:text="@string/decimal_separator" />
+
+                <TextView
+                    android:layout_columnWeight="1"
+                    android:text="@string/group_separator" />
+
+                <Spinner
+                    android:id="@+id/spinnerDecimals"
+                    android:layout_columnWeight="1"
+                    android:entries="@array/decimals"
+                    android:theme="@style/Monospaced" />
+
+                <Spinner
+                    android:id="@+id/spinnerDecimalSeparators"
+                    android:layout_columnWeight="1"
+                    android:entries="@array/decimal_separators"
+                    android:theme="@style/Monospaced" />
+
+                <Spinner
+                    android:id="@+id/spinnerGroupSeparators"
+                    android:layout_columnWeight="1"
+                    android:entries="@array/group_separators"
+                    android:theme="@style/Monospaced" />
+
+                <View android:layout_height="1dp"
+                    android:background="@drawable/divider_horizontal_dark"
+                    android:layout_columnSpan="3" />
+
+                <TextView
+                    android:layout_columnWeight="1"
+                    android:text="@string/field_separator" />
+
+                <CheckBox
+                    android:id="@+id/checkboxIncludeHeader"
+                    android:layout_rowSpan="2"
+                    android:layout_columnWeight="1"
+                    android:layout_gravity="fill"
+                    android:checked="true"
+                    android:text="@string/include_header" />
+
+                <CheckBox
+                    android:id="@+id/checkboxUploadToDropbox"
+                    android:layout_rowSpan="2"
+                    android:layout_columnWeight="1"
+                    android:layout_gravity="fill"
+                    android:checked="false"
+                    android:text="@string/upload_to_dropbox" />
+
+                <Spinner
+                    android:id="@+id/spinnerFieldSeparator"
+                    android:layout_columnWeight="1"
+                    android:entries="@array/field_separators"
+                    android:theme="@style/Monospaced" />
+
+                <View android:layout_height="1dp"
+                    android:background="@drawable/divider_horizontal_dark"
+                    android:layout_columnSpan="3" />
+
+                <Spinner
+                    android:layout_columnWeight="1"
+                    android:visibility="invisible" />
+
+                <CheckBox
+                    android:id="@+id/checkboxIncludeTxStatus"
+                    android:layout_rowSpan="2"
+                    android:layout_columnWeight="1"
+                    android:layout_gravity="fill"
+                    android:checked="false"
+                    android:text="@string/include_tx_status" />
+
+                <CheckBox
+                    android:id="@+id/checkboxUploadToGDrive"
+                    android:layout_rowSpan="2"
+                    android:layout_columnWeight="1"
+                    android:layout_gravity="fill"
+                    android:checked="false"
+                    android:text="@string/upload_to_gdrive" />
+
+                <Spinner
+                    android:layout_columnWeight="1"
+                    android:visibility="invisible" />
+
+            </GridLayout>
         </LinearLayout>
     </ScrollView>
+
     <include layout="@layout/ok_cancel_buttons"/>
 </LinearLayout>
