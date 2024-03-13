@@ -10,6 +10,7 @@ import android.content.Intent;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.provider.DocumentsContract;
+import android.util.Log;
 import android.widget.ListAdapter;
 import android.widget.Toast;
 
@@ -30,10 +31,12 @@ import tw.tib.financisto.export.csv.CsvImportTask;
 import tw.tib.financisto.utils.EntityEnum;
 import tw.tib.financisto.utils.EnumUtils;
 
+import androidx.documentfile.provider.DocumentFile;
 import androidx.fragment.app.Fragment;
 
 import tw.tib.financisto.utils.ExecutableEntityEnum;
 import tw.tib.financisto.utils.IntegrityFix;
+import tw.tib.financisto.utils.MyPreferences;
 import tw.tib.financisto.utils.SummaryEntityEnum;
 
 public enum MenuListItem implements SummaryEntityEnum {
@@ -66,6 +69,7 @@ public enum MenuListItem implements SummaryEntityEnum {
     MENU_BACKUP(R.string.backup_database, R.string.backup_database_summary, R.drawable.actionbar_db_backup) {
         @Override
         public void call(Fragment fragment) {
+            if (!checkBackupFolderConfigured(fragment.getContext())) return;
             ProgressDialog d = ProgressDialog.show(fragment.getContext(), null, fragment.getContext().getString(R.string.backup_database_inprogress), true);
             new BackupExportTask(fragment.getContext(), d, true).execute();
         }
@@ -83,6 +87,7 @@ public enum MenuListItem implements SummaryEntityEnum {
     GOOGLE_DRIVE_BACKUP(R.string.backup_database_online_google_drive, R.string.backup_database_online_google_drive_summary, R.drawable.actionbar_google_drive) {
         @Override
         public void call(Fragment fragment) {
+            if (!checkBackupFolderConfigured(fragment.getContext())) return;
             GreenRobotBus_.getInstance_(fragment.getContext()).post(new MenuListFragment.StartDriveBackup());
         }
     },
@@ -95,6 +100,7 @@ public enum MenuListItem implements SummaryEntityEnum {
     DROPBOX_BACKUP(R.string.backup_database_online_dropbox, R.string.backup_database_online_dropbox_summary, R.drawable.actionbar_dropbox) {
         @Override
         public void call(Fragment fragment) {
+            if (!checkBackupFolderConfigured(fragment.getContext())) return;
             GreenRobotBus_.getInstance_(fragment.getContext()).post(new MenuListFragment.StartDropboxBackup());
         }
     },
@@ -107,6 +113,7 @@ public enum MenuListItem implements SummaryEntityEnum {
     MENU_BACKUP_TO(R.string.backup_database_to, R.string.backup_database_to_summary, R.drawable.actionbar_share) {
         @Override
         public void call(Fragment fragment) {
+            if (!checkBackupFolderConfigured(fragment.getContext())) return;
             ProgressDialog d = ProgressDialog.show(fragment.getContext(), null, fragment.getString(R.string.backup_database_inprogress), true);
             final BackupExportTask t = new BackupExportTask(fragment.getContext(), d, false);
             t.setShowResultMessage(false);
@@ -156,26 +163,28 @@ public enum MenuListItem implements SummaryEntityEnum {
             new IntegrityFixTask(fragment.getContext()).execute();
         }
     },
-    MENU_DONATE(R.string.donate, R.string.donate_summary, R.drawable.actionbar_donate) {
-        @Override
-        public void call(Fragment fragment) {
-            try {
-                Intent browserIntent = new Intent("android.intent.action.VIEW",
-                        Uri.parse("market://search?q=pname:tw.tib.financisto.support"));
-                fragment.startActivity(browserIntent);
-            } catch (Exception ex) {
-                //eventually market is not available
-                Toast.makeText(fragment.getContext(), R.string.donate_error, Toast.LENGTH_LONG).show();
-            }
-        }
-
-    },
+//    MENU_DONATE(R.string.donate, R.string.donate_summary, R.drawable.actionbar_donate) {
+//        @Override
+//        public void call(Fragment fragment) {
+//            try {
+//                Intent browserIntent = new Intent("android.intent.action.VIEW",
+//                        Uri.parse("market://search?q=pname:tw.tib.financisto.support"));
+//                fragment.startActivity(browserIntent);
+//            } catch (Exception ex) {
+//                //eventually market is not available
+//                Toast.makeText(fragment.getContext(), R.string.donate_error, Toast.LENGTH_LONG).show();
+//            }
+//        }
+//
+//    },
     MENU_ABOUT(R.string.about, R.string.about_summary, R.drawable.ic_action_info) {
         @Override
         public void call(Fragment fragment) {
             fragment.startActivity(new Intent(fragment.getContext(), AboutActivity.class));
         }
     };
+
+    private static final String TAG = "MenuListItem";
 
     public final int titleId;
     public final int summaryId;
@@ -261,6 +270,8 @@ public enum MenuListItem implements SummaryEntityEnum {
         CSV_EXPORT(R.string.csv_export, R.drawable.backup_csv) {
             @Override
             public void execute(Fragment fragment) {
+                if (!checkBackupFolderConfigured(fragment.getContext())) return;
+
                 Intent intent = new Intent(fragment.getContext(), CsvExportActivity.class);
                 fragment.startActivityForResult(intent, ACTIVITY_CSV_EXPORT);
             }
@@ -275,6 +286,8 @@ public enum MenuListItem implements SummaryEntityEnum {
         QIF_EXPORT(R.string.qif_export, R.drawable.backup_qif) {
             @Override
             public void execute(Fragment fragment) {
+                if (!checkBackupFolderConfigured(fragment.getContext())) return;
+
                 Intent intent = new Intent(fragment.getContext(), QifExportActivity.class);
                 fragment.startActivityForResult(intent, ACTIVITY_QIF_EXPORT);
             }
@@ -325,6 +338,30 @@ public enum MenuListItem implements SummaryEntityEnum {
     public static void doQifImport(Activity activity, QifImportOptions options) {
         ProgressDialog progressDialog = ProgressDialog.show(activity, null, activity.getString(R.string.qif_import_inprogress), true);
         new QifImportTask(activity, progressDialog, options).execute();
+    }
+
+    private static boolean checkBackupFolderConfigured(Context context) {
+        try {
+            Uri backupFolderUri = Uri.parse(MyPreferences.getDatabaseBackupFolder(context));
+            Log.i(TAG, "backupFolderUri: " + backupFolderUri);
+            String backupFolderId = DocumentsContract.getTreeDocumentId(backupFolderUri);
+            Log.i(TAG, "backupFolderId: " + backupFolderId);
+            Uri dirUri = DocumentsContract.buildDocumentUriUsingTree(backupFolderUri, backupFolderId);
+            Log.i(TAG, "dirUri: " + dirUri);
+            DocumentFile file = DocumentFile.fromTreeUri(context, dirUri);
+            if (file.canWrite()) {
+                return true;
+            }
+        } catch (Exception e) {
+            Log.e(TAG, "check backup folder writable fail", e);
+        }
+
+        new AlertDialog.Builder(context)
+                .setTitle(R.string.fail)
+                .setMessage(context.getString(R.string.backup_folder_not_configured))
+                .setPositiveButton(R.string.ok, null)
+                .show();
+        return false;
     }
 
     private static class IntegrityFixTask extends AsyncTask<Void, Void, Void> {

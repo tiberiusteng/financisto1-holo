@@ -46,18 +46,10 @@ public abstract class Export {
 
     public Uri export() throws Exception {
         Uri backupFolderUri = Uri.parse(getBackupFolder(context));
-        String backupFolderId;
-        try {
-            backupFolderId = DocumentsContract.getTreeDocumentId(backupFolderUri);
-        } catch (Exception e) {
-            throw new ImportExportException(R.string.backup_folder_not_configured);
-        }
-        Log.i("Financisto", "backupPathId: " + backupFolderId);
+        String backupFolderId = DocumentsContract.getTreeDocumentId(backupFolderUri);
         Uri dirUri = DocumentsContract.buildDocumentUriUsingTree(backupFolderUri, backupFolderId);
-        Log.i("Financisto", "dirUri: " + dirUri.toString());
         Uri backupFileUri = DocumentsContract.createDocument(context.getContentResolver(),
-                dirUri, Export.BACKUP_MIME_TYPE, generateFilename());
-        Log.i("Financisto", "backupFileUri: " + backupFileUri.toString());
+                    dirUri, Export.BACKUP_MIME_TYPE, generateFilename());
         OutputStream outputStream = context.getContentResolver().openOutputStream(backupFileUri);
         try {
             if (useGzip) {
