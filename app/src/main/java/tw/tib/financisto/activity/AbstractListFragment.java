@@ -3,6 +3,7 @@ package tw.tib.financisto.activity;
 import static android.app.Activity.RESULT_OK;
 
 import android.annotation.SuppressLint;
+import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.os.Parcelable;
@@ -48,8 +49,16 @@ abstract public class AbstractListFragment<D> extends ListFragment
 
     protected boolean enablePin = true;
 
+    protected Context context;
+
     protected AbstractListFragment(int contentId) {
         this.contentId = contentId;
+    }
+
+    @Override
+    public void onAttach(@NonNull Context context) {
+        super.onAttach(context);
+        this.context = context;
     }
 
     @Override

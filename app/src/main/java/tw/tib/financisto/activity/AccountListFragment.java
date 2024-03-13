@@ -320,7 +320,7 @@ public class AccountListFragment extends AbstractListFragment<Cursor> {
 
         Log.d(this.getClass().getSimpleName(), "createCursor start");
         long t1 = System.currentTimeMillis();
-        if (MyPreferences.isHideClosedAccounts(getContext())) {
+        if (MyPreferences.isHideClosedAccounts(context)) {
             c = db.getAllActiveAccountsWithFilter(filter);
         } else {
             c = db.getAllAccountsWithFilter(filter);
