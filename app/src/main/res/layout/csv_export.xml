@@ -44,31 +44,37 @@
 
                 <TextView
                     android:layout_columnWeight="1"
+                    android:layout_width="0dp"
                     android:text="@string/decimals" />
 
                 <TextView
                     android:layout_columnWeight="1"
+                    android:layout_width="0dp"
                     android:text="@string/decimal_separator" />
 
                 <TextView
                     android:layout_columnWeight="1"
+                    android:layout_width="0dp"
                     android:text="@string/group_separator" />
 
                 <Spinner
                     android:id="@+id/spinnerDecimals"
                     android:layout_columnWeight="1"
+                    android:layout_width="0dp"
                     android:entries="@array/decimals"
                     android:theme="@style/Monospaced" />
 
                 <Spinner
                     android:id="@+id/spinnerDecimalSeparators"
                     android:layout_columnWeight="1"
+                    android:layout_width="0dp"
                     android:entries="@array/decimal_separators"
                     android:theme="@style/Monospaced" />
 
                 <Spinner
                     android:id="@+id/spinnerGroupSeparators"
                     android:layout_columnWeight="1"
+                    android:layout_width="0dp"
                     android:entries="@array/group_separators"
                     android:theme="@style/Monospaced" />
 
@@ -78,12 +84,14 @@
 
                 <TextView
                     android:layout_columnWeight="1"
+                    android:layout_width="0dp"
                     android:text="@string/field_separator" />
 
                 <CheckBox
                     android:id="@+id/checkboxIncludeHeader"
                     android:layout_rowSpan="2"
                     android:layout_columnWeight="1"
+                    android:layout_width="0dp"
                     android:layout_gravity="fill"
                     android:checked="true"
                     android:text="@string/include_header" />
@@ -92,6 +100,7 @@
                     android:id="@+id/checkboxUploadToDropbox"
                     android:layout_rowSpan="2"
                     android:layout_columnWeight="1"
+                    android:layout_width="0dp"
                     android:layout_gravity="fill"
                     android:checked="false"
                     android:text="@string/upload_to_dropbox" />
@@ -99,6 +108,7 @@
                 <Spinner
                     android:id="@+id/spinnerFieldSeparator"
                     android:layout_columnWeight="1"
+                    android:layout_width="0dp"
                     android:entries="@array/field_separators"
                     android:theme="@style/Monospaced" />
 
@@ -108,12 +118,14 @@
 
                 <Spinner
                     android:layout_columnWeight="1"
+                    android:layout_width="0dp"
                     android:visibility="invisible" />
 
                 <CheckBox
                     android:id="@+id/checkboxIncludeTxStatus"
                     android:layout_rowSpan="2"
                     android:layout_columnWeight="1"
+                    android:layout_width="0dp"
                     android:layout_gravity="fill"
                     android:checked="false"
                     android:text="@string/include_tx_status" />
@@ -122,12 +134,14 @@
                     android:id="@+id/checkboxUploadToGDrive"
                     android:layout_rowSpan="2"
                     android:layout_columnWeight="1"
+                    android:layout_width="0dp"
                     android:layout_gravity="fill"
                     android:checked="false"
                     android:text="@string/upload_to_gdrive" />
 
                 <Spinner
                     android:layout_columnWeight="1"
+                    android:layout_width="0dp"
                     android:visibility="invisible" />
 
             </GridLayout>

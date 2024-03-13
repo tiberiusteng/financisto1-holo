@@ -178,8 +178,8 @@
   <string name="decimal_separator">\n小數點</string>
   <string name="group_separator">\n分位點</string>
   <string name="field_separator">\n欄位分隔</string>
-  <string name="include_header">\n包含標題</string>
-  <string name="include_tx_status">\n包含交易狀態</string>
+  <string name="include_header">包含標題</string>
+  <string name="include_tx_status">包含交易狀態</string>
   <string name="delete_account_confirm">確定砍掉帳戶?</string>
   <string name="delete_transaction_confirm">確定刪掉交易?</string>
   <string name="delete_budget_confirm">確定刪除預算?</string>
