@@ -16,8 +16,9 @@ import android.content.Context;
 import android.util.Log;
 
 import androidx.work.Data;
-import androidx.work.OneTimeWorkRequest;
+import androidx.work.ExistingPeriodicWorkPolicy;
 import androidx.work.Operation;
+import androidx.work.PeriodicWorkRequest;
 import androidx.work.WorkManager;
 
 import tw.tib.financisto.db.DatabaseAdapter;
@@ -65,11 +66,7 @@ public class RecurrenceScheduler {
             if (transactionId == ALREADY_RECURRED) {
                 return null;
             }
-            boolean hasBeenRescheduled = rescheduleTransaction(context, transaction, timestamp);
-            if (!hasBeenRescheduled) {
-                deleteTransactionIfNeeded(transaction);
-                Log.i(TAG, "Expired transaction "+transaction.id+" has been deleted");
-            }
+            rescheduleTransaction(context, transaction, timestamp);
             transaction.id = transactionId;
             return transaction;
         }
@@ -80,6 +77,7 @@ public class RecurrenceScheduler {
         TransactionAttributeInfo a = db.getSystemAttributeForTransaction(SystemAttribute.DELETE_AFTER_EXPIRED, transaction.id);
         if (a != null && Boolean.valueOf(a.value)) {
             db.deleteTransaction(transaction.id);
+            Log.i(TAG, "Expired transaction "+transaction.id+" has been deleted");
         }
     }
 
@@ -190,10 +188,9 @@ public class RecurrenceScheduler {
         if (shouldSchedule(transaction, now)) {
             Date scheduleTime = transaction.nextDateTime;
 
-            long initialDelay = scheduleTime.getTime() - System.currentTimeMillis();
-
-            var workRequest = new OneTimeWorkRequest.Builder(ScheduleTxWorker.class)
-                    .setInitialDelay(initialDelay, TimeUnit.MILLISECONDS)
+            var workRequest = new PeriodicWorkRequest.Builder(ScheduleTxWorker.class,
+                    24, TimeUnit.HOURS, 1, TimeUnit.HOURS)
+                    .setNextScheduleTimeOverride(scheduleTime.getTime())
                     .addTag(ScheduleTxWorker.WORK_TAG)
                     .addTag(ScheduleTxWorker.WORK_NAME_PREFIX + transaction.id)
                     .setInputData(new Data.Builder()
@@ -202,9 +199,12 @@ public class RecurrenceScheduler {
                             .build())
                     .build();
 
-            WorkManager.getInstance(context).enqueue(workRequest);
+            WorkManager.getInstance(context).enqueueUniquePeriodicWork(
+                    ScheduleTxWorker.WORK_NAME_PREFIX + transaction.id,
+                    ExistingPeriodicWorkPolicy.UPDATE,
+                    workRequest);
 
-            Log.i(TAG, "Scheduling work for "+transaction.id+" at "+scheduleTime+" initial delay "+initialDelay);
+            Log.i(TAG, "Scheduling work for "+transaction.id+" at "+scheduleTime);
             return true;
         }
         Log.i(TAG, "Transactions "+transaction.id+" with next date/time "+transaction.nextDateTime+" is not selected for schedule");
@@ -212,12 +212,18 @@ public class RecurrenceScheduler {
     }
 
     public boolean rescheduleTransaction(Context context, TransactionInfo transaction, long timestamp) {
+        boolean rescheduled = false;
         if (transaction.recurrence != null) {
             long now = timestamp+1000;
             calculateAndSetNextDateTimeOnTransaction(transaction, now);
-            return scheduleWork(context, transaction, now);
+            rescheduled = scheduleWork(context, transaction, now);
         }
-        return false;
+        if (!rescheduled) {
+            cancelPendingWorkForSchedule(context, transaction.id);
+            deleteTransactionIfNeeded(transaction);
+            Log.i(TAG, "Expired transaction "+transaction.id+" has been removed from schedule");
+        }
+        return rescheduled;
     }
 
     private boolean shouldSchedule(TransactionInfo transaction, long now) {

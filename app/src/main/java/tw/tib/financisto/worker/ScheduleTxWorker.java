@@ -8,7 +8,6 @@ import android.app.PendingIntent;
 import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
-import android.graphics.BitmapFactory;
 import android.util.Log;
 
 import androidx.annotation.NonNull;
@@ -49,10 +48,16 @@ public class ScheduleTxWorker extends Worker {
 
         RecurrenceScheduler scheduler = new RecurrenceScheduler(db);
 
+        long now = System.currentTimeMillis();
         long scheduledTransactionId = args.getLong(TX_ID, -1);
-        long scheduledTimestamp = args.getLong(TX_TIME, System.currentTimeMillis());
+        long scheduledTimestamp = args.getLong(TX_TIME, now);
 
         Log.i(TAG, "doWork txId=" + scheduledTransactionId + ", ts=" + scheduledTimestamp);
+        if ((scheduledTimestamp - now) > 86400000) {
+            Log.i(TAG, "scheduled time is not in today, rescheduling");
+            scheduler.rescheduleTransaction(context, db.getTransactionInfo(scheduledTransactionId), now);
+            return Result.success();
+        }
 
         if (scheduledTransactionId > 0) {
             TransactionInfo transaction = scheduler.scheduleOne(context, scheduledTransactionId, scheduledTimestamp);
