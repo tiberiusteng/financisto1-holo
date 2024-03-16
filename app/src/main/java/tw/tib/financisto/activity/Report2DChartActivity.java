@@ -389,7 +389,10 @@ public class Report2DChartActivity extends Activity implements OnChartValueSelec
             vals.clear();
             for (Report2DPoint p : reportData.getPoints()) {
                 PeriodValue v = p.getPointData();
-                vals.add(new Entry(v.getMonthTimeInMillis(), (float) v.getValue() / 100.0f));
+                // x value is 32-bit floating point, on recent timestamps the step size is 131.072 seconds
+                // so sometimes it will become 1~2 minutes earlier in the previous month when converting to float
+                // we are only using the month part, so add 86400*1000*14 ms to shift it to middle of month
+                vals.add(new Entry(v.getMonthTimeInMillis() + 1209600000f, (float) v.getValue() / 100.0f));
             }
 
             ds.notifyDataSetChanged();
