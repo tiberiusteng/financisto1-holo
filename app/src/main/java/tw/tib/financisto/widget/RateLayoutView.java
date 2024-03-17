@@ -76,7 +76,7 @@ public class RateLayoutView implements RateNodeOwner {
         amountToTitleId = toAmountTitleId;
         amountInputToNode = x.addEditNode(layout, toAmountTitleId, amountInputTo);
         amountInputTo.setOnAmountChangedListener((oldAmount, newAmount) -> {
-            checkIfRateConsistent();
+            updateRateInfo();
             if (amountToChangeListener != null) {
                 amountToChangeListener.onAmountChanged(oldAmount, newAmount);
             }
@@ -88,10 +88,10 @@ public class RateLayoutView implements RateNodeOwner {
             amountInputTo.disableAmountChangedListener();
             amountInputTo.setAmount(amountTo);
             amountInputTo.enableAmountChangedListener();
-            rateNode.markRateConsistent();
+            updateRateInfo();
         });
         amountInputFrom.setOnAmountChangedListener((oldAmount, newAmount) -> {
-            checkIfRateConsistent();
+            updateRateInfo();
             if (amountInputFrom.isIncomeExpenseEnabled()) {
                 if (amountInputFrom.isExpense()) {
                     amountInputTo.setExpense();
@@ -110,7 +110,7 @@ public class RateLayoutView implements RateNodeOwner {
             amountInputFrom.disableAmountChangedListener();
             amountInputFrom.setAmount(amountFrom);
             amountInputFrom.enableAmountChangedListener();
-            rateNode.markRateConsistent();
+            updateRateInfo();
         });
         AbstractActivity.setVisibility(amountInputToNode, View.GONE);
         rateNode = new RateNode(this, activity, x, layout);
@@ -194,7 +194,7 @@ public class RateLayoutView implements RateNodeOwner {
             if (exchangeRate != ExchangeRate.NA) {
                 new Handler(Looper.getMainLooper()).post(() -> {
                     rateNode.setRate(exchangeRate);
-                    checkIfRateConsistent();
+                    updateRateInfo();
                 });
             }
         });
@@ -251,7 +251,7 @@ public class RateLayoutView implements RateNodeOwner {
         }
         else {
             // if there is input, don't overwrite it
-            checkIfRateConsistent();
+            updateRateInfo();
         }
     }
 
@@ -298,10 +298,10 @@ public class RateLayoutView implements RateNodeOwner {
 
     @Override
     public void onRateChanged() {
-        checkIfRateConsistent();
+        updateRateInfo();
     }
 
-    protected void checkIfRateConsistent() {
+    protected void updateRateInfo() {
         long amountFrom = amountInputFrom.getAmount();
         long amountTo = amountInputTo.getAmount();
         if (amountFrom != 0 && amountTo != 0) {
