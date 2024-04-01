@@ -141,14 +141,20 @@ public class BlotterFragment extends AbstractListFragment<Cursor> implements Blo
             calculationTask.cancel(true);
         }
         calculationTask = createTotalCalculationTask(filter);
-        calculationTask.execute();
+        if (calculationTask != null) {
+            calculationTask.execute();
+        }
     }
 
     protected TotalCalculationTask createTotalCalculationTask(WhereFilter filter) {
+        Context context = getContext();
+        if (context == null) {
+            return null;
+        }
         if (filter.getAccountId() > 0) {
-            return new AccountTotalCalculationTask(getContext(), db, filter, totalText);
+            return new AccountTotalCalculationTask(context, db, filter, totalText);
         } else {
-            return new BlotterTotalCalculationTask(getContext(), db, filter, totalText);
+            return new BlotterTotalCalculationTask(context, db, filter, totalText);
         }
     }
 
