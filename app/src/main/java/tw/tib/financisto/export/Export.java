@@ -109,8 +109,12 @@ public abstract class Export {
     }
 
     public static void uploadBackupFileToGoogleDrive(Context context, Uri backupFileUri) throws Exception {
-        GoogleDriveRESTClient googleDriveRESTClient = new GoogleDriveRESTClient(context);
-        googleDriveRESTClient.uploadFile(backupFileUri);
+        try {
+            GoogleDriveRESTClient googleDriveRESTClient = new GoogleDriveRESTClient(context);
+            googleDriveRESTClient.uploadFile(backupFileUri);
+        } catch (Exception e) {
+            throw new ImportExportException(R.string.google_drive_error);
+        }
     }
 
 }

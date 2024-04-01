@@ -243,7 +243,7 @@
   <string name="gdocs_folder_error">讀寫 Google Drive 目錄時發生錯誤。</string>
   <string name="gdocs_service_error">Google Drive 目前無法提供服務。</string>
   <string name="gdocs_io_error">連線到 Google Drive 時發生錯誤。</string>
-
+  <string name="google_drive_error">無法讀寫 Google Drive，請檢查授權與備份目錄設定。</string>
 
   <string name="success">成功! %s</string>
   <string name="fail">失敗…</string>

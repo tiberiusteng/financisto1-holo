@@ -948,6 +948,7 @@
     <string name="google_drive_upload_backup_summary">Upload database backups to Google Drive</string>
     <string name="google_drive_upload_autobackup">Upload Auto-backups</string>
     <string name="google_drive_upload_autobackup_summary">Upload database auto-backups to Google Drive</string>
+    <string name="google_drive_error">Not authorized to Google Drive. Please check your Preferences.</string>
 
     <string name="backup_restore_database_online">Backup/Restore Online</string>
     <string name="backup_database_online_google_drive">Google Drive Backup</string>
