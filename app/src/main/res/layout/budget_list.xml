@@ -24,6 +24,9 @@
 		<ImageButton android:id="@+id/bFilter"
 			style="@style/BottomBarButton"
 			android:src="@drawable/actionbar_filter" />
+		<ImageButton android:id="@+id/bSortOrder"
+			style="@style/BottomBarButton"
+			android:src="@drawable/sort" />
         <include layout="@layout/total_text"/>
 	</LinearLayout>
 </LinearLayout>

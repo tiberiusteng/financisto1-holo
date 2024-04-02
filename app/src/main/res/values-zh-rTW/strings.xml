@@ -905,4 +905,8 @@
     <item>淺色</item>
   </string-array>
   <string name="invalid_rrule">RRule 有誤: %s</string>
+  <string-array name="budget_sort_order">
+    <item>依名稱</item>
+    <item>依本期截止日</item>
+  </string-array>
 </resources>

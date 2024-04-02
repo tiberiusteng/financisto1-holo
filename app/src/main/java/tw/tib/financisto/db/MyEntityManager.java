@@ -492,7 +492,12 @@ public abstract class MyEntityManager extends EntityManager {
 		db().delete(DatabaseHelper.BUDGET_TABLE, "_id=?", new String[]{String.valueOf(id)});
 	}
 
-	public ArrayList<Budget> getAllBudgets(WhereFilter filter) {
+	public enum BudgetSortOrder {
+		BY_NAME,
+		BY_PERIOD_END_DATE
+	}
+
+	public ArrayList<Budget> getAllBudgets(WhereFilter filter, BudgetSortOrder budgetSortOrder) {
 		Query<Budget> q = createQuery(Budget.class);
 		Criteria c = filter.get(BlotterFilter.DATETIME);
 		if (c != null) {
@@ -500,7 +505,12 @@ public abstract class MyEntityManager extends EntityManager {
 			long end = c.getLongValue2();
 			q.where(Expressions.and(Expressions.lte("startDate", end), Expressions.gte("endDate", start)));
 		}
-		q.asc("title");
+		if (budgetSortOrder == BudgetSortOrder.BY_NAME) {
+			q.asc("title");
+		}
+		else if (budgetSortOrder == BudgetSortOrder.BY_PERIOD_END_DATE) {
+			q.asc("endDate");
+		}
 		try (Cursor cursor = q.execute()) {
 			ArrayList<Budget> list = new ArrayList<>();
 			while (cursor.moveToNext()) {

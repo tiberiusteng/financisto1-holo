@@ -1076,4 +1076,9 @@
 
     <string name="transaction_show_in_account_blotter">Show in account blotter</string>
     <string name="invalid_rrule">Invalid RRule: %s</string>
+
+    <string-array name="budget_sort_order">
+        <item>By Name</item>
+        <item>By Current Period End Date</item>
+    </string-array>
 </resources>

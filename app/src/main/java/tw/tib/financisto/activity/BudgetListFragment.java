@@ -2,6 +2,7 @@ package tw.tib.financisto.activity;
 
 import static android.app.Activity.RESULT_FIRST_USER;
 import static android.app.Activity.RESULT_OK;
+import static android.content.Context.MODE_PRIVATE;
 
 import android.app.AlertDialog;
 import android.content.Intent;
@@ -11,6 +12,7 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.util.Log;
 import android.view.View;
+import android.widget.ArrayAdapter;
 import android.widget.ImageButton;
 import android.widget.ListAdapter;
 import android.widget.TextView;
@@ -25,6 +27,7 @@ import tw.tib.financisto.R;
 import tw.tib.financisto.adapter.BudgetListAdapter;
 import tw.tib.financisto.blotter.BlotterFilter;
 import tw.tib.financisto.datetime.PeriodType;
+import tw.tib.financisto.db.MyEntityManager;
 import tw.tib.financisto.filter.Criteria;
 import tw.tib.financisto.filter.DateTimeCriteria;
 import tw.tib.financisto.filter.WhereFilter;
@@ -35,12 +38,17 @@ import tw.tib.financisto.utils.RecurUtils;
 import tw.tib.financisto.utils.Utils;
 
 public class BudgetListFragment extends AbstractListFragment<ArrayList<Budget>> {
+    private static final String TAG = "BudgetListFragment";
+
     private static final int NEW_BUDGET_REQUEST = 1;
     private static final int EDIT_BUDGET_REQUEST = 2;
     private static final int VIEW_BUDGET_REQUEST = 3;
     private static final int FILTER_BUDGET_REQUEST = 4;
 
+    private static final String PREF_SORT_ORDER = "sort_order";
+
     private ImageButton bFilter;
+    private ImageButton bSortOrder;
 
     private WhereFilter filter = WhereFilter.empty();
 
@@ -62,6 +70,24 @@ public class BudgetListFragment extends AbstractListFragment<ArrayList<Budget>> 
             Intent intent = new Intent(getContext(), DateFilterActivity.class);
             filter.toIntent(intent);
             startActivityForResult(intent, FILTER_BUDGET_REQUEST);
+        });
+
+        bSortOrder = view.findViewById(R.id.bSortOrder);
+        bSortOrder.setOnClickListener(v -> {
+            new AlertDialog.Builder(getContext())
+                    .setSingleChoiceItems(
+                            new ArrayAdapter<>(getContext(),
+                                    android.R.layout.simple_list_item_activated_1,
+                                    android.R.id.text1,
+                                    getResources().getStringArray(R.array.budget_sort_order)),
+                            getActivity().getSharedPreferences(TAG, MODE_PRIVATE).getInt(PREF_SORT_ORDER, 0),
+                            (dialog, which) -> {
+                                dialog.cancel();
+                                getActivity().getSharedPreferences(TAG, MODE_PRIVATE).edit().putInt(PREF_SORT_ORDER, which).apply();
+                                recreateCursor();
+                            })
+                    .setTitle(getString(R.string.sort_order))
+                    .show();
         });
 
         if (filter.isEmpty()) {
@@ -122,8 +148,9 @@ public class BudgetListFragment extends AbstractListFragment<ArrayList<Budget>> 
 
     @Override
     protected ArrayList<Budget> loadInBackground() {
+        int sortOrder = getActivity().getSharedPreferences(TAG, MODE_PRIVATE).getInt(PREF_SORT_ORDER, 0);
         filter.recalculatePeriod();
-        return db.getAllBudgets(filter);
+        return db.getAllBudgets(filter, MyEntityManager.BudgetSortOrder.values()[sortOrder]);
     }
 
     private BudgetListFragment.BudgetTotalsCalculationTask totalCalculationTask;
