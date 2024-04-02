@@ -60,7 +60,18 @@ public class RecurUtils {
 			}
 		},
 		SEMI_MONTHLY(R.layout.recur_semi_monthly, R.string.recur_interval_semi_monthly),
-		YEARLY(0, R.string.recur_interval_yearly);		
+		YEARLY(0, R.string.recur_interval_yearly){
+			@Override
+			public Period next(long startDate) {
+				Calendar c = Calendar.getInstance();
+				c.setTimeInMillis(startDate);
+				startDate = DateUtils.startOfDay(c).getTimeInMillis();
+				c.add(Calendar.YEAR, 1);
+				c.add(Calendar.DAY_OF_YEAR, -1);
+				long endDate = DateUtils.endOfDay(c).getTimeInMillis();
+				return new Period(PeriodType.CUSTOM, startDate, endDate);
+			}
+		};
 		
 		private final int layoutId;
 		private final int titleId;

@@ -92,7 +92,7 @@ public class RecurActivity extends Activity {
 			d.show();
 		});
 		
-		addSpinnerItems(sInterval, new RecurInterval[]{RecurInterval.NO_RECUR, RecurInterval.WEEKLY, RecurInterval.MONTHLY});
+		addSpinnerItems(sInterval, new RecurInterval[]{RecurInterval.NO_RECUR, RecurInterval.WEEKLY, RecurInterval.MONTHLY, RecurInterval.YEARLY});
 		addSpinnerItems(sPeriod, periods);
 		
 		LayoutInflater inflater = getLayoutInflater();
