@@ -904,4 +904,5 @@
     <item>深色</item>
     <item>淺色</item>
   </string-array>
+  <string name="invalid_rrule">RRule 有誤: %s</string>
 </resources>
