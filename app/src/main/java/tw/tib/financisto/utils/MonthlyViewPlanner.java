@@ -8,6 +8,7 @@
 
 package tw.tib.financisto.utils;
 
+import android.content.Context;
 import android.database.Cursor;
 
 import tw.tib.financisto.filter.Criteria;
@@ -44,8 +45,8 @@ public class MonthlyViewPlanner extends AbstractPlanner {
     private final boolean isStatementPreview;
     private final boolean treatTransferToCCardAsPayment;
 
-    public MonthlyViewPlanner(DatabaseAdapter db, Account account, boolean isStatementPreview, boolean treatTransferToCCardAsPayment, Date startDate, Date endDate, Date now) {
-        super(db, createMonthlyViewFilter(startDate, endDate, account), now);
+    public MonthlyViewPlanner(Context context, DatabaseAdapter db, Account account, boolean isStatementPreview, boolean treatTransferToCCardAsPayment, Date startDate, Date endDate, Date now) {
+        super(context, db, createMonthlyViewFilter(startDate, endDate, account), now);
         this.account = account;
         this.isStatementPreview = isStatementPreview;
         this.treatTransferToCCardAsPayment = treatTransferToCCardAsPayment;

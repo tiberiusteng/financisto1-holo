@@ -8,8 +8,13 @@
 
 package tw.tib.financisto.utils;
 
+import android.content.Context;
 import android.database.Cursor;
+import android.os.Handler;
+import android.os.Looper;
+import android.widget.Toast;
 
+import tw.tib.financisto.R;
 import tw.tib.financisto.filter.WhereFilter;
 import tw.tib.financisto.db.DatabaseAdapter;
 import tw.tib.financisto.model.*;
@@ -26,12 +31,15 @@ import java.util.*;
  */
 public abstract class AbstractPlanner {
 
+    protected Context context;
+
     protected final DatabaseAdapter db;
 
     protected final WhereFilter filter;
     protected final Date now;
 
-    public AbstractPlanner(DatabaseAdapter db, WhereFilter filter, Date now) {
+    public AbstractPlanner(Context context, DatabaseAdapter db, WhereFilter filter, Date now) {
+        this.context = context;
         this.db = db;
         this.filter = filter;
         this.now = now;
@@ -107,7 +115,13 @@ public abstract class AbstractPlanner {
             }
         } else {
             Recurrence r = Recurrence.parse(recurrence);
-            return r.generateDates(calcDate, endDate);
+            try {
+                return r.generateDates(calcDate, endDate);
+            } catch (IllegalArgumentException e) {
+                new Handler(Looper.getMainLooper()).post(() -> Toast.makeText(context,
+                        context.getString(R.string.invalid_rrule, e.getMessage()),
+                        Toast.LENGTH_LONG).show());
+            }
         }
         return Collections.emptyList();
     }

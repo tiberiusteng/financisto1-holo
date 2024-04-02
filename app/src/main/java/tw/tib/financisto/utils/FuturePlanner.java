@@ -8,6 +8,7 @@
 
 package tw.tib.financisto.utils;
 
+import android.content.Context;
 import android.database.Cursor;
 
 import tw.tib.financisto.blotter.BlotterFilter;
@@ -28,9 +29,8 @@ import java.util.List;
  * Date: 8/25/11 11:00 PM
  */
 public class FuturePlanner extends AbstractPlanner {
-
-    public FuturePlanner(DatabaseAdapter db, WhereFilter filter, Date now) {
-        super(db, filter, now);
+    public FuturePlanner(Context context, DatabaseAdapter db, WhereFilter filter, Date now) {
+        super(context, db, filter, now);
     }
 
     @Override
