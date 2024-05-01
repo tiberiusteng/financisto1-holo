@@ -96,7 +96,12 @@ public class CategorySelectorActivity extends AbstractListActivity<Cursor> {
 
     @Override
     protected ListAdapter createAdapter(Cursor cursor) {
-        bBack.setEnabled(navigator.canGoBack());
+        if (navigator == null) {
+            return null;
+        }
+        if (bBack != null) {
+            bBack.setEnabled(navigator.canGoBack());
+        }
         return new CategoryAdapter(navigator.categories);
     }
 
