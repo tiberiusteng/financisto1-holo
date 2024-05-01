@@ -8,17 +8,10 @@
 
 package tw.tib.financisto.activity;
 
-import android.app.Activity;
-import android.widget.ListAdapter;
-import android.widget.SimpleCursorAdapter;
-
-import java.util.List;
-
 import tw.tib.financisto.R;
 import tw.tib.financisto.db.MyEntityManager;
 import tw.tib.financisto.model.Payee;
 import tw.tib.financisto.utils.MyPreferences;
-import tw.tib.financisto.utils.TransactionUtils;
 
 public class PayeeSelector<A extends AbstractActivity> extends MyEntitySelector<Payee, A> {
 
@@ -29,7 +22,9 @@ public class PayeeSelector<A extends AbstractActivity> extends MyEntitySelector<
     public PayeeSelector(A activity, MyEntityManager em, ActivityLayout x, int actBtnId, int clearBtnId, int emptyId) {
         super(Payee.class, activity, em, x, MyPreferences.isShowPayee(activity),
                 R.id.payee, actBtnId, clearBtnId, R.string.payee, emptyId, R.id.payee_filter_toggle, R.id.payee_show_list, R.id.payee_create);
-        setUseSearchAsPrimary(true);
+        if (MyPreferences.getPayeeSelectorType(activity) == MyPreferences.EntitySelectorType.SEARCH) {
+            setUseSearchAsPrimary(true);
+        }
     }
 
     @Override

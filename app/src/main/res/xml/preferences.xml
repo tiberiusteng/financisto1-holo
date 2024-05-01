@@ -161,6 +161,29 @@
                     android:summary="@string/remember_last_project_summary"
                     android:title="@string/remember_last_project" />
             </PreferenceCategory>
+            <PreferenceCategory android:title="@string/entity_selector_type">
+                <ListPreference
+                    android:defaultValue="search"
+                    android:entries="@array/selector_type_entries"
+                    android:entryValues="@array/selector_type_values"
+                    android:key="payee_selector_type"
+                    android:title="@string/payee_selector_type_title"
+                    android:summary="@string/payee_selector_type_summary" />
+                <ListPreference
+                    android:defaultValue="search"
+                    android:entries="@array/selector_type_entries"
+                    android:entryValues="@array/selector_type_values"
+                    android:key="project_selector_type"
+                    android:title="@string/project_selector_type_title"
+                    android:summary="@string/project_selector_type_summary" />
+                <ListPreference
+                    android:defaultValue="search"
+                    android:entries="@array/selector_type_entries"
+                    android:entryValues="@array/selector_type_values"
+                    android:key="location_selector_type"
+                    android:title="@string/location_selector_type_title"
+                    android:summary="@string/location_selector_type_summary" />
+            </PreferenceCategory>
             <PreferenceCategory android:title="@string/screen_layout">
                 <CheckBoxPreference
                     android:defaultValue="false"

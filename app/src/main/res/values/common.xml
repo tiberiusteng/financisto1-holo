@@ -253,6 +253,11 @@
 		<item>RC</item>
 	</string-array>
 
+	<string-array name="selector_type_values">
+		<item>DROPDOWN</item>
+		<item>SEARCH</item>
+	</string-array>
+
 	<string name="electronic_type_paypal" translatable="false">PayPal</string>
 	<string name="electronic_type_bitcoin" translatable="false">Bitcoin</string>
 	<string name="electronic_type_amazon" translatable="false">Amazon</string>

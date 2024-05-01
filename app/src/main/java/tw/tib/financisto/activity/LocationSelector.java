@@ -28,7 +28,9 @@ public class LocationSelector<A extends AbstractActivity> extends MyEntitySelect
         super(MyLocation.class, activity, em, x, MyPreferences.isShowLocation(activity),
                 R.id.location, actBtnId, clearBtnId, R.string.location, emptyId,
                 R.id.location_filter_toggle, R.id.location_show_list, R.id.location_create);
-        setUseSearchAsPrimary(true);
+        if (MyPreferences.getLocationSelectorType(activity) == MyPreferences.EntitySelectorType.SEARCH) {
+            setUseSearchAsPrimary(true);
+        }
     }
 
     @Override

@@ -909,4 +909,17 @@
     <item>依名稱</item>
     <item>依本期截止日</item>
   </string-array>
+
+  <string name="entity_selector_type">實體選取方式</string>
+  <string name="payee_selector_type_title">受款人 選取方式</string>
+  <string name="payee_selector_type_summary">設定選取 受款人 的時候主要用搜尋還是顯示清單</string>
+  <string name="project_selector_type_title">專案 選取方式</string>
+  <string name="project_selector_type_summary">設定選取 專案 的時候主要用搜尋還是顯示清單</string>
+  <string name="location_selector_type_title">地點 選取方式</string>
+  <string name="location_selector_type_summary">設定選取 地點 的時候主要用搜尋還是顯示清單</string>
+  <string name="selector_type_summary">選取實體的方式</string>
+  <string-array name="selector_type_entries">
+        <item>左邊按鈕: 搜尋, 中間: 清單</item>
+        <item>左邊按鈕: 清單, 中間: 搜尋</item>
+    </string-array>
 </resources>

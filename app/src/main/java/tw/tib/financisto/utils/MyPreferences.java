@@ -103,6 +103,15 @@ public class MyPreferences {
 		AccountListDateType(String tag) { this.tag = tag; }
 	}
 
+	public enum EntitySelectorType {
+		DROPDOWN("DROPDOWN"),
+		SEARCH("SEARCH");
+
+		public final String tag;
+
+		EntitySelectorType(String tag) { this.tag = tag; }
+	}
+
 	private static Method hasSystemFeatureMethod;
 
 	static {
@@ -205,6 +214,28 @@ public class MyPreferences {
 	public static boolean isRememberProject(Context context) {
 		SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(context);
 		return sharedPreferences.getBoolean("remember_last_project", false);
+	}
+
+	private static EntitySelectorType getEntitySelectorType(Context context, String key) {
+		SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(context);
+		String selectorType = sharedPreferences.getString(key, EntitySelectorType.SEARCH.name());
+		try {
+			return EntitySelectorType.valueOf(selectorType);
+		} catch (IllegalArgumentException e) {
+			return EntitySelectorType.SEARCH;
+		}
+	}
+
+	public static EntitySelectorType getPayeeSelectorType(Context context) {
+		return getEntitySelectorType(context, "payee_selector_type");
+	}
+
+	public static EntitySelectorType getProjectSelectorType(Context context) {
+		return getEntitySelectorType(context, "project_selector_type");
+	}
+
+	public static EntitySelectorType getLocationSelectorType(Context context) {
+		return getEntitySelectorType(context, "location_selector_type");
 	}
 
 	public static boolean isShowTakePicture(Context context) {

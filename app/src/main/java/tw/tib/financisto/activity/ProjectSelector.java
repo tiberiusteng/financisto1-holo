@@ -8,17 +8,10 @@
 
 package tw.tib.financisto.activity;
 
-import android.app.Activity;
-import android.widget.ListAdapter;
-import android.widget.SimpleCursorAdapter;
 import tw.tib.financisto.R;
 import tw.tib.financisto.db.DatabaseAdapter;
-import tw.tib.financisto.db.MyEntityManager;
 import tw.tib.financisto.model.Project;
 import tw.tib.financisto.utils.MyPreferences;
-import tw.tib.financisto.utils.TransactionUtils;
-
-import java.util.List;
 
 /**
  * Created by IntelliJ IDEA.
@@ -34,7 +27,9 @@ public class ProjectSelector<A extends AbstractActivity> extends MyEntitySelecto
     public ProjectSelector(A activity, DatabaseAdapter db, ActivityLayout x, int actBtnId, int clearBtnId, int emptyId) {
         super(Project.class, activity, db, x, MyPreferences.isShowProject(activity),
                 R.id.project, actBtnId, clearBtnId, R.string.project, emptyId, R.id.project_filter_toggle, R.id.project_show_list, R.id.project_create);
-        setUseSearchAsPrimary(true);
+        if (MyPreferences.getProjectSelectorType(activity) == MyPreferences.EntitySelectorType.SEARCH) {
+            setUseSearchAsPrimary(true);
+        }
     }
 
     @Override

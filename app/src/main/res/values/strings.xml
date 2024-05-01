@@ -1077,6 +1077,19 @@
     <string name="transaction_show_in_account_blotter">Show in account blotter</string>
     <string name="invalid_rrule">Invalid RRule: %s</string>
 
+    <string name="entity_selector_type">Entity selector type</string>
+    <string name="payee_selector_type_title">Payee selector type</string>
+    <string name="payee_selector_type_summary">Configure primarily using search or showing list when choosing payee.</string>
+    <string name="project_selector_type_title">Project selector type</string>
+    <string name="project_selector_type_summary">Configure primarily using search or showing list when choosing project.</string>
+    <string name="location_selector_type_title">Location selector type</string>
+    <string name="location_selector_type_summary">Configure primarily using search or showing list when choosing location.</string>
+    <string name="selector_type_summary">Selector type for entities</string>
+    <string-array name="selector_type_entries">
+        <item>Button on left: Search, Center: List</item>
+        <item>Button on left: List, Center: Search</item>
+    </string-array>
+
     <string-array name="budget_sort_order">
         <item>By Name</item>
         <item>By Current Period End Date</item>
