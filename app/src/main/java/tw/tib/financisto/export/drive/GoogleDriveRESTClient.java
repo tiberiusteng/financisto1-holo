@@ -103,7 +103,7 @@ public class GoogleDriveRESTClient {
         ArrayList<GoogleDriveFileInfo> result = new ArrayList<>();
 
         List<File> fileList = googleDriveService.files().list()
-                .setQ("'" + folderID + "' in parents and mimeType ='" + Export.BACKUP_MIME_TYPE + "'")
+                .setQ("'" + folderID + "' in parents and trashed = false and mimeType ='" + Export.BACKUP_MIME_TYPE + "'")
                 .setSpaces("drive")
                 .setFields("files(id,name,createdTime)")
                 .execute().getFiles();
