@@ -494,6 +494,7 @@ public class DatabaseAdapter extends MyEntityManager {
             updateAccountBalance(oldT.fromAccountId, oldT.fromAmount, t.fromAccountId, t.fromAmount);
             updateAccountBalance(oldT.toAccountId, oldT.toAmount, t.toAccountId, t.toAmount);
             updateRunningBalance(oldT, t);
+            updateLastUsed(t);
             if (oldT.locationId != t.locationId) {
                 updateLocationCount(oldT.locationId, -1);
                 updateLocationCount(t.locationId, 1);
