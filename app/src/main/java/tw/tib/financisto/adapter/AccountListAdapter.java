@@ -57,6 +57,9 @@ public class AccountListAdapter extends ResourceCursorAdapter {
 		if (type.isCard && a.cardIssuer != null) {
 			CardIssuer cardIssuer = CardIssuer.valueOf(a.cardIssuer);
 			v.iconView.setImageResource(cardIssuer.iconId);
+		} else if (type.isElectronic && a.cardIssuer != null) {
+			ElectronicPaymentType electronicPaymentType = ElectronicPaymentType.valueOf(a.cardIssuer);
+			v.iconView.setImageResource(electronicPaymentType.iconId);
 		} else {
 			v.iconView.setImageResource(type.iconId);
 		}
