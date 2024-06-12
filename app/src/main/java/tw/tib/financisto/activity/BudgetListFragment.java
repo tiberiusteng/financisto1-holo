@@ -148,7 +148,11 @@ public class BudgetListFragment extends AbstractListFragment<ArrayList<Budget>> 
 
     @Override
     protected ArrayList<Budget> loadInBackground() {
-        int sortOrder = getActivity().getSharedPreferences(TAG, MODE_PRIVATE).getInt(PREF_SORT_ORDER, 0);
+        int sortOrder = 0;
+        FragmentActivity activity = getActivity();
+        if (activity != null) {
+            sortOrder = activity.getSharedPreferences(TAG, MODE_PRIVATE).getInt(PREF_SORT_ORDER, 0);
+        }
         filter.recalculatePeriod();
         return db.getAllBudgets(filter, MyEntityManager.BudgetSortOrder.values()[sortOrder]);
     }
@@ -160,9 +164,12 @@ public class BudgetListFragment extends AbstractListFragment<ArrayList<Budget>> 
             totalCalculationTask.stop();
             totalCalculationTask.cancel(true);
         }
-        TextView totalText = getView().findViewById(R.id.total);
-        totalCalculationTask = new BudgetListFragment.BudgetTotalsCalculationTask(totalText, budgets);
-        totalCalculationTask.execute((Void[]) null);
+        View view = getView();
+        if (view != null) {
+            TextView totalText = view.findViewById(R.id.total);
+            totalCalculationTask = new BudgetListFragment.BudgetTotalsCalculationTask(totalText, budgets);
+            totalCalculationTask.execute((Void[]) null);
+        }
     }
 
     @Override
