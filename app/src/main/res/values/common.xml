@@ -169,7 +169,7 @@
 	<string name="card_issuer_diners" translatable="false">Diners Club</string>
 	<string name="card_issuer_discover" translatable="false">Discover</string>
 	<string name="card_issuer_nets" translatable="false">NETS</string>
-	<string name="card_issuer_mir" translatable="false">Mir</string>
+	<string name="openexchangerates_app_id" translatable="false">OpenExchangeRates App ID</string>
 	<string name="recur_rrule" translatable="false">RFC-2445 RRULE</string>
 	<dimen name="category_padding">10dp</dimen>
 	<dimen name="transaction_icon_padding">10dp</dimen>
