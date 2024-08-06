@@ -358,10 +358,6 @@ public abstract class Report2DChart {
 	 * @return True if there is data to plot or False if there is no points or if all the points have no value different of zero.
 	 */
 	public boolean hasDataToPlot() {
-		if (data.getMaxValue()==data.getMinValue() && data.getMaxValue()==0) {
-			//return false;
-		}
-		//return true;
 		if (points!=null && points.size()>0) {
 			for (int i=0; i<points.size(); i++) {
 				if (points.get(i).getPointData().getValue()!=0) {
