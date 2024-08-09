@@ -493,7 +493,7 @@
   <string name="enable_widget">啟用小工具</string>
   <string name="enable_widget_summary">在小工具顯示帳戶總額</string>
   <string name="attach_picture">附加照片</string>
-  <string name="new_picture">拍攝照片</string>
+  <string name="new_picture">選取照片</string>
   <string name="credits">信用額度</string>
   <string name="sort_by_title">根據標題排序</string>
   <string name="sort_all_by_title">全部根據標題排序</string>
@@ -667,7 +667,19 @@
   <string name="dropbox_upload_backup_summary">將資料庫備份檔上傳到 Dropbox</string>
   <string name="dropbox_upload_autobackup">上傳自動備份</string>
   <string name="dropbox_upload_autobackup_summary">將資料庫自動備份檔上傳到 Dropbox</string>
+  <string name="dropbox_upload_pictures">上傳照片</string>
+  <string name="dropbox_upload_pictures_summary">將附加照片上傳到 Dropbox</string>
+  <string name="dropbox_download_pictures">下載照片</string>
+  <string name="dropbox_download_pictures_summary">從 Dropbox 下載本機沒有的附加照片</string>
   <string name="dropbox_uploading_file">正在上傳檔案到 Dropbox ...</string>
+  <string name="google_drive_upload_backup">上傳備份</string>
+  <string name="google_drive_upload_backup_summary">將資料庫備份檔上傳到 Google Drive</string>
+  <string name="google_drive_upload_autobackup">上傳自動備份</string>
+  <string name="google_drive_upload_autobackup_summary">將資料庫自動備份檔上傳到 Google Drive</string>
+  <string name="google_drive_upload_pictures">上傳照片</string>
+  <string name="google_drive_upload_pictures_summary">將附加照片上傳到 Google Drive</string>
+  <string name="google_drive_download_pictures">下載照片</string>
+  <string name="google_drive_download_pictures_summary">從 Google Drive 下載本機沒有的附加照片</string>
   <string name="exchange_rates">匯率</string>
   <string name="no_exchange_rates">無匯率</string>
   <string name="exchange_rate">匯率</string>
@@ -922,4 +934,8 @@
         <item>左邊按鈕: 搜尋, 中間: 清單</item>
         <item>左邊按鈕: 清單, 中間: 搜尋</item>
     </string-array>
+
+  <string name="downloading_picture_from_dropbox">正在從 Dropbox 下載 …</string>
+  <string name="downloading_picture_from_google_drive">正在從 Google Drive 下載 …</string>
+  <string name="missing_picture_file">%1$s (無法取得檔案)</string>
 </resources>

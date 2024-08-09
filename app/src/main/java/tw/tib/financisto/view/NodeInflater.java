@@ -15,6 +15,9 @@ import android.content.Context;
 import android.content.Intent;
 import android.net.Uri;
 import androidx.core.content.FileProvider;
+import androidx.documentfile.provider.DocumentFile;
+
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.View.OnClickListener;
@@ -252,20 +255,19 @@ public class NodeInflater {
 		public PictureBuilder withPicture(final Context context, String pictureFileName) {
 			final ImageView imageView = v.findViewById(R.id.picture);
 			imageView.setOnClickListener(arg0 -> {
-				if (RequestPermission.isRequestingPermission(context, Manifest.permission.READ_EXTERNAL_STORAGE)) {
-					return;
-				}
 				String fileName = (String) imageView.getTag(R.id.attached_picture);
 				if (fileName != null) {
-					Uri target = FileProvider.getUriForFile(context, BuildConfig.APPLICATION_ID, PicturesUtil.pictureFile(fileName, true));
+					Uri target = PicturesUtil.getPictureFileUri(context, fileName);
+					Log.i("withPicture", "fileName: " + fileName + ", target: " + target);
+					DocumentFile pictureFile = DocumentFile.fromSingleUri(context, target);
 					Intent intent = new Intent();
 					intent.setAction(Intent.ACTION_VIEW);
-					intent.setDataAndType(target, "image/jpeg");
+					intent.setDataAndType(target, pictureFile.getType());
 					intent.setFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
 					context.startActivity(intent);
 				}
 			});
-			PicturesUtil.showImage(context, imageView, pictureFileName);
+			PicturesUtil.showImage(context, imageView, v.findViewById(R.id.data), pictureFileName);
 			return this;
 		}
 

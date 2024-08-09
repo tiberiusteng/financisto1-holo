@@ -561,7 +561,7 @@
     <string name="enable_widget">Enable widget</string>
     <string name="enable_widget_summary">Show account total on the widget</string>
     <string name="attach_picture">Attach picture</string>
-    <string name="new_picture">Take a picture</string>
+    <string name="new_picture">Pick a picture</string>
 
     <string name="credits">Credits</string>
     <string name="sort_by_title">Sort by title</string>
@@ -777,6 +777,10 @@
     <string name="dropbox_upload_backup_summary">Upload database backups to Dropbox</string>
     <string name="dropbox_upload_autobackup">Upload Auto-backups</string>
     <string name="dropbox_upload_autobackup_summary">Upload database auto-backups to Dropbox</string>
+    <string name="dropbox_upload_pictures">Upload Pictures</string>
+    <string name="dropbox_upload_pictures_summary">Upload attached pictures to Dropbox</string>
+    <string name="dropbox_download_pictures">Download Pictures</string>
+    <string name="dropbox_download_pictures_summary">Download attached pictures not found locally from Dropbox</string>
     <string name="dropbox_uploading_file">Uploading file to Dropbox…</string>
     <string name="dropbox_error">Error while working with Dropbox</string>
     <string name="dropbox_auth_error">Not authorized to upload to Dropbox. Please check your Preferences.</string>
@@ -947,6 +951,10 @@
     <string name="google_drive_upload_backup_summary">Upload database backups to Google Drive</string>
     <string name="google_drive_upload_autobackup">Upload Auto-backups</string>
     <string name="google_drive_upload_autobackup_summary">Upload database auto-backups to Google Drive</string>
+    <string name="google_drive_upload_pictures">Upload Pictures</string>
+    <string name="google_drive_upload_pictures_summary">Upload attached pictures to Google Drive</string>
+    <string name="google_drive_download_pictures">Download Pictures</string>
+    <string name="google_drive_download_pictures_summary">Download attached pictures not found locally from Google Drive</string>
     <string name="google_drive_error">Not authorized to Google Drive. Please check your Preferences.</string>
 
     <string name="backup_restore_database_online">Backup/Restore Online</string>
@@ -1094,4 +1102,8 @@
         <item>By Current Period End Date</item>
     </string-array>
     <string name="card_issuer_mir">Mir</string>
+
+    <string name="downloading_picture_from_dropbox">Downloading from Dropbox …</string>
+    <string name="downloading_picture_from_google_drive">Downloading from Google Drive …</string>
+    <string name="missing_picture_file">%1$s (missing)</string>
 </resources>

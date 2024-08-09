@@ -58,9 +58,11 @@ public class CategorySelectorActivity extends AbstractListActivity<Cursor> {
     }
 
     private void confirmSelection() {
-        Intent data = new Intent();
-        data.putExtra(SELECTED_CATEGORY_ID, navigator.selectedCategoryId);
-        setResult(RESULT_OK, data);
+        if (navigator != null) {
+            Intent data = new Intent();
+            data.putExtra(SELECTED_CATEGORY_ID, navigator.selectedCategoryId);
+            setResult(RESULT_OK, data);
+        }
         finish();
     }
 

@@ -199,6 +199,8 @@ public class PreferencesActivity extends PreferenceActivity {
         preferenceScreen.findPreference("dropbox_unlink").setEnabled(dropboxAuthorized);
         preferenceScreen.findPreference("dropbox_upload_backup").setEnabled(dropboxAuthorized);
         preferenceScreen.findPreference("dropbox_upload_autobackup").setEnabled(dropboxAuthorized);
+        preferenceScreen.findPreference("dropbox_upload_pictures").setEnabled(dropboxAuthorized);
+        preferenceScreen.findPreference("dropbox_download_pictures").setEnabled(dropboxAuthorized);
     }
 
     private void selectDatabaseBackupFolder() {

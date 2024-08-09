@@ -105,13 +105,13 @@ public abstract class Export {
 
     public static void uploadBackupFileToDropbox(Context context, Uri backupFileUri) throws Exception {
         Dropbox dropbox = new Dropbox(context);
-        dropbox.uploadFile(backupFileUri);
+        dropbox.uploadBackupFile(backupFileUri);
     }
 
     public static void uploadBackupFileToGoogleDrive(Context context, Uri backupFileUri) throws Exception {
         try {
             GoogleDriveRESTClient googleDriveRESTClient = new GoogleDriveRESTClient(context);
-            googleDriveRESTClient.uploadFile(backupFileUri);
+            googleDriveRESTClient.uploadBackup(backupFileUri);
         } catch (Exception e) {
             throw new ImportExportException(R.string.google_drive_error);
         }

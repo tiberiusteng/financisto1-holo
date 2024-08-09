@@ -411,6 +411,16 @@
             android:key="dropbox_upload_autobackup"
             android:summary="@string/dropbox_upload_autobackup_summary"
             android:title="@string/dropbox_upload_autobackup" />
+        <CheckBoxPreference
+            android:defaultValue="false"
+            android:key="dropbox_upload_pictures"
+            android:summary="@string/dropbox_upload_pictures_summary"
+            android:title="@string/dropbox_upload_pictures" />
+        <CheckBoxPreference
+            android:defaultValue="false"
+            android:key="dropbox_download_pictures"
+            android:summary="@string/dropbox_download_pictures_summary"
+            android:title="@string/dropbox_download_pictures" />
     </PreferenceCategory>
 
     <PreferenceCategory android:title="@string/gdocs_backup">
@@ -437,6 +447,16 @@
             android:key="google_drive_upload_autobackup"
             android:summary="@string/google_drive_upload_autobackup_summary"
             android:title="@string/google_drive_upload_autobackup" />
+        <CheckBoxPreference
+            android:defaultValue="false"
+            android:key="google_drive_upload_pictures"
+            android:summary="@string/google_drive_upload_pictures_summary"
+            android:title="@string/google_drive_upload_pictures" />
+        <CheckBoxPreference
+            android:defaultValue="false"
+            android:key="google_drive_download_pictures"
+            android:summary="@string/google_drive_download_pictures_summary"
+            android:title="@string/google_drive_download_pictures" />
     </PreferenceCategory>
 
     <PreferenceCategory android:title="@string/exchange_rates">

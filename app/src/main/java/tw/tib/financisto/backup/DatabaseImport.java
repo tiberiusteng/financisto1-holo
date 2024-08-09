@@ -55,7 +55,7 @@ public class DatabaseImport extends FullDatabaseImport {
 
     public static DatabaseImport createFromDropboxBackup(Context context, DatabaseAdapter dbAdapter, Dropbox dropbox, String backupFile)
             throws Exception {
-        InputStream inputStream = dropbox.getFileAsStream(backupFile);
+        InputStream inputStream = dropbox.getBackupFileAsStream(backupFile);
         InputStream in = new GZIPInputStream(inputStream);
         return new DatabaseImport(context, dbAdapter, in);
     }

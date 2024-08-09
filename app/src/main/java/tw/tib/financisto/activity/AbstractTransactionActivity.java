@@ -17,16 +17,16 @@ import android.content.Intent;
 import android.database.Cursor;
 import android.os.Build;
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.Looper;
 import android.text.InputType;
 import android.util.Log;
 import android.view.View;
-import android.view.Window;
 import android.view.WindowManager;
 import android.widget.*;
 import android.app.DatePickerDialog;
 import android.app.TimePickerDialog;
 
-import greendroid.widget.QuickActionGrid;
 import greendroid.widget.QuickActionWidget;
 import tw.tib.financisto.R;
 import tw.tib.financisto.datetime.DateUtils;
@@ -55,12 +55,17 @@ import java.text.DateFormat;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
+import java.util.concurrent.Executors;
 
 import static tw.tib.financisto.activity.RequestPermission.isRequestingPermission;
 import static tw.tib.financisto.model.Category.NO_CATEGORY_ID;
 import static tw.tib.financisto.model.MyLocation.CURRENT_LOCATION_ID;
 import static tw.tib.financisto.model.Project.NO_PROJECT_ID;
 import static tw.tib.financisto.utils.Utils.text;
+
+import androidx.activity.result.ActivityResultLauncher;
+import androidx.activity.result.PickVisualMediaRequest;
+import androidx.activity.result.contract.ActivityResultContracts;
 
 public abstract class AbstractTransactionActivity extends AbstractActivity implements CategorySelector.CategorySelectorListener {
 
@@ -94,6 +99,7 @@ public abstract class AbstractTransactionActivity extends AbstractActivity imple
 	protected TextView notificationText;
 
 	private ImageView pictureView;
+	private TextView pictureDescView;
 
 	private CheckBox ccardPayment;
 
@@ -116,7 +122,7 @@ public abstract class AbstractTransactionActivity extends AbstractActivity imple
 	protected boolean isShowLocation;
 	protected boolean isShowProject;
 	protected boolean isShowNote;
-	protected boolean isShowTakePicture = false;
+	protected boolean isShowTakePicture;
 	protected boolean isShowIsCCardPayment;
 	protected boolean isOpenCalculatorForTemplates;
 
@@ -130,6 +136,8 @@ public abstract class AbstractTransactionActivity extends AbstractActivity imple
 	protected DateFormat tf;
 
 	private QuickActionWidget pickImageActionGrid;
+
+	ActivityResultLauncher<PickVisualMediaRequest> pickMedia;
 
 	protected Transaction transaction = new Transaction();
 
@@ -160,7 +168,7 @@ public abstract class AbstractTransactionActivity extends AbstractActivity imple
 		isShowLocation = MyPreferences.isShowLocation(this);
 		isShowProject = MyPreferences.isShowProject(this);
 		isShowNote = MyPreferences.isShowNote(this);
-		//isShowTakePicture = MyPreferences.isShowTakePicture(this);
+		isShowTakePicture = MyPreferences.isShowTakePicture(this);
 		isShowIsCCardPayment = MyPreferences.isShowIsCCardPayment(this);
 		isOpenCalculatorForTemplates = MyPreferences.isOpenCalculatorForTemplates(this);
 
@@ -330,36 +338,30 @@ public abstract class AbstractTransactionActivity extends AbstractActivity imple
 			}
 		}
 
-		setupPickImageActionGrid();
+		if (isShowTakePicture) {
+			pickMedia =
+					registerForActivityResult(new ActivityResultContracts.PickVisualMedia(), uri -> {
+						// Callback is invoked after the user selects a media item or closes the
+						// photo picker.
+						if (uri != null) {
+							Log.d("PhotoPicker", "Selected URI: " + uri);
+							var executor = Executors.newSingleThreadExecutor();
+							var handler = new Handler(Looper.getMainLooper());
+							executor.execute(() -> {
+								String fileName = PicturesUtil.saveSelectedPicture(this, uri);
+								if (fileName != null) {
+									handler.post(() -> selectPicture(fileName));
+								}
+							});
+						} else {
+							Log.d("PhotoPicker", "No media selected");
+						}
+					});
+		}
 
 		long t1 = System.currentTimeMillis();
 		Log.i("TransactionActivity", "onCreate " + (t1 - t0) + "ms");
 	}
-
-	protected void setupPickImageActionGrid() {
-		pickImageActionGrid = new QuickActionGrid(this);
-		pickImageActionGrid.addQuickAction(new MyQuickAction(this, R.drawable.ic_photo_camera, R.string.image_pick_camera));
-		pickImageActionGrid.addQuickAction(new MyQuickAction(this, R.drawable.ic_photo_library, R.string.image_pick_images));
-		pickImageActionGrid.setOnQuickActionClickListener((widget, position, action) -> {
-			switch (position) {
-				case 0:
-					//requestImage(Sources.CAMERA);
-					break;
-				case 1:
-					//requestImage(Sources.GALLERY);
-					break;
-			}
-		});
-	}
-
-	/*
-	protected void requestImage(Sources source) {
-		transaction.blobKey = null;
-		disposable.add(RxImagePicker.with(getFragmentManager()).requestImage(source)
-				.flatMap(uri -> RxImageConverters.uriToFile(this, uri, PicturesUtil.createEmptyImageFile()))
-				.subscribe(file -> selectPicture(file.getName())));
-	}
-	 */
 
 	protected void createPayeeNode(LinearLayout layout) {
 		payeeSelector = new PayeeSelector<>(this, db, x);
@@ -435,7 +437,9 @@ public abstract class AbstractTransactionActivity extends AbstractActivity imple
 			}
 		}
 		if (isShowTakePicture && transaction.isNotTemplateLike()) {
-			pictureView = x.addPictureNodeMinus(this, layout, R.id.attach_picture, R.id.delete_picture, R.string.attach_picture, R.string.new_picture);
+			View v = x.addPictureNodeMinus(this, layout, R.id.attach_picture, R.id.delete_picture, R.string.attach_picture, R.string.new_picture);
+			pictureView = v.findViewById(R.id.picture);
+			pictureDescView = v.findViewById(R.id.data);
 		}
 		if (isShowIsCCardPayment) {
 			// checkbox to register if the transaction is a credit card payment.
@@ -477,11 +481,12 @@ public abstract class AbstractTransactionActivity extends AbstractActivity imple
 				break;
 			}
 			case R.id.attach_picture: {
-				if (isRequestingPermission(this, Manifest.permission.CAMERA)) {
-					return;
+				if (PicturesUtil.getPictureFolderUri(this) != null) {
+					transaction.blobKey = null;
+					pickMedia.launch(new PickVisualMediaRequest.Builder()
+							.setMediaType(ActivityResultContracts.PickVisualMedia.ImageOnly.INSTANCE)
+							.build());
 				}
-				transaction.blobKey = null;
-				pickImageActionGrid.show(v);
 				break;
 			}
 			case R.id.delete_picture: {
@@ -624,7 +629,7 @@ public abstract class AbstractTransactionActivity extends AbstractActivity imple
 		if (pictureFileName == null) {
 			return;
 		}
-		PicturesUtil.showImage(this, pictureView, pictureFileName);
+		PicturesUtil.showImage(this, pictureView, pictureDescView, pictureFileName);
 		pictureView.setTag(R.id.attached_picture, pictureFileName);
 		transaction.attachedPicture = pictureFileName;
 	}
@@ -637,6 +642,7 @@ public abstract class AbstractTransactionActivity extends AbstractActivity imple
 		transaction.blobKey = null;
 		pictureView.setImageBitmap(null);
 		pictureView.setTag(R.id.attached_picture, null);
+		pictureDescView.setText(R.string.new_picture);
 	}
 
 	protected void setDateTime(long date) {

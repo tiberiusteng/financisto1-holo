@@ -293,11 +293,10 @@ public class ActivityLayout {
 		plusImageView.setVisibility(View.VISIBLE);
 	}
 
-	public ImageView addPictureNodeMinus(Context context, LinearLayout layout, int id, int minusId, int labelId, int defaultLabelResId) {
+	public View addPictureNodeMinus(Context context, LinearLayout layout, int id, int minusId, int labelId, int defaultLabelResId) {
 		PictureBuilder b = inflater.new PictureBuilder(layout);
-		View v = b.withPicture(context, null).withButtonId(minusId, listener).withId(id, listener)
+		return b.withPicture(context, null).withButtonId(minusId, listener).withId(id, listener)
 				.withLabel(labelId).withData(defaultLabelResId).create();
-		return (ImageView)v.findViewById(R.id.picture);
 	}
 
 	public View addEditNode(LinearLayout layout, int labelId, View view) {

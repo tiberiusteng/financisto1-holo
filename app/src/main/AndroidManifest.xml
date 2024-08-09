@@ -12,7 +12,7 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
 	xmlns:tools="http://schemas.android.com/tools"
 	package="tw.tib.financisto"
-	android:versionName="2024-06-12" android:versionCode="160"
+	android:versionName="2024-08-05" android:versionCode="161"
     android:installLocation="internalOnly">
 
     <supports-screens
@@ -346,6 +346,16 @@
 				android:resource="@xml/file_paths" />
 		</provider>
 
+		<!-- Prompt Google Play services to install the backported photo picker module -->
+		<!--suppress AndroidDomInspection -->
+		<service android:name="com.google.android.gms.metadata.ModuleDependencies"
+			android:enabled="false" android:exported="false" tools:ignore="MissingClass">
+			<intent-filter>
+				<action android:name="com.google.android.gms.metadata.MODULE_DEPENDENCIES" />
+			</intent-filter>
+
+			<meta-data android:name="photopicker_activity:0:required" android:value="" />
+		</service>
 	</application>
 
 	<queries>

@@ -24,6 +24,7 @@ import java.lang.reflect.Method;
 import java.util.Collection;
 import java.util.Locale;
 
+import tw.tib.financisto.R;
 import tw.tib.financisto.export.ImportExportException;
 import tw.tib.financisto.export.Export;
 import tw.tib.financisto.model.Currency;
@@ -240,7 +241,7 @@ public class MyPreferences {
 
 	public static boolean isShowTakePicture(Context context) {
 		SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(context);
-		return isCameraSupported(context) && sharedPreferences.getBoolean("ntsl_show_picture", true);
+		return sharedPreferences.getBoolean("ntsl_show_picture", true);
 	}
 
 	public static boolean isShowCategoryInTransferScreen(Context context) {
@@ -668,6 +669,14 @@ public class MyPreferences {
 		return isDropboxAuthorized(context) && getBoolean(context, "dropbox_upload_autobackup", false);
 	}
 
+	public static boolean isDropboxUploadPictures(Context context) {
+		return isDropboxAuthorized(context) && getBoolean(context, "dropbox_upload_pictures", false);
+	}
+
+	public static boolean isDropboxDownloadPictures(Context context) {
+		return isDropboxAuthorized(context) && getBoolean(context, "dropbox_download_pictures", false);
+	}
+
 	public static boolean isUseHierarchicalCategorySelector(Context context) {
 		return getBoolean(context, "use_hierarchical_category_selector", true);
 	}
@@ -761,6 +770,14 @@ public class MyPreferences {
 
 	public static boolean isGoogleDriveUploadAutoBackups(Context context) {
 		return getBoolean(context, "google_drive_upload_autobackup", false);
+	}
+
+	public static boolean isGoogleDriveUploadPictures(Context context) {
+		return getBoolean(context, "google_drive_upload_pictures", false);
+	}
+
+	public static boolean isGoogleDriveDownloadPictures(Context context) {
+		return getBoolean(context, "google_drive_download_pictures", false);
 	}
 
 	public static TransactionStatus getSmsTransactionStatus(Context context) {

@@ -13,6 +13,7 @@ import android.net.Uri;
 import android.util.Log;
 import android.widget.Toast;
 
+import com.dropbox.core.DbxDownloader;
 import com.dropbox.core.DbxException;
 import com.dropbox.core.DbxRequestConfig;
 import com.dropbox.core.android.Auth;
@@ -41,6 +42,8 @@ public class Dropbox {
     private static final String TAG = "Dropbox";
 
     private static final String APP_KEY = "aenijec51r68hsv";
+
+    private static final String PICTURES_DIR = "/pictures";
 
     private final Context context;
 
@@ -107,28 +110,36 @@ public class Dropbox {
         return false;
     }
 
-    public FileMetadata uploadFile(Uri uri) throws Exception {
+    public FileMetadata uploadFile(Uri uri, String path) throws Exception {
         if (authSession()) {
             try {
                 InputStream is = context.getContentResolver().openInputStream(uri);
                 try {
                     String fileName = uri.getLastPathSegment();
                     FileMetadata fileMetadata = dropboxClient.files()
-                            .uploadBuilder("/" + fileName.substring(fileName.lastIndexOf("/") + 1))
+                            .uploadBuilder(path + fileName.substring(fileName.lastIndexOf("/") + 1))
                             .withMode(WriteMode.ADD)
                             .uploadAndFinish(is);
-                    Log.i("Financisto", "Dropbox: The uploaded file's rev is: " + fileMetadata.getRev());
+                    Log.i(TAG, "Dropbox: The uploaded file's rev is: " + fileMetadata.getRev());
                     return fileMetadata;
                 } finally {
                     IOUtil.closeInput(is);
                 }
             } catch (Exception e) {
-                Log.e("Financisto", "Dropbox: Something wrong", e);
+                Log.e(TAG, "Dropbox: Something wrong", e);
                 throw new ImportExportException(R.string.dropbox_error, e);
             }
         } else {
             throw new ImportExportException(R.string.dropbox_auth_error);
         }
+    }
+
+    public FileMetadata uploadBackupFile(Uri uri) throws Exception {
+        return uploadFile(uri, "/");
+    }
+
+    public FileMetadata uploadPictureFile(Uri uri) throws Exception {
+        return uploadFile(uri, PICTURES_DIR + "/");
     }
 
     List<String> listFiles() throws Exception {
@@ -158,16 +169,32 @@ public class Dropbox {
         }
     }
 
-    public InputStream getFileAsStream(String backupFile) throws Exception {
+    public InputStream getFileAsStream(String fileName, String path) throws Exception {
         if (authSession()) {
             try {
-                return dropboxClient.files().downloadBuilder("/" + backupFile).start().getInputStream();
+                return dropboxClient.files().downloadBuilder(path + fileName).start().getInputStream();
             } catch (Exception e) {
-                Log.e("Financisto", "Dropbox: Something wrong", e);
+                Log.e(TAG, "Dropbox: Something wrong", e);
                 throw new ImportExportException(R.string.dropbox_error, e);
             }
         } else {
             throw new ImportExportException(R.string.dropbox_auth_error);
         }
+    }
+
+    public InputStream getBackupFileAsStream(String backupFileName) throws Exception {
+        return getFileAsStream(backupFileName, "/");
+    }
+
+    public DbxDownloader<FileMetadata> getPictureFile(String fileName) {
+        if (authSession()) {
+            try {
+                return dropboxClient.files().downloadBuilder(PICTURES_DIR + "/" + fileName).start();
+            } catch (Exception e) {
+                Log.e(TAG, "get picture file error", e);
+                return null;
+            }
+        }
+        return null;
     }
 }
