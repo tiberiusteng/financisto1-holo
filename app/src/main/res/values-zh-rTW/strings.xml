@@ -938,4 +938,9 @@
   <string name="downloading_picture_from_dropbox">正在從 Dropbox 下載 …</string>
   <string name="downloading_picture_from_google_drive">正在從 Google Drive 下載 …</string>
   <string name="missing_picture_file">%1$s (無法取得檔案)</string>
+
+  <string name="export_splits">匯出分割交易細目</string>
+  <string name="export_split_parents">匯出分割交易彙總</string>
+  <string name="export_tx_ids">匯出交易 ID</string>
+
 </resources>

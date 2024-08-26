@@ -144,6 +144,31 @@
                     android:layout_width="0dp"
                     android:visibility="invisible" />
 
+
+                <CheckBox
+                    android:id="@+id/checkboxExportSplits"
+                    android:layout_columnWeight="1"
+                    android:layout_width="0dp"
+                    android:layout_gravity="fill"
+                    android:checked="false"
+                    android:text="@string/export_splits" />
+
+                <CheckBox
+                    android:id="@+id/checkboxExportSplitParents"
+                    android:layout_columnWeight="1"
+                    android:layout_width="0dp"
+                    android:layout_gravity="fill"
+                    android:checked="false"
+                    android:text="@string/export_split_parents" />
+
+                <CheckBox
+                    android:id="@+id/checkboxExportTxIDs"
+                    android:layout_columnWeight="1"
+                    android:layout_width="0dp"
+                    android:layout_gravity="fill"
+                    android:checked="false"
+                    android:text="@string/export_tx_ids" />
+
             </GridLayout>
         </LinearLayout>
     </ScrollView>

@@ -916,6 +916,7 @@
     <string name="use_exchange_rate_service_with_historical">Please select an exchange rate service providing historical rates, like OpenExchangeRates.org</string>
 
     <string name="export_splits">Export splits</string>
+    <string name="export_split_parents">Export split parents</string>
 
     <string name="account_by_currency">All %s Accounts</string>
     <string name="budget_type_saving">Saving</string>
@@ -1106,4 +1107,7 @@
     <string name="downloading_picture_from_dropbox">Downloading from Dropbox …</string>
     <string name="downloading_picture_from_google_drive">Downloading from Google Drive …</string>
     <string name="missing_picture_file">%1$s (missing)</string>
+
+    <string name="export_tx_ids">Export TX ID</string>
+
 </resources>

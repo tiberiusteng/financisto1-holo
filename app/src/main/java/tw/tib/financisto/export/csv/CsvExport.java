@@ -36,6 +36,7 @@ import java.util.Map;
 
 public class CsvExport extends Export {
 
+    static final String HEADER_TXID = "txid";
     static final String[] HEADER = "date,time,account,amount,currency,original amount,original currency,category,parent,payee,location,project,note".split(",");
     static final String[] HEADER_WITH_STATUS = "date,time,status,account,amount,currency,original amount,original currency,category,parent,payee,location,project,note".split(",");
 
@@ -78,6 +79,9 @@ public class CsvExport extends Export {
         }
         if (options.includeHeader) {
             Csv.Writer w = new Csv.Writer(bw).delimiter(options.fieldSeparator);
+            if (options.exportTxIDs) {
+                w.value(HEADER_TXID);
+            }
             if (options.includeTxStatus) {
                 for (String h : HEADER_WITH_STATUS) {
                     w.value(h);
@@ -101,7 +105,7 @@ public class CsvExport extends Export {
             payeeMap = db.getAllPayeeByIdMap();
             projectMap = db.getAllProjectsByIdMap(false);
             locationMap = db.getAllLocationsByIdMap(false);
-            try (Cursor c = db.getBlotter(options.filter)) {
+            try (Cursor c = db.getBlotterWithSplits(options.filter)) {
                 while (c.moveToNext()) {
                     Transaction t = Transaction.fromBlotterCursor(c);
                     writeLine(w, t);
@@ -119,27 +123,28 @@ public class CsvExport extends Export {
         Account fromAccount = getAccount(t.fromAccountId);
         if (t.isTransfer()) {
             Account toAccount = getAccount(t.toAccountId);
-            writeLine(w, dt, t.status, fromAccount.title, t.fromAmount, fromAccount.currency.id, 0, 0, category, null, TRANSFER_OUT, project, t.note);
-            writeLine(w, dt, t.status, toAccount.title, t.toAmount, toAccount.currency.id, 0, 0, category, null, TRANSFER_IN, project, t.note);
+            writeLine(w, t.id, dt, t.status, fromAccount.title, t.fromAmount, fromAccount.currency.id, 0, 0, category, null, TRANSFER_OUT, project, t.note);
+            writeLine(w, t.id, dt, t.status, toAccount.title, t.toAmount, toAccount.currency.id, 0, 0, category, null, TRANSFER_IN, project, t.note);
         } else {
+            boolean isSplit = (category != null && category.isSplit());
             MyLocation location = getLocationById(t.locationId);
             Payee payee = getPayee(t.payeeId);
-            writeLine(w, dt, t.status, fromAccount.title, t.fromAmount, fromAccount.currency.id, t.originalFromAmount, t.originalCurrencyId,
-                    category, payee, location, project, t.note);
-            if (category != null && category.isSplit() && options.exportSplits) {
-                List<Transaction> splits = db.getSplitsForTransaction(t.id);
-                for (Transaction split : splits) {
-                    split.dateTime = 0;
-                    writeLine(w, split);
-                }
+            if ((t.parentId == 0 && (!isSplit || options.exportSplitParents)) ||
+                (t.parentId != 0 && options.exportSplits))
+            {
+                writeLine(w, t.id, dt, t.status, fromAccount.title, t.fromAmount, fromAccount.currency.id, t.originalFromAmount, t.originalCurrencyId,
+                        category, payee, location, project, t.note);
             }
         }
     }
 
-    private void writeLine(Csv.Writer w, Date dt, TransactionStatus status, String account,
+    private void writeLine(Csv.Writer w, long transactionId, Date dt, TransactionStatus status, String account,
                            long amount, long currencyId,
                            long originalAmount, long originalCurrencyId,
                            Category category, Payee payee, MyLocation location, Project project, String note) {
+        if (options.exportTxIDs) {
+            w.value(String.valueOf(transactionId));
+        }
         if (dt != null) {
             w.value(DateUtils.FORMAT_DATE_ISO_8601.format(dt));
             w.value(DateUtils.FORMAT_TIME_ISO_8601.format(dt));
