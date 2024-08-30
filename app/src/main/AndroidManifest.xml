@@ -294,7 +294,8 @@
 		<activity android:name=".activity.MonthlyViewActivity" android:label="@string/monthly_view"/>
 		<activity android:name=".activity.CCardStatementClosingDayActivity" android:label="@string/closing_day" />
 		
-		<activity android:name=".activity.Report2DChartActivity" android:label="@string/report"/>
+		<activity android:name=".activity.Report2DChartActivity" android:label="@string/report"
+			android:configChanges="screenSize|smallestScreenSize|orientation|screenLayout|keyboardHidden" />
 		<activity android:name=".activity.ReportPieChartActivity" android:label="@string/report"/>
 		<activity android:name=".activity.ReportPreferencesActivity" android:label="@string/report_preferences"/>
 		<activity android:name=".activity.AboutActivity" android:label="@string/about"
