@@ -31,10 +31,11 @@ import tw.tib.financisto.utils.Utils;
 
 public class TransactionsListAdapter extends BlotterListAdapter {
 
-    private int dateColor;
-    private int dateWeekendColor;
-    private int projectColor;
-    private boolean showProject;
+    private final int dateColor;
+    private final int dateWeekendColor;
+    private final int projectColor;
+    private final boolean showProject;
+    private final boolean colorizeWeekendDate;
 
     public TransactionsListAdapter(Context context, DatabaseAdapter db, Cursor c) {
         super(context, db, c);
@@ -44,6 +45,7 @@ public class TransactionsListAdapter extends BlotterListAdapter {
         this.dateWeekendColor = r.getColor(R.color.transaction_date_weekend);
         this.projectColor = r.getColor(R.color.project_color);
         this.showProject = MyPreferences.isShowProjectInBlotter(context);
+        this.colorizeWeekendDate = MyPreferences.isColorizeWeekendDate(context);
     }
 
     @Override
@@ -119,7 +121,7 @@ public class TransactionsListAdapter extends BlotterListAdapter {
             Calendar cal = Calendar.getInstance();
             cal.setTimeInMillis(date);
             int dayOfWeek = cal.get(Calendar.DAY_OF_WEEK);
-            if (dayOfWeek == Calendar.SUNDAY || dayOfWeek == Calendar.SATURDAY) {
+            if (colorizeWeekendDate && (dayOfWeek == Calendar.SUNDAY || dayOfWeek == Calendar.SATURDAY)) {
                 v.bottomView.setTextColor(dateWeekendColor);
             } else {
                 v.bottomView.setTextColor(dateColor);
