@@ -22,8 +22,10 @@ import tw.tib.financisto.utils.MyPreferences;
 
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.TimeUnit;
 
 public class CategorySelectorActivity extends AbstractListActivity<Cursor> {
 
@@ -114,21 +116,38 @@ public class CategorySelectorActivity extends AbstractListActivity<Cursor> {
         }
 
         var allTransactions = db.getTransactionsForAccount(selectedAccountId);
-        var suggestedCategories = new ArrayList<Category>();
+        if (allTransactions.isEmpty()) {
+            return null;
+        }
 
-        // This currently picks up to 5 most recently used categories.
-        // Room for improvement: pick popular categories over the last week/month.
+        var intervalEndMillis = allTransactions.get(0).dateTime;
+        var intervalStartMillis = intervalEndMillis - TimeUnit.DAYS.toMillis(30);
+        var transactionsProcessed = 0;
+        var recentCategories = new HashMap<Category, Integer>();
+
         for (var t: allTransactions) {
             var c = t.category;
-            if (!suggestedCategories.contains(c)) {
-                suggestedCategories.add(c);
+            if (!recentCategories.containsKey(c)) {
+                recentCategories.put(c, 1);
+            } else {
+                recentCategories.put(c, recentCategories.get(c) + 1);
             }
 
-            if (suggestedCategories.size() >= 5) {
+            if (transactionsProcessed++ >= 30 && t.dateTime < intervalStartMillis) {
                 break;
             }
         }
 
+        var topCategories = new ArrayList<>(recentCategories.entrySet());
+        Collections.sort(topCategories, (o1, o2) -> o2.getValue() - o1.getValue());
+
+        var suggestedCategories = new ArrayList<Category>();
+        for (var e: topCategories) {
+            suggestedCategories.add(e.getKey());
+            if (suggestedCategories.size() >= 5) {
+                break;
+            }
+        }
         return suggestedCategories;
     }
 
