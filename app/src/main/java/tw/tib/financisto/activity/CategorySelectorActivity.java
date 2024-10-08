@@ -25,6 +25,7 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
 
 public class CategorySelectorActivity extends AbstractListActivity<Cursor> {
@@ -43,6 +44,8 @@ public class CategorySelectorActivity extends AbstractListActivity<Cursor> {
     private Map<Long, String> attributes;
 
     private Button bBack;
+
+    private boolean isShowRecentlyUsedCategory = false;
 
     public CategorySelectorActivity() {
         super(R.layout.category_selector);
@@ -63,6 +66,12 @@ public class CategorySelectorActivity extends AbstractListActivity<Cursor> {
         });
         Button bSelect = findViewById(R.id.bSelect);
         bSelect.setOnClickListener(view -> confirmSelection());
+
+        isShowRecentlyUsedCategory = MyPreferences.isShowRecentlyUsedCategory(this);
+        if (isShowRecentlyUsedCategory) {
+            View v = findViewById(R.id.suggestedCategoriesBarView);
+            if (v != null) v.setVisibility(View.VISIBLE);
+        }
     }
 
     private void confirmSelection() {
@@ -84,6 +93,14 @@ public class CategorySelectorActivity extends AbstractListActivity<Cursor> {
         long excTreeId = -1;
         Intent intent = getIntent();
 
+        if (isShowRecentlyUsedCategory) {
+            var executor = Executors.newSingleThreadExecutor();
+            executor.execute(() -> {
+                var suggestedCategories = loadSuggestedCategories(intent);
+                runOnUiThread(() -> fillSuggestedCategories(suggestedCategories));
+            });
+        }
+
         if (intent != null) {
             excTreeId = intent.getLongExtra(EXCLUDED_SUB_TREE_ID, -1);
         }
@@ -100,8 +117,6 @@ public class CategorySelectorActivity extends AbstractListActivity<Cursor> {
             }
             navigator.selectCategory(intent.getLongExtra(SELECTED_CATEGORY_ID, 0));
         }
-        var suggestedCategories = loadSuggestedCategories(intent);
-        runOnUiThread(() -> fillSuggestedCategories(suggestedCategories));
 
         return null;
     }
@@ -153,11 +168,14 @@ public class CategorySelectorActivity extends AbstractListActivity<Cursor> {
 
     private void fillSuggestedCategories(List<Category> suggestedCategories) {
         var container = (LinearLayout)findViewById(R.id.suggestedCategoriesBar);
+        Button placeholder = findViewById(R.id.suggestedCategoriesBarLoadingPlaceholder);
 
         if (suggestedCategories == null || suggestedCategories.isEmpty()) {
-            container.setVisibility(View.GONE);
+            placeholder.setText(R.string.no_suggestion);
             return;
         }
+
+        placeholder.setVisibility(View.GONE);
 
         for (var c: suggestedCategories) {
             var v = buildViewForCategory(c);
@@ -166,7 +184,7 @@ public class CategorySelectorActivity extends AbstractListActivity<Cursor> {
                     navigator.goBack();
                 }
                 navigator.selectCategory(c.id);
-                setListAdapter(createAdapter(null));
+                confirmSelection();
             });
             container.addView(v);
         }

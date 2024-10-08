@@ -84,6 +84,7 @@
     <string name="no_currencies">No currencies</string>
     <string name="no_projects">No projects</string>
     <string name="no_recur">No recur</string>
+    <string name="no_suggestion">No suggestion</string>
     <string name="account_from">From Account</string>
     <string name="account_to">To Account</string>
     <string name="amount_from">Amount Out</string>
@@ -799,6 +800,8 @@
     <string name="category_selector">Category selector</string>
     <string name="use_hierarchical_category_selector">Hierarchical selector</string>
     <string name="use_hierarchical_category_selector_summary">Use hierarchical category selector</string>
+    <string name="show_recently_used_category">Show recently used categories</string>
+    <string name="show_recently_used_category_summary">Show recently used categories from current account</string>
     <string name="hierarchical_category_selector_select_child_immediately">Confirm automatically</string>
     <string name="hierarchical_category_selector_select_child_immediately_summary">Confirm child category selection automatically</string>
     <string name="hierarchical_category_selector_income_expense">Income/Expense</string>

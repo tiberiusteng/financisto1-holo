@@ -128,6 +128,11 @@
                     android:title="@string/use_hierarchical_category_selector" />
                 <CheckBoxPreference
                     android:defaultValue="true"
+                    android:key="show_recently_used_category"
+                    android:summary="@string/show_recently_used_category_summary"
+                    android:title="@string/show_recently_used_category" />
+                <CheckBoxPreference
+                    android:defaultValue="true"
                     android:key="hierarchical_category_selector_select_child_immediately"
                     android:summary="@string/hierarchical_category_selector_select_child_immediately_summary"
                     android:title="@string/hierarchical_category_selector_select_child_immediately" />

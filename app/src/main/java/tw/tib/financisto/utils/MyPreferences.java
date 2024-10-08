@@ -681,6 +681,10 @@ public class MyPreferences {
 		return getBoolean(context, "use_hierarchical_category_selector", true);
 	}
 
+	public static boolean isShowRecentlyUsedCategory(Context context) {
+		return getBoolean(context, "show_recently_used_category", true);
+	}
+
 	public static boolean isAutoSelectChildCategory(Context context) {
 		return getBoolean(context, "hierarchical_category_selector_select_child_immediately", true);
 	}

@@ -10,6 +10,8 @@
 	android:orientation="vertical">
 
 	<HorizontalScrollView
+		android:id="@+id/suggestedCategoriesBarView"
+		android:visibility="gone"
 		android:background="#FFF"
 		android:layout_width="match_parent"
 		android:layout_height="wrap_content">
@@ -18,7 +20,15 @@
 			android:id="@+id/suggestedCategoriesBar"
 			android:layout_width="wrap_content"
 			android:layout_height="match_parent"
-			android:orientation="horizontal" />
+			android:orientation="horizontal">
+
+			<Button android:id="@+id/suggestedCategoriesBarLoadingPlaceholder"
+				android:layout_width="wrap_content"
+				android:layout_height="wrap_content"
+				android:enabled="false"
+				android:text="@string/loading" />
+
+		</LinearLayout>
 	</HorizontalScrollView>
 
 	<ListView android:id="@android:id/list" android:layout_width="fill_parent"

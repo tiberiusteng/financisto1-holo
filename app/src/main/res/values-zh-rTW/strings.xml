@@ -66,12 +66,13 @@
   <string name="warning">警告</string>
   <string name="no_accounts">您必須從建立新帳戶開始，請點擊下面綠色的 \'+\' 按鈕…</string>
   <string name="no_budgets">無預算</string>
-  <string name="loading">載入中 ...</string>
+  <string name="loading">載入中…</string>
   <string name="no_transactions">無交易</string>
   <string name="no_categories">無分類</string>
   <string name="no_currencies">無貨幣</string>
   <string name="no_projects">無專案</string>
   <string name="no_recur">無循環</string>
+  <string name="no_suggestion">無建議</string>
   <string name="account_from">從帳戶</string>
   <string name="account_to">轉至帳戶</string>
   <string name="amount_from">轉出金額</string>
@@ -692,6 +693,8 @@
   <string name="category_selector">分類選單</string>
   <string name="use_hierarchical_category_selector">樹狀選單</string>
   <string name="use_hierarchical_category_selector_summary">使用樹狀分類選單</string>
+  <string name="show_recently_used_category">顯示最近用過分類</string>
+  <string name="show_recently_used_category_summary">列出選定帳戶最近用過的分類</string>
   <string name="hierarchical_category_selector_select_child_immediately">自動確認</string>
   <string name="hierarchical_category_selector_select_child_immediately_summary">自動確認子分類選項</string>
   <string name="hierarchical_category_selector_income_expense">收入/支出</string>
