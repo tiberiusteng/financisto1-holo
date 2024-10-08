@@ -12,6 +12,7 @@ import android.content.Context;
 import android.util.Log;
 
 import androidx.work.Constraints;
+import androidx.work.Data;
 import androidx.work.ExistingPeriodicWorkPolicy;
 import androidx.work.NetworkType;
 import androidx.work.PeriodicWorkRequest;
@@ -21,6 +22,7 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.concurrent.TimeUnit;
 
+import tw.tib.financisto.db.DatabaseAdapter;
 import tw.tib.financisto.utils.MyPreferences;
 import tw.tib.financisto.worker.AutoBackupWorker;
 
@@ -38,11 +40,15 @@ public class DailyAutoBackupScheduler {
     private String TAG;
 
     public static void scheduleNextAutoBackup(Context context) {
+        scheduleNextAutoBackupAfterTimestamp(context, System.currentTimeMillis());
+    }
+
+    public static void scheduleNextAutoBackupAfterTimestamp(Context context, long timestamp) {
         if (MyPreferences.isAutoBackupEnabled(context)) {
             int hhmm = MyPreferences.getAutoBackupTime(context);
             int hh = hhmm/100;
             int mm = hhmm - 100*hh;
-            new DailyAutoBackupScheduler(hh, mm, System.currentTimeMillis()).scheduleBackup(context);
+            new DailyAutoBackupScheduler(hh, mm, timestamp).scheduleBackup(context);
         }
         else {
             WorkManager.getInstance(context)
@@ -59,6 +65,7 @@ public class DailyAutoBackupScheduler {
     }
 
     private void scheduleBackup(Context context) {
+        StringBuilder log = new StringBuilder();
         Date scheduledTime = getScheduledTime();
 
         long initialDelay = scheduledTime.getTime() - System.currentTimeMillis();
@@ -66,7 +73,9 @@ public class DailyAutoBackupScheduler {
         Log.i(TAG, "Initial delay: " + initialDelay + " ms");
 
         var builder = new PeriodicWorkRequest.Builder(AutoBackupWorker.class,
-                initialDelay, TimeUnit.MILLISECONDS, 1, TimeUnit.HOURS);
+                24, TimeUnit.HOURS, 1, TimeUnit.HOURS);
+
+        builder.setNextScheduleTimeOverride(scheduledTime.getTime());
 
         if (MyPreferences.isDropboxUploadAutoBackups(context)
                 || MyPreferences.isGoogleDriveUploadAutoBackups(context))
@@ -74,6 +83,10 @@ public class DailyAutoBackupScheduler {
             builder.setConstraints(new Constraints.Builder()
                     .setRequiredNetworkType(NetworkType.CONNECTED).build());
         }
+
+        builder.setInputData(new Data.Builder()
+                .putLong(AutoBackupWorker.SCHEDULE_TIME, scheduledTime.getTime())
+                .build());
 
         PeriodicWorkRequest backupWorkRequest = builder.build();
 

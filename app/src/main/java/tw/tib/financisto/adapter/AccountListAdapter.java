@@ -20,6 +20,7 @@ import tw.tib.financisto.datetime.DateUtils;
 import tw.tib.financisto.model.Account;
 import tw.tib.financisto.model.AccountType;
 import tw.tib.financisto.model.CardIssuer;
+import tw.tib.financisto.model.ElectronicPaymentType;
 import tw.tib.financisto.utils.MyPreferences;
 import tw.tib.financisto.utils.Utils;
 import tw.tib.orb.EntityManager;

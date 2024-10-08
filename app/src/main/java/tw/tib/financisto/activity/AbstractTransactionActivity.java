@@ -11,8 +11,7 @@
 package tw.tib.financisto.activity;
 
 import static android.Manifest.permission.POST_NOTIFICATIONS;
-import android.Manifest;
-import android.app.AlertDialog;
+
 import android.content.Intent;
 import android.database.Cursor;
 import android.os.Build;
