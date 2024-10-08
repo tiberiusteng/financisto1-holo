@@ -540,6 +540,7 @@ public abstract class AbstractTransactionActivity extends AbstractActivity imple
 			rateView.selectCurrencyFrom(a.currency);
 			selectedAccount = a;
 		}
+		categorySelector.setSelectedAccount(a);
 		return a;
 	}
 
