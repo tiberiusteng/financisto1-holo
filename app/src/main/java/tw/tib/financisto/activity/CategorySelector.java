@@ -18,6 +18,7 @@ import android.widget.*;
 import tw.tib.financisto.R;
 import tw.tib.financisto.db.DatabaseAdapter;
 import tw.tib.financisto.db.DatabaseHelper;
+import tw.tib.financisto.model.Account;
 import tw.tib.financisto.model.Attribute;
 import tw.tib.financisto.model.Category;
 import tw.tib.financisto.model.MultiChoiceItem;
@@ -48,6 +49,7 @@ public class CategorySelector<A extends AbstractActivity> {
     private LinearLayout attributesLayout;
 
     private long selectedCategoryId = NO_CATEGORY_ID;
+    private Account selectedAccount;
     private CategorySelectorListener listener;
     private boolean showSplitCategory = true;
     private boolean multiSelect;
@@ -209,7 +211,7 @@ public class CategorySelector<A extends AbstractActivity> {
             case R.id.category: {
                 if (useMultiChoicePlainSelector) {
                     x.selectMultiChoice(activity, R.id.category, R.string.categories, categories);
-                } else if (!CategorySelectorActivity.pickCategory(activity, multiSelect, selectedCategoryId, excludingSubTreeId, showSplitCategory)) {
+                } else if (!CategorySelectorActivity.pickCategory(activity, multiSelect, selectedCategoryId, selectedAccount, excludingSubTreeId, showSplitCategory)) {
                     x.select(activity, R.id.category, R.string.category, categoryCursor, categoryAdapter,
                         DatabaseHelper.CategoryViewColumns._id.name(), selectedCategoryId);
                     
@@ -378,6 +380,10 @@ public class CategorySelector<A extends AbstractActivity> {
 
     public boolean isSplitCategorySelected() {
         return Category.isSplit(selectedCategoryId);
+    }
+
+    public void setSelectedAccount(Account account) {
+        selectedAccount = account;
     }
 
     @Deprecated // todo.mb: it seems not much sense in it, better do it in single place - activity.onSelectedId

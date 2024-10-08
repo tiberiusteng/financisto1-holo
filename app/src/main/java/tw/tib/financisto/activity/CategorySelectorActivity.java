@@ -9,15 +9,18 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
 import android.widget.Button;
+import android.widget.LinearLayout;
 import android.widget.ListAdapter;
 import tw.tib.financisto.R;
 import tw.tib.financisto.adapter.BlotterListAdapter;
+import tw.tib.financisto.model.Account;
 import tw.tib.financisto.model.Category;
 import tw.tib.financisto.model.CategoryTree;
 import tw.tib.financisto.model.CategoryTreeNavigator;
 import tw.tib.financisto.utils.MenuItemInfo;
 import tw.tib.financisto.utils.MyPreferences;
 
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
@@ -25,8 +28,11 @@ import java.util.Map;
 public class CategorySelectorActivity extends AbstractListActivity<Cursor> {
 
     public static final String SELECTED_CATEGORY_ID = "SELECTED_CATEGORY_ID";
+    public static final String SELECTED_ACCOUNT_ID = "SELECTED_ACCOUNT_ID";
     public static final String EXCLUDED_SUB_TREE_ID = "EXCLUDED_SUB_TREE_ID";
     public static final String INCLUDE_SPLIT_CATEGORY = "INCLUDE_SPLIT_CATEGORY";
+
+    public static final long NO_SELECTED_ACCOUNT = Long.MIN_VALUE;
 
     private int incomeColor;
     private int expenseColor;
@@ -92,8 +98,65 @@ public class CategorySelectorActivity extends AbstractListActivity<Cursor> {
             }
             navigator.selectCategory(intent.getLongExtra(SELECTED_CATEGORY_ID, 0));
         }
+        var suggestedCategories = loadSuggestedCategories(intent);
+        runOnUiThread(() -> fillSuggestedCategories(suggestedCategories));
 
         return null;
+    }
+
+    private List<Category> loadSuggestedCategories(Intent intent) {
+        if (intent == null) {
+            return null;
+        }
+        long selectedAccountId = intent.getLongExtra(SELECTED_ACCOUNT_ID, NO_SELECTED_ACCOUNT);
+        if (selectedAccountId == NO_SELECTED_ACCOUNT) {
+            return null;
+        }
+
+        var allTransactions = db.getTransactionsForAccount(selectedAccountId);
+        var suggestedCategories = new ArrayList<Category>();
+
+        // This currently picks up to 5 most recently used categories.
+        // Room for improvement: pick popular categories over the last week/month.
+        for (var t: allTransactions) {
+            var c = t.category;
+            if (!suggestedCategories.contains(c)) {
+                suggestedCategories.add(c);
+            }
+
+            if (suggestedCategories.size() >= 5) {
+                break;
+            }
+        }
+
+        return suggestedCategories;
+    }
+
+    private void fillSuggestedCategories(List<Category> suggestedCategories) {
+        var container = (LinearLayout)findViewById(R.id.suggestedCategoriesBar);
+
+        if (suggestedCategories == null || suggestedCategories.isEmpty()) {
+            container.setVisibility(View.GONE);
+            return;
+        }
+
+        for (var c: suggestedCategories) {
+            var v = buildViewForCategory(c);
+            v.setOnClickListener(cv -> {
+                while (navigator.canGoBack()) {
+                    navigator.goBack();
+                }
+                navigator.selectCategory(c.id);
+                setListAdapter(createAdapter(null));
+            });
+            container.addView(v);
+        }
+    }
+
+    private View buildViewForCategory(Category c) {
+        var res = new Button(this);
+        res.setText(c.title);
+        return res;
     }
 
     @Override
@@ -126,10 +189,11 @@ public class CategorySelectorActivity extends AbstractListActivity<Cursor> {
         }
     }
 
-    public static boolean pickCategory(Activity activity, boolean forceHierSelector, long selectedId, long excludingTreeId, boolean includeSplit) {
+    public static boolean pickCategory(Activity activity, boolean forceHierSelector, long selectedId, Account selectedAccount, long excludingTreeId, boolean includeSplit) {
         if (forceHierSelector || MyPreferences.isUseHierarchicalCategorySelector(activity)) {
             Intent intent = new Intent(activity, CategorySelectorActivity.class);
             intent.putExtra(CategorySelectorActivity.SELECTED_CATEGORY_ID, selectedId);
+            intent.putExtra(CategorySelectorActivity.SELECTED_ACCOUNT_ID, selectedAccount == null ? NO_SELECTED_ACCOUNT : selectedAccount.getId());
             intent.putExtra(CategorySelectorActivity.EXCLUDED_SUB_TREE_ID, excludingTreeId);
             intent.putExtra(CategorySelectorActivity.INCLUDE_SPLIT_CATEGORY, includeSplit);
             activity.startActivityForResult(intent, R.id.category_pick);
