@@ -1956,6 +1956,21 @@ public class DatabaseAdapter extends MyEntityManager {
                 new String[]{String.valueOf(account.id)});
     }
 
+    public Cursor getRecentlyUsedCategories(long accountId, long fromTimestamp) {
+        long t0 = System.nanoTime();
+        try {
+            return db().rawQuery("SELECT t.category_id AS id, c.title AS title, COUNT(*) AS count " +
+                    "FROM (SELECT category_id FROM transactions " +
+                        "WHERE from_account_id = ? AND category_id != 0 AND datetime > ?" +
+                        "ORDER BY datetime DESC) t " +
+                    "LEFT JOIN category c ON (t.category_id = c._id) GROUP BY category_id ORDER BY count DESC",
+                    new String[]{String.valueOf(accountId), String.valueOf(fromTimestamp)});
+        } finally {
+            long t1 = System.nanoTime();
+            Log.i(TAG, "getRecentlyUsedCategories " + ((t1 - t0) / 1000f) + "ms");
+        }
+    }
+
     public void log(String note) {
         Cursor c = getAllActiveAccounts();
         if (c.getCount() < 1) return;

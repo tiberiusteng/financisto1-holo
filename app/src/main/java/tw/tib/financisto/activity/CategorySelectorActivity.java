@@ -121,7 +121,17 @@ public class CategorySelectorActivity extends AbstractListActivity<Cursor> {
         return null;
     }
 
-    private List<Category> loadSuggestedCategories(Intent intent) {
+    private class CategoryTag {
+        public long id;
+        public String title;
+
+        public CategoryTag(long id, String title) {
+            this.id = id;
+            this.title = title;
+        }
+    }
+
+    private List<CategoryTag> loadSuggestedCategories(Intent intent) {
         if (intent == null) {
             return null;
         }
@@ -130,43 +140,20 @@ public class CategorySelectorActivity extends AbstractListActivity<Cursor> {
             return null;
         }
 
-        var allTransactions = db.getTransactionsForAccount(selectedAccountId);
-        if (allTransactions.isEmpty()) {
-            return null;
-        }
+        var c = db.getRecentlyUsedCategories(selectedAccountId, 0);
 
-        var intervalEndMillis = allTransactions.get(0).dateTime;
-        var intervalStartMillis = intervalEndMillis - TimeUnit.DAYS.toMillis(30);
-        var transactionsProcessed = 0;
-        var recentCategories = new HashMap<Category, Integer>();
-
-        for (var t: allTransactions) {
-            var c = t.category;
-            if (!recentCategories.containsKey(c)) {
-                recentCategories.put(c, 1);
-            } else {
-                recentCategories.put(c, recentCategories.get(c) + 1);
-            }
-
-            if (transactionsProcessed++ >= 30 && t.dateTime < intervalStartMillis) {
-                break;
-            }
-        }
-
-        var topCategories = new ArrayList<>(recentCategories.entrySet());
-        Collections.sort(topCategories, (o1, o2) -> o2.getValue() - o1.getValue());
-
-        var suggestedCategories = new ArrayList<Category>();
-        for (var e: topCategories) {
-            suggestedCategories.add(e.getKey());
-            if (suggestedCategories.size() >= 5) {
-                break;
+        var suggestedCategories = new ArrayList<CategoryTag>();
+        int suggestionCount = 0;
+        try (c) {
+            while (c.moveToNext() && suggestionCount < 5) {
+                suggestedCategories.add(new CategoryTag(c.getLong(0), c.getString(1)));
+                suggestionCount += 1;
             }
         }
         return suggestedCategories;
     }
 
-    private void fillSuggestedCategories(List<Category> suggestedCategories) {
+    private void fillSuggestedCategories(List<CategoryTag> suggestedCategories) {
         var container = (LinearLayout)findViewById(R.id.suggestedCategoriesBar);
         Button placeholder = findViewById(R.id.suggestedCategoriesBarLoadingPlaceholder);
 
@@ -190,7 +177,7 @@ public class CategorySelectorActivity extends AbstractListActivity<Cursor> {
         }
     }
 
-    private View buildViewForCategory(Category c) {
+    private View buildViewForCategory(CategoryTag c) {
         var res = new Button(this);
         res.setText(c.title);
         return res;
