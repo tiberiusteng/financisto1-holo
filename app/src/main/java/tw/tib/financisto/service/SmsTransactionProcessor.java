@@ -4,6 +4,7 @@ import android.util.Log;
 import tw.tib.financisto.db.DatabaseAdapter;
 import tw.tib.financisto.model.Account;
 import tw.tib.financisto.model.Payee;
+import tw.tib.financisto.model.Project;
 import tw.tib.financisto.model.SmsTemplate;
 import tw.tib.financisto.model.Transaction;
 import tw.tib.financisto.model.TransactionStatus;
@@ -50,6 +51,7 @@ public class SmsTransactionProcessor {
                 String text = match[TEXT.ordinal()];
                 String greedy_text = match[GREEDY_TEXT.ordinal()];
                 String payeeText =  match[PAYEE.ordinal()];
+                String projectText = match[PROJECT.ordinal()];
                 if (text == null && greedy_text != null) {
                     text = greedy_text;
                 }
@@ -69,7 +71,7 @@ public class SmsTransactionProcessor {
                 try {
                     BigDecimal price = toBigDecimal(parsedPrice);
                     return createNewTransaction(template, price, account, account_name,
-                            transfer_to_account_name, payeeText, note, status);
+                            transfer_to_account_name, payeeText, projectText, note, status);
                 } catch (Exception e) {
                     Log.e(TAG, format("Failed to parse price value: \"%s\"", parsedPrice), e);
                 }
@@ -143,6 +145,7 @@ public class SmsTransactionProcessor {
         String accountName,
         String transferToAccountName,
         String payeeText,
+        String projectText,
         String note,
         TransactionStatus status) {
         Transaction res = null;
@@ -161,6 +164,7 @@ public class SmsTransactionProcessor {
             transferToAccountId = smsTemplate.toAccountId;
         }
         Payee payee = db.findOrInsertEntityByTitle(Payee.class, payeeText);
+        Project project = db.findOrInsertEntityByTitle(Project.class, projectText);
         if (price.compareTo(ZERO) > 0 && accountId > 0) {
             res = new Transaction();
             res.isTemplate = 0;
@@ -168,6 +172,9 @@ public class SmsTransactionProcessor {
             if (payee != null) {
                 res.payeeId = payee.id;
                 res.categoryId = payee.lastCategoryId;
+            }
+            if (project != null) {
+                res.projectId = project.id;
             }
             res.fromAmount = (smsTemplate.isIncome ? 1 : -1) * Math.abs(price.multiply(HUNDRED).longValue());
             if (transferToAccountId != 0) {
@@ -305,6 +312,7 @@ public class SmsTransactionProcessor {
         DATE("<:D:>", "\\s{0,3}(\\d[\\d\\. /:-]{12,14}\\d)\\s*?", "{{d}}"),
         PAYEE("<:E:>", "(\\w+?)", "{{e}}"),
         PRICE("<:P:>", BALANCE.regexp, "{{p}}"),
+        PROJECT("<:R:>", "(\\w+?)", "{{r}}"),
         TEXT("<:T:>", "(.*?)", "{{t}}"),
         GREEDY_TEXT("<:U:>", "(.*)", "{{u}}"),
         TRANSFER_TO_ACCOUNT_NAME("<:X:>", "(\\w+?)", "{{x}}");
