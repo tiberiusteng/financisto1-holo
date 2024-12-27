@@ -163,19 +163,42 @@ public class SmsTransactionProcessor {
         if (transferToAccountId == 0 && smsTemplate.toAccountId != -1) {
             transferToAccountId = smsTemplate.toAccountId;
         }
-        Payee payee = db.findOrInsertEntityByTitle(Payee.class, payeeText);
-        Project project = db.findOrInsertEntityByTitle(Project.class, projectText);
+        Payee payee = null;
+        Project project = null;
+        if (payeeText != null) {
+            payee = db.findOrInsertEntityByTitle(Payee.class, payeeText);
+        }
+        if (projectText != null) {
+            project = db.findOrInsertEntityByTitle(Project.class, projectText);
+        }
+        Log.d(TAG, format("payee=%s project=%s template.payeeId=%s template.projectId=%s",
+                payee, project, smsTemplate.payeeId, smsTemplate.projectId));
         if (price.compareTo(ZERO) > 0 && accountId > 0) {
             res = new Transaction();
             res.isTemplate = 0;
             res.fromAccountId = accountId;
+
             if (payee != null) {
                 res.payeeId = payee.id;
                 res.categoryId = payee.lastCategoryId;
             }
+            else if (smsTemplate.payeeId != Payee.EMPTY.id) {
+                Payee templatePayee = db.get(Payee.class, smsTemplate.payeeId);
+                if (templatePayee != null) {
+                    res.payeeId = smsTemplate.payeeId;
+                    res.categoryId = templatePayee.lastCategoryId;
+                }
+            }
+
             if (project != null) {
                 res.projectId = project.id;
+            } else if (smsTemplate.projectId != Project.NO_PROJECT_ID) {
+                Project templateProject = db.get(Project.class, smsTemplate.projectId);
+                if (templateProject != null) {
+                    res.projectId = smsTemplate.projectId;
+                }
             }
+
             res.fromAmount = (smsTemplate.isIncome ? 1 : -1) * Math.abs(price.multiply(HUNDRED).longValue());
             if (transferToAccountId != 0) {
                 res.toAccountId = transferToAccountId;

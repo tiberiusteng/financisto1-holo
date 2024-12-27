@@ -23,6 +23,8 @@ import tw.tib.financisto.adapter.MyEntityAdapter;
 import tw.tib.financisto.db.DatabaseAdapter;
 import tw.tib.financisto.db.DatabaseHelper.SmsTemplateColumns;
 import tw.tib.financisto.model.Account;
+import tw.tib.financisto.model.Payee;
+import tw.tib.financisto.model.Project;
 import tw.tib.financisto.model.SmsTemplate;
 import tw.tib.financisto.service.SmsTransactionProcessor;
 import tw.tib.financisto.utils.MyPreferences;
@@ -47,7 +49,10 @@ public class SmsTemplateActivity extends AbstractActivity {
     private ArrayList<Account> toAccounts;
     private long categoryId = -1;
     private SmsTemplate smsTemplate = new SmsTemplate();
+    private LinearLayout selectors;
     private CategorySelector<SmsTemplateActivity> categorySelector;
+    private PayeeSelector<SmsTemplateActivity> payeeSelector;
+    private ProjectSelector<SmsTemplateActivity> projectSelector;
 
     @Override
     protected void attachBaseContext(Context base) {
@@ -70,6 +75,8 @@ public class SmsTemplateActivity extends AbstractActivity {
         toggleIncome = findViewById(R.id.toggle);
 
         parseResult = findViewById(R.id.parse_result);
+
+        selectors = findViewById(R.id.list2);
 
         Button bOK = findViewById(R.id.bOK);
         bOK.setOnClickListener(arg0 -> {
@@ -94,6 +101,7 @@ public class SmsTemplateActivity extends AbstractActivity {
 
         fillByCallerData();
         initCategorySelector();
+        initPayeeProjectSelector();
     }
 
     private void initTitleAndDynamicDescription() {
@@ -143,7 +151,7 @@ public class SmsTemplateActivity extends AbstractActivity {
             categorySelector.setEmptyResId(R.string.no_category);
             categorySelector.doNotShowSplitCategory();
             categorySelector.fetchCategories(false);
-            categorySelector.createNode(findViewById(R.id.list2), CategorySelector.SelectorType.FILTER);
+            categorySelector.createNode(selectors, CategorySelector.SelectorType.FILTER);
             
             if (smsTemplate != null) {
                 categorySelector.selectCategory(smsTemplate.categoryId, false);
@@ -151,9 +159,32 @@ public class SmsTemplateActivity extends AbstractActivity {
         }
     }
 
+    private void initPayeeProjectSelector() {
+        payeeSelector = new PayeeSelector<>(this, db, x);
+        projectSelector = new ProjectSelector<>(this, db, x);
+
+        if (smsTemplate != null) {
+            if (smsTemplate.payeeId != Payee.EMPTY.id) {
+                payeeSelector.setIncludeEntityIds(smsTemplate.payeeId);
+            }
+            payeeSelector.fetchEntities();
+            payeeSelector.createNode(selectors);
+            payeeSelector.selectEntity(smsTemplate.payeeId);
+
+            if (smsTemplate.projectId != Project.NO_PROJECT_ID) {
+                projectSelector.setIncludeEntityIds(smsTemplate.projectId);
+            }
+            projectSelector.fetchEntities();
+            projectSelector.createNode(selectors);
+            projectSelector.selectEntity(smsTemplate.projectId);
+        }
+    }
+
     @Override
     protected void onClick(View v, int id) {
         categorySelector.onClick(id);
+        payeeSelector.onClick(id);
+        projectSelector.onClick(id);
     }
 
     private void initAccounts() {
@@ -190,6 +221,11 @@ public class SmsTemplateActivity extends AbstractActivity {
         smsTemplate.isIncome = toggleIncome.isChecked();
         smsTemplate.accountId = accountSpinner.getSelectedItemId();
         smsTemplate.toAccountId = toAccountSpinner.getSelectedItemId();
+
+        payeeSelector.autoCreateNewEntityFromSearch();
+        projectSelector.autoCreateNewEntityFromSearch();
+        smsTemplate.payeeId = payeeSelector.getSelectedEntityId();
+        smsTemplate.projectId = projectSelector.getSelectedEntityId();
     }
 
     private void fillByCallerData() {
@@ -236,6 +272,8 @@ public class SmsTemplateActivity extends AbstractActivity {
     @Override
     public void onSelectedId(int id, long selectedId) {
         categorySelector.onSelectedId(id, selectedId);
+        payeeSelector.onSelectedId(id, selectedId);
+        projectSelector.onSelectedId(id, selectedId);
         switch (id) {
             case R.id.category:
                 categoryId = categorySelector.getSelectedCategoryId();
@@ -244,9 +282,17 @@ public class SmsTemplateActivity extends AbstractActivity {
     }
 
     @Override
+    public void onSelectedPos(int id, int selectedPos) {
+        payeeSelector.onSelectedPos(id, selectedPos);
+        projectSelector.onSelectedPos(id, selectedPos);
+    }
+
+    @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
         categorySelector.onActivityResult(requestCode, resultCode, data);
+        payeeSelector.onActivityResult(requestCode, resultCode, data);
+        projectSelector.onActivityResult(requestCode, resultCode, data);
     }
 
     private void validateExampleAndHighlight(String template, String example) {

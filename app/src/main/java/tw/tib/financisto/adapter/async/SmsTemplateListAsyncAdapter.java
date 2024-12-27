@@ -183,11 +183,16 @@ public class SmsTemplateListAsyncAdapter extends AsyncAdapter<SmsTemplate, SmsTe
 
         public void bindView(SmsTemplate item, Integer ignore) {
             if (item != null) {
+                String payeeName = item.payeeName;
+                if (payeeName == null) payeeName = context.getString(R.string.no_payee);
+
                 itemView.setTag(R.id.sms_tpl_id, item.getId());
                 lineView.setText(item.title);
                 numberView.setText(item.template);
                 amountView.setVisibility(View.VISIBLE);
-                amountView.setText(Category.getTitle(item.categoryName, item.categoryLevel));
+                amountView.setText(activity.getString(R.string.sms_tpl_list_category_payee_project_name,
+                        Category.getTitle(item.categoryName, item.categoryLevel),
+                        payeeName, item.projectName));
             }
         }
 

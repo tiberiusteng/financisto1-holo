@@ -1135,13 +1135,21 @@ public class DatabaseAdapter extends MyEntityManager {
 
     public Cursor getSmsTemplatesWithFullInfo(final String filter) {
         String nativeQuery = String.format(
-                "select %s, c.%s as %s, c.%s as %s " +
-                        "from %s t left outer join %s c on t.%s = c.%s ",
+                "select %s, c.%s as %s, c.%s as %s, e.%s as %s, p.%s as %s " +
+                        "from %s t left outer join %s c on t.%s = c.%s " +
+                        "left outer join %s e on t.%s = e.%s " +
+                        "left outer join %s p on t.%s = p.%s ",
                 DatabaseUtils.generateSelectClause(DatabaseHelper.SmsTemplateColumns.NORMAL_PROJECTION, "t"),
                 DatabaseHelper.CategoryViewColumns.title, DatabaseHelper.SmsTemplateListColumns.cat_name, DatabaseHelper.CategoryViewColumns.level, DatabaseHelper.SmsTemplateListColumns.cat_level,
+                DatabaseHelper.EntityColumns.TITLE, DatabaseHelper.SmsTemplateListColumns.payee_name,
+                DatabaseHelper.EntityColumns.TITLE, DatabaseHelper.SmsTemplateListColumns.project_name,
                 DatabaseHelper.SMS_TEMPLATES_TABLE,
                 DatabaseHelper.V_CATEGORY,
-                DatabaseHelper.SmsTemplateColumns.category_id, DatabaseHelper.CategoryViewColumns._id);
+                DatabaseHelper.SmsTemplateColumns.category_id, DatabaseHelper.CategoryViewColumns._id,
+                DatabaseHelper.PAYEE_TABLE,
+                DatabaseHelper.SmsTemplateColumns.payee_id, DatabaseHelper.EntityColumns.ID,
+                DatabaseHelper.PROJECT_TABLE,
+                DatabaseHelper.SmsTemplateColumns.project_id, DatabaseHelper.EntityColumns.ID);
         if (!StringUtil.isEmpty(filter)) {
             nativeQuery += String.format("where t.%s like '%%%s%%' or t.%s like '%%%2$s%%' ",
                     DatabaseHelper.CategoryViewColumns.title, filter, DatabaseHelper.SmsTemplateColumns.template);

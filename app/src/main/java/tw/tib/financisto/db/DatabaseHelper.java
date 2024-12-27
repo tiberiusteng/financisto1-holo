@@ -304,6 +304,8 @@ public class DatabaseHelper extends DatabaseSchemaEvolution {
         template,
         note,
         category_id,
+        payee_id,
+        project_id,
         account_id,
         to_account_id,
         is_income,
@@ -314,7 +316,9 @@ public class DatabaseHelper extends DatabaseSchemaEvolution {
 
     public enum SmsTemplateListColumns {
         cat_name,
-        cat_level
+        cat_level,
+        payee_name,
+        project_name
     }
 
     public static class TransactionAttributeColumns {

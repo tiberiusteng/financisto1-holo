@@ -1024,6 +1024,7 @@
     <string name="pref_tpl_transaction_status">Status of transaction created from template: %s</string>
     <string name="pref_tpl_adding_to_note_title">Saving notification text</string>
     <string name="pref_tpl_adding_to_note">Add notification text to transaction note</string>
+    <string name="sms_tpl_list_category_payee_project_name">%1$s, %2$s, %3$s</string>
 
     <string name="card_issuer_default">Default</string>
     <string name="electronic_payment_type">Payment type</string>
