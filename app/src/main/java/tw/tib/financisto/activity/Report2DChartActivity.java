@@ -399,6 +399,7 @@ public class Report2DChartActivity extends Activity implements OnChartValueSelec
             chart.getData().notifyDataChanged();
             chart.notifyDataSetChanged();
             chart.invalidate();
+            onNothingSelected();
 
         } else {
             findViewById(R.id.report_empty).setVisibility(View.VISIBLE);
@@ -629,7 +630,7 @@ public class Report2DChartActivity extends Activity implements OnChartValueSelec
 
     @Override
     public void onNothingSelected() {
-        pointDate.setText("");
-        pointAmount.setText("");
+        if (pointDate != null) pointDate.setText("");
+        if (pointAmount != null) pointAmount.setText("");
     }
 }
