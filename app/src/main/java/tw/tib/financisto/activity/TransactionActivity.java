@@ -360,8 +360,13 @@ public class TransactionActivity extends AbstractTransactionActivity {
 
     @Override
     protected Account selectAccount(long accountId, boolean selectLast) {
-        Account a = super.selectAccount(accountId, selectLast);
+        Account a = db.getAccount(accountId);
+        categorySelector.setSelectedAccount(a);
+
         if (a != null) {
+            accountText.setText(a.title);
+            selectedAccount = a;
+
             if (selectLast && !isShowPayee && isRememberLastCategory) {
                 categorySelector.selectCategory(a.lastCategoryId);
             }
