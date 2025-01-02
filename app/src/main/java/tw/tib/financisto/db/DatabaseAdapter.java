@@ -11,6 +11,8 @@
  ******************************************************************************/
 package tw.tib.financisto.db;
 
+import static tw.tib.financisto.activity.CategorySelectorActivity.NO_SELECTED_ACCOUNT;
+
 import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
@@ -1966,13 +1968,34 @@ public class DatabaseAdapter extends MyEntityManager {
 
     public Cursor getRecentlyUsedCategories(long accountId, long fromTimestamp) {
         long t0 = System.nanoTime();
+        String accountFilter;
+        ArrayList<String> params = new ArrayList<>();
+
+        if (accountId == NO_SELECTED_ACCOUNT) {
+            accountFilter = "";
+            params.add(String.valueOf(fromTimestamp));
+        }
+        else {
+            accountFilter = "from_account_id = ? AND";
+            params.add(String.valueOf(accountId));
+            params.add(String.valueOf(fromTimestamp));
+            params.add(String.valueOf(accountId));
+        }
+
         try {
-            return db().rawQuery("SELECT t.category_id AS id, c.title AS title, COUNT(*) AS count " +
-                    "FROM (SELECT category_id FROM transactions " +
-                        "WHERE from_account_id = ? AND category_id != 0 AND datetime > ?" +
-                        "ORDER BY datetime DESC) t " +
-                    "LEFT JOIN category c ON (t.category_id = c._id) GROUP BY category_id ORDER BY count DESC",
-                    new String[]{String.valueOf(accountId), String.valueOf(fromTimestamp)});
+            // generate suggested categories from (specified time duration) UNION (last 100 transactions)
+            return db().rawQuery(String.format("""
+                SELECT t.category_id AS id, c.title AS title, SUM(count) AS count
+                FROM (
+                    SELECT category_id, COUNT(*) AS count FROM (SELECT category_id FROM transactions
+                        WHERE %1$s category_id != 0 AND datetime > ?
+                        ORDER BY datetime DESC) GROUP BY category_id
+                    UNION
+                    SELECT category_id, COUNT(*) AS count FROM (SELECT category_id FROM transactions
+                        WHERE %1$s category_id != 0
+                        ORDER BY datetime DESC LIMIT 100) GROUP BY category_id
+                ) t LEFT JOIN category c ON (t.category_id = c._id) GROUP BY category_id ORDER BY count DESC""", accountFilter),
+                    params.toArray(new String[0]));
         } finally {
             long t1 = System.nanoTime();
             Log.i(TAG, "getRecentlyUsedCategories " + ((t1 - t0) / 1000f) + "ms");

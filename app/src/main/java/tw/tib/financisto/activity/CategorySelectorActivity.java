@@ -132,20 +132,18 @@ public class CategorySelectorActivity extends AbstractListActivity<Cursor> {
     }
 
     private List<CategoryTag> loadSuggestedCategories(Intent intent) {
-        if (intent == null) {
-            return null;
-        }
-        long selectedAccountId = intent.getLongExtra(SELECTED_ACCOUNT_ID, NO_SELECTED_ACCOUNT);
-        if (selectedAccountId == NO_SELECTED_ACCOUNT) {
-            return null;
+        long selectedAccountId = NO_SELECTED_ACCOUNT;
+        if (intent != null) {
+            selectedAccountId = intent.getLongExtra(SELECTED_ACCOUNT_ID, NO_SELECTED_ACCOUNT);
         }
 
-        var c = db.getRecentlyUsedCategories(selectedAccountId, 0);
+        // Generate recently used categories from last two months
+        var c = db.getRecentlyUsedCategories(selectedAccountId, System.currentTimeMillis() - (86400000L * 60));
 
         var suggestedCategories = new ArrayList<CategoryTag>();
         int suggestionCount = 0;
         try (c) {
-            while (c.moveToNext() && suggestionCount < 5) {
+            while (c.moveToNext() && suggestionCount < 10) {
                 suggestedCategories.add(new CategoryTag(c.getLong(0), c.getString(1)));
                 suggestionCount += 1;
             }
