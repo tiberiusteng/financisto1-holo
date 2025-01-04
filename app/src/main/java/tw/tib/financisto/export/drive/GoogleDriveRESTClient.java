@@ -7,10 +7,10 @@ import android.util.Log;
 import com.google.android.gms.auth.api.signin.GoogleSignIn;
 import com.google.android.gms.auth.api.signin.GoogleSignInAccount;
 import com.google.android.gms.drive.DriveFolder;
-import com.google.api.client.extensions.android.http.AndroidHttp;
 import com.google.api.client.googleapis.extensions.android.gms.auth.GoogleAccountCredential;
 import com.google.api.client.http.HttpResponse;
 import com.google.api.client.http.InputStreamContent;
+import com.google.api.client.http.javanet.NetHttpTransport;
 import com.google.api.client.json.gson.GsonFactory;
 import com.google.api.services.drive.DriveScopes;
 import com.google.api.services.drive.Drive;
@@ -48,7 +48,7 @@ public class GoogleDriveRESTClient {
         credential.setSelectedAccount(account.getAccount());
 
         this.googleDriveService = new Drive.Builder(
-                        AndroidHttp.newCompatibleTransport(),
+                        new NetHttpTransport(),
                         new GsonFactory(),
                         credential)
                         .setApplicationName("Financisto 1 Holo Test")

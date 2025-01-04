@@ -46,6 +46,7 @@ android {
     packagingOptions {
         pickFirst 'META-INF/LICENSE'
         exclude 'META-INF/DEPENDENCIES'
+        exclude 'META-INF/INDEX.LIST'
     }
 
     compileOptions {
@@ -73,18 +74,13 @@ dependencies {
     annotationProcessor "org.androidannotations:androidannotations:$AAVersion"
     implementation "org.androidannotations:androidannotations-api:$AAVersion"
 
-    //implementation 'com.android.support:support-v4:25.1.1'
-    implementation 'com.google.api-client:google-api-client:1.26.0'
-    implementation 'com.google.api-client:google-api-client-android:1.26.0'
-    implementation 'com.google.apis:google-api-services-drive:v3-rev136-1.25.0'
-    implementation 'com.google.http-client:google-http-client:1.26.0'
-    implementation 'com.google.http-client:google-http-client-android:1.26.0'
-    implementation 'com.google.http-client:google-http-client-gson:1.26.0'
-    implementation 'com.google.http-client:google-http-client-jackson2:1.26.0'
+    implementation 'com.google.api-client:google-api-client-android:2.7.1'
+    implementation 'com.google.apis:google-api-services-drive:v3-rev20241206-2.0.0'
+    implementation 'com.google.auth:google-auth-library-oauth2-http:1.30.1'
+    implementation 'com.google.auth:google-auth-library-credentials:1.30.1'
     implementation 'com.dropbox.core:dropbox-core-sdk:6.0.0'
     implementation 'com.dropbox.core:dropbox-android-sdk:6.0.0'
     implementation 'com.squareup.okhttp3:okhttp:3.11.0'
-    //implementation 'com.google.code.gson:gson:2.4'
     implementation "com.google.android.gms:play-services-base:18.2.0"
     implementation "com.google.android.gms:play-services-drive:17.0.0"
     implementation "com.google.android.gms:play-services-plus:17.0.0"
