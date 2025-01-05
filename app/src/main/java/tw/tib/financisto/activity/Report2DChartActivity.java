@@ -399,11 +399,16 @@ public class Report2DChartActivity extends Activity implements OnChartValueSelec
             chart.getData().notifyDataChanged();
             chart.notifyDataSetChanged();
             chart.invalidate();
-            onNothingSelected();
 
+            if (chart.valuesToHighlight()) {
+                Highlight[] highlights = chart.getHighlighted();
+                Entry entry = chart.getData().getEntryForHighlight(highlights[0]);
+                onValueSelected(entry, highlights[0]);
+            }
         } else {
             findViewById(R.id.report_empty).setVisibility(View.VISIBLE);
             findViewById(R.id.report_2d_chart).setVisibility(View.GONE);
+            onNothingSelected();
         }
         // adjust report 2D user interface elements
         adjustLabels();
