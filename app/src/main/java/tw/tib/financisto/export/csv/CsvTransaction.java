@@ -10,6 +10,8 @@ package tw.tib.financisto.export.csv;
 
 import androidx.annotation.NonNull;
 
+import tw.tib.financisto.R;
+import tw.tib.financisto.export.ImportExportException;
 import tw.tib.financisto.model.*;
 import tw.tib.financisto.model.Category;
 import tw.tib.financisto.model.Currency;
@@ -24,12 +26,14 @@ import java.util.Map;
 
 public class CsvTransaction {
 
+    public Long id;
     public Date date;
     public Date time;
     public String status;
-    public long fromAccountId;
-    public long fromAmount;
-    public long originalAmount;
+    public String account;
+    public Account defaultAccount;
+    public Long fromAmount;
+    public Long originalAmount;
     public String originalCurrency;
     public String payee;
     public String category;
@@ -39,19 +43,103 @@ public class CsvTransaction {
     public String currency;
     public long delta;
 
-    Transaction createTransaction(Map<String, Currency> currencies, Map<String, Category> categories, Map<String, Project> projects, Map<String, Payee> payees) {
+    void updateTransaction(
+            Transaction t,
+            Map<String, Account> accountsByName,
+            Map<Long, Account> accountsById,
+            Map<String, Currency> currencies,
+            Map<String, Category> categories,
+            Map<String, Project> projects,
+            Map<String, Payee> payees)
+            throws ImportExportException
+    {
+        if (date != null && time != null) {
+            t.dateTime = combineToMillis(date, time, delta);
+        }
+        if (status != null) {
+            t.status = TransactionStatus.valueOf(status);
+        }
+        if (account != null) {
+            Account entity = accountsByName.get(account);
+            if (entity == null) {
+                throw new ImportExportException(R.string.csv_account_not_found, null, account);
+            }
+            t.fromAccountId = entity.id;
+        }
+        if (currency != null) {
+            Account entity = accountsById.get(t.fromAccountId);
+            if (!currency.equals(entity.currency.name)) {
+                throw new ImportExportException(R.string.import_wrong_currency_2, null, currency,
+                        entity.currency.name);
+            }
+        }
+        if (fromAmount != null) {
+            t.fromAmount = fromAmount;
+        }
+        if (category != null) {
+            t.categoryId = getEntityIdOrZero(categories, category);
+        }
+        if (payee != null) {
+            t.payeeId = getEntityIdOrZero(payees, payee);
+        }
+        if (project != null) {
+            t.projectId = getEntityIdOrZero(projects, project);
+        }
+        if (originalCurrency != null) {
+            Currency currency = currencies.get(originalCurrency);
+            if (currency == null) {
+                throw new ImportExportException(R.string.csv_currency_not_found, null, originalCurrency);
+            }
+            t.originalCurrencyId = currency.id;
+        }
+        if (originalAmount != null) {
+            t.originalFromAmount = originalAmount;
+        }
+        if (note != null) {
+            t.note = note;
+        }
+    }
+
+    Transaction createTransaction(
+            Map<String, Account> accounts,
+            Map<String, Currency> currencies,
+            Map<String, Category> categories,
+            Map<String, Project> projects,
+            Map<String, Payee> payees)
+            throws ImportExportException
+    {
         Transaction t = new Transaction();
         t.dateTime = combineToMillis(date, time, delta);
         if (status != null) {
             t.status = TransactionStatus.valueOf(status);
         }
-        t.fromAccountId = fromAccountId;
+        if (account != null) {
+            Account entity = accounts.get(account);
+            if (entity == null) {
+                throw new ImportExportException(R.string.csv_account_not_found, null, account);
+            }
+            t.fromAccountId = entity.id;
+
+            if (currency != null && !currency.equals(entity.currency.name)) {
+                throw new ImportExportException(R.string.import_wrong_currency_2, null, currency,
+                        entity.currency.name);
+            }
+        }
+        else {
+            t.fromAccountId = defaultAccount.id;
+        }
+        if (fromAmount == null) {
+            throw new ImportExportException(R.string.csv_amount_required);
+        }
         t.fromAmount = fromAmount;
         t.categoryId = getEntityIdOrZero(categories, category);
         t.payeeId = getEntityIdOrZero(payees, payee);
         t.projectId = getEntityIdOrZero(projects, project);
-        if (originalAmount != 0) {
+        if (originalAmount != null && originalAmount != 0) {
             Currency currency = currencies.get(originalCurrency);
+            if (currency == null) {
+                throw new ImportExportException(R.string.csv_currency_not_found, null, originalCurrency);
+            }
             t.originalFromAmount = originalAmount;
             t.originalCurrencyId = currency.id;
         }

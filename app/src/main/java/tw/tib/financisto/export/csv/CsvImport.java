@@ -72,10 +72,14 @@ public class CsvImport {
         Map<String, Currency> currencies = collectAndInsertCurrencies(transactions);
         long t5 = System.currentTimeMillis();
         Log.i("Financisto", "Collecting currencies =" + (t5 - t4) + "ms");
-        importTransactions(transactions, currencies, categories, projects, payees);
+        Map<String, Account> accountsByName = db.getAllAccountsByTitleMap();
+        Map<Long, Account> accountsById = db.getAllAccountsMap();
         long t6 = System.currentTimeMillis();
-        Log.i("Financisto", "Inserting transactions =" + (t6 - t5) + "ms");
-        Log.i("Financisto", "Overall csv import =" + ((t6 - t0) / 1000) + "s");
+        Log.i("Financisto", "Collecting accounts =" + (t6 - t5) + "ms");
+        importTransactions(transactions, accountsByName, accountsById, currencies, categories, projects, payees);
+        long t7 = System.currentTimeMillis();
+        Log.i("Financisto", "Inserting transactions =" + (t7 - t6) + "ms");
+        Log.i("Financisto", "Overall csv import =" + ((t7 - t0) / 1000) + "s");
 
         String path = options.uri.getPath();
         return path.substring(path.lastIndexOf("/") + 1) + " imported!";
@@ -146,10 +150,12 @@ public class CsvImport {
     }
 
     private void importTransactions(List<CsvTransaction> transactions,
+                                    Map<String, Account> accountsByName,
+                                    Map<Long, Account> accountsById,
                                     Map<String, Currency> currencies,
                                     Map<String, Category> categories,
                                     Map<String, Project> projects,
-                                    Map<String, Payee> payees) {
+                                    Map<String, Payee> payees) throws ImportExportException {
         SQLiteDatabase database = db.db();
         database.beginTransaction();
         try {
@@ -157,7 +163,19 @@ public class CsvImport {
             int count = 0;
             int totalCount = transactions.size();
             for (CsvTransaction transaction : transactions) {
-                Transaction t = transaction.createTransaction(currencies, categories, projects, payees);
+                Transaction t;
+                if (transaction.id != null) {
+                    // updating existing transaction
+                    t = db.getTransaction(transaction.id);
+                    if (t.id == -1) {
+                        throw new ImportExportException(R.string.csv_txid_not_found, null, transaction.id);
+                    }
+                    transaction.updateTransaction(t, accountsByName, accountsById, currencies, categories, projects, payees);
+                }
+                else {
+                    // creating new transaction
+                    t = transaction.createTransaction(accountsByName, currencies, categories, projects, payees);
+                }
                 db.insertOrUpdateInTransaction(t, emptyAttributes);
                 if (++count % 100 == 0) {
                     Log.i("Financisto", "Inserted " + count + " out of " + totalCount);
@@ -193,7 +211,7 @@ public class CsvImport {
                 Log.d(getClass().getSimpleName(), "line=" + line);
                 if (parseLine) {
                     CsvTransaction transaction = new CsvTransaction();
-                    transaction.fromAccountId = this.account.id;
+                    transaction.defaultAccount = this.account;
                     int countOfColumns = line.size();
                     for (int i = 0; i < countOfColumns; i++) {
                         String transactionField = myTrim(header.get(i));
@@ -201,10 +219,22 @@ public class CsvImport {
                             try {
                                 String fieldValue = line.get(i);
                                 if (!fieldValue.equals("")) {
-                                    if (transactionField.equals("date")) {
-                                        transaction.date = options.dateFormat.parse(fieldValue);
+                                    if (transactionField.equals("txid")) {
+                                        transaction.id = Long.parseLong(fieldValue);
+                                    } else if (transactionField.equals("account")) {
+                                        transaction.account = fieldValue;
+                                    } else if (transactionField.equals("date")) {
+                                        try {
+                                            transaction.date = options.dateFormat.parse(fieldValue);
+                                        } catch (Exception e) {
+                                            throw new ImportExportException(R.string.csv_date_format_error, null, fieldValue);
+                                        }
                                     } else if (transactionField.equals("time")) {
-                                        transaction.time = format.parse(fieldValue);
+                                        try {
+                                            transaction.time = format.parse(fieldValue);
+                                        } catch (Exception e) {
+                                            throw new ImportExportException(R.string.csv_time_format_error, null, fieldValue);
+                                        }
                                     } else if (transactionField.equals("status")) {
                                         transaction.status = fieldValue;
                                     } else if (transactionField.equals("amount")) {
@@ -226,8 +256,9 @@ public class CsvImport {
                                     } else if (transactionField.equals("project")) {
                                         transaction.project = fieldValue;
                                     } else if (transactionField.equals("currency")) {
-                                        if (!account.currency.name.equals(fieldValue)) {
-                                            throw new ImportExportException(R.string.import_wrong_currency_2, null, fieldValue);
+                                        if (transaction.account == null && !account.currency.name.equals(fieldValue)) {
+                                            throw new ImportExportException(R.string.import_wrong_currency_2,
+                                                    null, fieldValue, account.currency.name);
                                         }
                                         transaction.currency = fieldValue;
                                     }

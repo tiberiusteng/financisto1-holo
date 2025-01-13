@@ -618,6 +618,17 @@
   <string name="import_parse_error">匯入檔解析錯誤</string>
   <string name="csv_import_error">CSV 匯入錯誤</string>
   <string name="file_import_permission">讀取檔案的權限已被系統收回，請重新選取檔案以賦予權限</string>
+  <string name="provided_by_other_app">(從其他程式傳入)</string>
+  <string name="csv_date_required">匯入資料必須有 date (日期) 欄位</string>
+  <string name="csv_date_format_error">date 欄位與設定格式不符: %1$s</string>
+  <string name="csv_time_required">匯入資料必須有 time (時間) 欄位</string>
+  <string name="csv_time_format_error">time 欄位必須使用 HH:mm:ss 格式: %1$s</string>
+  <string name="csv_amount_required">新建交易必須有 amount 欄位</string>
+  <string name="csv_txid_not_found">txid %1$s 不是一筆現有交易</string>
+  <string name="csv_currency_not_found">currency (幣值) %1$s 不存在</string>
+  <string name="csv_account_not_found">account (帳戶) %1$s 不存在</string>
+  <string name="csv_import_account_selector">預設帳戶\n(若資料列有指定帳戶，會優先使用資料列的)</string>
+  <string name="import_wrong_currency_2">幣值有誤: %1$s (必須與帳戶幣值 %2$s 相同)</string>
   <string name="qif_import">QIF 匯入</string>
   <string name="qif_import_inprogress">正在從 QIF 匯入資料...</string>
   <string name="qif_import_error">QIF 匯入錯誤</string>

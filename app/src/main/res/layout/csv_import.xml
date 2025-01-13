@@ -17,7 +17,7 @@
             <include layout="@layout/list_divider"/>
             <TextView android:layout_height="wrap_content"
                       android:layout_width="fill_parent" android:layout_marginLeft="3dp"
-                      android:text="@string/account"/>
+                      android:text="@string/csv_import_account_selector"/>
             <Spinner android:layout_height="wrap_content" android:layout_width="fill_parent"
                      android:id="@+id/spinnerAccount" android:prompt="@string/account" />
             <include layout="@layout/list_divider"/>

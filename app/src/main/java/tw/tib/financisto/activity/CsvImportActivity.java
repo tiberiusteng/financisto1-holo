@@ -7,24 +7,31 @@
  */
 package tw.tib.financisto.activity;
 
+import android.app.ProgressDialog;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.net.Uri;
+import android.util.Log;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.Spinner;
 import android.widget.Toast;
 
+import java.nio.charset.StandardCharsets;
 import java.util.List;
 
 import tw.tib.financisto.R;
 import tw.tib.financisto.adapter.MyEntityAdapter;
 import tw.tib.financisto.db.DatabaseAdapter;
+import tw.tib.financisto.export.csv.CsvImportOptions;
+import tw.tib.financisto.export.csv.CsvImportTask;
 import tw.tib.financisto.model.Account;
 import tw.tib.financisto.utils.CurrencyExportPreferences;
 
 public class CsvImportActivity extends AbstractImportActivity {
+
+    private static final String TAG = "CSVImportActivity";
 
     public static final String CSV_IMPORT_SELECTED_ACCOUNT_2 = "CSV_IMPORT_SELECTED_ACCOUNT_2";
     public static final String CSV_IMPORT_DATE_FORMAT = "CSV_IMPORT_DATE_FORMAT";
@@ -38,6 +45,8 @@ public class CsvImportActivity extends AbstractImportActivity {
     private List<Account> accounts;
     private Spinner accountSpinner;
     private CheckBox useHeaderFromFile;
+
+    private Uri openedUri;
 
     public CsvImportActivity() {
         super(R.layout.csv_import);
@@ -64,8 +73,22 @@ public class CsvImportActivity extends AbstractImportActivity {
             }
             Intent data = new Intent();
             updateResultIntentFromUi(data);
-            setResult(RESULT_OK, data);
-            finish();
+
+            // started from main activity menu, continue import work there
+            if (openedUri == null) {
+                setResult(RESULT_OK, data);
+                finish();
+            }
+
+            // opened file from other app, do import here, then redirect to main activity
+            CsvImportOptions options = CsvImportOptions.fromIntent(data);
+            ProgressDialog progressDialog = ProgressDialog.show(this, null, getString(R.string.csv_import_inprogress), true);
+            CsvImportTask task = new CsvImportTask(this, progressDialog, options);
+            task.setListener(result -> {
+                Intent intent = new Intent(this, MainActivity.class);
+                startActivity(intent);
+            });
+            task.execute();
         });
 
         Button bCancel = findViewById(R.id.bCancel);
@@ -74,6 +97,16 @@ public class CsvImportActivity extends AbstractImportActivity {
             finish();
         });
 
+        Intent intent = getIntent();
+        String action = intent.getAction();
+        if (Intent.ACTION_VIEW.equals(action)) {
+            openedUri = intent.getData();
+            Log.i(TAG, "uri: " + openedUri);
+
+            edFilename.setText(getText(R.string.provided_by_other_app));
+            edFilename.setEnabled(false);
+            bBrowse.setEnabled(false);
+        }
     }
 
 
@@ -89,7 +122,12 @@ public class CsvImportActivity extends AbstractImportActivity {
         data.putExtra(CSV_IMPORT_SELECTED_ACCOUNT_2, getSelectedAccountId());
         Spinner dateFormats = findViewById(R.id.spinnerDateFormats);
         data.putExtra(CSV_IMPORT_DATE_FORMAT, dateFormats.getSelectedItem().toString());
-        data.putExtra(CSV_IMPORT_URI, importFileUri.toString());
+        if (openedUri != null) {
+            data.putExtra(CSV_IMPORT_URI, openedUri.toString());
+        }
+        else {
+            data.putExtra(CSV_IMPORT_URI, importFileUri.toString());
+        }
         Spinner fieldSeparator = findViewById(R.id.spinnerFieldSeparator);
         data.putExtra(CSV_IMPORT_FIELD_SEPARATOR, fieldSeparator.getSelectedItem().toString().charAt(1));
         data.putExtra(CSV_IMPORT_USE_HEADER_FROM_FILE, useHeaderFromFile.isChecked());
@@ -103,7 +141,9 @@ public class CsvImportActivity extends AbstractImportActivity {
         editor.putLong(CSV_IMPORT_SELECTED_ACCOUNT_2, getSelectedAccountId());
         Spinner dateFormats = findViewById(R.id.spinnerDateFormats);
         editor.putInt(CSV_IMPORT_DATE_FORMAT, dateFormats.getSelectedItemPosition());
-        editor.putString(CSV_IMPORT_URI, importFileUri.toString());
+        if (importFileUri != null) {
+            editor.putString(CSV_IMPORT_URI, importFileUri.toString());
+        }
         Spinner fieldSeparator = findViewById(R.id.spinnerFieldSeparator);
         editor.putInt(CSV_IMPORT_FIELD_SEPARATOR, fieldSeparator.getSelectedItemPosition());
         editor.putBoolean(CSV_IMPORT_USE_HEADER_FROM_FILE, useHeaderFromFile.isChecked());
@@ -122,11 +162,13 @@ public class CsvImportActivity extends AbstractImportActivity {
         Spinner dateFormats = findViewById(R.id.spinnerDateFormats);
         dateFormats.setSelection(preferences.getInt(CSV_IMPORT_DATE_FORMAT, 0));
 
-        edFilename = findViewById(R.id.edFilename);
-        importFileUri = Uri.parse(preferences.getString(CSV_IMPORT_URI, ""));
-        String filePath = importFileUri.getPath();
-        if (filePath != null) {
-            edFilename.setText(filePath.substring(filePath.lastIndexOf("/") + 1));
+        if (openedUri == null) {
+            edFilename = findViewById(R.id.edFilename);
+            importFileUri = Uri.parse(preferences.getString(CSV_IMPORT_URI, ""));
+            String filePath = importFileUri.getPath();
+            if (filePath != null) {
+                edFilename.setText(filePath.substring(filePath.lastIndexOf("/") + 1));
+            }
         }
 
         Spinner fieldSeparator = findViewById(R.id.spinnerFieldSeparator);

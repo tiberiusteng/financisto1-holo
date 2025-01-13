@@ -331,6 +331,10 @@ public abstract class MyEntityManager extends EntityManager {
 		return accountsMap;
 	}
 
+	public Map<String, Account> getAllAccountsByTitleMap() {
+		return entitiesAsTitleMap(getAllAccountsList());
+	}
+
 	/* ===============================================
 	 * CURRENCY
 	 * =============================================== */

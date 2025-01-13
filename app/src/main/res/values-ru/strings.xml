@@ -693,7 +693,6 @@
     <string name="import_unknown_category">Неизвестная категория в файле импорта</string>
     <string name="import_unknown_project">Неизвестный проект в файле импорта</string>
     <string name="import_wrong_currency">Неверная валюта в файле импорта</string>
-    <string name="import_wrong_currency_2">Неправильная валюта в файле импорта: <xliff:g id="currency">%1$s</xliff:g>\nПожалуйста, разделите разные счета на разные файлы.</string>
     <string name="import_illegal_argument_exception">Исключение недопустимого аргумента</string>
     <string name="import_parse_error">Ошибка парсинга файла импорта</string>
     <string name="csv_import_error">Ошибка импорта из CSV</string>

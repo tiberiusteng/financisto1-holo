@@ -12,7 +12,7 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
 	xmlns:tools="http://schemas.android.com/tools"
 	package="tw.tib.financisto"
-	android:versionName="2025-01-05" android:versionCode="170"
+	android:versionName="2025-01-13" android:versionCode="171"
     android:installLocation="internalOnly">
 
     <supports-screens
@@ -284,7 +284,18 @@
 		<activity android:name=".activity.CsvExportActivity" android:label="@string/csv_export"
 			android:theme="@style/AppThemeCompat" />
 		<activity android:name=".activity.CsvImportActivity" android:label="@string/csv_import"
-			android:theme="@style/AppThemeCompat" />
+			android:theme="@style/AppThemeCompat" android:exported="true">
+			<intent-filter>
+				<data android:scheme="content" />
+				<data android:scheme="file" />
+				<action android:name="android.intent.action.VIEW" />
+				<category android:name="android.intent.category.BROWSABLE" />
+				<category android:name="android.intent.category.DEFAULT" />
+				<data android:mimeType="text/csv" />
+				<data android:mimeType="text/x-csv" />
+				<data android:mimeType="text/comma-separated-values" />
+			</intent-filter>
+		</activity>
 
 		<activity android:name=".activity.QifExportActivity" android:label="@string/qif_export"
 			android:theme="@style/AppThemeCompat" />
