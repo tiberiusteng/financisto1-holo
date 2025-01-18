@@ -1123,5 +1123,6 @@
     <string name="missing_picture_file">%1$s (missing)</string>
 
     <string name="export_tx_ids">Export TX ID</string>
+    <string name="export_attributes">Export attributes</string>
 
 </resources>

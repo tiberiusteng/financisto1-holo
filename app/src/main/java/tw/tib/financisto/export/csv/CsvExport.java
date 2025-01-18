@@ -14,6 +14,7 @@ import android.content.Context;
 import android.database.Cursor;
 
 import tw.tib.financisto.datetime.DateUtils;
+import tw.tib.financisto.db.DatabaseHelper;
 import tw.tib.financisto.export.Export;
 import tw.tib.financisto.db.DatabaseAdapter;
 import tw.tib.financisto.model.*;
@@ -31,8 +32,9 @@ import java.io.BufferedWriter;
 import java.io.IOException;
 import java.math.BigDecimal;
 import java.util.Date;
-import java.util.List;
+import java.util.LinkedHashSet;
 import java.util.Map;
+import java.util.Set;
 
 public class CsvExport extends Export {
 
@@ -56,6 +58,8 @@ public class CsvExport extends Export {
     private Map<Long, Payee> payeeMap;
     private Map<Long, Project> projectMap;
     private Map<Long, MyLocation> locationMap;
+    private Map<Long, Attribute> attributeMap;
+    private Set<Long> usedAttributes;
 
     public CsvExport(Context context, DatabaseAdapter db, CsvExportOptions options) {
         super(context, false);
@@ -90,6 +94,21 @@ public class CsvExport extends Export {
             else {
                 for (String h : HEADER) {
                     w.value(h);
+                }
+            }
+            if (options.exportAttributes) {
+                attributeMap = db.getAllAttributesByIdMap();
+                // only export attributes actually used by exporting transactions
+                usedAttributes = new LinkedHashSet<>();
+                try (Cursor c = db.getBlotterWithSplits(options.filter)) {
+                    while (c.moveToNext()) {
+                        long id = c.getLong(DatabaseHelper.BlotterColumns._id.ordinal());
+                        Map<Long, String> attrs = db.getAllAttributesForTransaction(id);
+                        usedAttributes.addAll(attrs.keySet());
+                    }
+                }
+                for (long i : usedAttributes) {
+                    w.value("attr:" + attributeMap.get(i).title);
                 }
             }
             w.newLine();
@@ -175,6 +194,18 @@ public class CsvExport extends Export {
         w.value(location != null ? location.title : "");
         w.value(project != null ? project.title : "");
         w.value(note);
+        if (options.exportAttributes) {
+            Map<Long, String> attrs = db.getAllAttributesForTransaction(transactionId);
+            for (long i : usedAttributes) {
+                String value = attrs.get(i);
+                if (value != null) {
+                    w.value(value);
+                }
+                else {
+                    w.value("");
+                }
+            }
+        }
         w.newLine();
     }
 

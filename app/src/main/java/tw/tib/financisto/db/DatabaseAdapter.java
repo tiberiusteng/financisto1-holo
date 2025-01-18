@@ -1174,6 +1174,17 @@ public class DatabaseAdapter extends MyEntityManager {
     // ATTRIBUTES
     // ===================================================================
 
+    public Map<Long, Attribute> getAllAttributesByIdMap() {
+        Map<Long, Attribute> ret = new HashMap<>();
+        try (Cursor c = getAllAttributes()) {
+            while (c.moveToNext()) {
+                Attribute a = Attribute.fromCursor(c);
+                ret.put(a.id, a);
+            }
+            return ret;
+        }
+    }
+
     public ArrayList<Attribute> getAttributesForCategory(long categoryId) {
         try (Cursor c = db().query(DatabaseHelper.V_ATTRIBUTES, DatabaseHelper.AttributeColumns.NORMAL_PROJECTION,
                 DatabaseHelper.CategoryAttributeColumns.CATEGORY_ID + "=?", new String[]{String.valueOf(categoryId)},
@@ -1256,6 +1267,7 @@ public class DatabaseAdapter extends MyEntityManager {
                 DatabaseHelper.AttributeColumns.ID + ">0", null, null, null, DatabaseHelper.AttributeColumns.TITLE);
     }
 
+    // category id -> attributes name list
     public Map<Long, String> getAllAttributesMap() {
         try (Cursor c = db().query(DatabaseHelper.V_ATTRIBUTES, DatabaseHelper.AttributeViewColumns.NORMAL_PROJECTION, null, null, null, null,
                 DatabaseHelper.AttributeViewColumns.CATEGORY_ID + ", " + DatabaseHelper.AttributeViewColumns.TITLE)) {

@@ -169,6 +169,14 @@
                     android:checked="false"
                     android:text="@string/export_tx_ids" />
 
+                <CheckBox
+                    android:id="@+id/checkboxExportAttributes"
+                    android:layout_columnWeight="1"
+                    android:layout_width="0dp"
+                    android:layout_gravity="fill"
+                    android:checked="false"
+                    android:text="@string/export_attributes" />
+
             </GridLayout>
         </LinearLayout>
     </ScrollView>

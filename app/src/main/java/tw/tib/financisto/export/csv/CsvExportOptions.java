@@ -32,6 +32,7 @@ public class CsvExportOptions {
     public final boolean exportSplits;
     public final boolean exportSplitParents;
     public final boolean exportTxIDs;
+    public final boolean exportAttributes;
     public final boolean uploadToDropbox;
     public final boolean uploadToGDrive;
     public final WhereFilter filter;
@@ -39,8 +40,8 @@ public class CsvExportOptions {
 
     public CsvExportOptions(Currency currency, char fieldSeparator, boolean includeHeader,
                             boolean includeTxStatus, boolean exportSplits, boolean exportSplitParents,
-                            boolean exportTxIDs, boolean uploadToDropbox, boolean uploadToGDrive,
-                            WhereFilter filter, boolean writeUtfBom) {
+                            boolean exportTxIDs, boolean exportAttributes, boolean uploadToDropbox,
+                            boolean uploadToGDrive, WhereFilter filter, boolean writeUtfBom) {
         this.filter = filter;
         this.amountFormat = CurrencyCache.createCurrencyFormat(currency);
         this.fieldSeparator = fieldSeparator;
@@ -49,6 +50,7 @@ public class CsvExportOptions {
         this.exportSplits = exportSplits;
         this.exportSplitParents = exportSplitParents;
         this.exportTxIDs = exportTxIDs;
+        this.exportAttributes = exportAttributes;
         this.uploadToDropbox = uploadToDropbox;
         this.uploadToGDrive = uploadToGDrive;
         this.writeUtfBom = writeUtfBom;
@@ -63,11 +65,12 @@ public class CsvExportOptions {
         boolean exportSplits = data.getBooleanExtra(CsvExportActivity.CSV_EXPORT_SPLITS, false);
         boolean exportSplitParents = data.getBooleanExtra(CsvExportActivity.CSV_EXPORT_SPLIT_PARENTS, false);
         boolean exportTxIDs = data.getBooleanExtra(CsvExportActivity.CSV_EXPORT_TX_IDS, false);
+        boolean exportAttributes = data.getBooleanExtra(CsvExportActivity.CSV_EXPORT_ATTRIBUTES, false);
         boolean uploadToDropbox = data.getBooleanExtra(CsvExportActivity.CSV_EXPORT_UPLOAD_TO_DROPBOX, false);
         boolean uploadToGDrive = data.getBooleanExtra(CsvExportActivity.CSV_EXPORT_UPLOAD_TO_GDRIVE, false);
         return new CsvExportOptions(currency, fieldSeparator, includeHeader, includeTxStatus,
-                exportSplits, exportSplitParents, exportTxIDs, uploadToDropbox, uploadToGDrive,
-                filter, true);
+                exportSplits, exportSplitParents, exportTxIDs, exportAttributes,
+                uploadToDropbox, uploadToGDrive, filter, true);
     }
 
 }
