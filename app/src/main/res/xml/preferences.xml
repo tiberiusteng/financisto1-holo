@@ -56,6 +56,11 @@
                 android:key="show_menu_button_on_accounts_screen"
                 android:summary="@string/show_menu_button_on_accounts_screen_summary"
                 android:title="@string/show_menu_button_on_accounts_screen" />
+            <CheckBoxPreference
+                android:defaultValue="false"
+                android:key="show_transfer_current_balance"
+                android:summary="@string/show_transfer_current_balance_summary"
+                android:title="@string/show_transfer_current_balance" />
         </PreferenceScreen>
         <PreferenceScreen
             android:summary="@string/blotter_screen_summary"

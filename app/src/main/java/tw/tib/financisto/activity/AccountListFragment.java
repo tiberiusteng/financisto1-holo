@@ -207,6 +207,9 @@ public class AccountListFragment extends AbstractListFragment<Cursor> {
             accountActionGrid.addQuickAction(new MyQuickAction(getContext(), R.drawable.ic_action_lock_open, R.string.reopen_account));
         }
         accountActionGrid.addQuickAction(new MyQuickAction(getContext(), R.drawable.ic_action_trash, R.string.delete_account));
+        if (MyPreferences.isShowTransferCurrentBalance(getContext())) {
+            accountActionGrid.addQuickAction(new MyQuickAction(getContext(), R.drawable.share_windows_32dp, R.string.transfer_current_balance));
+        }
         accountActionGrid.setOnQuickActionClickListener(accountActionListener);
     }
 
@@ -239,6 +242,9 @@ public class AccountListFragment extends AbstractListFragment<Cursor> {
             case 8:
                 deleteAccount();
                 break;
+            case 9:
+                transferCurrentBalance(selectedId);
+                break;
         }
     };
 
@@ -246,6 +252,16 @@ public class AccountListFragment extends AbstractListFragment<Cursor> {
         Intent intent = new Intent(getContext(), clazz);
         intent.putExtra(TransactionActivity.ACCOUNT_ID_EXTRA, accountId);
         startActivityForResult(intent, VIEW_ACCOUNT_REQUEST);
+    }
+
+    private void transferCurrentBalance(long accountId) {
+        Account a = db.getAccount(accountId);
+        if (a != null) {
+            Intent intent = new Intent(getContext(), TransferActivity.class);
+            intent.putExtra(TransactionActivity.ACCOUNT_ID_EXTRA, accountId);
+            intent.putExtra(TransferActivity.AMOUNT_EXTRA, a.totalAmount);
+            startActivityForResult(intent, VIEW_ACCOUNT_REQUEST);
+        }
     }
 
     @Override

@@ -1125,4 +1125,7 @@
     <string name="export_tx_ids">Export TX ID</string>
     <string name="export_attributes">Export attributes</string>
 
+    <string name="transfer_current_balance">Transfer current balance</string>
+    <string name="show_transfer_current_balance">Show \'Transfer current balance\'</string>
+    <string name="show_transfer_current_balance_summary">Show \'Transfer current balance\' in account quick action menu</string>
 </resources>

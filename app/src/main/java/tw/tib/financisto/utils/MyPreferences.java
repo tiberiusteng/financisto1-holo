@@ -711,6 +711,10 @@ public class MyPreferences {
 		return getBoolean(context, "show_menu_button_on_accounts_screen", true);
 	}
 
+	public static boolean isShowTransferCurrentBalance(Context context) {
+		return getBoolean(context, "show_transfer_current_balance", false);
+	}
+
 	public static StartupScreen getStartupScreen(Context context) {
 		SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(context);
 		String screen = sharedPreferences.getString("startup_screen", StartupScreen.ACCOUNTS.name());

@@ -10,6 +10,8 @@
  ******************************************************************************/
 package tw.tib.financisto.activity;
 
+import android.content.Intent;
+import android.os.Bundle;
 import android.view.View;
 import android.widget.LinearLayout;
 import android.widget.TextView;
@@ -24,6 +26,8 @@ import tw.tib.financisto.utils.MyPreferences;
 import static tw.tib.financisto.activity.CategorySelector.SelectorType.TRANSFER;
 
 public class TransferActivity extends AbstractTransactionActivity {
+
+	public static final String AMOUNT_EXTRA = "amount";
 
 	private TextView accountFromText;
 	private TextView accountToText;
@@ -42,6 +46,18 @@ public class TransferActivity extends AbstractTransactionActivity {
 			if (transaction.isTemplate()) {
 				dateText.setEnabled(false);
 				timeText.setEnabled(false);
+			}
+		}
+	}
+
+	@Override
+	protected  void onCreate(Bundle savedInstanceState){
+		super.onCreate(savedInstanceState);
+		Intent intent = getIntent();
+		if (intent != null) {
+			if (intent.hasExtra(AMOUNT_EXTRA)) {
+				long amount = intent.getLongExtra(AMOUNT_EXTRA, 0);
+				rateView.setFromAmount(amount);
 			}
 		}
 	}

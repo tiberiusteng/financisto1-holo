@@ -958,4 +958,7 @@
   <string name="export_tx_ids">匯出交易 ID</string>
   <string name="export_attributes">匯出交易屬性</string>
 
+  <string name="transfer_current_balance">轉出所有餘額</string>
+  <string name="show_transfer_current_balance">顯示「轉出目前餘額」</string>
+  <string name="show_transfer_current_balance_summary">在帳戶列表快速選單顯示「轉出目前餘額」按鈕</string>
 </resources>

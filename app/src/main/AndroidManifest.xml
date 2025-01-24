@@ -12,7 +12,7 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
 	xmlns:tools="http://schemas.android.com/tools"
 	package="tw.tib.financisto"
-	android:versionName="2025-01-18" android:versionCode="172"
+	android:versionName="2025-01-25" android:versionCode="173"
     android:installLocation="internalOnly">
 
     <supports-screens
