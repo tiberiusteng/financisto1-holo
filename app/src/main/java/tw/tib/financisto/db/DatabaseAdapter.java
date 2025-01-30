@@ -1335,6 +1335,35 @@ public class DatabaseAdapter extends MyEntityManager {
         }
     }
 
+    /**
+     * Sets status=RS (Restored) for the selected transactions
+     *
+     * @param ids selected transactions' ids
+     */
+    public void markRestoredSelectedTransactions(long[] ids) {
+        String sql = "UPDATE " + DatabaseHelper.TRANSACTION_TABLE + " SET " + DatabaseHelper.TransactionColumns.status + "='" + TransactionStatus.RS + "'";
+        runInTransaction(sql, ids);
+    }
+
+    /**
+     * Sets status=PN (Pending) for the selected transactions
+     *
+     * @param ids selected transactions' ids
+     */
+    public void markPendingSelectedTransactions(long[] ids) {
+        String sql = "UPDATE " + DatabaseHelper.TRANSACTION_TABLE + " SET " + DatabaseHelper.TransactionColumns.status + "='" + TransactionStatus.PN + "'";
+        runInTransaction(sql, ids);
+    }
+
+    /**
+     * Sets status=UR (Unreconciled) for the selected transactions
+     *
+     * @param ids selected transactions' ids
+     */
+    public void markUnreconciledSelectedTransactions(long[] ids) {
+        String sql = "UPDATE " + DatabaseHelper.TRANSACTION_TABLE + " SET " + DatabaseHelper.TransactionColumns.status + "='" + TransactionStatus.UR + "'";
+        runInTransaction(sql, ids);
+    }
 
     /**
      * Sets status=CL (Cleared) for the selected transactions

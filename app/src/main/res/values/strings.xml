@@ -608,6 +608,9 @@
     <string name="mass_operations">Mass operations</string>
     <string name="account_type_paypal">PayPal</string>
     <string name="mass_operations_use_filter">Use filter to search for transactions</string>
+    <string name="mass_operations_mark_restored_all">Mark Restored all</string>
+    <string name="mass_operations_mark_pending_all">Mark Pending all</string>
+    <string name="mass_operations_mark_unreconciled_all">Mark Unreconciled all</string>
     <string name="mass_operations_clear_all">Clear all</string>
     <string name="mass_operations_reconcile">Reconcile all</string>
     <string name="mass_operations_delete">Delete all</string>

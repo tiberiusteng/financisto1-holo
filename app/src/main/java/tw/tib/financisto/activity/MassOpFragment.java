@@ -1,17 +1,21 @@
 package tw.tib.financisto.activity;
 
 import android.app.AlertDialog;
+import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.database.Cursor;
+import android.database.DataSetObserver;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.LayoutInflater;
 import android.view.View;
+import android.view.ViewGroup;
 import android.widget.*;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
-import androidx.core.os.BuildCompat;
+import androidx.core.content.ContextCompat;
 
 import tw.tib.financisto.R;
 import tw.tib.financisto.adapter.BlotterListAdapter;
@@ -62,7 +66,71 @@ public class MassOpFragment extends BlotterFragment {
             applyFilter();
         }
         spOperation.setPrompt(getString(R.string.mass_operations));
-        spOperation.setAdapter(EnumUtils.createSpinnerAdapter(getContext(), operations));
+        spOperation.setAdapter(new SpinnerAdapter() {
+            private LayoutInflater inflater;
+
+            @Override
+            public View getDropDownView(int position, View convertView, ViewGroup parent) {
+                return getView(position, convertView, parent);
+            }
+
+            @Override
+            public void registerDataSetObserver(DataSetObserver observer) {
+
+            }
+
+            @Override
+            public void unregisterDataSetObserver(DataSetObserver observer) {
+
+            }
+
+            @Override
+            public int getCount() {
+                return operations.length;
+            }
+
+            @Override
+            public Object getItem(int position) {
+                return operations[position];
+            }
+
+            @Override
+            public long getItemId(int position) {
+                return position;
+            }
+
+            @Override
+            public boolean hasStableIds() {
+                return false;
+            }
+
+            @Override
+            public View getView(int position, View convertView, ViewGroup parent) {
+                Context context = getContext();
+                if (inflater == null) inflater = LayoutInflater.from(context);
+                View view = inflater.inflate(R.layout.mass_op_action_item, parent, false);
+                TextView indicator = view.findViewById(R.id.indicator);
+                TextView title = view.findViewById(R.id.center);
+                title.setText(context.getString(operations[position].getTitleId()));
+                indicator.setBackgroundColor(ContextCompat.getColor(context, operations[position].getColor()));
+                return view;
+            }
+
+            @Override
+            public int getItemViewType(int position) {
+                return 0;
+            }
+
+            @Override
+            public int getViewTypeCount() {
+                return 1;
+            }
+
+            @Override
+            public boolean isEmpty() {
+                return false;
+            }
+        });
         prepareTransactionActionGrid();
 
         emptyText = view.findViewById(android.R.id.empty);
@@ -117,10 +185,44 @@ public class MassOpFragment extends BlotterFragment {
     }
 
     private enum MassOp implements LocalizableEnum{
+        PENDING(R.string.mass_operations_mark_pending_all) {
+            @Override
+            public void apply(DatabaseAdapter db, long[] ids) {
+                db.markPendingSelectedTransactions(ids);
+            }
+            @Override
+            public int getColor() {
+                return R.color.pending_transaction_color;
+            }
+        },
+        RESTORED(R.string.mass_operations_mark_restored_all) {
+            @Override
+            public void apply(DatabaseAdapter db, long[] ids) {
+                db.markRestoredSelectedTransactions(ids);
+            }
+            @Override
+            public int getColor() {
+                return R.color.restored_transaction_color;
+            }
+        },
+        UNRECONCILED(R.string.mass_operations_mark_unreconciled_all) {
+            @Override
+            public void apply(DatabaseAdapter db, long[] ids) {
+                db.markUnreconciledSelectedTransactions(ids);
+            }
+            @Override
+            public int getColor() {
+                return R.color.unreconciled_transaction_color;
+            }
+        },
         CLEAR(R.string.mass_operations_clear_all){
             @Override
             public void apply(DatabaseAdapter db, long[] ids) {
                 db.clearSelectedTransactions(ids);
+            }
+            @Override
+            public int getColor() {
+                return R.color.cleared_transaction_color;
             }
         },
         RECONCILE(R.string.mass_operations_reconcile){
@@ -128,12 +230,20 @@ public class MassOpFragment extends BlotterFragment {
             public void apply(DatabaseAdapter db, long[] ids) {
                 db.reconcileSelectedTransactions(ids);
             }
+            @Override
+            public int getColor() {
+                return R.color.reconciled_transaction_color;
+            }
         },
         DELETE(R.string.mass_operations_delete){
             @Override
             public void apply(DatabaseAdapter db, long[] ids) {
                 db.deleteSelectedTransactions(ids);
                 db.rebuildRunningBalances();
+            }
+            @Override
+            public int getColor() {
+                return R.color.holo_red_dark;
             }
         };
 
@@ -143,6 +253,7 @@ public class MassOpFragment extends BlotterFragment {
             this.titleId = titleId;
         }
 
+        public abstract int getColor();
         public abstract void apply(DatabaseAdapter db, long[] ids);
 
         @Override

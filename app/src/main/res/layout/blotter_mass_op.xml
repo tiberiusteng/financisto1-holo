@@ -13,11 +13,12 @@
 	<LinearLayout android:layout_height="?android:attr/listPreferredItemHeightSmall"
 		android:layout_width="fill_parent"
 		android:paddingTop="2dp"
+		android:paddingBottom="2dp"
 		style="@style/MassOpActionDropdown">
 		<Spinner
 			android:id="@+id/spOperation"
 			android:layout_width="fill_parent"
-			android:layout_height="wrap_content"
+			android:layout_height="@dimen/select_entry_height"
 			android:layout_gravity="center_vertical" />
 	</LinearLayout>
 	<FrameLayout
