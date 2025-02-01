@@ -148,6 +148,7 @@
   <string name="max_result_label">最多:</string>
   <string name="min_result_label">最少:</string>
   <string name="mean_result_label">平均:</string>
+  <string name="mean_line_label">平均</string>
   <string name="sum_result_label">總額:</string>
   <string name="report_init_res">0</string>
   <string name="no_data_to_report">沒有資料可供顯示報告。</string>

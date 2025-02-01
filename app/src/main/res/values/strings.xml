@@ -167,6 +167,7 @@
     <string name="max_result_label">Max:</string>
     <string name="min_result_label">Min:</string>
     <string name="mean_result_label">Mean:</string>
+    <string name="mean_line_label">Mean</string>
     <string name="sum_result_label">Sum:</string>
     <string name="report_init_res">0</string>
     <string name="no_data_to_report">No data available to display the report.</string>
@@ -603,6 +604,8 @@
     <string name="header_expenses">Expenses</string>
     <string name="ui_language">Locale</string>
     <string name="ui_language_summary">Set language of user interface (requires restart!)</string>
+    <string name="ui_theme">Theme</string>
+    <string name="ui_theme_summary">Set theme of user interfaces (requires restart!)</string>
 
     <string name="enter_pin">Enter PIN</string>
     <string name="mass_operations">Mass operations</string>

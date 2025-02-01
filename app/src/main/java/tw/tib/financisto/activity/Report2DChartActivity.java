@@ -14,6 +14,7 @@ import android.widget.ImageButton;
 import android.widget.TextView;
 
 import com.github.mikephil.charting.charts.LineChart;
+import com.github.mikephil.charting.components.LimitLine;
 import com.github.mikephil.charting.components.XAxis;
 import com.github.mikephil.charting.components.YAxis;
 import com.github.mikephil.charting.data.Entry;
@@ -433,11 +434,12 @@ public class Report2DChartActivity extends Activity implements OnChartValueSelec
         Double max;
         Double min;
         Double mean;
+        Double meanWithSign;
         Double sum = reportData.getDataBuilder().getSum();
         if (considerNull) {
             max = reportData.getDataBuilder().getMaxValue();
             min = reportData.getDataBuilder().getMinValue();
-            mean = reportData.getDataBuilder().getMean();
+            mean = meanWithSign = reportData.getDataBuilder().getMean();
             if ((min * max >= 0)) {
                 // absolute calculation (all points over the x axis)
                 max = reportData.getDataBuilder().getAbsoluteMaxValue();
@@ -449,7 +451,7 @@ public class Report2DChartActivity extends Activity implements OnChartValueSelec
             // exclude impact of null values in statistics
             max = reportData.getDataBuilder().getMaxExcludingNulls();
             min = reportData.getDataBuilder().getMinExcludingNulls();
-            mean = reportData.getDataBuilder().getMeanExcludingNulls();
+            mean = meanWithSign = reportData.getDataBuilder().getMeanExcludingNulls();
             if ((min * max >= 0)) {
                 // absolute calculation (all points over the x axis)
                 max = reportData.getDataBuilder().getAbsoluteMaxExcludingNulls();
@@ -465,6 +467,17 @@ public class Report2DChartActivity extends Activity implements OnChartValueSelec
         ((TextView) findViewById(R.id.report_mean_result)).setText(Utils.amountToString(reportData.getCurrency(), mean.longValue()));
         ((TextView) findViewById(R.id.report_mean_result)).setTextColor(meanColor);
         ((TextView) findViewById(R.id.report_sum_result)).setText(Utils.amountToString(reportData.getCurrency(), sum.longValue()));
+
+        // mean line
+        LimitLine ll = new LimitLine(meanWithSign.floatValue() / 100.0f, getString(R.string.mean_line_label));
+        ll.setTextColor(meanColor);
+        ll.setLineColor(meanColor);
+        ll.setLineWidth(1.0f);
+        ll.setTextSize(12f);
+        ll.setLabelPosition(LimitLine.LimitLabelPosition.RIGHT_BOTTOM);
+
+        chart.getAxisLeft().removeAllLimitLines();
+        chart.getAxisLeft().addLimitLine(ll);
     }
 
     /**
