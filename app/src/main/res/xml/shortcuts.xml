@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="utf-8"?>
+<shortcuts xmlns:android="http://schemas.android.com/apk/res/android">
+    <shortcut
+        android:shortcutId="transaction"
+        android:enabled="true"
+        android:icon="@drawable/icon_transaction"
+        android:shortcutShortLabel="@string/transaction"
+        android:shortcutLongLabel="@string/transaction_title">
+        <intent
+            android:action="android.intent.action.MAIN"
+            android:targetPackage="tw.tib.financisto"
+            android:targetClass="tw.tib.financisto.activity.TransactionActivity" />
+    </shortcut>
+    <shortcut
+        android:shortcutId="transfer"
+        android:enabled="true"
+        android:icon="@drawable/icon_transfer"
+        android:shortcutShortLabel="@string/transfer"
+        android:shortcutLongLabel="@string/transfer_title">
+        <intent
+            android:action="android.intent.action.MAIN"
+            android:targetPackage="tw.tib.financisto"
+            android:targetClass="tw.tib.financisto.activity.TransferActivity" />
+    </shortcut>
+</shortcuts>
