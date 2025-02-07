@@ -12,10 +12,8 @@ package tw.tib.financisto.activity;
 
 import android.accounts.Account;
 import android.accounts.AccountManager;
-import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
-import android.content.Intent.ShortcutIconResource;
 import android.net.Uri;
 import android.os.Bundle;
 import android.preference.Preference;
@@ -25,6 +23,10 @@ import android.preference.PreferenceScreen;
 import android.provider.DocumentsContract;
 import android.util.Log;
 import android.widget.Toast;
+
+import androidx.core.content.pm.ShortcutInfoCompat;
+import androidx.core.content.pm.ShortcutManagerCompat;
+import androidx.core.graphics.drawable.IconCompat;
 
 import com.google.android.gms.auth.api.signin.GoogleSignIn;
 import com.google.android.gms.auth.api.signin.GoogleSignInAccount;
@@ -70,12 +72,12 @@ public class PreferencesActivity extends PreferenceActivity {
         });
         Preference pNewTransactionShortcut = preferenceScreen.findPreference("shortcut_new_transaction");
         pNewTransactionShortcut.setOnPreferenceClickListener(arg0 -> {
-            addShortcut(".activity.TransactionActivity", R.string.transaction, R.drawable.icon_transaction);
+            addShortcut(TransactionActivity.class, R.string.transaction, R.string.transaction_title, R.drawable.icon_transaction);
             return true;
         });
         Preference pNewTransferShortcut = preferenceScreen.findPreference("shortcut_new_transfer");
         pNewTransferShortcut.setOnPreferenceClickListener(arg0 -> {
-            addShortcut(".activity.TransferActivity", R.string.transfer, R.drawable.icon_transfer);
+            addShortcut(TransferActivity.class, R.string.transfer, R.string.transfer_title, R.drawable.icon_transfer);
             return true;
         });
         Preference pDatabaseBackupFolder = preferenceScreen.findPreference("database_backup_folder");
@@ -268,23 +270,28 @@ public class PreferencesActivity extends PreferenceActivity {
         }
     }
 
-    private void addShortcut(String activity, int nameId, int iconId) {
-        Intent intent = createShortcutIntent(activity, getString(nameId), Intent.ShortcutIconResource.fromContext(this, iconId),
-                "com.android.launcher.action.INSTALL_SHORTCUT");
-        sendBroadcast(intent);
+    private void addShortcut(Class activity, int nameId, int longLabelId, int iconId) {
+        if (!ShortcutManagerCompat.isRequestPinShortcutSupported(this)) {
+            Toast.makeText(this, R.string.shortcut_not_supported_by_launcher, Toast.LENGTH_LONG).show();
+            return;
+        }
+
+        ShortcutInfoCompat shortcutInfo = new ShortcutInfoCompat.Builder(this, getString(nameId))
+                .setShortLabel(getString(nameId))
+                .setLongLabel(getString(longLabelId))
+                .setIcon(IconCompat.createWithResource(this, iconId))
+                .setIntent(createShortcutIntent(activity))
+                .build();
+
+        ShortcutManagerCompat.requestPinShortcut(this, shortcutInfo, null);
     }
 
-    private Intent createShortcutIntent(String activity, String shortcutName, ShortcutIconResource shortcutIcon, String action) {
-        Intent shortcutIntent = new Intent();
-        shortcutIntent.setComponent(new ComponentName(this.getPackageName(), activity));
+    private Intent createShortcutIntent(Class activity) {
+        Intent shortcutIntent = new Intent(this, activity);
+        shortcutIntent.setAction(Intent.ACTION_MAIN);
         shortcutIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
         shortcutIntent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-        Intent intent = new Intent();
-        intent.putExtra(Intent.EXTRA_SHORTCUT_INTENT, shortcutIntent);
-        intent.putExtra(Intent.EXTRA_SHORTCUT_NAME, shortcutName);
-        intent.putExtra(Intent.EXTRA_SHORTCUT_ICON_RESOURCE, shortcutIcon);
-        intent.setAction(action);
-        return intent;
+        return shortcutIntent;
     }
 
     Dropbox dropbox = new Dropbox(this);

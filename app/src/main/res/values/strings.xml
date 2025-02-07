@@ -391,6 +391,7 @@
     <string name="shortcut_new_transaction">\'New Transaction\' shortcut</string>
     <string name="shortcut_new_transfer">\'New Transfer\' shortcut</string>
     <string name="shortcut_summary">Add the shortcut to the Home Screen</string>
+    <string name="shortcut_not_supported_by_launcher">Your launcher does not support pinning shortcut</string>
     <string name="use_fixed_layout">Use fixed layout</string>
     <string name="use_fixed_layout_summary">Fix OK/Cancel buttons in the layout</string>
     <string name="use_twin_date_picker">Use twin date picker</string>

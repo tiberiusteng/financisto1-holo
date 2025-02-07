@@ -340,6 +340,7 @@
   <string name="shortcut_new_transaction">新交易捷徑</string>
   <string name="shortcut_new_transfer">新移轉捷徑</string>
   <string name="shortcut_summary">加入捷徑到桌面</string>
+  <string name="shortcut_not_supported_by_launcher">您的桌面程式不支援固定捷徑</string>
   <string name="use_fixed_layout">使用固定版型</string>
   <string name="use_fixed_layout_summary">固定確定/取消按鈕在版面中</string>
   <string name="use_twin_date_picker">使用雙重日期選取器</string>
