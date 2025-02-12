@@ -136,7 +136,7 @@ public class MonthlyViewPlanner extends AbstractPlanner {
         if (isStatementPreview) {
             // exclude payments
             for (TransactionInfo t : transactions) {
-                if (!((treatTransferToCCardAsPayment && t.isTransfer()) || t.isCreditCardPayment())) {
+                if (!((treatTransferToCCardAsPayment && t.isTransfer() && t.fromAmount > 0) || t.isCreditCardPayment())) {
                     total += getAmount(t);
                 }
             }
