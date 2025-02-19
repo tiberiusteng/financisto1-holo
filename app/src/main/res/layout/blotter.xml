@@ -9,6 +9,7 @@
       Denis Solonenko - initial API and implementation
 -->
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+	xmlns:app="http://schemas.android.com/apk/res-auto"
 	android:layout_width="fill_parent"
 	android:layout_height="fill_parent"
 	android:orientation="vertical">
@@ -88,33 +89,50 @@
 		android:textColor="#FFFFFF"
 		android:visibility="gone" />
 
-	<LinearLayout style="@style/BottomBar">
-		<ImageButton
-			android:id="@+id/bAdd"
-			style="@style/BottomBarButton"
-			android:src="@drawable/actionbar_add_big" />
+	<androidx.constraintlayout.widget.ConstraintLayout style="@style/BottomBar">
+		<HorizontalScrollView
+			android:layout_width="0dp"
+			android:layout_height="fill_parent"
+			android:layout_marginRight="10dp"
+			android:scrollbarThumbHorizontal="@android:color/darker_gray"
+			app:layout_constraintStart_toStartOf="parent"
+			app:layout_constraintEnd_toStartOf="@id/total"
+			app:layout_constraintTop_toTopOf="parent"
+			app:layout_constraintBottom_toBottomOf="parent">
 
-		<ImageButton
-			android:id="@+id/bTransfer"
-			style="@style/BottomBarButton"
-			android:src="@drawable/actionbar_transfer"
-			android:visibility="gone" />
+			<LinearLayout
+				android:layout_width="wrap_content"
+				android:layout_height="wrap_content">
 
-		<ImageButton
-			android:id="@+id/bTemplate"
-			style="@style/BottomBarButton"
-			android:src="@drawable/actionbar_tiles_large"
-			android:visibility="gone" />
+				<ImageButton
+					android:id="@+id/bAdd"
+					style="@style/BottomBarButton"
+					android:src="@drawable/actionbar_add_big" />
 
-		<ImageButton
-			android:id="@+id/bSearch"
-			style="@style/BottomBarButton"
-			android:src="@android:drawable/ic_menu_search" />
+				<ImageButton
+					android:id="@+id/bTransfer"
+					style="@style/BottomBarButton"
+					android:src="@drawable/actionbar_transfer"
+					android:visibility="gone" />
 
-		<ImageButton
-			android:id="@+id/bFilter"
-			style="@style/BottomBarButton"
-			android:src="@drawable/actionbar_filter" />
+				<ImageButton
+					android:id="@+id/bTemplate"
+					style="@style/BottomBarButton"
+					android:src="@drawable/actionbar_tiles_large"
+					android:visibility="gone" />
+
+				<ImageButton
+					android:id="@+id/bSearch"
+					style="@style/BottomBarButton"
+					android:src="@android:drawable/ic_menu_search" />
+
+				<ImageButton
+					android:id="@+id/bFilter"
+					style="@style/BottomBarButton"
+					android:src="@drawable/actionbar_filter" />
+
+			</LinearLayout>
+		</HorizontalScrollView>
 
 		<!--
 		<ImageButton
@@ -123,6 +141,19 @@
 			android:src="@drawable/actionbar_dot_menu" />
 		-->
 
-		<include layout="@layout/total_text" />
-	</LinearLayout>
+		<TextView
+			android:layout_height="fill_parent"
+			android:layout_width="wrap_content"
+			android:id="@+id/total"
+			android:textStyle="bold"
+			android:background="@drawable/btn_total"
+			android:clickable="true"
+			android:focusable="true"
+			android:gravity="right|center"
+			android:layout_margin="4dp"
+			app:layout_constraintEnd_toEndOf="parent"
+			app:layout_constraintTop_toTopOf="parent"
+			app:layout_constraintBottom_toBottomOf="parent" />
+
+	</androidx.constraintlayout.widget.ConstraintLayout>
 </LinearLayout>
