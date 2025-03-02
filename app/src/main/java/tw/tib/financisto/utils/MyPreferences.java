@@ -501,6 +501,11 @@ public class MyPreferences {
 		return sharedPreferences.getBoolean("reset_copied_foreign_transaction_status", false);
 	}
 
+	public static boolean isUpdateCopiedTransactionProject(Context context) {
+		SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(context);
+		return sharedPreferences.getBoolean("update_copied_transaction_project", false);
+	}
+
 	public static boolean isColorizeWeekendDate(Context context) {
 		SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(context);
 		return sharedPreferences.getBoolean("colorize_weekend_date", true);

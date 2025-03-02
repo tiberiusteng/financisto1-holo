@@ -664,6 +664,9 @@
     <string name="reset_copied_foreign_transaction_status">Reset copied foreign currency transaction status</string>
     <string name="reset_copied_foreign_transaction_status_summary">Make copied foreign currency transaction pending</string>
 
+    <string name="update_copied_transaction_project">Update Project of copied transaction</string>
+    <string name="update_copied_transaction_project_summary">Make copied transaction use latest project if it has a project</string>
+
     <string name="colorize_weekend_date">Colorize weekend date/time</string>
     <string name="colorize_weekend_date_summary">Show dates of Saturday/Sunday in red</string>
 

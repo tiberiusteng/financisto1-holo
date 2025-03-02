@@ -116,6 +116,11 @@
                 android:summary="@string/reset_copied_foreign_transaction_status_summary"
                 android:title="@string/reset_copied_foreign_transaction_status" />
             <CheckBoxPreference
+                android:defaultValue="false"
+                android:key="update_copied_transaction_project"
+                android:summary="@string/update_copied_transaction_project_summary"
+                android:title="@string/update_copied_transaction_project" />
+            <CheckBoxPreference
                 android:defaultValue="true"
                 android:key="colorize_weekend_date"
                 android:summary="@string/colorize_weekend_date_summary"
