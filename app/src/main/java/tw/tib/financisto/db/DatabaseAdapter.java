@@ -1962,7 +1962,7 @@ public class DatabaseAdapter extends MyEntityManager {
 
     public long getLastUsedProjectId(long datetime) {
         return DatabaseUtils.rawFetchLongValue(this,
-                "SELECT project_id FROM transactions WHERE project_id > 0 AND datetime>?",
+                "SELECT project_id FROM transactions WHERE project_id > 0 AND datetime>? ORDER BY datetime DESC LIMIT 1",
                 new String[]{String.valueOf(datetime)});
     }
 
