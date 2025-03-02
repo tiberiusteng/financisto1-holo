@@ -1138,4 +1138,12 @@
     <string name="transfer_current_balance">Transfer current balance</string>
     <string name="show_transfer_current_balance">Show \'Transfer current balance\'</string>
     <string name="show_transfer_current_balance_summary">Show \'Transfer current balance\' in account quick action menu</string>
+
+    <string name="first_day_of_week">First day of week</string>
+    <string name="first_day_of_week_summary">Change first day of the week used in reporting</string>
+    <string-array name="first_day_of_week_entries">
+        <item>System default</item>
+        <item>Sunday</item>
+        <item>Monday</item>
+    </string-array>
 </resources>

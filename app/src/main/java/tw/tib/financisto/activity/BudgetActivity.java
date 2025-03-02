@@ -107,7 +107,7 @@ public class BudgetActivity extends AbstractActivity {
 		bOK.setOnClickListener(arg0 -> {
 			if (checkSelected(budget.currency != null ? budget.currency : budget.account, R.string.select_account)) {
 				updateBudgetFromUI();
-				long id = db.insertBudget(budget);
+				long id = db.insertBudget(this, budget);
 				Intent intent = new Intent();
 				intent.putExtra(BUDGET_ID_EXTRA, id);
 				setResult(RESULT_OK, intent);

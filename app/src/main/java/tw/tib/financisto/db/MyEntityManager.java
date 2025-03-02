@@ -455,7 +455,7 @@ public abstract class MyEntityManager extends EntityManager {
 //		return q.list();
 //	}
 
-	public long insertBudget(Budget budget) {
+	public long insertBudget(Context context, Budget budget) {
 		SQLiteDatabase db = db();
 		budget.remoteKey = null;
 
@@ -466,7 +466,7 @@ public abstract class MyEntityManager extends EntityManager {
 			}
 			long id = 0;
 			RecurUtils.Recur recur = RecurUtils.createFromExtraString(budget.recur);
-			Period[] periods = RecurUtils.periods(recur);
+			Period[] periods = RecurUtils.periods(context, recur);
 			for (int i = 0; i < periods.length; i++) {
 				Period p = periods[i];
 				budget.id = -1;

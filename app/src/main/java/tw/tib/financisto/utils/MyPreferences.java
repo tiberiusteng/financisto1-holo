@@ -104,6 +104,16 @@ public class MyPreferences {
 		AccountListDateType(String tag) { this.tag = tag; }
 	}
 
+	public enum FirstDayOfWeek {
+		SYSTEM_DEFAULT("SYSTEM_DEFAULT"),
+		SUNDAY("SUNDAY"),
+		MONDAY("MONDAY");
+
+		public final String tag;
+
+		FirstDayOfWeek(String tag) { this.tag = tag; }
+	}
+
 	public enum EntitySelectorType {
 		DROPDOWN("DROPDOWN"),
 		SEARCH("SEARCH");
@@ -539,6 +549,12 @@ public class MyPreferences {
 		context = context.createConfigurationContext(config);
 		Log.i("MyPreferences", "Switching locale to " + config.locale.getDisplayName());
 		return context;
+	}
+
+	public static FirstDayOfWeek getFirstDayOfWeek(Context context) {
+		SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(context);
+		String firstDayOfWeek = sharedPreferences.getString("first_day_of_week", FirstDayOfWeek.SYSTEM_DEFAULT.name());
+		return FirstDayOfWeek.valueOf(firstDayOfWeek);
 	}
 
 	public static boolean isCameraSupported(Context context) {

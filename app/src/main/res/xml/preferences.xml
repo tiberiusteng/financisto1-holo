@@ -301,6 +301,13 @@
                     android:title="@string/set_focus_on_amount_field" />
             </PreferenceCategory>
         </PreferenceScreen>
+        <ListPreference
+            android:defaultValue="0"
+            android:entries="@array/first_day_of_week_entries"
+            android:entryValues="@array/first_day_of_week_values"
+            android:key="first_day_of_week"
+            android:summary="@string/first_day_of_week_summary"
+            android:title="@string/first_day_of_week" />
     </PreferenceCategory>
 
     <PreferenceCategory android:title="@string/pref_tpl">

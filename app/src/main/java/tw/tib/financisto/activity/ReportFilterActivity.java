@@ -274,7 +274,7 @@ public class ReportFilterActivity extends FilterAbstractActivity {
             if (resultCode == RESULT_FIRST_USER) {
                 onClick(period, R.id.period_clear);
             } else if (resultCode == RESULT_OK) {
-                DateTimeCriteria c = WhereFilter.dateTimeFromIntent(data);
+                DateTimeCriteria c = WhereFilter.dateTimeFromIntent(this, data);
                 filter.put(c);
                 updatePeriodFromFilter();
             }

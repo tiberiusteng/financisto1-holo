@@ -8,6 +8,8 @@
 
 package tw.tib.financisto.filter;
 
+import android.content.Context;
+
 import tw.tib.financisto.blotter.BlotterFilter;
 import tw.tib.financisto.datetime.DateUtils;
 import tw.tib.financisto.datetime.Period;
@@ -30,8 +32,8 @@ public class DateTimeCriteria extends Criteria {
         this.period = period;
     }
 
-    public DateTimeCriteria(PeriodType period) {
-        this(DateUtils.getPeriod(period));
+    public DateTimeCriteria(Context context, PeriodType period) {
+        this(DateUtils.getPeriod(context, period));
     }
 
     public DateTimeCriteria(long start, long end) {

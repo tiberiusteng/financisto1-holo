@@ -51,7 +51,7 @@ public class PeriodReport extends Report {
 	public PeriodReport(Context context, Currency currency) {
 		super(ReportType.BY_PERIOD, context, currency);
         for (int i=0; i<periodTypes.length; i++) {
-            periods[i] = periodTypes[i].calculatePeriod();
+            periods[i] = periodTypes[i].calculatePeriod(context);
         }
     }
 

@@ -55,7 +55,7 @@ public abstract class AbstractExportActivity extends AppCompatActivity {
 		
 		df = DateUtils.getShortDateFormat(this);
 		
-		filter.put(new DateTimeCriteria(PeriodType.THIS_MONTH));
+		filter.put(new DateTimeCriteria(this, PeriodType.THIS_MONTH));
 		
 		bPeriod = (Button)findViewById(R.id.bPeriod);
 		bPeriod.setOnClickListener(new OnClickListener(){
@@ -135,7 +135,7 @@ public abstract class AbstractExportActivity extends AppCompatActivity {
 					long periodTo = data.getLongExtra(DateFilterActivity.EXTRA_FILTER_PERIOD_TO, 0);
 					filter.put(new DateTimeCriteria(periodFrom, periodTo));
 				} else {
-					filter.put(new DateTimeCriteria(p));
+					filter.put(new DateTimeCriteria(this, p));
 				}			
 			}
 			updatePeriod();

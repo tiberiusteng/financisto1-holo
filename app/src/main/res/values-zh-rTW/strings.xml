@@ -968,4 +968,12 @@
   <string name="transfer_current_balance">轉出所有餘額</string>
   <string name="show_transfer_current_balance">顯示「轉出目前餘額」</string>
   <string name="show_transfer_current_balance_summary">在帳戶列表快速選單顯示「轉出目前餘額」按鈕</string>
+
+  <string name="first_day_of_week">一週第一天</string>
+  <string name="first_day_of_week_summary">設定產生報表時每週從哪天開始計算</string>
+  <string-array name="first_day_of_week_entries">
+    <item>系統預設</item>
+    <item>星期日</item>
+    <item>星期一</item>
+  </string-array>
 </resources>

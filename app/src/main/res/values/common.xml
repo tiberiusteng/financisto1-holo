@@ -273,4 +273,9 @@
 
 	<dimen name="list_section_divider_min_height">32dip</dimen>
 
+	<string-array name="first_day_of_week_values">
+		<item>SYSTEM_DEFAULT</item>
+		<item>SUNDAY</item>
+		<item>MONDAY</item>
+	</string-array>
 </resources>

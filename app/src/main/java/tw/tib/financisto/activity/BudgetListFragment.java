@@ -95,7 +95,7 @@ public class BudgetListFragment extends AbstractListFragment<ArrayList<Budget>> 
             filter = WhereFilter.fromSharedPreferences(getContext().getSharedPreferences(this.getClass().getName(), 0));
         }
         if (filter.isEmpty()) {
-            filter.put(new DateTimeCriteria(PeriodType.THIS_MONTH));
+            filter.put(new DateTimeCriteria(getContext(), PeriodType.THIS_MONTH));
         }
 
         handler = new Handler();
@@ -133,7 +133,7 @@ public class BudgetListFragment extends AbstractListFragment<ArrayList<Budget>> 
                     long periodTo = data.getLongExtra(DateFilterActivity.EXTRA_FILTER_PERIOD_TO, 0);
                     filter.put(new DateTimeCriteria(periodFrom, periodTo));
                 } else {
-                    filter.put(new DateTimeCriteria(p));
+                    filter.put(new DateTimeCriteria(getContext(), p));
                 }
             }
             saveFilter();
@@ -154,7 +154,7 @@ public class BudgetListFragment extends AbstractListFragment<ArrayList<Budget>> 
         if (activity != null) {
             sortOrder = activity.getSharedPreferences(TAG, MODE_PRIVATE).getInt(PREF_SORT_ORDER, 0);
         }
-        filter.recalculatePeriod();
+        filter.recalculatePeriod(getContext());
         return db.getAllBudgets(filter, MyEntityManager.BudgetSortOrder.values()[sortOrder]);
     }
 
