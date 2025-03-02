@@ -964,6 +964,7 @@
   <string name="export_split_parents">匯出分割交易彙總</string>
   <string name="export_tx_ids">匯出交易 ID</string>
   <string name="export_attributes">匯出交易屬性</string>
+  <string name="export_running_balance">匯出逐筆餘額</string>
 
   <string name="transfer_current_balance">轉出所有餘額</string>
   <string name="show_transfer_current_balance">顯示「轉出目前餘額」</string>

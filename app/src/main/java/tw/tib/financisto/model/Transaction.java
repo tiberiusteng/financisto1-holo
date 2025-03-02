@@ -67,6 +67,12 @@ public class Transaction extends TransactionBase {
 	@Transient
 	public long unsplitAmount;
 
+	@Transient
+	public long fromAccountBalance;
+
+	@Transient
+	public long toAccountBalance;
+
 	public ContentValues toValues() {
 		ContentValues values = new ContentValues();
 		values.put(TransactionColumns.parent_id.name(), parentId);
@@ -135,6 +141,8 @@ public class Transaction extends TransactionBase {
 		t.attachedPicture = c.getString(BlotterColumns.attached_picture.ordinal());
 		t.isCCardPayment = c.getInt(BlotterColumns.is_ccard_payment.ordinal());
 		t.lastRecurrence = c.getLong(BlotterColumns.last_recurrence.ordinal());
+		t.fromAccountBalance = c.getLong(BlotterColumns.from_account_balance.ordinal());
+		t.toAccountBalance = c.getLong(BlotterColumns.to_account_balance.ordinal());
 		return t;
 	}
 

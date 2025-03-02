@@ -177,6 +177,14 @@
                     android:checked="false"
                     android:text="@string/export_attributes" />
 
+                <CheckBox
+                    android:id="@+id/checkboxExportRunningBalance"
+                    android:layout_columnWeight="1"
+                    android:layout_width="0dp"
+                    android:layout_gravity="fill"
+                    android:checked="false"
+                    android:text="@string/export_running_balance" />
+
             </GridLayout>
         </LinearLayout>
     </ScrollView>
