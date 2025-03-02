@@ -33,6 +33,7 @@ import org.androidannotations.annotations.ViewById;
 import org.androidannotations.annotations.ViewsById;
 
 import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.util.List;
 import java.util.Stack;
 
@@ -266,10 +267,10 @@ public class CalculatorInput extends DialogFragment {
                 break;
             case '/':
                 BigDecimal d2 = new BigDecimal(valTwo);
-                if (d2.intValue() == 0) {
+                try {
+                    stack.push(new BigDecimal(valOne).divide(d2, 2, RoundingMode.HALF_UP).stripTrailingZeros().toPlainString());
+                } catch (ArithmeticException e) {
                     stack.push("0.0");
-                } else {
-                    stack.push(new BigDecimal(valOne).divide(d2, 2, BigDecimal.ROUND_HALF_UP).stripTrailingZeros().toPlainString());
                 }
                 break;
             default:
