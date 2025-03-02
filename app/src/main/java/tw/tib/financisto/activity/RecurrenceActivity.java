@@ -189,7 +189,7 @@ public class RecurrenceActivity extends AbstractActivity {
 					DateFormat df = DateUtils.getMediumDateFormat(this);
 					String n = String.format("%n");
 					int count = 0;
-					while (count++ < 10 && ri.hasNext()) {
+					while (count++ < 15 && ri.hasNext()) {
 						Date nextDate = ri.next();
 						if (count > 1) {
 							sb.append(n);
