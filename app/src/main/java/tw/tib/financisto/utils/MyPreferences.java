@@ -554,7 +554,11 @@ public class MyPreferences {
 	public static FirstDayOfWeek getFirstDayOfWeek(Context context) {
 		SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(context);
 		String firstDayOfWeek = sharedPreferences.getString("first_day_of_week", FirstDayOfWeek.SYSTEM_DEFAULT.name());
-		return FirstDayOfWeek.valueOf(firstDayOfWeek);
+		try {
+			return FirstDayOfWeek.valueOf(firstDayOfWeek);
+		} catch (IllegalArgumentException e) {
+			return FirstDayOfWeek.SYSTEM_DEFAULT;
+		}
 	}
 
 	public static boolean isCameraSupported(Context context) {
