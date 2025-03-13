@@ -49,8 +49,7 @@
 
     <EditText
         android:id="@+id/secondary"
-        android:layout_width="wrap_content"
-        android:ems="2"
+        android:layout_width="30sp"
         android:layout_height="wrap_content"
         app:layout_constraintEnd_toStartOf="@id/amount_input"
         app:layout_constraintTop_toTopOf="parent"

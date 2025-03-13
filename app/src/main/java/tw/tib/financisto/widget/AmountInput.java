@@ -30,6 +30,8 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
+import androidx.constraintlayout.widget.ConstraintLayout;
+
 import org.androidannotations.annotations.AfterViews;
 import org.androidannotations.annotations.Click;
 import org.androidannotations.annotations.EViewGroup;
@@ -226,6 +228,11 @@ public class AmountInput extends LinearLayout implements AmountListener {
         if (!MyPreferences.isEnterCurrencyDecimalPlaces(getContext())) {
             secondary.setVisibility(GONE);
             delimiter.setVisibility(GONE);
+        }
+        else {
+            var l = (ConstraintLayout.LayoutParams) secondary.getLayoutParams();
+            l.width = (int) (secondary.getPaint().measureText("00") + secondary.getPaddingStart() + secondary.getPaddingEnd());
+            secondary.setLayoutParams(l);
         }
     }
 
