@@ -232,7 +232,7 @@ public class ReportDataByPeriod {
 		accountsWhere.append(")");
 		
 		// period
-		accountsWhere.append(" and ("+TransactionColumns.datetime +">=? and "+TransactionColumns.datetime +"<=?)");
+		accountsWhere.append(" and ("+TransactionColumns.datetime +">=? and "+TransactionColumns.datetime +"<?)");
 		
 		// list of accounts for which the reference currency is the report reference currency
 		if(accounts.length>0)
@@ -336,7 +336,13 @@ public class ReportDataByPeriod {
 			PeriodValue periodValue = new PeriodValue(month, result);
 			int monthPosition = (month.get(Calendar.YEAR)-startDate.get(Calendar.YEAR))*12+
 								 month.get(Calendar.MONTH)-startDate.get(Calendar.MONTH);
-			values.set(monthPosition, periodValue); 
+			// FIXME date range edge case
+			if (monthPosition < values.size()) {
+				values.set(monthPosition, periodValue);
+			}
+			else {
+				values.add(periodValue);
+			}
 		}
 		
 		// Generating statistics
