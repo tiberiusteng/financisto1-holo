@@ -81,7 +81,10 @@ public class AccountInfoDialog {
     private void createNodes(Account a, LinearLayout layout) {
         AccountType type = AccountType.valueOf(a.type);
         if (type.isCard) {
-            CardIssuer issuer = CardIssuer.valueOf(a.cardIssuer);
+            CardIssuer issuer = CardIssuer.DEFAULT;
+            if (a.cardIssuer != null) {
+                issuer = CardIssuer.valueOf(a.cardIssuer);
+            }
             add(layout, R.string.issuer, issuerTitle(a), issuer);
         }
         add(layout, R.string.currency, a.currency.title);
