@@ -333,7 +333,7 @@ public class DatabaseAdapter extends MyEntityManager {
             {
                 // Get recently used project ID in a week
                 // TODO make the time span configurable?
-                long lastUsedProjectId = getLastUsedProjectId(System.currentTimeMillis() - (86400 * 3));
+                long lastUsedProjectId = getLastUsedProjectId(System.currentTimeMillis() - (86400000L * 3));
                 if (lastUsedProjectId != 0) {
                     transaction.projectId = lastUsedProjectId;
                 }
