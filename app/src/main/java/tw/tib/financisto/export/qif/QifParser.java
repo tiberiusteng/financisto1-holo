@@ -104,6 +104,11 @@ public class QifParser {
         if (isNotEmpty(t.categoryClass)) {
             classes.add(t.categoryClass);
         }
+        if (t.splits != null) {
+            for (var s : t.splits) {
+                addCategoryFromTransaction(s);
+            }
+        }
     }
 
     private boolean shouldBreakCurrentBlock() throws IOException {
