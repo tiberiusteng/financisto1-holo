@@ -237,6 +237,12 @@ public class CalculatorInput extends DialogFragment {
     }
 
     private void doOpChar(char op) {
+        try {
+            var d = new BigDecimal(result);
+        } catch (Exception e) {
+            tvOp.setText("Num?");
+            return;
+        }
         if (isInEquals) {
             stack.clear();
             isInEquals = false;
@@ -294,6 +300,12 @@ public class CalculatorInput extends DialogFragment {
             return;
         }
         if (!isInEquals) {
+            try {
+                var d = new BigDecimal(result);
+            } catch (Exception e) {
+                tvOp.setText("Num?");
+                return;
+            }
             isInEquals = true;
             stack.push(result);
         }
