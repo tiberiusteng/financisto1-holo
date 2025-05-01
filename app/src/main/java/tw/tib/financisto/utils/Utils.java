@@ -41,8 +41,6 @@ public class Utils {
     private static final int zeroColor = Resources.getSystem().getColor(android.R.color.secondary_text_dark);
 
     private Context context = null;
-    private final StringBuilder sb = new StringBuilder();
-    private static final StringBuilder sb2 = new StringBuilder();
 
     public int positiveColor = 0;
     public int negativeColor = 0;
@@ -90,7 +88,7 @@ public class Utils {
     }
 
     public static StringBuilder amountToString(StringBuilder sb, Currency c, BigDecimal amount, boolean addPlus) {
-        sb2.setLength(0);
+        var sb2 = new StringBuilder();
         if (amount.compareTo(BigDecimal.ZERO) > 0) {
             if (addPlus) {
                 sb2.append("+");
@@ -229,7 +227,7 @@ public class Utils {
     }
 
     public String getTransferTitleText(String fromAccountTitle, String toAccountTitle) {
-        sb.setLength(0);
+        var sb = new StringBuilder();
         sb.append(fromAccountTitle).append(TRANSFER_DELIMITER).append(toAccountTitle);
         return sb.toString();
     }
@@ -244,7 +242,7 @@ public class Utils {
     }
 
     public String getTransferAmountText(Currency fromCurrency, long fromAmount, Currency toCurrency, long toAmount) {
-        sb.setLength(0);
+        var sb = new StringBuilder();
         if (sameCurrency(fromCurrency, toCurrency)) {
             Utils.amountToString(sb, toCurrency, toAmount);
         } else {
@@ -259,7 +257,7 @@ public class Utils {
     }
 
     public void setTransferBalanceText(TextView textView, Currency fromCurrency, long fromBalance, Currency toCurrency, long toBalance) {
-        sb.setLength(0);
+        var sb = new StringBuilder();
         Utils.amountToString(sb, fromCurrency, fromBalance, false).append(TRANSFER_DELIMITER);
         Utils.amountToString(sb, toCurrency, toBalance, false);
         textView.setText(sb.toString());
