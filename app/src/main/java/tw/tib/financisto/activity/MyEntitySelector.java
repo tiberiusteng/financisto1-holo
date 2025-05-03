@@ -53,6 +53,7 @@ public abstract class MyEntitySelector<T extends MyEntity, A extends AbstractAct
     private SimpleCursorAdapter filterAdapter;
     private List<T> entities = Collections.emptyList();
     private ListAdapter adapter;
+    private boolean includeZero;
     private boolean multiSelect;
     private boolean useSearchAsPrimary;
 
@@ -112,6 +113,10 @@ public abstract class MyEntitySelector<T extends MyEntity, A extends AbstractAct
         this.enableCreate = enableCreate;
     }
 
+    public void setIncludeZero(boolean includeZero) {
+        this.includeZero = includeZero;
+    }
+
     public void fetchEntities() {
         entities = fetchEntities(em);
         if (!multiSelect) {
@@ -121,10 +126,10 @@ public abstract class MyEntitySelector<T extends MyEntity, A extends AbstractAct
 
     protected List<T> fetchEntities(MyEntityManager em) {
         if (fetchAllEntities) {
-            return em.getAllEntitiesList(entityClass, !isMultiSelect(), false);
+            return em.getAllEntitiesList(entityClass, this.includeZero || !isMultiSelect(), false);
         }
         else {
-            return em.getAllEntitiesList(entityClass, !isMultiSelect(), true, includeEntityIds);
+            return em.getAllEntitiesList(entityClass, this.includeZero || !isMultiSelect(), true, includeEntityIds);
         }
     }
 

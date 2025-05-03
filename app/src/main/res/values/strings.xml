@@ -83,6 +83,7 @@
     <string name="no_categories">No categories</string>
     <string name="no_currencies">No currencies</string>
     <string name="no_projects">No projects</string>
+    <string name="any_projects">(Any projects)</string>
     <string name="no_recur">No recur</string>
     <string name="no_suggestion">No suggestion</string>
     <string name="account_from">From Account</string>

@@ -71,6 +71,7 @@
   <string name="no_categories">無分類</string>
   <string name="no_currencies">無貨幣</string>
   <string name="no_projects">無專案</string>
+  <string name="any_projects">(任何專案)</string>
   <string name="no_recur">無循環</string>
   <string name="no_suggestion">無建議</string>
   <string name="account_from">從帳戶</string>

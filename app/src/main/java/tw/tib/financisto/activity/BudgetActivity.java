@@ -68,7 +68,8 @@ public class BudgetActivity extends AbstractActivity {
 		categorySelector.initMultiSelect();
 		categorySelector.setUseMultiChoicePlainSelector();
 
-		projectSelector = new ProjectSelector<>(this, db, x, 0, R.id.project_clear, R.string.no_projects);
+		projectSelector = new ProjectSelector<>(this, db, x, 0, R.id.project_clear, R.string.any_projects);
+		projectSelector.setIncludeZero(true);
 		projectSelector.initMultiSelect();
 
 		LinearLayout layout = findViewById(R.id.list);
@@ -180,6 +181,8 @@ public class BudgetActivity extends AbstractActivity {
 
 	@Override
 	protected void onClick(View v, int id) {
+		categorySelector.onClick(id);
+		projectSelector.onClick(id);
 		switch (id) {
 			case R.id.include_subcategories:
 				cbIncludeSubCategories.performClick();
@@ -193,29 +196,6 @@ public class BudgetActivity extends AbstractActivity {
 			case R.id.type:
 				cbSavingBudget.performClick();
 				break;
-			case R.id.category:
-			case R.id.category_clear:
-				categorySelector.onClick(id);
-//                x.selectMultiChoice(this, R.id.category, R.string.categories, categories);
-				break;
-            /*case R.id.category_add: {
-                Intent intent = new Intent(this, CategoryActivity.class);
-                startActivityForResult(intent, NEW_CATEGORY_REQUEST);
-            }
-            break;*/
-			case R.id.category_filter_toggle:
-				categorySelector.onClick(id);
-				break;
-			case R.id.project:
-			case R.id.project_clear:
-				//x.selectMultiChoice(this, R.id.project, R.string.projects, projects);
-				projectSelector.onClick(id);
-				break;
-            /*case R.id.project_add: {
-                Intent intent = new Intent(this, ProjectActivity.class);
-                startActivityForResult(intent, NEW_PROJECT_REQUEST);
-            }
-            break;*/
 			case R.id.account:
 				x.selectPosition(this, R.id.account, R.string.account, accountAdapter, selectedAccountOption);
 				break;
@@ -227,9 +207,6 @@ public class BudgetActivity extends AbstractActivity {
 				startActivityForResult(intent, RECUR_REQUEST);
 			}
 			break;
-			case R.id.project_filter_toggle:
-				projectSelector.onClick(id);
-				break;
 		}
 	}
 
