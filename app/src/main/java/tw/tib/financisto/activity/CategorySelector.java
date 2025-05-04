@@ -240,6 +240,9 @@ public class CategorySelector<A extends AbstractActivity> {
         selectedCategoryId = NO_CATEGORY_ID;
         for (MyEntity e : categories) e.setChecked(false);
         showHideMinusBtn(false);
+        if (listener != null) {
+            listener.onCategorySelected(Category.noCategory(), false);
+        }
     }
 
     public void onSelectedId(int id, long selectedId) {

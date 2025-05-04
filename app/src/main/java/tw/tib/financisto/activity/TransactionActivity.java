@@ -418,7 +418,7 @@ public class TransactionActivity extends AbstractTransactionActivity {
         super.onSelectedPos(id, selectedPos);
         switch (id) {
             case R.id.payee:
-                if (isRememberLastCategory) {
+                if (isRememberLastCategory && !categorySelector.isSplitCategorySelected()) {
                     selectLastCategoryForPayee(payeeSelector.getSelectedEntityId());
                 }
                 break;
