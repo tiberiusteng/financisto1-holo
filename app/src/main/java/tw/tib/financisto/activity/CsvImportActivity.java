@@ -67,6 +67,8 @@ public class CsvImportActivity extends AbstractImportActivity {
 
         Button bOk = findViewById(R.id.bOK);
         bOk.setOnClickListener(view -> {
+            bOk.setEnabled(false);
+
             if (edFilename.getText().toString().equals("")) {
                 Toast.makeText(CsvImportActivity.this, R.string.select_filename, Toast.LENGTH_SHORT).show();
                 return;
@@ -79,16 +81,17 @@ public class CsvImportActivity extends AbstractImportActivity {
                 setResult(RESULT_OK, data);
                 finish();
             }
-
-            // opened file from other app, do import here, then redirect to main activity
-            CsvImportOptions options = CsvImportOptions.fromIntent(data);
-            ProgressDialog progressDialog = ProgressDialog.show(this, null, getString(R.string.csv_import_inprogress), true);
-            CsvImportTask task = new CsvImportTask(this, progressDialog, options);
-            task.setListener(result -> {
-                Intent intent = new Intent(this, MainActivity.class);
-                startActivity(intent);
-            });
-            task.execute();
+            else {
+                // opened file from other app, do import here, then redirect to main activity
+                CsvImportOptions options = CsvImportOptions.fromIntent(data);
+                ProgressDialog progressDialog = ProgressDialog.show(this, null, getString(R.string.csv_import_inprogress), true);
+                CsvImportTask task = new CsvImportTask(this, progressDialog, options);
+                task.setListener(result -> {
+                    Intent intent = new Intent(this, MainActivity.class);
+                    startActivity(intent);
+                });
+                task.execute();
+            }
         });
 
         Button bCancel = findViewById(R.id.bCancel);
