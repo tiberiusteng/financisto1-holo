@@ -192,7 +192,7 @@ public class QifExportActivity extends AbstractExportActivity implements Activit
         CheckBox uploadToDropbox = findViewById(R.id.checkboxUploadToDropbox);
         uploadToDropbox.setChecked(preferences.getBoolean(QIF_EXPORT_UPLOAD_TO_DROPBOX, false));
         CheckBox uploadToGDrive = findViewById(R.id.checkboxUploadToGDrive);
-        uploadToDropbox.setChecked(preferences.getBoolean(QIF_EXPORT_UPLOAD_TO_GDRIVE, false));
+        uploadToGDrive.setChecked(preferences.getBoolean(QIF_EXPORT_UPLOAD_TO_GDRIVE, false));
     }
 
     private void parseSelectedAccounts(String selectedIds) {
