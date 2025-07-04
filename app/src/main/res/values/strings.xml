@@ -1034,6 +1034,8 @@
     <string name="sms_delete_alert">Delete this template?</string>
     <string name="new_sms_transaction_text">New transaction added by template from %s</string>
     <string name="new_sms_transaction_title">Template transaction from %s</string>
+    <string name="new_intent_transaction_text">New transaction added from intent</string>
+    <string name="new_intent_transaction_title">Transaction from intent</string>
     <string name="choose_sms_template_type_and_account">Choose type and account (optional)</string>
     <string name="choose_sms_template_transfer_to_account">Choose transfer-to account (optional)</string>
     <string name="tpl_not_transfer">Not transfer</string>

@@ -815,6 +815,8 @@
   <string name="sms_delete_alert">刪除此模板?</string>
   <string name="new_sms_transaction_text">已透過模板新建來自 %s 的交易</string>
   <string name="new_sms_transaction_title">從 %s 自動產生交易</string>
+  <string name="new_intent_transaction_text">已透過 Intent 新建交易</string>
+  <string name="new_intent_transaction_title">從 Intent 自動產生交易</string>
   <string name="choose_sms_template_type_and_account">選擇分類與帳戶 (可省略)</string>
   <string name="choose_sms_template_transfer_to_account">選擇轉帳對象 (可省略)</string>
   <string name="tpl_not_transfer">不轉帳</string>

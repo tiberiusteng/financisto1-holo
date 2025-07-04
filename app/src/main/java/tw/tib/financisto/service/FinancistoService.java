@@ -14,12 +14,9 @@ import android.Manifest;
 import android.app.Notification;
 import android.app.PendingIntent;
 
-import static android.app.PendingIntent.FLAG_CANCEL_CURRENT;
-
 import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
-import android.graphics.BitmapFactory;
 
 import androidx.annotation.NonNull;
 import androidx.core.app.ActivityCompat;
@@ -28,7 +25,6 @@ import androidx.core.app.NotificationCompat;
 import androidx.core.app.NotificationManagerCompat;
 
 import tw.tib.financisto.R;
-import tw.tib.financisto.activity.AbstractTransactionActivity;
 import tw.tib.financisto.activity.AccountWidget;
 import tw.tib.financisto.activity.MassOpActivity;
 import tw.tib.financisto.blotter.BlotterFilter;
@@ -37,7 +33,7 @@ import tw.tib.financisto.db.DatabaseAdapter;
 import tw.tib.financisto.model.Transaction;
 import tw.tib.financisto.model.TransactionInfo;
 import tw.tib.financisto.model.TransactionStatus;
-import tw.tib.financisto.recur.NotificationOptions;
+import tw.tib.financisto.utils.NotificationUtils;
 
 import static tw.tib.financisto.utils.MyPreferences.getSmsTransactionStatus;
 import static tw.tib.financisto.utils.MyPreferences.shouldSaveSmsToTransactionNote;
@@ -55,6 +51,7 @@ public class FinancistoService extends JobIntentService {
     private DatabaseAdapter db;
     private RecurrenceScheduler scheduler;
     private SmsTransactionProcessor smsProcessor;
+    private IntentTransactionProcessor intentTransactionProcessor;
 
     public static void enqueueWork(Context context, Intent work) {
         enqueueWork(context, FinancistoService.class, JOB_ID, work);
@@ -67,6 +64,7 @@ public class FinancistoService extends JobIntentService {
         db.open();
         scheduler = new RecurrenceScheduler(db);
         smsProcessor = new SmsTransactionProcessor(db);
+        intentTransactionProcessor = new IntentTransactionProcessor(db);
     }
 
     @Override
@@ -101,7 +99,7 @@ public class FinancistoService extends JobIntentService {
             if (t != null) {
                 TransactionInfo transactionInfo = db.getTransactionInfo(t.id);
                 Notification notification = createSmsTransactionNotification(transactionInfo, number);
-                notifyUser(notification, (int) t.id);
+                NotificationUtils.notifyUser(this, notification, (int) t.id);
                 AccountWidget.updateWidgets(this);
             }
         }
@@ -110,19 +108,8 @@ public class FinancistoService extends JobIntentService {
     private void scheduleAll() {
         int restoredTransactionsCount = scheduler.scheduleAll(this);
         if (restoredTransactionsCount > 0) {
-            notifyUser(createRestoredNotification(restoredTransactionsCount), RESTORED_NOTIFICATION_ID);
+            NotificationUtils.notifyUser(this, createRestoredNotification(restoredTransactionsCount), RESTORED_NOTIFICATION_ID);
         }
-    }
-
-    private void notifyUser(Notification notification, int id) {
-        NotificationChannelService.initialize(this);
-
-        NotificationManagerCompat notificationManager = NotificationManagerCompat.from(this);
-
-        if (ActivityCompat.checkSelfPermission(this, Manifest.permission.POST_NOTIFICATIONS) != PackageManager.PERMISSION_GRANTED) {
-            return;
-        }
-        notificationManager.notify(id, notification);
     }
 
     private Notification createRestoredNotification(int count) {
@@ -153,33 +140,7 @@ public class FinancistoService extends JobIntentService {
         String contentTitle = getString(R.string.new_sms_transaction_title, number);
         String text = t.getNotificationContentText(this);
 
-        return generateNotification(t, tickerText, contentTitle, text);
-    }
-
-    private Notification generateNotification(TransactionInfo t, String tickerText, String contentTitle, String text) {
-        Intent notificationIntent = new Intent(this, t.getActivity());
-        notificationIntent.putExtra(AbstractTransactionActivity.TRAN_ID_EXTRA, t.id);
-        PendingIntent contentIntent = PendingIntent.getActivity(this, (int) t.id, notificationIntent, FLAG_CANCEL_CURRENT | PendingIntent.FLAG_IMMUTABLE); /* https://stackoverflow.com/a/3730394/365675 */
-
-        var builder = new NotificationCompat.Builder(this, NotificationChannelService.TRANSACTIONS_CHANNEL)
-                .setContentIntent(contentIntent)
-                .setSmallIcon(R.mipmap.a_icon_notify)
-                .setWhen(System.currentTimeMillis())
-                .setTicker(tickerText)
-                .setContentText(text)
-                .setContentTitle(contentTitle)
-                .setAutoCancel(true);
-
-        applyNotificationOptions(builder, t.notificationOptions);
-
-        return builder.build();
-    }
-
-    private void applyNotificationOptions(NotificationCompat.Builder builder, String notificationOptions) {
-        if (notificationOptions != null) {
-            NotificationOptions options = NotificationOptions.parse(notificationOptions);
-            options.apply(builder);
-        }
+        return NotificationUtils.generateNotification(this, t, tickerText, contentTitle, text);
     }
 
 }

@@ -12,7 +12,7 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
 	xmlns:tools="http://schemas.android.com/tools"
 	package="tw.tib.financisto"
-	android:versionName="2025-05-06" android:versionCode="188"
+	android:versionName="2025-07-05" android:versionCode="190"
     android:installLocation="internalOnly">
 
     <supports-screens
@@ -94,6 +94,12 @@
 			    <action android:name="android.intent.action.MY_PACKAGE_REPLACED" />
 			</intent-filter>
 		</receiver>		
+
+		<service android:name=".service.IntentService" android:exported="true">
+			<intent-filter>
+				<action android:name=".NEW_TRANSACTION" />
+			</intent-filter>
+		</service>
 
 		<service android:name=".service.FinancistoService" android:exported="true"
 			android:permission="android.permission.BIND_JOB_SERVICE">
