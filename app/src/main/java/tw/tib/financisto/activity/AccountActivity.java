@@ -15,9 +15,14 @@ import android.content.Intent;
 import android.database.Cursor;
 import android.os.Bundle;
 import androidx.core.content.ContextCompat;
+import androidx.core.graphics.Insets;
+import androidx.core.view.ViewCompat;
+import androidx.core.view.WindowInsetsCompat;
+
 import android.text.InputFilter;
 import android.text.InputType;
 import android.view.View;
+import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.EditText;
@@ -82,6 +87,16 @@ public class AccountActivity extends AbstractActivity {
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.account);
+
+		ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.account), (v, windowInsets) -> {
+			Insets insets = windowInsets.getInsets(WindowInsetsCompat.Type.systemBars()
+					| WindowInsetsCompat.Type.ime());
+			var lp = (ViewGroup.MarginLayoutParams) v.getLayoutParams();
+			lp.topMargin = insets.top;
+			lp.bottomMargin = insets.bottom;
+			v.setLayoutParams(lp);
+			return WindowInsetsCompat.CONSUMED;
+		});
 
 		accountTitle = new EditText(this);
 		accountTitle.setInputType(InputType.TYPE_CLASS_TEXT | InputType.TYPE_TEXT_FLAG_CAP_SENTENCES);
