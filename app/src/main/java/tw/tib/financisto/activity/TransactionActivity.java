@@ -464,7 +464,7 @@ public class TransactionActivity extends AbstractTransactionActivity {
                     return;
                 }
                 else {
-                    if (prevCurrencyFromId == selectedAccount.currency.id) {
+                    if (prevCurrencyFromId == selectedAccount.currency.id || prevCurrencyFromId == 0) {
                         rateView.clearFromAmount();
                         rateView.setToAmount(fromAmount);
                     }
