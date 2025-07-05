@@ -182,30 +182,37 @@ public class BlotterFragment extends AbstractListFragment<Cursor> implements Blo
 
         if (!this.saveFilter) {
             var toolbar = (Toolbar) view.findViewById(R.id.toolbar);
-            toolbar.setVisibility(View.VISIBLE);
-            ((AppCompatActivity) getActivity()).setSupportActionBar(toolbar);
+            if (toolbar != null) {
+                toolbar.setVisibility(View.VISIBLE);
+                ((AppCompatActivity) getActivity()).setSupportActionBar(toolbar);
 
-            ViewCompat.setOnApplyWindowInsetsListener(getView().findViewById(R.id.toolbar), (v, windowInsets) -> {
+                ViewCompat.setOnApplyWindowInsetsListener(getView().findViewById(R.id.toolbar), (v, windowInsets) -> {
+                    Insets insets = windowInsets.getInsets(WindowInsetsCompat.Type.systemBars()
+                            | WindowInsetsCompat.Type.statusBars()
+                            | WindowInsetsCompat.Type.captionBar());
+                    Log.d(TAG, format("insets.top: %s", insets.top));
+                    if (v.getPaddingTop() == 0) {
+                        var lp = (ViewGroup.MarginLayoutParams) v.getLayoutParams();
+                        lp.height += insets.top;
+                        v.setPadding(0, insets.top, 0, 0);
+                        v.setLayoutParams(lp);
+                    }
+                    return WindowInsetsCompat.CONSUMED;
+                });
+            }
+        }
+
+        View vi = view.findViewById(R.id.bottom_bar);
+        if (vi != null) {
+            ViewCompat.setOnApplyWindowInsetsListener(vi, (v, windowInsets) -> {
                 Insets insets = windowInsets.getInsets(WindowInsetsCompat.Type.systemBars()
                         | WindowInsetsCompat.Type.statusBars()
                         | WindowInsetsCompat.Type.captionBar());
-                Log.d(TAG, format("insets.top: %s", insets.top));
-                var lp = (ViewGroup.MarginLayoutParams) v.getLayoutParams();
-                lp.height += insets.top;
-                v.setPadding(v.getPaddingLeft(), v.getPaddingTop() + insets.top, v.getPaddingRight(), v.getPaddingBottom());
-                v.setLayoutParams(lp);
+                Log.d(TAG, format("insets.bottom: %s", insets.bottom));
+                v.setPadding(0, 0, 0, insets.bottom);
                 return WindowInsetsCompat.CONSUMED;
             });
         }
-
-        ViewCompat.setOnApplyWindowInsetsListener(view.findViewById(R.id.bottom_bar), (v, windowInsets) -> {
-            Insets insets = windowInsets.getInsets(WindowInsetsCompat.Type.systemBars()
-                    | WindowInsetsCompat.Type.statusBars()
-                    | WindowInsetsCompat.Type.captionBar());
-            Log.d(TAG, format("insets.bottom: %s", insets.bottom));
-            v.setPadding(v.getPaddingLeft(), v.getPaddingTop(), v.getPaddingRight(), v.getPaddingBottom() + insets.bottom);
-            return WindowInsetsCompat.CONSUMED;
-        });
 
         integrityCheck();
 

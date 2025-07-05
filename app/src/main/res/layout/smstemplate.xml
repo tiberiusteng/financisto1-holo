@@ -11,7 +11,8 @@
 <LinearLayout xmlns:a="http://schemas.android.com/apk/res/android"
 	a:layout_height="fill_parent" a:layout_width="fill_parent"
 	a:orientation="vertical" a:paddingLeft="3dp"
-	a:paddingRight="3dp" a:paddingTop="3dp">
+	a:paddingRight="3dp" a:paddingTop="3dp"
+	a:id="@+id/sms_template_base">
 	<ScrollView a:layout_width="fill_parent"
 		a:layout_height="wrap_content" a:layout_weight="1">
 		<LinearLayout

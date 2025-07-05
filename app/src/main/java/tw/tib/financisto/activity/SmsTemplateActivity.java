@@ -17,7 +17,13 @@ import android.os.Bundle;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.view.View;
+import android.view.ViewGroup;
 import android.widget.*;
+
+import androidx.core.graphics.Insets;
+import androidx.core.view.ViewCompat;
+import androidx.core.view.WindowInsetsCompat;
+
 import tw.tib.financisto.R;
 import tw.tib.financisto.adapter.MyEntityAdapter;
 import tw.tib.financisto.db.DatabaseAdapter;
@@ -63,6 +69,17 @@ public class SmsTemplateActivity extends AbstractActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.smstemplate);
+
+        ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.sms_template_base), (v, windowInsets) -> {
+            Insets insets = windowInsets.getInsets(WindowInsetsCompat.Type.systemBars()
+                    | WindowInsetsCompat.Type.statusBars()
+                    | WindowInsetsCompat.Type.captionBar());
+            var lp = (ViewGroup.MarginLayoutParams) v.getLayoutParams();
+            lp.topMargin = insets.top;
+            lp.bottomMargin = insets.bottom;
+            v.setLayoutParams(lp);
+            return WindowInsetsCompat.CONSUMED;
+        });
 
         db = new DatabaseAdapter(this);
         db.open();

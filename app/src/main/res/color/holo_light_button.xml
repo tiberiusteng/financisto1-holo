@@ -1,15 +1,15 @@
 <?xml version="1.0" encoding="utf-8"?>
 <selector xmlns:android="http://schemas.android.com/apk/res/android">
     <item android:state_window_focused="false" android:state_enabled="true"
-        android:color="#ffcccccc" />
+        android:color="#ffbdbdbd" />
     <item android:state_window_focused="false" android:state_enabled="false"
         android:color="#ffeeeeee" />
     <item android:state_pressed="true"
-        android:color="#ffb0b0b0" />
+        android:color="#ff9e9e9e" />
     <item android:state_focused="true" android:state_enabled="true"
         android:color="#ffade1f5" />
     <item android:state_enabled="true"
-        android:color="#ffcccccc" />
+        android:color="#ffbdbdbd" />
     <item android:state_focused="true"
         android:color="#ffe6f6fc" />
     <item

@@ -83,8 +83,9 @@ public class AccountListFragment extends AbstractListFragment<Cursor> {
         ViewCompat.setOnApplyWindowInsetsListener(view.findViewById(R.id.bottom_bar), (v, windowInsets) -> {
             Insets insets = windowInsets.getInsets(WindowInsetsCompat.Type.systemBars()
                     | WindowInsetsCompat.Type.statusBars()
-                    | WindowInsetsCompat.Type.captionBar());
-            v.setPadding(v.getPaddingLeft(), v.getPaddingTop(), v.getPaddingRight(), v.getPaddingBottom() + insets.bottom);
+                    | WindowInsetsCompat.Type.captionBar()
+                    | WindowInsetsCompat.Type.ime());
+            v.setPadding(0, 0, 0, insets.bottom);
             return WindowInsetsCompat.CONSUMED;
         });
 

@@ -69,7 +69,7 @@ public class MainActivity extends AppCompatActivity {
             Insets insets = windowInsets.getInsets(WindowInsetsCompat.Type.systemBars()
                     | WindowInsetsCompat.Type.statusBars()
                     | WindowInsetsCompat.Type.captionBar());
-            v.setPadding(v.getPaddingLeft(), insets.top, v.getPaddingRight(), v.getPaddingBottom());
+            v.setPadding(0, insets.top, 0, 0);
             return WindowInsetsCompat.CONSUMED;
         });
 

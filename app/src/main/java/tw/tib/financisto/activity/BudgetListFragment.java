@@ -73,7 +73,7 @@ public class BudgetListFragment extends AbstractListFragment<ArrayList<Budget>> 
                     | WindowInsetsCompat.Type.statusBars()
                     | WindowInsetsCompat.Type.captionBar());
             Log.d(TAG, format("insets.bottom: %s", insets.bottom));
-            v.setPadding(v.getPaddingLeft(), v.getPaddingTop(), v.getPaddingRight(), v.getPaddingBottom() + insets.bottom);
+            v.setPadding(0, 0, 0, insets.bottom);
             return WindowInsetsCompat.CONSUMED;
         });
 

@@ -48,7 +48,7 @@
     <style name="BottomBar">
         <item name="android:layout_width">fill_parent</item>
         <item name="android:layout_height">wrap_content</item>
-        <item name="android:background">#FFF</item>
+        <item name="android:background">#E0E0E0</item>
     </style>
 
     <style name="LightSpinner" parent="@style/AppTheme">

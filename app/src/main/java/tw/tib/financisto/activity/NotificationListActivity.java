@@ -14,6 +14,9 @@ import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.graphics.Insets;
+import androidx.core.view.ViewCompat;
+import androidx.core.view.WindowInsetsCompat;
 
 import java.util.ArrayList;
 
@@ -28,6 +31,22 @@ public class NotificationListActivity extends AppCompatActivity {
     protected void onCreate(Bundle state) {
         super.onCreate(state);
         setContentView(R.layout.notification_list);
+
+        setSupportActionBar(findViewById(R.id.toolbar));
+
+        ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.toolbar), (v, windowInsets) -> {
+            Insets insets = windowInsets.getInsets(WindowInsetsCompat.Type.systemBars()
+                    | WindowInsetsCompat.Type.statusBars()
+                    | WindowInsetsCompat.Type.captionBar());
+            if (v.getPaddingTop() == 0) {
+                var lp = (ViewGroup.MarginLayoutParams) v.getLayoutParams();
+                lp.height += insets.top;
+                v.setLayoutParams(lp);
+                v.setPadding(0, insets.top, 0, 0);
+            }
+            return WindowInsetsCompat.CONSUMED;
+        });
+
         list = findViewById(android.R.id.list);
         list.setAdapter(new NotificationListAdapter(this));
         list.setOnItemClickListener((adapterView, view, i, l) -> {

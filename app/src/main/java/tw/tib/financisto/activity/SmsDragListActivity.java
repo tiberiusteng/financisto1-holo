@@ -4,8 +4,11 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.os.Parcelable;
 import androidx.annotation.NonNull;
+import androidx.core.graphics.Insets;
 import androidx.core.view.MenuItemCompat;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.view.ViewCompat;
+import androidx.core.view.WindowInsetsCompat;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 import androidx.appcompat.widget.SearchView;
@@ -14,6 +17,7 @@ import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.ViewGroup;
 import android.widget.TextView;
 import tw.tib.financisto.R;
 import tw.tib.financisto.adapter.async.SmsTemplateListAsyncAdapter;
@@ -41,6 +45,21 @@ public class SmsDragListActivity extends AppCompatActivity {
     protected void onCreate(Bundle state) {
         super.onCreate(state);
         setContentView(R.layout.draglist_bar_layout);
+
+        setSupportActionBar(findViewById(R.id.toolbar));
+
+        ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.toolbar), (v, windowInsets) -> {
+            Insets insets = windowInsets.getInsets(WindowInsetsCompat.Type.systemBars()
+                    | WindowInsetsCompat.Type.statusBars()
+                    | WindowInsetsCompat.Type.captionBar());
+            if (v.getPaddingTop() == 0) {
+                var lp = (ViewGroup.MarginLayoutParams) v.getLayoutParams();
+                lp.height += insets.top;
+                v.setLayoutParams(lp);
+                v.setPadding(0, insets.top, 0, 0);
+            }
+            return WindowInsetsCompat.CONSUMED;
+        });
 
         db = new DatabaseAdapter(this);
         db.open();
