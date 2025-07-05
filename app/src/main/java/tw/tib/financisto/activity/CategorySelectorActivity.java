@@ -11,6 +11,11 @@ import android.widget.BaseAdapter;
 import android.widget.Button;
 import android.widget.LinearLayout;
 import android.widget.ListAdapter;
+
+import androidx.core.graphics.Insets;
+import androidx.core.view.ViewCompat;
+import androidx.core.view.WindowInsetsCompat;
+
 import tw.tib.financisto.R;
 import tw.tib.financisto.adapter.BlotterListAdapter;
 import tw.tib.financisto.model.Account;
@@ -57,6 +62,17 @@ public class CategorySelectorActivity extends AbstractListActivity<Cursor> {
         Resources resources = getResources();
         this.incomeColor = resources.getColor(R.color.category_type_income);
         this.expenseColor = resources.getColor(R.color.category_type_expense);
+
+        ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.category_selector), (v, windowInsets) -> {
+            Insets insets = windowInsets.getInsets(WindowInsetsCompat.Type.systemBars()
+                    | WindowInsetsCompat.Type.statusBars()
+                    | WindowInsetsCompat.Type.captionBar());
+            var lp = (ViewGroup.MarginLayoutParams) v.getLayoutParams();
+            lp.topMargin = insets.top;
+            lp.bottomMargin = insets.bottom;
+            v.setLayoutParams(lp);
+            return WindowInsetsCompat.CONSUMED;
+        });
 
         bBack = findViewById(R.id.bBack);
         bBack.setOnClickListener(view -> {

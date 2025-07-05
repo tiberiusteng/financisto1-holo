@@ -207,7 +207,8 @@ public class BlotterFragment extends AbstractListFragment<Cursor> implements Blo
             ViewCompat.setOnApplyWindowInsetsListener(vi, (v, windowInsets) -> {
                 Insets insets = windowInsets.getInsets(WindowInsetsCompat.Type.systemBars()
                         | WindowInsetsCompat.Type.statusBars()
-                        | WindowInsetsCompat.Type.captionBar());
+                        | WindowInsetsCompat.Type.captionBar()
+                        | WindowInsetsCompat.Type.ime());
                 Log.d(TAG, format("insets.bottom: %s", insets.bottom));
                 v.setPadding(0, 0, 0, insets.bottom);
                 return WindowInsetsCompat.CONSUMED;

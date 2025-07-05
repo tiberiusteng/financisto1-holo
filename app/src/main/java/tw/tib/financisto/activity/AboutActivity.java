@@ -20,6 +20,9 @@ import android.webkit.WebViewClient;
 import androidx.activity.OnBackPressedCallback;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.graphics.Insets;
+import androidx.core.view.ViewCompat;
+import androidx.core.view.WindowInsetsCompat;
 import androidx.recyclerview.widget.RecyclerView;
 import androidx.viewpager2.widget.ViewPager2;
 
@@ -45,6 +48,14 @@ public class AboutActivity extends AppCompatActivity {
         setTitle("Financisto Holo ("+getAppVersion(this)+")");
 
         setContentView(R.layout.main2);
+
+        ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.tabs), (v, windowInsets) -> {
+            Insets insets = windowInsets.getInsets(WindowInsetsCompat.Type.systemBars()
+                    | WindowInsetsCompat.Type.statusBars()
+                    | WindowInsetsCompat.Type.captionBar());
+            v.setPadding(0, insets.top, 0, 0);
+            return WindowInsetsCompat.CONSUMED;
+        });
 
         TabLayout tabLayout = findViewById(R.id.tabs);
         ViewPager2 viewPager = findViewById(R.id.viewpager);

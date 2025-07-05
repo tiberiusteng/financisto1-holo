@@ -21,9 +21,7 @@
     <TextView android:id="@id/android:empty"
         android:layout_width="fill_parent" android:layout_height="wrap_content"
         android:layout_weight="1" android:gravity="center" android:text="@string/empty_report" />
-	<LinearLayout android:layout_height="wrap_content"
-		android:layout_width="fill_parent" android:background="#FFF"
-		android:paddingTop="2dp">
+	<LinearLayout style="@style/BottomBar">
 		<ImageButton android:id="@+id/bFilter"
 			android:src="@drawable/ic_menu_filter_off"
 			style="@style/BottomBarButton" />

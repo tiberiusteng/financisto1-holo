@@ -10,6 +10,9 @@ import androidx.core.app.ActivityCompat;
 import androidx.core.app.NotificationManagerCompat;
 import androidx.core.content.ContextCompat;
 import androidx.appcompat.widget.SwitchCompat;
+import androidx.core.graphics.Insets;
+import androidx.core.view.ViewCompat;
+import androidx.core.view.WindowInsetsCompat;
 
 import android.os.Build;
 import android.view.View;
@@ -62,6 +65,14 @@ public class RequestPermissionActivity extends Activity {
 
     @AfterViews
     public void initViews() {
+        ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.scroll), (v, windowInsets) -> {
+            Insets insets = windowInsets.getInsets(WindowInsetsCompat.Type.systemBars()
+                    | WindowInsetsCompat.Type.statusBars()
+                    | WindowInsetsCompat.Type.captionBar());
+            v.setPadding(0, insets.top, 0, insets.bottom);
+            return WindowInsetsCompat.CONSUMED;
+        });
+
         checkPermissions();
     }
 

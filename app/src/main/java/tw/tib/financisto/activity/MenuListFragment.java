@@ -10,6 +10,7 @@ import android.content.Intent;
 import android.net.Uri;
 import android.util.Log;
 import android.view.View;
+import android.view.ViewGroup;
 import android.widget.ListView;
 import android.widget.Toast;
 
@@ -58,6 +59,7 @@ public class MenuListFragment extends ListFragment {
                     | WindowInsetsCompat.Type.statusBars()
                     | WindowInsetsCompat.Type.captionBar());
             v.setPadding(0, 0, 0, insets.bottom);
+            ((ViewGroup) v).setClipToPadding(false);
             return WindowInsetsCompat.CONSUMED;
         });
 
