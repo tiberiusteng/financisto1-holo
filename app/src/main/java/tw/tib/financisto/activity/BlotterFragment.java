@@ -669,20 +669,21 @@ public class BlotterFragment extends AbstractListFragment<Cursor> implements Blo
 
     private long duplicateTransaction(long id, int multiplier, KeepTime keepTime) {
         long newId;
+        String toastText;
         if (keepTime == KeepTime.KEEP_TIME) {
             newId = new BlotterOperations(getContext(), this, db, id).duplicateTransactionKeepTime();
+            toastText = getString(R.string.duplicate_success_keep_time);
         }
         else if (keepTime == KeepTime.KEEP_DATE_TIME) {
             newId = new BlotterOperations(getContext(), this, db, id).duplicateTransactionKeepDateTime();
+            toastText = getString(R.string.duplicate_success_keep_date_time);
         }
         else {
             newId = new BlotterOperations(getContext(), this, db, id).duplicateTransaction(multiplier);
+            toastText = getString(R.string.duplicate_success);
         }
-        String toastText;
         if (multiplier > 1) {
             toastText = getString(R.string.duplicate_success_with_multiplier, multiplier);
-        } else {
-            toastText = getString(R.string.duplicate_success);
         }
         Toast.makeText(getContext(), toastText, Toast.LENGTH_LONG).show();
         recreateCursor();

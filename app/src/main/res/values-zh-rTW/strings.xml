@@ -261,6 +261,8 @@
   <string name="difference">差異值</string>
   <string name="new_balance">最新餘額</string>
   <string name="duplicate_success">已用現在的時間點複製交易項目</string>
+  <string name="duplicate_success_keep_time">已複製交易項目至今日，保留原始時間</string>
+  <string name="duplicate_success_keep_date_time">已複製交易項目，保留原始日期時間</string>
   <string name="duplicate_success_with_multiplier">已用現在的時間點複製交易項目 (x%d)</string>
   <string name="no_category">無分類</string>
   <string name="no_project">無專案</string>

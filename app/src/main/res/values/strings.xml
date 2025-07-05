@@ -312,6 +312,8 @@
     <string name="difference">Difference</string>
     <string name="new_balance">New balance</string>
     <string name="duplicate_success">Transaction has been duplicated with the current date and time</string>
+    <string name="duplicate_success_keep_time">Transaction has been duplicated today with original time</string>
+    <string name="duplicate_success_keep_date_time">Transaction has been duplicated with original date and time</string>
     <string name="duplicate_success_with_multiplier">Transaction has been duplicated with the current date and time (x%d)</string>
     <string name="no_category">No category</string>
     <string name="no_project">No project</string>
