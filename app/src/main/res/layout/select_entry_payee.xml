@@ -21,7 +21,7 @@
 		android:duplicateParentState="true">
 		<TextView android:id="@+id/label" android:layout_width="wrap_content"
 			android:layout_height="wrap_content" android:singleLine="true"
-			android:textAppearance="?android:attr/textAppearanceMedium"
+			style="@style/Caption"
 			android:ellipsize="marquee" android:fadingEdge="horizontal"
 			android:duplicateParentState="true" android:layout_alignParentLeft="true"
 			android:layout_alignParentRight="true" />
@@ -37,7 +37,7 @@
 			android:layout_alignTop="@+id/plus_minus" android:layout_toLeftOf="@+id/plus_minus"
             android:layout_alignBottom="@+id/payee" />
 		<TextView android:id="@+id/data" android:layout_width="wrap_content"
-			android:layout_height="wrap_content" android:textAppearance="?android:attr/textAppearanceSmall"
+			android:layout_height="wrap_content" android:textAppearance="?android:attr/textAppearanceMedium"
 			android:maxLines="2" android:duplicateParentState="true"
 			android:layout_below="@+id/payee" />
 	</RelativeLayout>

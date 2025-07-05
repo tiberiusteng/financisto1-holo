@@ -22,13 +22,13 @@
 		android:layout_weight="1" android:duplicateParentState="true">
 		<TextView android:id="@+id/label" android:layout_width="wrap_content"
 			android:layout_height="wrap_content" android:singleLine="true"
-			android:textAppearance="?android:attr/textAppearanceMedium"
+			style="@style/Caption"
 			android:ellipsize="marquee" android:fadingEdge="horizontal"
 			android:duplicateParentState="true" />
 		<TextView android:id="@+id/data" android:layout_width="wrap_content"
 			android:layout_height="wrap_content" android:layout_below="@+id/label"
 			android:layout_alignLeft="@+id/label" 
-			android:textAppearance="?android:attr/textAppearanceSmall"
+			android:textAppearance="?android:attr/textAppearanceMedium"
 			android:maxLines="2" android:duplicateParentState="true" />
 	</RelativeLayout>
 	<ImageView android:id="@+id/icon" android:layout_width="wrap_content"

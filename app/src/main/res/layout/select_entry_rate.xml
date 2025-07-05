@@ -37,7 +37,7 @@
             android:fadingEdge="horizontal"
             android:singleLine="true"
             android:text="Rate"
-            android:textAppearance="?android:attr/textAppearanceMedium" />
+            style="@style/Caption" />
 
         <ImageButton
             android:id="@+id/rateCalculator"

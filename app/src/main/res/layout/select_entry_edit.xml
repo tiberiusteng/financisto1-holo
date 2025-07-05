@@ -35,7 +35,7 @@
             android:ellipsize="marquee"
             android:fadingEdge="horizontal"
             android:singleLine="true"
-            android:textAppearance="?android:attr/textAppearanceMedium" />
+            style="@style/Caption" />
     </RelativeLayout>
 
 </LinearLayout>

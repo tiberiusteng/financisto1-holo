@@ -63,12 +63,12 @@
             a:layout_weight="1" a:duplicateParentState="true">
             <TextView a:id="@+id/label" a:layout_width="wrap_content"
                 a:layout_height="wrap_content" a:singleLine="true"
-                a:textAppearance="?android:attr/textAppearanceMedium"
+                style="@style/Caption"
                 a:ellipsize="marquee" a:fadingEdge="horizontal"
                 a:duplicateParentState="true"/>
             <TextView a:id="@+id/data" a:layout_width="wrap_content"
                 a:layout_height="wrap_content" a:layout_below="@+id/label"
-                a:layout_alignLeft="@+id/label" a:textAppearance="?android:attr/textAppearanceSmall"
+                a:layout_alignLeft="@+id/label" a:textAppearance="?android:attr/textAppearanceMedium"
                 a:maxLines="2" a:duplicateParentState="true"/>
         </RelativeLayout>
 

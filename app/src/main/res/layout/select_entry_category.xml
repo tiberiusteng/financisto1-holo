@@ -49,17 +49,17 @@
 					  a:layout_width="wrap_content"
 					  a:layout_height="wrap_content" 
 					  a:singleLine="true"
-					  a:textAppearance="?android:attr/textAppearanceMedium"
-					  a:ellipsize="marquee" 
+					  a:ellipsize="marquee"
 					  a:fadingEdge="horizontal"
-					  a:duplicateParentState="true"/>
+					  a:duplicateParentState="true"
+					  style="@style/Caption"/>
 			
 			<TextView a:id="@+id/data"
 					  a:layout_width="wrap_content"
 					  a:layout_height="wrap_content" 
 					  a:layout_below="@+id/label"
 					  a:layout_alignStart="@+id/label" 
-					  a:textAppearance="?android:attr/textAppearanceSmall"
+					  a:textAppearance="?android:attr/textAppearanceMedium"
 					  a:maxLines="2" 
 					  a:duplicateParentState="true" />
 		</RelativeLayout>
