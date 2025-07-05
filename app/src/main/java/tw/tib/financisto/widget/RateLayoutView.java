@@ -112,6 +112,8 @@ public class RateLayoutView implements RateNodeOwner {
             amountInputFrom.enableAmountChangedListener();
             updateRateInfo();
         });
+        amountInputFrom.hideAssignButton();
+        amountInputFrom.hideRateInfo();
         AbstractActivity.setVisibility(amountInputToNode, View.GONE);
         rateNode = new RateNode(this, activity, x, layout);
         AbstractActivity.setVisibility(rateNode.rateInfoNode, View.GONE);
