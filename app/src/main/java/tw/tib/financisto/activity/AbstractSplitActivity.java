@@ -4,6 +4,7 @@ import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
+import android.view.ViewGroup;
 import android.view.Window;
 import android.widget.Button;
 import android.widget.EditText;
@@ -18,6 +19,10 @@ import tw.tib.financisto.utils.MyPreferences;
 import tw.tib.financisto.utils.Utils;
 
 import static tw.tib.financisto.utils.Utils.text;
+
+import androidx.core.graphics.Insets;
+import androidx.core.view.ViewCompat;
+import androidx.core.view.WindowInsetsCompat;
 
 /**
  * Created by IntelliJ IDEA.
@@ -46,6 +51,16 @@ public abstract class AbstractSplitActivity extends AbstractActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(layoutId);
+
+        ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.split_fixed), (vi, windowInsets) -> {
+            Insets insets = windowInsets.getInsets(WindowInsetsCompat.Type.systemBars()
+                    | WindowInsetsCompat.Type.ime());
+            var lp = (ViewGroup.MarginLayoutParams) vi.getLayoutParams();
+            lp.topMargin = insets.top;
+            lp.bottomMargin = insets.bottom;
+            vi.setLayoutParams(lp);
+            return WindowInsetsCompat.CONSUMED;
+        });
 
         fetchData();
         // todo.mb: check selector here
