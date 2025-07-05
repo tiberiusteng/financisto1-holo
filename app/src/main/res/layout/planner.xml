@@ -7,7 +7,8 @@
   -->
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
 	android:layout_height="fill_parent" android:layout_width="fill_parent"
-	android:orientation="vertical">
+	android:orientation="vertical"
+	android:id="@+id/planner">
     <TextView android:layout_width="fill_parent" android:id="@+id/period"
               android:layout_height="wrap_content" android:text="@string/no_filter"
               android:gravity="center_horizontal" android:layout_marginBottom="5dp"

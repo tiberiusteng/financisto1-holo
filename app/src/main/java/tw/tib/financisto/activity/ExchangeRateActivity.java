@@ -13,6 +13,7 @@ import android.app.DatePickerDialog;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
+import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.LinearLayout;
 import android.widget.TextView;
@@ -27,6 +28,10 @@ import tw.tib.financisto.widget.RateNodeOwner;
 import java.util.Calendar;
 
 import static tw.tib.financisto.utils.Utils.formatRateDate;
+
+import androidx.core.graphics.Insets;
+import androidx.core.view.ViewCompat;
+import androidx.core.view.WindowInsetsCompat;
 
 public class ExchangeRateActivity extends AbstractActivity implements RateNodeOwner {
 
@@ -47,6 +52,17 @@ public class ExchangeRateActivity extends AbstractActivity implements RateNodeOw
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.exchange_rate);
+
+        ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.exchange_rate), (v, windowInsets) -> {
+            Insets insets = windowInsets.getInsets(WindowInsetsCompat.Type.systemBars()
+                    | WindowInsetsCompat.Type.statusBars()
+                    | WindowInsetsCompat.Type.captionBar());
+            var lp = (ViewGroup.MarginLayoutParams) v.getLayoutParams();
+            lp.topMargin = insets.top;
+            lp.bottomMargin = insets.bottom;
+            v.setLayoutParams(lp);
+            return WindowInsetsCompat.CONSUMED;
+        });
 
         Intent intent = getIntent();
         if (intent == null) {

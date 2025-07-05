@@ -11,7 +11,8 @@
 <LinearLayout xmlns:a="http://schemas.android.com/apk/res/android"
     a:layout_width="fill_parent"
     a:layout_height="fill_parent"
-    a:orientation="vertical">
+    a:orientation="vertical"
+    a:id="@+id/entity_list">
 
     <EditText a:layout_width="match_parent" a:layout_height="wrap_content" a:id="@+id/searchFilter" a:hint="Type name..."/> <!-- todo.mb -->
     
@@ -26,9 +27,9 @@
         a:id="@id/android:empty"
         a:layout_width="fill_parent"
         a:layout_height="wrap_content"
-        a:layout_weight="1"
         a:gravity="center"
-        a:text="@string/no_projects" />
+        a:text="@string/no_projects"
+        a:layout_weight="1" />
 
     <LinearLayout style="@style/BottomBar">
         <ImageButton

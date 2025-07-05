@@ -24,6 +24,10 @@ import android.widget.ImageView;
 import android.widget.ListAdapter;
 import android.widget.TextView;
 
+import androidx.core.graphics.Insets;
+import androidx.core.view.ViewCompat;
+import androidx.core.view.WindowInsetsCompat;
+
 import java.util.ArrayList;
 import java.util.Map;
 
@@ -47,6 +51,18 @@ public class CategoryListActivity2 extends AbstractListActivity<Cursor> {
 	@Override
 	protected void internalOnCreate(Bundle savedInstanceState) {
 		super.internalOnCreate(savedInstanceState);
+
+		ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.category_list), (v, windowInsets) -> {
+			Insets insets = windowInsets.getInsets(WindowInsetsCompat.Type.systemBars()
+					| WindowInsetsCompat.Type.statusBars()
+					| WindowInsetsCompat.Type.captionBar());
+			var lp = (ViewGroup.MarginLayoutParams) v.getLayoutParams();
+			lp.topMargin = insets.top;
+			lp.bottomMargin = insets.bottom;
+			v.setLayoutParams(lp);
+			return WindowInsetsCompat.CONSUMED;
+		});
+
 		ImageButton b = findViewById(R.id.bAttributes);
 		b.setOnClickListener(v -> {
 			Intent intent = new Intent(CategoryListActivity2.this, AttributeListActivity.class);

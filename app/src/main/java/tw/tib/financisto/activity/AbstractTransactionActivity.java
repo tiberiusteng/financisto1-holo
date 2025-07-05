@@ -21,6 +21,7 @@ import android.os.Looper;
 import android.text.InputType;
 import android.util.Log;
 import android.view.View;
+import android.view.ViewGroup;
 import android.view.WindowManager;
 import android.widget.*;
 import android.app.DatePickerDialog;
@@ -65,6 +66,9 @@ import static tw.tib.financisto.utils.Utils.text;
 import androidx.activity.result.ActivityResultLauncher;
 import androidx.activity.result.PickVisualMediaRequest;
 import androidx.activity.result.contract.ActivityResultContracts;
+import androidx.core.graphics.Insets;
+import androidx.core.view.ViewCompat;
+import androidx.core.view.WindowInsetsCompat;
 
 public abstract class AbstractTransactionActivity extends AbstractActivity implements CategorySelector.CategorySelectorListener {
 
@@ -159,6 +163,17 @@ public abstract class AbstractTransactionActivity extends AbstractActivity imple
 		long t0 = System.currentTimeMillis();
 
 		setContentView(getLayoutId());
+
+		ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.transaction_base), (v, windowInsets) -> {
+			Insets insets = windowInsets.getInsets(WindowInsetsCompat.Type.systemBars()
+					| WindowInsetsCompat.Type.statusBars()
+					| WindowInsetsCompat.Type.captionBar());
+			var lp = (ViewGroup.MarginLayoutParams) v.getLayoutParams();
+			lp.topMargin = insets.top;
+			lp.bottomMargin = insets.bottom;
+			v.setLayoutParams(lp);
+			return WindowInsetsCompat.CONSUMED;
+		});
 
 		isRememberLastAccount = MyPreferences.isRememberAccount(this);
 		isRememberLastCategory = isRememberLastAccount && MyPreferences.isRememberCategory(this);

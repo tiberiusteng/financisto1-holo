@@ -10,6 +10,9 @@ import android.view.WindowManager;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.content.res.ResourcesCompat;
+import androidx.core.graphics.Insets;
+import androidx.core.view.ViewCompat;
+import androidx.core.view.WindowInsetsCompat;
 import androidx.fragment.app.Fragment;
 import androidx.viewpager2.adapter.FragmentStateAdapter;
 import androidx.viewpager2.widget.ViewPager2;
@@ -23,7 +26,6 @@ import org.greenrobot.eventbus.ThreadMode;
 import java.util.HashMap;
 
 import tw.tib.financisto.R;
-import tw.tib.financisto.activity.MenuListFragment_;
 import tw.tib.financisto.bus.GreenRobotBus;
 import tw.tib.financisto.bus.RefreshCurrentTab;
 import tw.tib.financisto.bus.SwitchToMenuTabEvent;
@@ -36,6 +38,8 @@ import tw.tib.financisto.utils.MyPreferences;
 import tw.tib.financisto.utils.PinProtection;
 
 public class MainActivity extends AppCompatActivity {
+    private static final String TAG = "MainActivity";
+
     private GreenRobotBus greenRobotBus;
     private Fragment fragments[];
     HashMap<String, TabLayout.Tab> tabs;
@@ -60,6 +64,14 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.main2);
 
         initialLoad();
+
+        ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.tabs), (v, windowInsets) -> {
+            Insets insets = windowInsets.getInsets(WindowInsetsCompat.Type.systemBars()
+                    | WindowInsetsCompat.Type.statusBars()
+                    | WindowInsetsCompat.Type.captionBar());
+            v.setPadding(v.getPaddingLeft(), insets.top, v.getPaddingRight(), v.getPaddingBottom());
+            return WindowInsetsCompat.CONSUMED;
+        });
 
         tabLayout = findViewById(R.id.tabs);
         ViewPager2 viewPager = findViewById(R.id.viewpager);

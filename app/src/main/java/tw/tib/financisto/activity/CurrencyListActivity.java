@@ -15,8 +15,13 @@ import android.content.Intent;
 import android.database.Cursor;
 import android.os.Bundle;
 import android.view.View;
+import android.view.ViewGroup;
 import android.widget.ImageButton;
 import android.widget.ListAdapter;
+
+import androidx.core.graphics.Insets;
+import androidx.core.view.ViewCompat;
+import androidx.core.view.WindowInsetsCompat;
 
 import java.util.List;
 
@@ -42,6 +47,17 @@ public class CurrencyListActivity extends AbstractListActivity<Cursor> {
 		bRates.setOnClickListener(view -> {
 			Intent intent = new Intent(CurrencyListActivity.this, ExchangeRatesListActivity.class);
 			startActivity(intent);
+		});
+
+		ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.currency_list), (v, windowInsets) -> {
+			Insets insets = windowInsets.getInsets(WindowInsetsCompat.Type.systemBars()
+					| WindowInsetsCompat.Type.statusBars()
+					| WindowInsetsCompat.Type.captionBar());
+			var lp = (ViewGroup.MarginLayoutParams) v.getLayoutParams();
+			lp.topMargin = insets.top;
+			lp.bottomMargin = insets.bottom;
+			v.setLayoutParams(lp);
+			return WindowInsetsCompat.CONSUMED;
 		});
 	}
 

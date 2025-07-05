@@ -14,12 +14,4 @@
 	<ListView android:id="@android:id/list" android:layout_width="fill_parent"
 		android:layout_weight="1" android:layout_height="wrap_content">
 	</ListView>
-	<LinearLayout android:layout_height="wrap_content"
-		android:layout_width="fill_parent" android:background="#FFF"
-		android:paddingTop="2dp">
-		<ImageButton android:layout_width="wrap_content"
-			android:layout_height="wrap_content" android:id="@+id/bFilter"
-			android:src="@drawable/ic_menu_filter_off"
-			android:visibility="invisible"/>
-	</LinearLayout>
 </LinearLayout>

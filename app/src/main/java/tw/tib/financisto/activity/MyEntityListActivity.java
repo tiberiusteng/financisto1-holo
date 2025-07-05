@@ -16,9 +16,15 @@ import android.database.Cursor;
 import android.os.Bundle;
 import android.text.TextUtils;
 import android.view.View;
+import android.view.ViewGroup;
 import android.widget.EditText;
 import android.widget.ListAdapter;
 import android.widget.TextView;
+
+import androidx.core.graphics.Insets;
+import androidx.core.view.ViewCompat;
+import androidx.core.view.WindowInsetsCompat;
+
 import tw.tib.financisto.R;
 import tw.tib.financisto.adapter.EntityListAdapter;
 import tw.tib.financisto.filter.Criteria;
@@ -60,6 +66,17 @@ public abstract class MyEntityListActivity<T extends MyEntity> extends AbstractL
 	protected void internalOnCreate(Bundle savedInstanceState) {
 		super.internalOnCreate(savedInstanceState);
 		((TextView) findViewById(android.R.id.empty)).setText(emptyResId);
+
+		ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.entity_list), (v, windowInsets) -> {
+			Insets insets = windowInsets.getInsets(WindowInsetsCompat.Type.systemBars()
+					| WindowInsetsCompat.Type.statusBars()
+					| WindowInsetsCompat.Type.captionBar());
+			var lp = (ViewGroup.MarginLayoutParams) v.getLayoutParams();
+			lp.topMargin = insets.top;
+			lp.bottomMargin = insets.bottom;
+			v.setLayoutParams(lp);
+			return WindowInsetsCompat.CONSUMED;
+		});
 
 		searchFilter = findViewById(R.id.searchFilter);
 		if (searchFilter != null) {

@@ -42,6 +42,10 @@ import tw.tib.financisto.utils.MyPreferences;
 
 import static tw.tib.financisto.utils.Utils.formatRateDate;
 
+import androidx.core.graphics.Insets;
+import androidx.core.view.ViewCompat;
+import androidx.core.view.WindowInsetsCompat;
+
 public class ExchangeRatesListActivity extends AbstractListActivity<List<ExchangeRate>> {
     private static final String TAG = "ExRateListActivity";
 
@@ -63,6 +67,18 @@ public class ExchangeRatesListActivity extends AbstractListActivity<List<Exchang
     @Override
     protected void internalOnCreate(Bundle savedInstanceState) {
         super.internalOnCreate(savedInstanceState);
+
+        ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.exchange_rate_list), (v, windowInsets) -> {
+            Insets insets = windowInsets.getInsets(WindowInsetsCompat.Type.systemBars()
+                    | WindowInsetsCompat.Type.statusBars()
+                    | WindowInsetsCompat.Type.captionBar());
+            var lp = (ViewGroup.MarginLayoutParams) v.getLayoutParams();
+            lp.topMargin = insets.top;
+            lp.bottomMargin = insets.bottom;
+            v.setLayoutParams(lp);
+            return WindowInsetsCompat.CONSUMED;
+        });
+
         currencies = db.getAllCurrenciesList("name");
 
         fromCurrencySpinner = findViewById(R.id.spinnerFromCurrency);

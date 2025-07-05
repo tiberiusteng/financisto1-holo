@@ -603,6 +603,12 @@ public abstract class MyEntityManager extends EntityManager {
 		return q.uniqueResult();
 	}
 
+	public Category getCategory(String category) {
+		Query<Category> q = createQuery(Category.class);
+		q.where(Expressions.eq("title", category));
+		return q.uniqueResult();
+	}
+
 	public <T extends MyEntity> Cursor getAllEntities(Class<T> entityClass) {
 		return queryEntities(entityClass, null, false, false);
 	}

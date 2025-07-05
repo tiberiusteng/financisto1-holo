@@ -15,12 +15,12 @@ apply plugin: 'com.android.application'
 
 android {
     namespace 'tw.tib.financisto'
-    compileSdkVersion 34
+    compileSdk 35
 
     defaultConfig {
         applicationId "tw.tib.financisto"
         minSdkVersion 21
-        targetSdkVersion 34
+        targetSdkVersion 35
         multiDexEnabled true
 
         testApplicationId "tw.tib.financisto.test"

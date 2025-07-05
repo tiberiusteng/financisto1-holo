@@ -12,7 +12,18 @@
 	xmlns:app="http://schemas.android.com/apk/res-auto"
 	android:layout_width="fill_parent"
 	android:layout_height="fill_parent"
-	android:orientation="vertical">
+	android:orientation="vertical"
+	android:id="@+id/blotter_base">
+
+	<androidx.appcompat.widget.Toolbar
+		android:id="@+id/toolbar"
+		android:layout_width="match_parent"
+		android:layout_height="?attr/actionBarSize"
+		android:background="?attr/colorPrimary"
+		android:elevation="4dp"
+		android:theme="@style/ThemeOverlay.AppCompat.Dark.ActionBar"
+		app:popupTheme="@style/ThemeOverlay.AppCompat.Dark"
+		android:visibility="gone" />
 
 	<TextView android:id="@+id/period"
 		android:visibility="gone"
@@ -89,7 +100,9 @@
 		android:textColor="#FFFFFF"
 		android:visibility="gone" />
 
-	<androidx.constraintlayout.widget.ConstraintLayout style="@style/BottomBar">
+	<androidx.constraintlayout.widget.ConstraintLayout
+		android:id="@+id/bottom_bar"
+		style="@style/BottomBar">
 		<HorizontalScrollView
 			android:layout_width="0dp"
 			android:layout_height="fill_parent"

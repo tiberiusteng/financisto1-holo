@@ -11,6 +11,7 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
 	android:layout_width="fill_parent"
 	android:layout_height="fill_parent"
+	xmlns:app="http://schemas.android.com/apk/res-auto"
 	android:orientation="vertical">
 
 	<FrameLayout
@@ -75,7 +76,7 @@
 		android:textColor="#FFFFFF"
 		android:visibility="gone" />
 
-	<LinearLayout style="@style/BottomBar">
+	<LinearLayout style="@style/BottomBar" android:id="@+id/bottom_bar">
 		<ImageButton
 			android:id="@+id/bAdd"
 			style="@style/BottomBarButton"

@@ -17,6 +17,7 @@ import android.os.Bundle;
 import android.text.InputType;
 import android.view.LayoutInflater;
 import android.view.View;
+import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
@@ -43,6 +44,10 @@ import static tw.tib.financisto.activity.CategorySelector.SelectorType.PARENT;
 import static tw.tib.financisto.activity.RequestPermission.isRequestingPermission;
 import static tw.tib.financisto.utils.Utils.checkEditText;
 import static tw.tib.financisto.utils.Utils.text;
+
+import androidx.core.graphics.Insets;
+import androidx.core.view.ViewCompat;
+import androidx.core.view.WindowInsetsCompat;
 
 public class CategoryActivity extends AbstractActivity implements CategorySelector.CategorySelectorListener {
 
@@ -74,6 +79,17 @@ public class CategoryActivity extends AbstractActivity implements CategorySelect
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.category);
+
+		ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.category), (v, windowInsets) -> {
+			Insets insets = windowInsets.getInsets(WindowInsetsCompat.Type.systemBars()
+					| WindowInsetsCompat.Type.statusBars()
+					| WindowInsetsCompat.Type.captionBar());
+			var lp = (ViewGroup.MarginLayoutParams) v.getLayoutParams();
+			lp.topMargin = insets.top;
+			lp.bottomMargin = insets.bottom;
+			v.setLayoutParams(lp);
+			return WindowInsetsCompat.CONSUMED;
+		});
 
 		types = getResources().getStringArray(R.array.attribute_types);
 

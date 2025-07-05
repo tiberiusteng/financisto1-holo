@@ -3,6 +3,8 @@ package tw.tib.financisto.activity;
 import static android.app.Activity.RESULT_FIRST_USER;
 import static android.app.Activity.RESULT_OK;
 
+import static java.lang.String.format;
+
 import android.app.AlertDialog;
 import android.content.Context;
 import android.content.Intent;
@@ -35,7 +37,11 @@ import androidx.annotation.Nullable;
 import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.activity.OnBackPressedCallback;
+import androidx.appcompat.widget.Toolbar;
+import androidx.core.graphics.Insets;
 import androidx.core.view.MenuProvider;
+import androidx.core.view.ViewCompat;
+import androidx.core.view.WindowInsetsCompat;
 import androidx.lifecycle.Lifecycle;
 import androidx.loader.content.Loader;
 
@@ -173,6 +179,33 @@ public class BlotterFragment extends AbstractListFragment<Cursor> implements Blo
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
+
+        if (!this.saveFilter) {
+            var toolbar = (Toolbar) view.findViewById(R.id.toolbar);
+            toolbar.setVisibility(View.VISIBLE);
+            ((AppCompatActivity) getActivity()).setSupportActionBar(toolbar);
+
+            ViewCompat.setOnApplyWindowInsetsListener(getView().findViewById(R.id.toolbar), (v, windowInsets) -> {
+                Insets insets = windowInsets.getInsets(WindowInsetsCompat.Type.systemBars()
+                        | WindowInsetsCompat.Type.statusBars()
+                        | WindowInsetsCompat.Type.captionBar());
+                Log.d(TAG, format("insets.top: %s", insets.top));
+                var lp = (ViewGroup.MarginLayoutParams) v.getLayoutParams();
+                lp.height += insets.top;
+                v.setPadding(v.getPaddingLeft(), v.getPaddingTop() + insets.top, v.getPaddingRight(), v.getPaddingBottom());
+                v.setLayoutParams(lp);
+                return WindowInsetsCompat.CONSUMED;
+            });
+        }
+
+        ViewCompat.setOnApplyWindowInsetsListener(view.findViewById(R.id.bottom_bar), (v, windowInsets) -> {
+            Insets insets = windowInsets.getInsets(WindowInsetsCompat.Type.systemBars()
+                    | WindowInsetsCompat.Type.statusBars()
+                    | WindowInsetsCompat.Type.captionBar());
+            Log.d(TAG, format("insets.bottom: %s", insets.bottom));
+            v.setPadding(v.getPaddingLeft(), v.getPaddingTop(), v.getPaddingRight(), v.getPaddingBottom() + insets.bottom);
+            return WindowInsetsCompat.CONSUMED;
+        });
 
         integrityCheck();
 
@@ -338,7 +371,7 @@ public class BlotterFragment extends AbstractListFragment<Cursor> implements Blo
                                             Criteria.btw(BlotterFilter.ORIGINAL_FROM_AMOUNT, "-" + val3, "-" + val2));
                                 }
                             }
-                            String likePattern = String.format("%%%s%%", text);
+                            String likePattern = format("%%%s%%", text);
                             if (amount == null) {
                                 blotterFilter.eq(Criteria.or(
                                         Criteria.like(BlotterFilter.NOTE, likePattern),
@@ -698,7 +731,7 @@ public class BlotterFragment extends AbstractListFragment<Cursor> implements Blo
         this.lastTxId = db.getLastTransactionId();
         this.lastDay = Calendar.getInstance().get(Calendar.DAY_OF_YEAR);
         long t2 = System.nanoTime();
-        Log.d(TAG, "getLastTransactionId() = " + lastTxId + ", " + String.format("%,d", (t2 - t1)) + " ns");
+        Log.d(TAG, "getLastTransactionId() = " + lastTxId + ", " + format("%,d", (t2 - t1)) + " ns");
         long accountId = blotterFilterCopy.getAccountId();
         if (accountId != -1) {
             c = db.getBlotterForAccount(blotterFilterCopy);
@@ -706,7 +739,7 @@ public class BlotterFragment extends AbstractListFragment<Cursor> implements Blo
             c = db.getBlotter(blotterFilterCopy);
         }
         c.getCount();
-        Log.d(TAG, "createCursor: " + String.format("%,d", (System.nanoTime() - t1)) + " ns");
+        Log.d(TAG, "createCursor: " + format("%,d", (System.nanoTime() - t1)) + " ns");
         return c;
     }
 
@@ -896,7 +929,7 @@ public class BlotterFragment extends AbstractListFragment<Cursor> implements Blo
         if (lastTxId != BEFORE_INITIAL_LOAD) {
             long t1 = System.nanoTime();
             long currentLastTxId = db.getLastTransactionId();
-            Log.d(TAG, "getLastTransactionId() = " + lastTxId + ", " + String.format("%,d", System.nanoTime() - t1) + " ns");
+            Log.d(TAG, "getLastTransactionId() = " + lastTxId + ", " + format("%,d", System.nanoTime() - t1) + " ns");
             long currentDay = Calendar.getInstance().get(Calendar.DAY_OF_YEAR);
             if (currentLastTxId != lastTxId || currentDay != lastDay) {
                 Log.d(TAG, "lastTxId " + lastTxId + " != " + currentLastTxId +
