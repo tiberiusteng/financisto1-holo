@@ -10,6 +10,9 @@ import android.widget.ListView;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.core.graphics.Insets;
+import androidx.core.view.ViewCompat;
+import androidx.core.view.WindowInsetsCompat;
 import androidx.fragment.app.ListFragment;
 
 import tw.tib.financisto.R;
@@ -46,6 +49,14 @@ public class ReportsListFragment extends ListFragment {
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
+
+        ViewCompat.setOnApplyWindowInsetsListener(getView().findViewById(android.R.id.list), (v, windowInsets) -> {
+            Insets insets = windowInsets.getInsets(WindowInsetsCompat.Type.systemBars());
+            v.setPadding(0, 0, 0, insets.bottom);
+            ((ViewGroup) v).setClipToPadding(false);
+            return WindowInsetsCompat.CONSUMED;
+        });
+
         setListAdapter(new ReportListAdapter(getContext(), reports));
     }
 
