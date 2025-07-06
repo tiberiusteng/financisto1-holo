@@ -77,6 +77,14 @@ public class PinActivity extends AppCompatActivity implements PinView.PinListene
         String pin = MyPreferences.getPin(this);
         PinView v = new PinView(this, this, pin, R.layout.lock);
         setContentView(v.getView());
+
+        ViewCompat.setOnApplyWindowInsetsListener(v.getView(), (vi, windowInsets) -> {
+            Insets insets = windowInsets.getInsets(WindowInsetsCompat.Type.systemBars()
+                    | WindowInsetsCompat.Type.ime());
+            vi.setPadding(insets.left, insets.top, insets.right, insets.bottom);
+            return WindowInsetsCompat.CONSUMED;
+        });
+        v.getView().requestApplyInsets();
     }
 
     private void askForFingerprint() {

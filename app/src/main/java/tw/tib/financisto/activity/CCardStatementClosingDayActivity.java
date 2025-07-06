@@ -13,10 +13,15 @@ import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
 import android.view.View.OnClickListener;
+import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.RadioButton;
 import android.widget.TextView;
+
+import androidx.core.graphics.Insets;
+import androidx.core.view.ViewCompat;
+import androidx.core.view.WindowInsetsCompat;
 
 /**
  * @author Abdsandryk
@@ -58,6 +63,16 @@ public class CCardStatementClosingDayActivity extends Activity {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.ccard_statement_closing_day);
+
+		ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.ccard_statement_closing_day), (v, windowInsets) -> {
+			Insets insets = windowInsets.getInsets(WindowInsetsCompat.Type.systemBars()
+					| WindowInsetsCompat.Type.ime());
+			var lp = (ViewGroup.MarginLayoutParams) v.getLayoutParams();
+			lp.topMargin = insets.top;
+			lp.bottomMargin = insets.bottom;
+			v.setLayoutParams(lp);
+			return WindowInsetsCompat.CONSUMED;
+		});
         
         intent = getIntent();
         activity = this;
