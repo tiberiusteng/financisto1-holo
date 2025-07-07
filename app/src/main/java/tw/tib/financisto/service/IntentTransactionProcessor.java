@@ -29,6 +29,7 @@ public class IntentTransactionProcessor {
     public static final String PROJECT_NAME = "PROJECT_NAME";
     public static final String AMOUNT = "AMOUNT"; // String, "-16.25", "35", "4,500", "1.23"
     public static final String NOTE = "NOTE";
+    public static final String IS_CREDIT_CARD_PAYMENT = "IS_CREDIT_CARD_PAYMENT";
     public static final String STATUS = "STATUS"; // "RS", "PN", "UR", "CL", "RC"; see TransactionStatus
 
     private static BigDecimal HUNDRED = new BigDecimal(100);
@@ -127,6 +128,10 @@ public class IntentTransactionProcessor {
             }
 
             tx.status = status;
+
+            if (intent.getBooleanExtra(IS_CREDIT_CARD_PAYMENT, false)) {
+                tx.isCCardPayment = 1;
+            }
 
             long id = db.insertOrUpdate(tx);
             tx.id = id;
