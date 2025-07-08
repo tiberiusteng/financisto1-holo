@@ -383,14 +383,16 @@ public class BlotterFragment extends AbstractListFragment<Cursor> implements Blo
                             if (amount == null) {
                                 blotterFilter.eq(Criteria.or(
                                         Criteria.like(BlotterFilter.NOTE, likePattern),
-                                        Criteria.like(BlotterFilter.PAYEE, likePattern)
+                                        Criteria.like(BlotterFilter.PAYEE, likePattern),
+                                        Criteria.like(BlotterFilter.CATEGORY_NAME, likePattern)
                                 ));
                             }
                             else {
                                 blotterFilter.eq(Criteria.or(
                                         amount,
                                         Criteria.like(BlotterFilter.NOTE, likePattern),
-                                        Criteria.like(BlotterFilter.PAYEE, likePattern)
+                                        Criteria.like(BlotterFilter.PAYEE, likePattern),
+                                        Criteria.like(BlotterFilter.CATEGORY_NAME, likePattern)
                                 ));
                             }
 
