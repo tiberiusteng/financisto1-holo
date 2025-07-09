@@ -9,8 +9,8 @@ FROM v_account
 UNION
 SELECT
     _id, '' AS icon, accent_color, title, 0 AS creation_date, 0 AS currency_id,
-    0 AS total_amount, '' AS type, '' AS issuer, '' AS number, TRUE AS is_active,
-    FALSE AS is_include_into_totals, 0 AS last_category_id, 0 AS last_account_id,
+    0 AS total_amount, '' AS type, '' AS issuer, '' AS number, 1 AS is_active,
+    0 AS is_include_into_totals, 0 AS last_category_id, 0 AS last_account_id,
     0 AS total_limit, '' AS card_issuer, 0 AS closing_day, 0 AS payment_day,
     '' AS note, 0 AS last_transaction_date, 0 AS updated_on, '' AS remote_key,
     '' AS currency_name, sort_order, 1 AS is_separator
