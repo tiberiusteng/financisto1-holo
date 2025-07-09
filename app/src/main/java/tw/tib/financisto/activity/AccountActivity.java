@@ -11,9 +11,13 @@
  ******************************************************************************/
 package tw.tib.financisto.activity;
 
+import android.app.AlertDialog;
 import android.content.Intent;
 import android.database.Cursor;
+import android.graphics.Color;
+import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
+
 import androidx.core.content.ContextCompat;
 import androidx.core.graphics.Insets;
 import androidx.core.view.ViewCompat;
@@ -21,8 +25,11 @@ import androidx.core.view.WindowInsetsCompat;
 
 import android.text.InputFilter;
 import android.text.InputType;
+import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.Window;
+import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.EditText;
@@ -48,6 +55,7 @@ import tw.tib.financisto.widget.AmountInput_;
 import tw.tib.financisto.utils.EnumUtils;
 
 public class AccountActivity extends AbstractActivity {
+	public static final String TAG = "AccountActivity";
 
 	public static final String ACCOUNT_ID_EXTRA = "accountId";
 
@@ -58,6 +66,8 @@ public class AccountActivity extends AbstractActivity {
 	private AmountInput limitInput;
 	private View limitAmountView;
 	private EditText accountTitle;
+	private EditText iconText;
+	private EditText accentColor;
 
 	private Cursor currencyCursor;
 	private TextView currencyText;
@@ -192,6 +202,47 @@ public class AccountActivity extends AbstractActivity {
 		noteText.setLines(2);
 		x.addEditNode(layout, R.string.note, noteText);
 
+		iconText = new EditText(this);
+		iconText.setSingleLine();
+		x.addEditNode(layout, R.string.icon_text, iconText);
+
+		accentColor = new EditText(this);
+		accentColor.setSingleLine();
+		accentColor.setHint("yellow, teal, #a52a2a");
+		x.addColorEditNode(layout, R.string.accent_color, R.id.palette, clicked -> {
+			String[] colors = {
+					"#000000", "#ffffff", "#ff0000", "#800000", "#ff00ff", "#ffc0cb", "#00ffff",
+					"#add8e6", "#0000ff", "#00008b", "#c0c0c0", "#808080", "#ffa500", "#a52a2a",
+					"#ffff00", "#800080", "#00ff00", "#7fffd4", "#008000", "#808000"
+			};
+			var adapter = new ArrayAdapter<>(this, R.layout.select_entry_color_row, colors)
+			{
+				@Override
+				public View getView(int position, View convertView,	ViewGroup parent) {
+					View v;
+					final var inflater = LayoutInflater.from(getContext());
+					if (convertView == null) {
+						convertView = inflater.inflate(R.layout.select_entry_color_row, parent, false);
+						v = convertView.findViewById(R.id.color_patch);
+						convertView.setTag(v);
+					}
+					else {
+						v = (View) convertView.getTag();
+					}
+					v.setBackground(new ColorDrawable(Color.parseColor(colors[position])));
+					return convertView;
+				}
+			};
+			var builder = new AlertDialog.Builder(this);
+					builder.setTitle(R.string.select_color)
+					.setAdapter(adapter, (dialog, which) -> {
+						accentColor.setText(colors[which]);
+						dialog.cancel();
+					})
+					.create()
+					.show();
+		}, accentColor);
+
 		x.addEditNode(layout, R.string.sort_order, sortOrderText);
 		isIncludedIntoTotals = x.addCheckboxNode(layout,
 				R.id.is_included_into_totals, R.string.is_included_into_totals,
@@ -246,6 +297,8 @@ public class AccountActivity extends AbstractActivity {
 			account.isIncludeIntoTotals = isIncludedIntoTotals.isChecked();
 			account.limitAmount = -Math.abs(limitInput.getAmount());
 			account.note = Utils.text(noteText);
+			account.icon = iconText.getText().toString().trim();
+			account.accentColor = accentColor.getText().toString().trim();
 
 			long accountId = db.saveAccount(account);
 			long amount = amountInput.getAmount();
@@ -415,6 +468,8 @@ public class AccountActivity extends AbstractActivity {
 			limitInput.setAmount(-Math.abs(account.limitAmount));
 		}
 		noteText.setText(account.note);
+		accentColor.setText(account.accentColor);
+		iconText.setText(account.icon);
 	}
 
 	@Override

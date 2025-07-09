@@ -132,6 +132,24 @@ public class NodeInflater {
 
 	}
 
+	public class EditColorBuilder extends Builder {
+		public EditColorBuilder(LinearLayout layout, View view) {
+			super(layout, R.layout.select_entry_palette);
+			RelativeLayout relativeLayout = v.findViewById(R.id.layout);
+			RelativeLayout.LayoutParams layoutParams = new RelativeLayout.LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.WRAP_CONTENT);
+			layoutParams.addRule(RelativeLayout.ALIGN_LEFT, R.id.label);
+			layoutParams.addRule(RelativeLayout.BELOW, R.id.label);
+			relativeLayout.addView(view, layoutParams);
+		}
+
+		public EditColorBuilder withPaletteButtonId(int buttonId, OnClickListener listener) {
+			ImageButton button = v.findViewById(R.id.palette);
+			button.setId(buttonId);
+			button.setOnClickListener(listener);
+			return this;
+		}
+	}
+
 	public class ListBuilder extends Builder {
 
 		public ListBuilder(LinearLayout layout, int layoutId) {

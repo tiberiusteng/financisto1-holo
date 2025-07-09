@@ -9,6 +9,7 @@ import androidx.core.view.MenuItemCompat;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
+import androidx.recyclerview.widget.DividerItemDecoration;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 import androidx.appcompat.widget.SearchView;
@@ -68,7 +69,9 @@ public class SmsDragListActivity extends AppCompatActivity {
 //        setSupportActionBar(menu);
 
         recyclerView = findViewById(R.id.drag_list_view);
-        recyclerView.setLayoutManager(new LinearLayoutManager(this));
+        var layoutManager = new LinearLayoutManager(this);
+        recyclerView.setLayoutManager(layoutManager);
+        recyclerView.addItemDecoration(new DividerItemDecoration(this, layoutManager.getOrientation()));
 
         cursorSource = createSource();
         createAdapter(true);

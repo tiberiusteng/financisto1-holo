@@ -79,7 +79,7 @@ public class MainActivity extends AppCompatActivity {
         viewPager.setUserInputEnabled(false);
 
         fragments = new Fragment[]{
-                new AccountListFragment(),
+                new AccountRecyclerFragment(),
                 new BlotterFragment(true),
                 new BudgetListFragment(),
                 new ReportsListFragment(),

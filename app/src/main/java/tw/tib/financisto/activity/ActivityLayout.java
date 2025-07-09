@@ -15,6 +15,11 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.database.Cursor;
 import androidx.core.util.Pair;
+
+import android.graphics.Color;
+import android.graphics.drawable.ColorDrawable;
+import android.text.Editable;
+import android.text.TextWatcher;
 import android.view.View;
 import android.widget.*;
 import tw.tib.financisto.R;
@@ -302,6 +307,38 @@ public class ActivityLayout {
 	public View addEditNode(LinearLayout layout, int labelId, View view) {
 		EditBuilder b = inflater.new EditBuilder(layout, view);
 		return b.withLabel(labelId).create();
+	}
+
+	public View addColorEditNode(LinearLayout layout, int labelId, int buttonId, View.OnClickListener onClickListener, EditText editText) {
+		EditColorBuilder b = inflater.new EditColorBuilder(layout, editText);
+		var view = b.withPaletteButtonId(buttonId, onClickListener).withLabel(labelId).create();
+
+		View colorPreview = view.findViewById(R.id.color_preview);
+
+		editText.addTextChangedListener(new TextWatcher() {
+			@Override
+			public void afterTextChanged(Editable s) {
+				int color = 0;
+				try {
+					color = Color.parseColor(s.toString());
+				} catch (Exception e) {
+					// pass
+				}
+				colorPreview.setBackground(new ColorDrawable(color));
+			}
+
+			@Override
+			public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+
+			}
+
+			@Override
+			public void onTextChanged(CharSequence s, int start, int before, int count) {
+
+			}
+		});
+
+		return view;
 	}
 
 	private void selectSingleChoice(Context context, int titleId, ListAdapter adapter, int checkedItem,

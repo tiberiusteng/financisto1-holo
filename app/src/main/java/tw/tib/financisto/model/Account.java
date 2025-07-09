@@ -74,6 +74,12 @@ public class Account extends MyEntity {
     @Column(name = "note")
     public String note;
 
+	@Column(name = "icon")
+	public String icon;
+
+	@Column(name = "accent_color")
+	public String accentColor;
+
     public boolean shouldIncludeIntoTotals() {
         return isActive && isIncludeIntoTotals;
     }

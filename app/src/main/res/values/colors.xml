@@ -22,6 +22,8 @@
     <color name="material_brown">#795548</color>
     <color name="calculator_background">#424242</color>
 
+    <color name="button_tint">#757575</color>
+
     <color name="transaction_category">@android:color/primary_text_dark</color>
     <color name="transaction_note">@android:color/secondary_text_dark</color>
     <color name="transaction_payee">@android:color/holo_blue_light</color>
