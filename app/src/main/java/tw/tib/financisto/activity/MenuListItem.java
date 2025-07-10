@@ -44,7 +44,7 @@ public enum MenuListItem implements SummaryEntityEnum {
     MENU_PREFERENCES(R.string.preferences, R.string.preferences_summary, R.drawable.drawer_action_preferences) {
         @Override
         public void call(Fragment fragment) {
-            fragment.startActivityForResult(new Intent(fragment.getContext(), PreferencesActivity.class), ACTIVITY_CHANGE_PREFERENCES);
+            fragment.startActivityForResult(new Intent(fragment.getContext(), PreferencesActivity2.class), ACTIVITY_CHANGE_PREFERENCES);
         }
     },
     MENU_ENTITIES(R.string.entities, R.string.entities_summary, R.drawable.drawer_action_entities) {
