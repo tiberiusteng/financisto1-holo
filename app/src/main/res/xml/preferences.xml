@@ -53,7 +53,7 @@
             android:key="sms_transaction_status"
             android:summary="@string/pref_tpl_transaction_status"
             android:title="@string/pref_tpl_transaction_status_title" />
-        <CheckBoxPreference
+        <SwitchPreferenceCompat
             android:defaultValue="true"
             android:key="sms_transaction_note"
             android:summary="@string/pref_tpl_adding_to_note"
@@ -61,17 +61,17 @@
     </PreferenceCategory>
 
     <PreferenceCategory android:title="@string/protection">
-        <CheckBoxPreference
+        <SwitchPreferenceCompat
             android:defaultValue="true"
             android:key="secure_window"
             android:summary="@string/secure_window_summary"
             android:title="@string/secure_window" />
-        <CheckBoxPreference
+        <SwitchPreferenceCompat
             android:defaultValue="true"
             android:key="enable_widget"
             android:summary="@string/enable_widget_summary"
             android:title="@string/enable_widget" />
-        <CheckBoxPreference
+        <SwitchPreferenceCompat
             android:defaultValue="false"
             android:key="pin_protection"
             android:summary="@string/pin_protection_summary"
@@ -82,19 +82,19 @@
             android:key="pin"
             android:summary="@string/pin_warning"
             android:title="@string/change_pin" />
-        <CheckBoxPreference
+        <SwitchPreferenceCompat
             android:defaultValue="false"
             android:dependency="pin_protection"
             android:key="pin_protection_use_fingerprint"
             android:summary="@string/pin_protection_use_fingerprint_summary"
             android:title="@string/pin_protection_use_fingerprint" />
-        <CheckBoxPreference
+        <SwitchPreferenceCompat
             android:defaultValue="true"
             android:dependency="pin_protection_use_fingerprint"
             android:key="pin_protection_use_fingerprint_fallback_to_pin"
             android:summary="@string/pin_protection_use_fingerprint_fallback_to_pin"
             android:title="@string/pin_protection_use_fingerprint_fallback_to_pin_summary" />
-        <CheckBoxPreference
+        <SwitchPreferenceCompat
             android:defaultValue="true"
             android:dependency="pin_protection"
             android:key="pin_protection_lock_transaction"
@@ -126,12 +126,12 @@
             android:key="database_backup_folder"
             android:summary="@string/database_backup_folder_summary"
             android:title="@string/database_backup_folder" />
-        <CheckBoxPreference
+        <SwitchPreferenceCompat
             android:defaultValue="true"
             android:key="auto_backup_reminder_enabled"
             android:summary="@string/auto_backup_reminder_enabled_summary"
             android:title="@string/auto_backup_reminder_enabled" />
-        <CheckBoxPreference
+        <SwitchPreferenceCompat
             android:defaultValue="false"
             android:key="auto_backup_enabled"
             android:summary="@string/auto_backup_enabled_summary"
@@ -141,7 +141,7 @@
             android:key="auto_backup_time"
             android:summary="@string/auto_backup_time_summary"
             android:title="@string/auto_backup_time" />
-        <CheckBoxPreference
+        <SwitchPreferenceCompat
             android:defaultValue="true"
             android:dependency="auto_backup_enabled"
             android:key="auto_backup_warning_enabled"
@@ -158,22 +158,22 @@
             android:key="dropbox_unlink"
             android:summary="@string/dropbox_unlink_summary"
             android:title="@string/dropbox_unlink" />
-        <CheckBoxPreference
+        <SwitchPreferenceCompat
             android:defaultValue="false"
             android:key="dropbox_upload_backup"
             android:summary="@string/dropbox_upload_backup_summary"
             android:title="@string/dropbox_upload_backup" />
-        <CheckBoxPreference
+        <SwitchPreferenceCompat
             android:defaultValue="false"
             android:key="dropbox_upload_autobackup"
             android:summary="@string/dropbox_upload_autobackup_summary"
             android:title="@string/dropbox_upload_autobackup" />
-        <CheckBoxPreference
+        <SwitchPreferenceCompat
             android:defaultValue="false"
             android:key="dropbox_upload_pictures"
             android:summary="@string/dropbox_upload_pictures_summary"
             android:title="@string/dropbox_upload_pictures" />
-        <CheckBoxPreference
+        <SwitchPreferenceCompat
             android:defaultValue="false"
             android:key="dropbox_download_pictures"
             android:summary="@string/dropbox_download_pictures_summary"
@@ -194,22 +194,22 @@
             android:key="google_drive_backup_folder"
             android:summary="@string/backup_folder_summary"
             android:title="@string/backup_folder" />
-        <CheckBoxPreference
+        <SwitchPreferenceCompat
             android:defaultValue="false"
             android:key="google_drive_upload_backup"
             android:summary="@string/google_drive_upload_backup_summary"
             android:title="@string/google_drive_upload_backup" />
-        <CheckBoxPreference
+        <SwitchPreferenceCompat
             android:defaultValue="false"
             android:key="google_drive_upload_autobackup"
             android:summary="@string/google_drive_upload_autobackup_summary"
             android:title="@string/google_drive_upload_autobackup" />
-        <CheckBoxPreference
+        <SwitchPreferenceCompat
             android:defaultValue="false"
             android:key="google_drive_upload_pictures"
             android:summary="@string/google_drive_upload_pictures_summary"
             android:title="@string/google_drive_upload_pictures" />
-        <CheckBoxPreference
+        <SwitchPreferenceCompat
             android:defaultValue="false"
             android:key="google_drive_download_pictures"
             android:summary="@string/google_drive_download_pictures_summary"
@@ -249,17 +249,17 @@
     </PreferenceCategory>
 
     <PreferenceCategory android:title="@string/other">
-        <CheckBoxPreference
+        <SwitchPreferenceCompat
             android:defaultValue="true"
             android:key="pin_protection_haptic_feedback"
             android:summary="@string/pin_protection_haptic_feedback_summary"
             android:title="@string/pin_protection_haptic_feedback" />
-        <CheckBoxPreference
+        <SwitchPreferenceCompat
             android:defaultValue="true"
             android:key="restore_missed_scheduled_transactions"
             android:summary="@string/restore_missed_scheduled_transactions_summary"
             android:title="@string/restore_missed_scheduled_transactions" />
-        <CheckBoxPreference
+        <SwitchPreferenceCompat
             android:defaultValue="true"
             android:key="treat_transfer_to_ccard_as_payment"
             android:summary="@string/treat_transfer_to_ccard_as_payment_summary"

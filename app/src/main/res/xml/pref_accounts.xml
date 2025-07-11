@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <androidx.preference.PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
-    <CheckBoxPreference
+    <SwitchPreferenceCompat
         android:defaultValue="true"
         android:key="quick_menu_account_enabled"
         android:summary="@string/quick_menu_account_enabled_summary"
@@ -19,17 +19,17 @@
         android:key="sort_accounts"
         android:summary="@string/sort_accounts_summary"
         android:title="@string/sort_accounts" />
-    <CheckBoxPreference
+    <SwitchPreferenceCompat
         android:defaultValue="false"
         android:key="hide_closed_accounts"
         android:summary="@string/hide_closed_accounts_summary"
         android:title="@string/hide_closed_accounts" />
-    <CheckBoxPreference
+    <SwitchPreferenceCompat
         android:defaultValue="true"
         android:key="show_menu_button_on_accounts_screen"
         android:summary="@string/show_menu_button_on_accounts_screen_summary"
         android:title="@string/show_menu_button_on_accounts_screen" />
-    <CheckBoxPreference
+    <SwitchPreferenceCompat
         android:defaultValue="false"
         android:key="show_transfer_current_balance"
         android:summary="@string/show_transfer_current_balance_summary"

@@ -12,11 +12,15 @@ import android.os.Bundle;
 import android.provider.DocumentsContract;
 import android.util.Log;
 import android.view.View;
+import android.view.ViewGroup;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.graphics.Insets;
+import androidx.core.view.ViewCompat;
+import androidx.core.view.WindowInsetsCompat;
 import androidx.preference.Preference;
 import androidx.preference.PreferenceFragmentCompat;
 import androidx.preference.PreferenceScreen;
@@ -63,6 +67,13 @@ public class PreferenceFragment extends PreferenceFragmentCompat {
         PreferenceScreen preferenceScreen = getPreferenceScreen();
         Preference pLocale = preferenceScreen.findPreference("ui_language");
         Context context = getContext();
+
+        ViewCompat.setOnApplyWindowInsetsListener(getListView(), (v, windowInsets) -> {
+            Insets insets = windowInsets.getInsets(WindowInsetsCompat.Type.systemBars());
+            v.setPadding(0, 0, 0, insets.bottom);
+            ((ViewGroup) v).setClipToPadding(false);
+            return WindowInsetsCompat.CONSUMED;
+        });
 
         dropbox = new Dropbox(getContext());
 
