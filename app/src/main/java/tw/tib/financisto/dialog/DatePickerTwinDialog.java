@@ -24,6 +24,8 @@ public class DatePickerTwinDialog extends DialogFragment {
     public static final String MONTH = "MONTH";
     public static final String DAY = "DAY";
 
+    protected boolean updating = false;
+
     public static DatePickerTwinDialog newInstance(int year, int month, int day, DatePicker.OnDateChangedListener listener) {
         DatePickerTwinDialog d = new DatePickerTwinDialog();
 
@@ -60,11 +62,19 @@ public class DatePickerTwinDialog extends DialogFragment {
         int year = args.getInt(YEAR), month = args.getInt(MONTH), day = args.getInt(DAY);
 
         dateCalendar.init(year, month, day, (v, pyear, pmonth, pday) -> {
-            dateSpinner.updateDate(pyear, pmonth, pday);
+            if (!updating) {
+                updating = true;
+                dateSpinner.updateDate(pyear, pmonth, pday);
+                updating = false;
+            }
         });
 
         dateSpinner.init(year, month, day, (v, pyear, pmonth, pday) -> {
-            dateCalendar.updateDate(pyear, pmonth, pday);
+            if (!updating) {
+                updating = true;
+                dateCalendar.updateDate(pyear, pmonth, pday);
+                updating = false;
+            }
         });
 
         int theme = 0;
