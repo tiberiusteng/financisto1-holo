@@ -1,7 +1,7 @@
 repositories {
     google()
     mavenCentral()
-    maven { url 'https://jitpack.io' }
+    maven { url = 'https://jitpack.io' }
 }
 
 configurations {
@@ -14,14 +14,14 @@ configurations {
 apply plugin: 'com.android.application'
 
 android {
-    namespace 'tw.tib.financisto'
-    compileSdk 36
+    namespace = 'tw.tib.financisto'
+    compileSdk = 36
 
     defaultConfig {
         applicationId "tw.tib.financisto"
         minSdkVersion 21
         targetSdkVersion 36
-        multiDexEnabled true
+        multiDexEnabled = true
 
         testApplicationId "tw.tib.financisto.test"
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
@@ -40,7 +40,7 @@ android {
         release {
             minifyEnabled true
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.txt', 'proguard-google-api-client.txt'
-            signingConfig signingConfigs.debug
+            signingConfig = signingConfigs.debug
         }
     }
     packagingOptions {
@@ -54,7 +54,7 @@ android {
         targetCompatibility JavaVersion.VERSION_17
     }
     buildFeatures {
-        buildConfig true
+        buildConfig = true
     }
 }
 
