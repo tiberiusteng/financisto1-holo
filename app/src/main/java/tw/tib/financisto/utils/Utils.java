@@ -28,6 +28,7 @@ import android.widget.EditText;
 import android.widget.TextView;
 import tw.tib.financisto.R;
 import tw.tib.financisto.model.Account;
+import tw.tib.financisto.model.AccountType;
 import tw.tib.financisto.model.Currency;
 import tw.tib.financisto.model.Total;
 
@@ -41,6 +42,8 @@ public class Utils {
     private static final int zeroColor = Resources.getSystem().getColor(android.R.color.secondary_text_dark);
 
     private Context context = null;
+
+    private boolean isShowAccountBalanceOnSelector = false;
 
     public int positiveColor = 0;
     public int negativeColor = 0;
@@ -57,6 +60,8 @@ public class Utils {
             this.futureColor = r.getColor(R.color.future_color);
             this.splitColor = r.getColor(R.color.split_color);
             this.context = context;
+
+            this.isShowAccountBalanceOnSelector = MyPreferences.isShowAccountBalanceOnSelector(context);
         }
     }
 
@@ -326,4 +331,24 @@ public class Utils {
 
     }
 
+    public void setAccountTitleBalance(
+            Account a, TextView accountText, TextView accountBalanceText, TextView accountLimitText
+    ) {
+        if (isShowAccountBalanceOnSelector) {
+            long amount = a.totalAmount;
+            AccountType type = AccountType.valueOf(a.type);
+            if (type == AccountType.CREDIT_CARD && a.limitAmount != 0) {
+                long limitAmount = Math.abs(a.limitAmount);
+                long balance = limitAmount + amount;
+                accountLimitText.setVisibility(View.VISIBLE);
+                setAmountText(accountBalanceText, a.currency, amount, false);
+                setAmountText(accountLimitText, a.currency, balance, false);
+            } else {
+                accountLimitText.setVisibility(View.GONE);
+                setAmountText(accountBalanceText, a.currency, amount, false);
+            }
+            accountBalanceText.setVisibility(View.VISIBLE);
+        }
+        accountText.setText(a.title);
+    }
 }

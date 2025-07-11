@@ -214,7 +214,7 @@ public class TransferActivity extends AbstractTransactionActivity {
 	}
 
 	protected void selectAccount(Account account, TextView accountText, TextView accountBalanceText, TextView accountLimitText, boolean selectLast) {
-		showAccountTitleBalance(account, accountText, accountBalanceText, accountLimitText);
+		u.setAccountTitleBalance(account, accountText, accountBalanceText, accountLimitText);
 		if (selectLast && isRememberLastAccount) {
 			selectToAccount(account.lastAccountId);
 		}

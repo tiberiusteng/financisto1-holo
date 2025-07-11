@@ -17,6 +17,8 @@ import android.widget.SimpleCursorAdapter;
 
 import java.util.List;
 
+import tw.tib.financisto.R;
+import tw.tib.financisto.adapter.AccountSelectorBalanceAdapter;
 import tw.tib.financisto.adapter.CategoryListAdapter;
 import tw.tib.financisto.adapter.MyEntityAdapter;
 import tw.tib.financisto.db.DatabaseAdapter;
@@ -33,6 +35,10 @@ public class TransactionUtils {
     public static ListAdapter createAccountAdapter(Context context, Cursor accountCursor) {
         return new SimpleCursorAdapter(context, android.R.layout.simple_list_item_activated_1, accountCursor,
                 new String[]{"e_"+AccountColumns.TITLE}, new int[]{android.R.id.text1});
+    }
+
+    public static ListAdapter createAccountBalanceAdapter(Context context, Cursor accountCursor) {
+        return new AccountSelectorBalanceAdapter(context, R.layout.simple_list_item_account, accountCursor);
     }
 
     public static ListAdapter createAccountMultiChoiceAdapter(Context context, Cursor accountCursor) {

@@ -224,7 +224,12 @@ public abstract class AbstractTransactionActivity extends AbstractActivity imple
 			accountCursor = db.getAccountsForTransaction(transaction);
 		}
 		startManagingCursor(accountCursor);
-		accountAdapter = TransactionUtils.createAccountAdapter(this, accountCursor);
+		if (isShowAccountBalanceOnSelector) {
+			accountAdapter = TransactionUtils.createAccountBalanceAdapter(this, accountCursor);
+		}
+		else {
+			accountAdapter = TransactionUtils.createAccountAdapter(this, accountCursor);
+		}
 
 		dateTime = Calendar.getInstance();
 		Date date = dateTime.getTime();
@@ -565,27 +570,6 @@ public abstract class AbstractTransactionActivity extends AbstractActivity imple
 		categorySelector.setSelectedAccount(a);
 		return a;
 	} */
-
-	protected void showAccountTitleBalance(
-			Account a, TextView accountText, TextView accountBalanceText, TextView accountLimitText
-	) {
-		if (isShowAccountBalanceOnSelector) {
-			long amount = a.totalAmount;
-			AccountType type = AccountType.valueOf(a.type);
-			if (type == AccountType.CREDIT_CARD && a.limitAmount != 0) {
-				long limitAmount = Math.abs(a.limitAmount);
-				long balance = limitAmount + amount;
-				accountLimitText.setVisibility(View.VISIBLE);
-				u.setAmountText(accountBalanceText, a.currency, amount, false);
-				u.setAmountText(accountLimitText, a.currency, balance, false);
-			} else {
-				accountLimitText.setVisibility(View.GONE);
-				u.setAmountText(accountBalanceText, a.currency, amount, false);
-			}
-			accountBalanceText.setVisibility(View.VISIBLE);
-		}
-		accountText.setText(a.title);
-	}
 
 	protected long getSelectedAccountId() {
 		return selectedAccount != null ? selectedAccount.id : -1;

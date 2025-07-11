@@ -21,11 +21,9 @@ import android.widget.Toast;
 import greendroid.widget.QuickActionGrid;
 import greendroid.widget.QuickActionWidget;
 import tw.tib.financisto.R;
-import tw.tib.financisto.model.*;
 import tw.tib.financisto.model.Account;
 import tw.tib.financisto.model.Category;
 import tw.tib.financisto.model.Currency;
-import tw.tib.financisto.utils.*;
 import tw.tib.financisto.model.MyEntity;
 import tw.tib.financisto.model.Payee;
 import tw.tib.financisto.model.Transaction;
@@ -33,7 +31,6 @@ import tw.tib.financisto.utils.CurrencyCache;
 import tw.tib.financisto.utils.MyPreferences;
 import tw.tib.financisto.utils.SplitAdjuster;
 import tw.tib.financisto.utils.TransactionUtils;
-import tw.tib.financisto.utils.Utils;
 
 import java.io.*;
 import java.util.*;
@@ -375,7 +372,7 @@ public class TransactionActivity extends AbstractTransactionActivity {
         categorySelector.setSelectedAccount(a);
 
         if (a != null) {
-            showAccountTitleBalance(a, accountText, accountBalanceText, accountLimitText);
+            u.setAccountTitleBalance(a, accountText, accountBalanceText, accountLimitText);
 
             selectedAccount = a;
 
