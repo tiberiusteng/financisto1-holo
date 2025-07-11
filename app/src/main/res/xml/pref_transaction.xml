@@ -77,6 +77,11 @@
             android:summary="@string/use_twin_date_picker_summary"
             android:title="@string/use_twin_date_picker" />
         <SwitchPreferenceCompat
+            android:defaultValue="false"
+            android:key="ntsl_show_account_balance_on_selector"
+            android:title="@string/show_account_balance_on_selector"
+            android:summary="@string/show_account_balance_on_selector_summary" />
+        <SwitchPreferenceCompat
             android:defaultValue="true"
             android:key="ntsl_use_fixed_layout"
             android:summary="@string/use_fixed_layout_summary"

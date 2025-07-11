@@ -53,10 +53,12 @@ public class TransactionActivity extends AbstractTransactionActivity {
     private long idSequence = 0;
     private final IdentityHashMap<View, Transaction> viewToSplitMap = new IdentityHashMap<>();
 
+    private TextView accountBalanceText;
+    private TextView accountLimitText;
+
     private TextView differenceText;
     private boolean isUpdateBalanceMode = false;
     private long currentBalance;
-    private Utils u;
 
     private LinearLayout splitsLayout;
     private TextView unsplitAmountText;
@@ -74,7 +76,6 @@ public class TransactionActivity extends AbstractTransactionActivity {
 
     @Override
     protected void internalOnCreate() {
-        u = new Utils(this);
         Intent intent = getIntent();
         if (intent != null) {
             if (intent.hasExtra(CURRENT_BALANCE_EXTRA)) {
@@ -173,7 +174,17 @@ public class TransactionActivity extends AbstractTransactionActivity {
     @Override
     protected void createListNodes(LinearLayout layout) {
         //account
-        accountText = x.addListNode(layout, R.id.account, R.string.account, R.string.select_account);
+        if (isShowAccountBalanceOnSelector) {
+            accountText = x.addListNodeAccount(layout, R.id.account, R.string.account, R.string.select_account);
+            View v = ((View) accountText.getTag());
+            accountBalanceText = v.findViewById(R.id.balance);
+            accountBalanceText.setVisibility(View.INVISIBLE);
+            accountLimitText = v.findViewById(R.id.limit);
+            accountLimitText.setVisibility(View.GONE);
+        }
+        else {
+            accountText = x.addListNode(layout, R.id.account, R.string.account, R.string.select_account);
+        }
         //payee
         isShowPayee = MyPreferences.isShowPayee(this);
         if (isShowPayee) {
@@ -364,7 +375,8 @@ public class TransactionActivity extends AbstractTransactionActivity {
         categorySelector.setSelectedAccount(a);
 
         if (a != null) {
-            accountText.setText(a.title);
+            showAccountTitleBalance(a, accountText, accountBalanceText, accountLimitText);
+
             selectedAccount = a;
 
             if (selectLast && !isShowPayee && isRememberLastCategory) {

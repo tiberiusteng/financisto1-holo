@@ -237,6 +237,11 @@ public class MyPreferences {
 		}
 	}
 
+	public static boolean isShowAccountBalanceOnSelector(Context context) {
+		SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(context);
+		return sharedPreferences.getBoolean("ntsl_show_account_balance_on_selector", false);
+	}
+
 	public static EntitySelectorType getPayeeSelectorType(Context context) {
 		return getEntitySelectorType(context, "payee_selector_type");
 	}

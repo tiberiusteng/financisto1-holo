@@ -47,6 +47,7 @@ import tw.tib.financisto.utils.EnumUtils;
 import tw.tib.financisto.utils.MyPreferences;
 import tw.tib.financisto.utils.PicturesUtil;
 import tw.tib.financisto.utils.TransactionUtils;
+import tw.tib.financisto.utils.Utils;
 import tw.tib.financisto.view.AttributeView;
 import tw.tib.financisto.view.AttributeViewFactory;
 import tw.tib.financisto.widget.RateLayoutView;
@@ -128,6 +129,7 @@ public abstract class AbstractTransactionActivity extends AbstractActivity imple
 	protected boolean isShowTakePicture;
 	protected boolean isShowIsCCardPayment;
 	protected boolean isOpenCalculatorForTemplates;
+	protected boolean isShowAccountBalanceOnSelector;
 
 	protected boolean isShowPayee = true;
 //    protected AutoCompleteTextView payeeText;
@@ -137,6 +139,8 @@ public abstract class AbstractTransactionActivity extends AbstractActivity imple
 
 	protected DateFormat df;
 	protected DateFormat tf;
+
+	protected Utils u;
 
 	private QuickActionWidget pickImageActionGrid;
 
@@ -152,6 +156,8 @@ public abstract class AbstractTransactionActivity extends AbstractActivity imple
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
+
+		u = new Utils(this);
 
 		if (MyPreferences.isSecureWindow(this)) {
 			getWindow().addFlags(WindowManager.LayoutParams.FLAG_SECURE);
@@ -185,6 +191,7 @@ public abstract class AbstractTransactionActivity extends AbstractActivity imple
 		isShowTakePicture = MyPreferences.isShowTakePicture(this);
 		isShowIsCCardPayment = MyPreferences.isShowIsCCardPayment(this);
 		isOpenCalculatorForTemplates = MyPreferences.isOpenCalculatorForTemplates(this);
+		isShowAccountBalanceOnSelector = MyPreferences.isShowAccountBalanceOnSelector(this);
 
 		categorySelector = new CategorySelector<>(this, db, x);
 		categorySelector.setListener(this);
@@ -231,7 +238,7 @@ public abstract class AbstractTransactionActivity extends AbstractActivity imple
 		dateText = findViewById(R.id.date);
 		dateText.setText(df.format(date));
 		dateText.setOnClickListener(arg0 -> {
-			if (MyPreferences.isUseTwinDatePicker(this)) {
+			if (MyPreferences.isUseTwinDatePicker(this) && Build.VERSION.SDK_INT >= 22) {
 				DatePickerTwinDialog dpd = DatePickerTwinDialog.newInstance(
 						dateTime.get(Calendar.YEAR),
 						dateTime.get(Calendar.MONTH),
@@ -548,7 +555,7 @@ public abstract class AbstractTransactionActivity extends AbstractActivity imple
 		return selectAccount(accountId, true);
 	}
 
-	protected Account selectAccount(long accountId, boolean selectLast) {
+	abstract protected Account selectAccount(long accountId, boolean selectLast); /* {
 		Account a = db.getAccount(accountId);
 		if (a != null) {
 			accountText.setText(a.title);
@@ -557,6 +564,27 @@ public abstract class AbstractTransactionActivity extends AbstractActivity imple
 		}
 		categorySelector.setSelectedAccount(a);
 		return a;
+	} */
+
+	protected void showAccountTitleBalance(
+			Account a, TextView accountText, TextView accountBalanceText, TextView accountLimitText
+	) {
+		if (isShowAccountBalanceOnSelector) {
+			long amount = a.totalAmount;
+			AccountType type = AccountType.valueOf(a.type);
+			if (type == AccountType.CREDIT_CARD && a.limitAmount != 0) {
+				long limitAmount = Math.abs(a.limitAmount);
+				long balance = limitAmount + amount;
+				accountLimitText.setVisibility(View.VISIBLE);
+				u.setAmountText(accountBalanceText, a.currency, amount, false);
+				u.setAmountText(accountLimitText, a.currency, balance, false);
+			} else {
+				accountLimitText.setVisibility(View.GONE);
+				u.setAmountText(accountBalanceText, a.currency, amount, false);
+			}
+			accountBalanceText.setVisibility(View.VISIBLE);
+		}
+		accountText.setText(a.title);
 	}
 
 	protected long getSelectedAccountId() {

@@ -30,7 +30,12 @@ public class TransferActivity extends AbstractTransactionActivity {
 	public static final String AMOUNT_EXTRA = "amount";
 
 	private TextView accountFromText;
+	private TextView accountFromBalanceText;
+	private TextView accountFromLimitText;
+
 	private TextView accountToText;
+	private TextView accountToBalanceText;
+	private TextView accountToLimitText;
 
 	private long selectedAccountFromId = -1;
 	private long selectedAccountToId = -1;
@@ -73,8 +78,25 @@ public class TransferActivity extends AbstractTransactionActivity {
 
 	@Override
 	protected void createListNodes(LinearLayout layout) {
-		accountFromText = x.addListNode(layout, R.id.account_from, R.string.account_from, R.string.select_account);
-		accountToText = x.addListNode(layout, R.id.account_to, R.string.account_to, R.string.select_account);
+		if (isShowAccountBalanceOnSelector) {
+			accountFromText = x.addListNodeAccount(layout, R.id.account_from, R.string.account_from, R.string.select_account);
+			View v = ((View) accountFromText.getTag());
+			accountFromBalanceText = v.findViewById(R.id.balance);
+			accountFromBalanceText.setVisibility(View.INVISIBLE);
+			accountFromLimitText = v.findViewById(R.id.limit);
+			accountFromLimitText.setVisibility(View.GONE);
+
+			accountToText = x.addListNodeAccount(layout, R.id.account_to, R.string.account_to, R.string.select_account);
+			v = ((View) accountToText.getTag());
+			accountToBalanceText = v.findViewById(R.id.balance);
+			accountToBalanceText.setVisibility(View.INVISIBLE);
+			accountToLimitText = v.findViewById(R.id.limit);
+			accountToLimitText.setVisibility(View.GONE);
+		}
+		else {
+			accountFromText = x.addListNode(layout, R.id.account_from, R.string.account_from, R.string.select_account);
+			accountToText = x.addListNode(layout, R.id.account_to, R.string.account_to, R.string.select_account);
+		}
 		// payee
 		isShowPayee = MyPreferences.isShowPayeeInTransfers(this);
 		if (isShowPayee) {
@@ -94,7 +116,7 @@ public class TransferActivity extends AbstractTransactionActivity {
 	protected void editTransaction(Transaction transaction) {
 		if (transaction.fromAccountId > 0) {
 			Account fromAccount = db.getAccount(transaction.fromAccountId);
-			selectAccount(fromAccount, accountFromText, false);
+			selectAccount(fromAccount, accountFromText, accountFromBalanceText, accountFromLimitText, false);
 			rateView.selectCurrencyFrom(fromAccount.currency);
 			rateView.setFromAmount(transaction.fromAmount);
 			selectedAccountFromId = transaction.fromAccountId;
@@ -102,7 +124,7 @@ public class TransferActivity extends AbstractTransactionActivity {
 		commonEditTransaction(transaction);
 		if (transaction.toAccountId > 0) {
 			Account toAccount = db.getAccount(transaction.toAccountId);
-			selectAccount(toAccount, accountToText, false);
+			selectAccount(toAccount, accountToText, accountToBalanceText, accountToLimitText, false);
 			rateView.selectCurrencyTo(toAccount.currency);
 			rateView.setToAmount(transaction.toAmount);
 			selectedAccountToId = transaction.toAccountId;
@@ -174,7 +196,7 @@ public class TransferActivity extends AbstractTransactionActivity {
 	private void selectToAccount(long selectedId) {
 		Account account = db.getAccount(selectedId);
 		if (account != null) {
-			selectAccount(account, accountToText, false);
+			selectAccount(account, accountToText, accountToBalanceText, accountToLimitText, false);
 			selectedAccountToId = selectedId;
 			rateView.selectCurrencyTo(account.currency);
 		}
@@ -184,15 +206,15 @@ public class TransferActivity extends AbstractTransactionActivity {
 	protected Account selectAccount(long accountId, boolean selectLast) {
 		Account account = db.getAccount(accountId);
 		if (account != null) {
-			selectAccount(account, accountFromText, selectLast);
+			selectAccount(account, accountFromText, accountFromBalanceText, accountFromLimitText, selectLast);
 			selectedAccountFromId = accountId;
 			rateView.selectCurrencyFrom(account.currency);
 		}
 		return account;
 	}
 
-	protected void selectAccount(Account account, TextView accountText, boolean selectLast) {
-		accountText.setText(account.title);
+	protected void selectAccount(Account account, TextView accountText, TextView accountBalanceText, TextView accountLimitText, boolean selectLast) {
+		showAccountTitleBalance(account, accountText, accountBalanceText, accountLimitText);
 		if (selectLast && isRememberLastAccount) {
 			selectToAccount(account.lastAccountId);
 		}

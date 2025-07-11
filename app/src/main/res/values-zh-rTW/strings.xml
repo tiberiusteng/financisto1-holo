@@ -351,6 +351,8 @@
   <string name="use_fixed_layout_summary">固定確定/取消按鈕在版面中</string>
   <string name="use_twin_date_picker">使用雙重日期選取器</string>
   <string name="use_twin_date_picker_summary">同時顯示日曆與滾輪日期選取器</string>
+  <string name="show_account_balance_on_selector">顯示帳戶餘額</string>
+  <string name="show_account_balance_on_selector_summary">在帳戶選單顯示餘額</string>
   <string name="no_data">無資料</string>
   <string name="calculating">計算中..</string>
   <string name="budget_mode">擇一限制</string>

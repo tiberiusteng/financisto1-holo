@@ -123,6 +123,14 @@ public class ActivityLayout {
 		return data;
 	}
 
+	public TextView addListNodeAccount(LinearLayout layout, int id, int labelId, int defaultValueResId) {
+		Builder b = inflater.new Builder(layout, R.layout.select_entry_account);
+		View v = b.withId(id, listener).withLabel(labelId).withData(defaultValueResId).create();
+		TextView data = v.findViewById(R.id.data);
+		data.setTag(v);
+		return data;
+	}
+
 	public TextView addListNode(LinearLayout layout, int id, int labelId, String defaultValue) {
 		Builder b = inflater.new Builder(layout, R.layout.select_entry);
 		View v = b.withId(id, listener).withLabel(labelId).withData(defaultValue).create();

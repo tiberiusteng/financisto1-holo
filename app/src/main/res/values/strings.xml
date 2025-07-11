@@ -402,6 +402,8 @@
     <string name="use_fixed_layout_summary">Fix OK/Cancel buttons in the layout</string>
     <string name="use_twin_date_picker">Use twin date picker</string>
     <string name="use_twin_date_picker_summary">Show both calendar and spinner date picker</string>
+    <string name="show_account_balance_on_selector">Show account balance</string>
+    <string name="show_account_balance_on_selector_summary">Show account balance on account selector</string>
     <string name="no_data">No data</string>
     <string name="calculating">Calculating…</string>
     <string name="budget_mode">Ease conditions</string>
