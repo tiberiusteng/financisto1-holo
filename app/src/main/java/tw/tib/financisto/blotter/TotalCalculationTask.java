@@ -26,11 +26,13 @@ public abstract class TotalCalculationTask extends AsyncTask<Object, Total, Tota
 
 	private final Context context;
 	private final TextView totalText;
+	private final Utils u;
 
 	public TotalCalculationTask(Context context, DatabaseAdapter db, TextView totalText) {
 		this.context = context;
 		this.db = db;
 		this.totalText = totalText;
+		this.u = new Utils(context);
 	}
 
     @Override
@@ -43,7 +45,10 @@ public abstract class TotalCalculationTask extends AsyncTask<Object, Total, Tota
 		}
 	}
 
-    public abstract Total getTotalInHomeCurrency();
+    public Total getTotalInHomeCurrency() {
+		Total[] totals = getTotals();
+		return u.calculateTotalInCurrency(totals, db.getLatestRates(), db.getHomeCurrency());
+	}
 
     public abstract Total[] getTotals();
 

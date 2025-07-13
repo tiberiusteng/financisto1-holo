@@ -313,13 +313,8 @@ public class AccountRecyclerFragment extends AbstractRecyclerViewFragment
         }
 
         @Override
-        public Total getTotalInHomeCurrency() {
-            return db.getAccountsTotalInHomeCurrencyWithFilter(filter);
-        }
-
-        @Override
         public Total[] getTotals() {
-            return new Total[0];
+            return db.getAccountsTotalWithFilter(filter);
         }
 
     }

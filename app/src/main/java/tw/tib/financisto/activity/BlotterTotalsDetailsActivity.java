@@ -9,8 +9,9 @@
 package tw.tib.financisto.activity;
 
 import android.content.Intent;
+import android.util.Log;
+
 import tw.tib.financisto.R;
-import tw.tib.financisto.blotter.*;
 import tw.tib.financisto.blotter.AccountTotalCalculationTask;
 import tw.tib.financisto.blotter.BlotterFilter;
 import tw.tib.financisto.blotter.BlotterTotalCalculationTask;
@@ -24,6 +25,7 @@ import tw.tib.financisto.model.Total;
  * Date: 3/15/12 16:40 PM
  */
 public class BlotterTotalsDetailsActivity extends AbstractTotalsDetailsActivity  {
+    private static final String TAG = "BlotterTotalsDetails";
 
     private volatile TotalCalculationTask totalCalculationTask;
 
@@ -47,16 +49,13 @@ public class BlotterTotalsDetailsActivity extends AbstractTotalsDetailsActivity 
 
     private TotalCalculationTask createTotalCalculationTask(WhereFilter blotterFilter) {
         WhereFilter filter = WhereFilter.copyOf(blotterFilter);
+        Log.d(TAG, "blotterFilter; " + blotterFilter.getSelectionArgs());
         if (filter.getAccountId() > 0) {
             shouldShowHomeCurrencyTotal = false;
             return new AccountTotalCalculationTask(this, db, filter, null);
         } else {
             return new BlotterTotalCalculationTask(this, db, filter, null);
         }
-    }
-
-    protected Total getTotalInHomeCurrency() {
-        return totalCalculationTask.getTotalInHomeCurrency();
     }
 
     protected Total[] getTotals() {

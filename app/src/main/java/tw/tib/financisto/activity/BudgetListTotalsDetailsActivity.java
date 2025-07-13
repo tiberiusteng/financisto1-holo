@@ -41,10 +41,6 @@ public class BudgetListTotalsDetailsActivity extends AbstractTotalsDetailsActivi
         calculator.updateBudgets(null);
     }
 
-    protected Total getTotalInHomeCurrency() {
-        return calculator.calculateTotalInHomeCurrency();
-    }
-
     protected Total[] getTotals() {
         return calculator.calculateTotals();
     }

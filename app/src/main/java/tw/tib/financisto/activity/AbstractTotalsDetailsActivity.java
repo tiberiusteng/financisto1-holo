@@ -94,9 +94,9 @@ public abstract class AbstractTotalsDetailsActivity extends AbstractActivity {
         @Override
         protected TotalsInfo doInBackground(Void... voids) {
             prepareInBackground();
+            homeCurrency = db.getHomeCurrency();
             Total[] totals = getTotals();
-            Total totalInHomeCurrency = getTotalInHomeCurrency();
-            homeCurrency = totalInHomeCurrency.currency;
+            Total totalInHomeCurrency = u.calculateTotalInCurrency(totals, db.getLatestRates(), homeCurrency);
             ExchangeRateProvider rates = db.getLatestRates();
             List<TotalInfo> result = new ArrayList<TotalInfo>();
             for (Total total : totals) {
@@ -162,8 +162,6 @@ public abstract class AbstractTotalsDetailsActivity extends AbstractActivity {
                 sb.append(getString(R.string.rate_info, totalInfo.total.currency.name, nf.format(Math.abs(totalInfo.rate.rate)), homeCurrency.name));
                 v.rate.setText(sb);
 
-                Log.d(TAG, format("totalInfo.rate.rate: %f, totalInfo.total.balance: %d", totalInfo.rate.rate, totalInfo.total.balance));
-
                 u.setAmountText(v.right, homeCurrency, (long) Math.floor(totalInfo.rate.rate * totalInfo.total.balance), false);
             }
         }
@@ -196,8 +194,6 @@ public abstract class AbstractTotalsDetailsActivity extends AbstractActivity {
         }
 
     }
-
-    protected abstract Total getTotalInHomeCurrency();
 
     protected abstract Total[] getTotals();
 

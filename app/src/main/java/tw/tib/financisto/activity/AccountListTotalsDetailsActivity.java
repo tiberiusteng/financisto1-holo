@@ -23,11 +23,6 @@ public class AccountListTotalsDetailsActivity extends AbstractTotalsDetailsActiv
         super(R.string.account_total_in_currency);
     }
 
-    protected Total getTotalInHomeCurrency() {
-        String filter = getIntent().getStringExtra(FILTER);
-        return db.getAccountsTotalInHomeCurrencyWithFilter(filter);
-    }
-
     protected Total[] getTotals() {
         String filter = getIntent().getStringExtra(FILTER);
         return db.getAccountsTotalWithFilter(filter);

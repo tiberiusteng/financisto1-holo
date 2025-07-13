@@ -31,6 +31,9 @@ import tw.tib.financisto.model.Account;
 import tw.tib.financisto.model.AccountType;
 import tw.tib.financisto.model.Currency;
 import tw.tib.financisto.model.Total;
+import tw.tib.financisto.model.TotalError;
+import tw.tib.financisto.rates.ExchangeRate;
+import tw.tib.financisto.rates.ExchangeRateProvider;
 
 import java.math.BigDecimal;
 
@@ -350,5 +353,25 @@ public class Utils {
             accountBalanceText.setVisibility(View.VISIBLE);
         }
         accountText.setText(a.title);
+    }
+
+    public Total calculateTotalInCurrency(Total[] totals, ExchangeRateProvider rates, Currency inCurrency) {
+        BigDecimal total = BigDecimal.ZERO;
+        for (Total item : totals) {
+            if (item.currency.id == inCurrency.id) {
+                total = total.add(BigDecimal.valueOf(item.balance));
+            }
+            else {
+                ExchangeRate rate = rates.getRate(item.currency, inCurrency);
+                if (rate == ExchangeRate.NA) {
+                    return new Total(inCurrency, TotalError.lastRateError(item.currency));
+                } else {
+                    total = total.add(BigDecimal.valueOf(rate.rate * item.balance));
+                }
+            }
+        }
+        Total result = new Total(inCurrency);
+        result.balance = total.longValue();
+        return result;
     }
 }

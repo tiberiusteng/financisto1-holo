@@ -134,7 +134,7 @@ public class TransactionsTotalCalculator {
     }
 
     private static long calculateTotalFromCursor(DatabaseAdapter db, Cursor c, Currency toCurrency) throws UnableToCalculateRateException {
-        ExchangeRateProvider rates = db.getHistoryRates();
+        ExchangeRateProvider rates = db.getLatestRates();
         BigDecimal balance = BigDecimal.ZERO;
         while (c.moveToNext()) {
             balance = balance.add(getAmountFromCursor(db, c, toCurrency, rates, 0));
@@ -153,7 +153,7 @@ public class TransactionsTotalCalculator {
     }
 
     public static long[] calculateTotalFromList(DatabaseAdapter db, List<TransactionInfo> list, Currency toCurrency) throws UnableToCalculateRateException {
-        ExchangeRateProvider rates = db.getHistoryRates();
+        ExchangeRateProvider rates = db.getLatestRates();
         BigDecimal income = BigDecimal.ZERO;
         BigDecimal expenses = BigDecimal.ZERO;
         for (TransactionInfo t : list) {
@@ -217,6 +217,7 @@ public class TransactionsTotalCalculator {
                         onlineExchangeRate.date = datetime;
                         new DatabaseAdapter(context).saveRate(onlineExchangeRate);
                         ((ExchangeRatesCollection) rates).addRate(onlineExchangeRate);
+                        exchangeRate = onlineExchangeRate;
                     }
                     else {
                         new Handler(Looper.getMainLooper()).post(() -> Toast.makeText(context,
