@@ -78,6 +78,30 @@ public class ActivityLayout {
 		return labelView;
 	}
 
+	public static class ForeignTotal {
+		public TextView left;
+		public TextView equal;
+		public TextView right;
+		public TextView rate;
+
+		public ForeignTotal(TextView left, TextView equal, TextView right, TextView rate) {
+			this.left = left;
+			this.equal = equal;
+			this.right = right;
+			this.rate = rate;
+		}
+	}
+
+	public ForeignTotal addInfoNodeForeignTotal(LinearLayout layout, int id, String label) {
+		Builder b = inflater.new Builder(layout, R.layout.select_entry_foreign_total);
+		View v = b.withId(id, listener).create();
+		return new ForeignTotal(
+				v.findViewById(R.id.left),
+				v.findViewById(R.id.equal),
+				v.findViewById(R.id.right),
+				v.findViewById(R.id.rate_info));
+	}
+
 	public TextView addInfoNode(LinearLayout layout, int id, int labelId, int defaultValueResId) {
 		Builder b = inflater.new Builder(layout, R.layout.select_entry_simple);
 		View v = b.withId(id, listener).withLabel(labelId).withData(defaultValueResId).create();
