@@ -67,9 +67,10 @@ public class TransactionsTotalCalculator {
 
     public Total[] getTransactionsBalance() {
         WhereFilter filter = this.filter;
-        if (filter.getAccountId() == -1) {
+        if (filter.getAccountId() == -1 && filter.get(WhereFilter.TAG_AS_IS) == null) {
             filter = excludeAccountsNotIncludedInTotalsAndSplits(filter);
         }
+        filter.remove(WhereFilter.TAG_AS_IS);
         try (Cursor c = db.db().query(DatabaseHelper.V_BLOTTER_FOR_ACCOUNT_WITH_SPLITS, BALANCE_PROJECTION,
                 filter.getSelection(), filter.getSelectionArgs(),
                 BALANCE_GROUPBY, null, null)) {
@@ -83,7 +84,7 @@ public class TransactionsTotalCalculator {
                 total.balance = balance;
                 totals.add(total);
             }
-            return totals.toArray(new Total[totals.size()]);
+            return totals.toArray(new Total[0]);
         }
     }
 

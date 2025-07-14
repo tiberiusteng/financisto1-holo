@@ -480,7 +480,7 @@ public class BlotterFragment extends AbstractListFragment<Cursor> implements Blo
         }, getViewLifecycleOwner(), Lifecycle.State.RESUMED);
     }
 
-    private void showTotals() {
+    protected void showTotals() {
         Intent intent = new Intent(getContext(), BlotterTotalsDetailsActivity.class);
         blotterFilter.toIntent(intent);
         startActivityForResult(intent, -1);

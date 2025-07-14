@@ -1607,8 +1607,8 @@ public class DatabaseAdapter extends MyEntityManager {
     private static final String[] SUM_FROM_AMOUNT = new String[]{"sum(from_amount)"};
 
     public long fetchBudgetBalance(Map<Long, Category> categories, Map<Long, Project> projects, Budget b) {
-        String where = Budget.createWhere(b, categories, projects);
-        Cursor c = db().query(DatabaseHelper.V_BLOTTER_FOR_ACCOUNT_WITH_SPLITS, SUM_FROM_AMOUNT, where, null, null, null, null);
+        WhereFilter filter = Budget.createWhereFilter(b, categories, projects);
+        Cursor c = db().query(DatabaseHelper.V_BLOTTER_FOR_ACCOUNT_WITH_SPLITS, SUM_FROM_AMOUNT, filter.getSelection(), filter.getSelectionArgs(), null, null, null);
         try {
             if (c.moveToNext()) {
                 return c.getLong(0);

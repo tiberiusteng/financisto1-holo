@@ -11,6 +11,7 @@
 package tw.tib.financisto.activity;
 
 import android.annotation.SuppressLint;
+import android.content.Intent;
 import android.database.Cursor;
 import android.os.Bundle;
 import android.os.Handler;
@@ -67,8 +68,18 @@ public class BudgetBlotterFragment extends BlotterFragment {
 
     private Cursor getBlotterForBudget(long budgetId) {
         Budget b = db.load(Budget.class, budgetId);
-        String where = Budget.createWhere(b, categories, projects);
-        return db.getBlotterWithSplits(where);
+        WhereFilter filter = Budget.createWhereFilter(b, categories, projects);
+        return db.getBlotterForAccountWithSplits(filter);
+    }
+
+    @Override
+    protected void showTotals() {
+        Budget b = db.load(Budget.class, blotterFilter.getBudgetId());
+        Intent intent = new Intent(getContext(), BlotterTotalsDetailsActivity.class);
+        WhereFilter budgetFilter = Budget.createWhereFilter(b, categories, projects);
+        budgetFilter.eq(WhereFilter.TAG_AS_IS, "1");
+        budgetFilter.toIntent(intent);
+        startActivityForResult(intent, -1);
     }
 
     @Override

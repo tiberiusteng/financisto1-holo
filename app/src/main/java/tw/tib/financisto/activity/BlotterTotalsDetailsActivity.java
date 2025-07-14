@@ -50,7 +50,7 @@ public class BlotterTotalsDetailsActivity extends AbstractTotalsDetailsActivity 
     private TotalCalculationTask createTotalCalculationTask(WhereFilter blotterFilter) {
         WhereFilter filter = WhereFilter.copyOf(blotterFilter);
         Log.d(TAG, "blotterFilter; " + blotterFilter.getSelectionArgs());
-        if (filter.getAccountId() > 0) {
+        if (filter.getAccountId() > 0 && filter.get(WhereFilter.TAG_AS_IS) == null) {
             shouldShowHomeCurrencyTotal = false;
             return new AccountTotalCalculationTask(this, db, filter, null);
         } else {

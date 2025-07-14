@@ -44,6 +44,8 @@ public class WhereFilter {
 	public static final String FILTER_CRITERIA_PREF = "filterCriteria";
 	public static final String FILTER_SORT_ORDER_PREF = "filterSortOrder";
 
+	public static final String TAG_AS_IS = "__tag_as_is"; // signal Total Details activity to not filter excluded transactions
+
 	private final String title;
 	private final LinkedList<Criteria> criterias = new LinkedList<>();
 	private final LinkedList<String> sorts = new LinkedList<>();

@@ -11,10 +11,14 @@
 package tw.tib.financisto.model;
 
 import tw.tib.financisto.blotter.BlotterFilter;
+import tw.tib.financisto.filter.Criteria;
+import tw.tib.financisto.filter.WhereFilter;
 import tw.tib.financisto.utils.RecurUtils;
 import tw.tib.financisto.utils.Utils;
 
 import javax.persistence.*;
+
+import java.util.LinkedList;
 import java.util.Map;
 
 @Entity
@@ -94,91 +98,79 @@ public class Budget {
 	public RecurUtils.Recur getRecur() {
 		return RecurUtils.createFromExtraString(recur);
 	}
-	
-	public static String createWhere(Budget b, Map<Long, Category> categories, Map<Long, Project> projects) {
-		StringBuilder sb = new StringBuilder();
+
+	public static WhereFilter createWhereFilter(Budget b, Map<Long, Category> categories, Map<Long, Project> projects) {
+		WhereFilter filter = new WhereFilter(b.title);
+
 		// currency
-        if (b.currency != null) {
-		    sb.append(BlotterFilter.FROM_ACCOUNT_CURRENCY_ID).append("=").append(b.currency.id);
-        } else if (b.account != null) {
-            sb.append(BlotterFilter.FROM_ACCOUNT_ID).append("=").append(b.account.id);
-        } else {
-            sb.append(" 1=1 ");
-        }
+		if (b.currency != null) {
+			filter.eq(BlotterFilter.FROM_ACCOUNT_CURRENCY_ID, Long.toString(b.currency.id));
+		} else if (b.account != null) {
+			filter.eq(BlotterFilter.FROM_ACCOUNT_ID, Long.toString(b.account.id));
+		}
+
 		// categories & projects
-		String categoriesWhere = createCategoriesWhere(b, categories);
-		boolean hasCategories = Utils.isNotEmpty(categoriesWhere);
-		String projectWhere = createProjectsWhere(b, projects);
-		boolean hasProjects = Utils.isNotEmpty(projectWhere);
-		if (hasCategories && hasProjects) {
-			sb.append(" AND ((").append(categoriesWhere).append(") ");
-			sb.append(b.expanded ? "OR" : "AND");
-			sb.append(" (").append(projectWhere).append("))");
-		} else if (hasCategories) {
-			sb.append(" AND (").append(categoriesWhere).append(")");
-		} else if (hasProjects) {
-			sb.append(" AND (").append(projectWhere).append(")");
-		}
-		// start date
-		if (b.startDate > 0) {
-			sb.append(" AND ").append(BlotterFilter.DATETIME).append(">=").append(b.startDate);
-		}
-		// end date
-		if (b.endDate > 0) {
-			sb.append(" AND ").append(BlotterFilter.DATETIME).append("<=").append(b.endDate);
-		}
-		if (!b.includeCredit) {
-			sb.append(" AND from_amount<0");
-		}
-		return sb.toString();
-	}
-
-	private static String createCategoriesWhere(Budget b, Map<Long, Category> categories) {
 		long[] ids = MyEntity.splitIds(b.categories);
+		LinkedList<Criteria> categoryCriterion = new LinkedList<>();
 		if (ids != null) {
-			StringBuilder sb = new StringBuilder();
-			boolean f = false;
 			for (long id : ids) {
-				Category c = categories.get(id);
-				if (c != null) {
-					if (f) {
-						sb.append(" OR ");
-					}
-					if (b.includeSubcategories) {
-						sb.append("(").append(BlotterFilter.CATEGORY_LEFT).append(" BETWEEN ").append(c.left).append(" AND ").append(c.right).append(")");
-					} else {
-						sb.append(BlotterFilter.CATEGORY_ID).append("=").append(c.id);
-					}
-					f = true;
+				if (b.includeSubcategories) {
+					Category c = categories.get(id);
+					categoryCriterion.add(Criteria.btw(BlotterFilter.CATEGORY_LEFT, Integer.toString(c.left), Integer.toString(c.right)));
+				} else {
+					categoryCriterion.add(Criteria.eq(BlotterFilter.CATEGORY_ID, Long.toString(id)));
 				}
 			}
-			if (f) {
-				return sb.toString();
-			}
 		}
-		return null;
-	}
+		Criteria categoryCriteria = null;
+		if (!categoryCriterion.isEmpty()) {
+			categoryCriteria = Criteria.or(categoryCriterion.toArray(new Criteria[0]));
+		}
 
-	private static String createProjectsWhere(Budget b, Map<Long, Project> projects) {
-		long[] ids = MyEntity.splitIds(b.projects);
+		ids = MyEntity.splitIds(b.projects);
+		LinkedList<Criteria> projectCriterion = new LinkedList<>();
 		if (ids != null) {
-			StringBuilder sb = new StringBuilder();
-			boolean f = false;
 			for (long id : ids) {
-				Project p = projects.get(id);
-				if (p != null) {
-					if (f) {
-						sb.append(" OR ");
-					}
-					sb.append(BlotterFilter.PROJECT_ID).append("=").append(p.id);
-					f = true;
-				}
-			}
-			if (f) {
-				return sb.toString();
+				projectCriterion.add(Criteria.eq(BlotterFilter.PROJECT_ID, Long.toString(id)));
 			}
 		}
-		return null;
+		Criteria projectCriteria = null;
+		if (!projectCriterion.isEmpty()) {
+			projectCriteria = Criteria.or(projectCriterion.toArray(new Criteria[0]));
+		}
+
+		if (categoryCriteria != null && projectCriteria != null) {
+			if (b.expanded) {
+				filter.put(Criteria.or(categoryCriteria, projectCriteria));
+			}
+			else {
+				filter.put(Criteria.and(categoryCriteria, projectCriteria));
+			}
+		}
+		else if (categoryCriteria != null) {
+			filter.put(categoryCriteria);
+		}
+		else if (projectCriteria != null) {
+			filter.put(projectCriteria);
+		}
+
+		// start date, end date
+		if (b.startDate > 0 && b.endDate > 0) {
+			filter.put(Criteria.and(
+					Criteria.gte(BlotterFilter.DATETIME, Long.toString(b.startDate)),
+					Criteria.lte(BlotterFilter.DATETIME, Long.toString(b.endDate))
+			));
+		} else if (b.startDate > 0) {
+			filter.gte(BlotterFilter.DATETIME, Long.toString(b.startDate));
+		} else if (b.endDate > 0) {
+			filter.lte(BlotterFilter.DATETIME, Long.toString(b.endDate));
+		}
+
+		if (!b.includeCredit) {
+			filter.lt(BlotterFilter.FROM_AMOUNT, "0");
+		}
+
+		return filter;
 	}
 
     public Currency getBudgetCurrency() {
