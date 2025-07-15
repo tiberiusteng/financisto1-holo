@@ -312,7 +312,7 @@ public abstract class FilterAbstractActivity extends AbstractActivity implements
 				filter.put(Criteria.btw(BlotterFilter.CATEGORY_LEFT, categories));
 			}
 			else {
-				filter.put(Criteria.eq(BlotterFilter.CATEGORY_ID, "0"));
+				clearCategory();
 			}
 		} else {
 			if (cat.id > 0) {
