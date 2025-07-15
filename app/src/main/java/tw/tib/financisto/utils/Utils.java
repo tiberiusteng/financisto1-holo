@@ -16,6 +16,7 @@ import android.content.pm.PackageManager;
 import android.content.pm.PackageManager.NameNotFoundException;
 import android.content.res.Resources;
 import android.database.Cursor;
+import android.graphics.BlurMaskFilter;
 import android.graphics.drawable.Drawable;
 import android.location.Location;
 import android.text.Spannable;
@@ -373,5 +374,11 @@ public class Utils {
         Total result = new Total(inCurrency);
         result.balance = total.longValue();
         return result;
+    }
+
+    public static void applyBlur(TextView textView) {
+        float radius = textView.getTextSize() / 3.0f;
+        BlurMaskFilter filter = new BlurMaskFilter(radius, BlurMaskFilter.Blur.NORMAL);
+        textView.getPaint().setMaskFilter(filter);
     }
 }

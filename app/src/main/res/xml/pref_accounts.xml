@@ -21,6 +21,12 @@
         android:title="@string/sort_accounts" />
     <SwitchPreferenceCompat
         android:defaultValue="false"
+        android:key="blur_balances"
+        android:summary="@string/blur_balances_summary"
+        android:title="@string/blur_balances" />
+        />
+    <SwitchPreferenceCompat
+        android:defaultValue="false"
         android:key="hide_closed_accounts"
         android:summary="@string/hide_closed_accounts_summary"
         android:title="@string/hide_closed_accounts" />

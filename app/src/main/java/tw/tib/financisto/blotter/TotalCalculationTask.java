@@ -16,6 +16,7 @@ import tw.tib.financisto.R;
 import tw.tib.financisto.db.DatabaseAdapter;
 import tw.tib.financisto.model.Currency;
 import tw.tib.financisto.model.Total;
+import tw.tib.financisto.utils.MyPreferences;
 import tw.tib.financisto.utils.Utils;
 
 public abstract class TotalCalculationTask extends AsyncTask<Object, Total, Total> {
@@ -62,6 +63,14 @@ public abstract class TotalCalculationTask extends AsyncTask<Object, Total, Tota
             }
             Utils u = new Utils(context);
     	    u.setTotal(totalText, result);
+			if (MyPreferences.isBlurBalances(context)) {
+				u.applyBlur(totalText);
+				totalText.invalidate();
+			}
+			else {
+				totalText.getPaint().setMaskFilter(null);
+				totalText.invalidate();
+			}
 		}
 	}
 	

@@ -72,6 +72,7 @@ import tw.tib.financisto.utils.IntegrityCheckRunningBalance;
 import tw.tib.financisto.utils.MenuItemInfo;
 import tw.tib.financisto.utils.MyPreferences;
 import tw.tib.financisto.utils.PinProtection;
+import tw.tib.financisto.utils.Utils;
 import tw.tib.financisto.view.NodeInflater;
 
 public class BlotterFragment extends AbstractListFragment<Cursor> implements BlotterOperations.BlotterOperationsCallback {
@@ -85,6 +86,7 @@ public class BlotterFragment extends AbstractListFragment<Cursor> implements Blo
     private static final int NEW_TRANSACTION_FROM_TEMPLATE_REQUEST = 5;
     private static final int MONTHLY_VIEW_REQUEST = 6;
     private static final int BILL_PREVIEW_REQUEST = 7;
+    private static final int SHOW_TOTALS_REQUEST = 8;
 
     protected static final int FILTER_REQUEST = 6;
     private static final int MENU_DUPLICATE = MENU_ADD + 1;
@@ -263,7 +265,23 @@ public class BlotterFragment extends AbstractListFragment<Cursor> implements Blo
 
         totalText = view.findViewById(R.id.total);
         if (totalText != null) {
-            totalText.setOnClickListener(v -> showTotals());
+            totalText.setOnClickListener((v) -> {
+                if (MyPreferences.isBlurBalances(getContext())) {
+                    if (totalText.getPaint().getMaskFilter() != null) {
+                        totalText.getPaint().setMaskFilter(null);
+                        totalText.invalidate();
+                    } else {
+                        Utils.applyBlur(getView().findViewById(R.id.total));
+                    }
+                }
+                else {
+                    showTotals();
+                }
+            });
+            totalText.setOnLongClickListener((v) -> {
+                showTotals();
+                return true;
+            });
         }
 
         emptyText = view.findViewById(android.R.id.empty);
@@ -483,7 +501,7 @@ public class BlotterFragment extends AbstractListFragment<Cursor> implements Blo
     protected void showTotals() {
         Intent intent = new Intent(getContext(), BlotterTotalsDetailsActivity.class);
         blotterFilter.toIntent(intent);
-        startActivityForResult(intent, -1);
+        startActivityForResult(intent, SHOW_TOTALS_REQUEST);
     }
 
     protected void prepareTransactionActionGrid() {

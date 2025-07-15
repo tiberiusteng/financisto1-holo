@@ -72,13 +72,14 @@
         xmlns:app="http://schemas.android.com/apk/res-auto">
 
         <LinearLayout
+            android:id="@+id/center_touch"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:orientation="vertical"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"
             app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toStartOf="@id/right_center">
+            app:layout_constraintEnd_toStartOf="@id/balance_touch">
 
             <TextView android:id="@+id/top"
                 android:text="top"
@@ -108,28 +109,38 @@
 
         </LinearLayout>
 
-    <TextView
-        android:id="@+id/right_center"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="right_center"
-        android:singleLine="true"
-        android:textAppearance="@style/ListPrimary"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintBottom_toBottomOf="parent" />
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:layout_height="wrap_content"
+            android:layout_width="0dp"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            android:focusable="true"
+            android:clickable="true"
+            android:id="@+id/balance_touch">
+            <TextView
+                android:id="@+id/right_center"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="right_center"
+                android:singleLine="true"
+                android:textAppearance="@style/ListPrimary"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintBottom_toBottomOf="parent" />
 
-    <TextView
-        android:id="@+id/right"
-        style="@style/TextAppearance.BalanceAmount"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:singleLine="true"
-        android:text="right"
-        android:layout_marginTop="-1sp"
-        android:layout_marginBottom="2sp"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/right_center" />
+            <TextView
+                android:id="@+id/right"
+                style="@style/TextAppearance.BalanceAmount"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:singleLine="true"
+                android:text="right"
+                android:layout_marginTop="-1sp"
+                android:layout_marginBottom="2sp"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/right_center" />
+        </androidx.constraintlayout.widget.ConstraintLayout>
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 

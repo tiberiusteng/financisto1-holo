@@ -52,6 +52,7 @@ import tw.tib.financisto.utils.IntegrityCheckAutobackup;
 import tw.tib.financisto.utils.MenuItemInfo;
 import tw.tib.financisto.utils.MyPreferences;
 import tw.tib.financisto.utils.PinProtection;
+import tw.tib.financisto.utils.Utils;
 import tw.tib.financisto.view.NodeInflater;
 
 public class AccountRecyclerFragment extends AbstractRecyclerViewFragment
@@ -66,6 +67,7 @@ public class AccountRecyclerFragment extends AbstractRecyclerViewFragment
     public static final int EDIT_ACCOUNT_REQUEST = 2;
     private static final int VIEW_ACCOUNT_REQUEST = 3;
     private static final int PURGE_ACCOUNT_REQUEST = 4;
+    private static final int SHOW_TOTALS_REQUEST = 5;
 
     private QuickActionWidget accountActionGrid;
     private TextView emptyText;
@@ -290,7 +292,24 @@ public class AccountRecyclerFragment extends AbstractRecyclerViewFragment
             totalCalculationTask.cancel(true);
         }
         TextView totalText = getView().findViewById(R.id.total);
-        totalText.setOnClickListener(view -> showTotals());
+        totalText.setOnClickListener((view) -> {
+            if (MyPreferences.isBlurBalances(getContext())) {
+                if (totalText.getPaint().getMaskFilter() != null) {
+                    totalText.getPaint().setMaskFilter(null);
+                    totalText.invalidate();
+                }
+                else {
+                    Utils.applyBlur(getView().findViewById(R.id.total));
+                }
+            }
+            else {
+                showTotals();
+            }
+        });
+        totalText.setOnLongClickListener((view) -> {
+            showTotals();
+            return true;
+        });
         totalCalculationTask = new AccountTotalsCalculationTask(getContext(), db, totalText, filter);
         totalCalculationTask.execute();
     }
@@ -298,7 +317,7 @@ public class AccountRecyclerFragment extends AbstractRecyclerViewFragment
     private void showTotals() {
         Intent intent = new Intent(getContext(), AccountListTotalsDetailsActivity.class);
         intent.putExtra(AccountListTotalsDetailsActivity.FILTER, filter);
-        startActivityForResult(intent, -1);
+        startActivityForResult(intent, SHOW_TOTALS_REQUEST);
     }
 
     public static class AccountTotalsCalculationTask extends TotalCalculationTask {

@@ -215,6 +215,8 @@
   <string name="user_interface">使用者界面</string>
   <string name="sort_accounts">帳戶排序</string>
   <string name="sort_accounts_summary">定義帳戶列表的排列順序 (需要重新啟動)</string>
+  <string name="blur_balances">模糊餘額</string>
+  <string name="blur_balances_summary">點按後才清晰顯示餘額 (長按帳戶列表與明細畫面的總額以顯示各幣值小計)</string>
   <string name="sort_locations">地點排序</string>
   <string name="sort_locations_summary">定義地點列表的排列順序</string>
   <string name="more_products">更多商品…</string>

@@ -324,7 +324,7 @@ public class PreferenceFragment extends PreferenceFragmentCompat {
 
         var actionBar = ((AppCompatActivity) getActivity()).getSupportActionBar();
         actionBar.setTitle(R.string.preferences);
-        actionBar.setDisplayHomeAsUpEnabled(false);
+        actionBar.setDisplayHomeAsUpEnabled(true);
     }
 
     @Override
