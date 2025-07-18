@@ -215,7 +215,9 @@ abstract public class AbstractRecyclerViewFragment<VH extends RecyclerView.ViewH
     public void onLoadFinished(@NonNull Loader<Cursor> loader, Cursor data) {
         adapter = createAdapter(data);
         long t1 = System.nanoTime();
+        var scrollState = recyclerView.getLayoutManager().onSaveInstanceState();
         recyclerView.setAdapter(adapter);
+        recyclerView.getLayoutManager().onRestoreInstanceState(scrollState);
         long t2 = System.nanoTime();
 
         if (data.getCount() == 0) {
