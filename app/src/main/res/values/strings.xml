@@ -308,6 +308,8 @@
     <string name="duplicate">Duplicate</string>
     <string name="duplicate_keep_time">Duplicate keep time</string>
     <string name="duplicate_keep_date_time">Duplicate keep date/time</string>
+    <string name="change_to_transfer">Convert to Transfer</string>
+    <string name="change_to_transaction">Convert to Transaction</string>
     <string name="select_from_account">Please select from account…</string>
     <string name="select_to_account">Please select to account…</string>
     <string name="update_balance">Update balance</string>

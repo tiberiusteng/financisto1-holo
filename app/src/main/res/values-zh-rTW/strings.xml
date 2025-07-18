@@ -258,6 +258,8 @@
   <string name="duplicate">複製</string>
   <string name="duplicate_keep_time">複製保留時間</string>
   <string name="duplicate_keep_date_time">複製保留日期時間</string>
+  <string name="change_to_transfer">改成轉帳</string>
+  <string name="change_to_transaction">改成交易</string>
   <string name="select_from_account">請選擇來源帳戶…</string>
   <string name="select_to_account">請選擇目標帳戶…</string>
   <string name="update_balance">調整餘額</string>
@@ -658,8 +660,16 @@
   <string name="use_header_from_file">使用檔案的欄位名稱</string>
   <string name="info">資訊</string>
   <string name="balance">餘額</string>
+  <string name="show_is_ccard_payment">信用卡付款欄位</string>
+  <string name="show_is_ccard_payment_summary">在交易畫面顯示信用卡付款欄位 (勾選的交易不會列入帳單金額)</string>
   <string name="show_category_in_transfer">轉帳分類</string>
-  <string name="show_category_in_transfer_summary">在新轉帳畫面顯示分類選單</string>
+  <string name="show_category_in_transfer_summary">在轉帳畫面顯示分類欄位</string>
+  <string name="show_payee_in_transfer">轉帳受款人</string>
+  <string name="show_payee_in_transfer_summary">在轉帳畫面顯示受款人欄位</string>
+  <string name="open_calculator_for_template_transactions">打開計算機</string>
+  <string name="open_calculator_for_template_transactions_summary">以模板建立交易後直接打開計算機輸入金額</string>
+  <string name="set_focus_on_amount_field">直接選擇金額欄位</string>
+  <string name="set_focus_on_amount_field_summary">新增/編輯交易時直接選擇金額欄位</string>
   <string name="auto_backup">自動備份</string>
   <string name="auto_backup_enabled">啟用自動備份</string>
   <string name="auto_backup_enabled_summary">每日在指定時間備份資料庫</string>

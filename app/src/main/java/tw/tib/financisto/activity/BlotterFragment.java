@@ -74,6 +74,7 @@ import tw.tib.financisto.utils.MyPreferences;
 import tw.tib.financisto.utils.PinProtection;
 import tw.tib.financisto.utils.Utils;
 import tw.tib.financisto.view.NodeInflater;
+import tw.tib.orb.EntityManager;
 
 public class BlotterFragment extends AbstractListFragment<Cursor> implements BlotterOperations.BlotterOperationsCallback {
     private static final String TAG = "BlotterFragment";
@@ -92,6 +93,8 @@ public class BlotterFragment extends AbstractListFragment<Cursor> implements Blo
     private static final int MENU_DUPLICATE = MENU_ADD + 1;
     private static final int MENU_SAVE_AS_TEMPLATE = MENU_ADD + 2;
     private static final int MENU_SHOW_IN_ACCOUNT_BLOTTER = MENU_ADD + 3;
+    private static final int MENU_CHANGE_TO_TRANSACTION = MENU_ADD + 4;
+    private static final int MENU_CHANGE_TO_TRANSFER = MENU_ADD + 5;
 
     protected TextView totalText;
     protected TextView emptyText;
@@ -639,12 +642,22 @@ public class BlotterFragment extends AbstractListFragment<Cursor> implements Blo
             menus.add(new MenuItemInfo(MENU_DUPLICATE, R.string.duplicate));
             menus.add(new MenuItemInfo(MENU_SAVE_AS_TEMPLATE, R.string.save_as_template));
             menus.add(new MenuItemInfo(MENU_SHOW_IN_ACCOUNT_BLOTTER, R.string.transaction_show_in_account_blotter));
+            Transaction t = db.getTransaction(id);
+            if (t.isTransfer()) {
+                menus.add(new MenuItemInfo(MENU_CHANGE_TO_TRANSACTION, R.string.change_to_transaction));
+            }
+            else {
+                menus.add(new MenuItemInfo(MENU_CHANGE_TO_TRANSFER, R.string.change_to_transfer));
+            }
             return menus;
         }
     }
 
     @Override
     public boolean onPopupItemSelected(int itemId, View view, int position, long id) {
+        Transaction t;
+        Account a;
+
         if (!super.onPopupItemSelected(itemId, view, position, id)) {
             switch (itemId) {
                 case MENU_DUPLICATE:
@@ -655,14 +668,57 @@ public class BlotterFragment extends AbstractListFragment<Cursor> implements Blo
                     Toast.makeText(getContext(), R.string.save_as_template_success, Toast.LENGTH_SHORT).show();
                     return true;
                 case MENU_SHOW_IN_ACCOUNT_BLOTTER:
-                    Transaction t = db.getTransaction(id);
-                    Account a = db.getAccount(t.fromAccountId);
+                    t = db.getTransaction(id);
+                    a = db.getAccount(t.fromAccountId);
                     Intent intent = new Intent(getContext(), BlotterActivity.class);
                     Criteria.eq(BlotterFilter.FROM_ACCOUNT_ID, String.valueOf(a.id))
                             .toIntent(a.title, intent);
                     intent.putExtra(BlotterFilterActivity.IS_ACCOUNT_FILTER, true);
                     intent.putExtra(GO_TO_TRANSACTION, id);
                     startActivity(intent);
+                    return true;
+                case MENU_CHANGE_TO_TRANSACTION:
+                case MENU_CHANGE_TO_TRANSFER:
+                    t = db.getTransaction(id);
+                    if (t.isTransfer()) {
+                        t.toAccountId = 0;
+                        t.toAmount = 0;
+                    }
+                    else {
+                        a = db.getAccount(t.fromAccountId);
+                        // if the transaction's account had transfer to other account,
+                        // use the last used transfer target
+                        if (a.lastAccountId != 0) {
+                            t.toAccountId = a.lastAccountId;
+                        }
+                        // try to get a different account with same currency
+                        else {
+                            try (Cursor c = db.getAllActiveAccounts()) {
+                                while (c.moveToNext()) {
+                                    Account toAccount = EntityManager.loadFromCursor(c, Account.class);
+                                    if (toAccount.id != a.id && toAccount.currency.id == a.currency.id) {
+                                        t.toAccountId = toAccount.id;
+                                        break;
+                                    }
+                                }
+                            }
+                            // give up
+                            if (t.toAccountId == 0) {
+                                Toast.makeText(getContext(), R.string.select_to_account_differ_from_to_account,
+                                        Toast.LENGTH_SHORT).show();
+                                return true;
+                            }
+                        }
+                        t.toAmount = -t.fromAmount;
+                        if (!MyPreferences.isShowPayeeInTransfers(getContext())) {
+                            t.payeeId = 0;
+                        }
+                        if (!MyPreferences.isShowCategoryInTransferScreen(getContext())) {
+                            t.categoryId = 0;
+                        }
+                    }
+                    db.insertOrUpdate(t);
+                    recreateCursor();
                     return true;
             }
         }
