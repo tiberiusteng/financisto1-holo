@@ -18,7 +18,6 @@ import android.content.AsyncTaskLoader;
 import android.content.Loader;
 import android.content.Intent;
 import android.os.Bundle;
-import android.os.Parcelable;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -42,6 +41,7 @@ import tw.tib.financisto.utils.PinProtection;
 public abstract class AbstractListActivity<D> extends ListActivity
 		implements RefreshSupportedActivity, LoaderManager.LoaderCallbacks<D>
 {
+	private static final String TAG = "AbsListActivity";
 
 	protected static final int MENU_VIEW = Menu.FIRST + 1;
 	protected static final int MENU_EDIT = Menu.FIRST + 2;
@@ -54,8 +54,6 @@ public abstract class AbstractListActivity<D> extends ListActivity
 	protected ListAdapter adapter;
 	protected DatabaseAdapter db;
 	protected ImageButton bAdd;
-
-	protected Parcelable listViewState;
 
 	protected boolean enablePin = true;
 
@@ -171,7 +169,6 @@ public abstract class AbstractListActivity<D> extends ListActivity
 
 	public void recreateCursor() {
 		Log.i(getClass().getSimpleName(), "Recreating cursor");
-		listViewState = getListView().onSaveInstanceState();
 		getLoaderManager().restartLoader(0, null, this);
 	}
 
@@ -215,16 +212,13 @@ public abstract class AbstractListActivity<D> extends ListActivity
 	public void onLoadFinished(@NonNull Loader<D> loader, D data) {
 		// This will always be called from the process's main thread.
 		adapter = createAdapter(data);
-		long t1 = System.currentTimeMillis();
+		long t1 = System.nanoTime();
+		var listViewState = getListView().onSaveInstanceState();
 		setListAdapter(adapter);
-		long t2 = System.currentTimeMillis();
-		Log.d(this.getClass().getCanonicalName(), "setListAdapter: " + (t2 - t1));
-
-		if (listViewState != null) {
-			getListView().onRestoreInstanceState(listViewState);
-			Log.d(this.getClass().getCanonicalName(), "getListView().onRestoreInstanceState: " + (System.currentTimeMillis() - t2));
-			listViewState = null;
-		}
+		long t2 = System.nanoTime();
+		Log.d(TAG, "setListAdapter: " + (t2 - t1) / 1000 + " us");
+		getListView().onRestoreInstanceState(listViewState);
+		Log.d(TAG, "getListView().onRestoreInstanceState: " + (System.nanoTime() - t2) / 1000 + " us");
 	}
 
 	@Override
