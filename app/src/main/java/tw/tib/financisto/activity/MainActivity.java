@@ -41,9 +41,9 @@ public class MainActivity extends AppCompatActivity {
     private static final String TAG = "MainActivity";
 
     private GreenRobotBus greenRobotBus;
-    private Fragment fragments[];
     HashMap<String, TabLayout.Tab> tabs;
     private TabLayout tabLayout;
+    private ViewPager2 viewPager;
 
     @Override
     protected void attachBaseContext(Context base) {
@@ -74,29 +74,29 @@ public class MainActivity extends AppCompatActivity {
         });
 
         tabLayout = findViewById(R.id.tabs);
-        ViewPager2 viewPager = findViewById(R.id.viewpager);
+        viewPager = findViewById(R.id.viewpager);
 
         viewPager.setUserInputEnabled(false);
 
-        fragments = new Fragment[]{
-                new AccountRecyclerFragment(),
-                new BlotterFragment(true),
-                new BudgetListFragment(),
-                new ReportsListFragment(),
-                new MenuListFragment_()
-        };
         tabs = new HashMap<>();
 
         viewPager.setAdapter(new FragmentStateAdapter(this) {
             @NonNull
             @Override
-            public Fragment createFragment(int position) {
-                return fragments[position];
+            public Fragment createFragment(int position)
+            {
+                switch (position) {
+                    case 0: return new AccountRecyclerFragment();
+                    case 1: return new BlotterFragment(true);
+                    case 2: return new BudgetListFragment();
+                    case 3: return new ReportsListFragment();
+                    default: return new MenuListFragment_();
+                }
             }
 
             @Override
             public int getItemCount() {
-                return fragments.length;
+                return 5;
             }
         });
 
@@ -201,8 +201,8 @@ public class MainActivity extends AppCompatActivity {
     }
 
     public void refreshCurrentTab() {
-        if (fragments[tabLayout.getSelectedTabPosition()] instanceof RefreshSupportedActivity) {
-            Fragment f = fragments[tabLayout.getSelectedTabPosition()];
+        Fragment f = getSupportFragmentManager().findFragmentByTag("f" + viewPager.getCurrentItem());
+        if (f instanceof RefreshSupportedActivity) {
             if (f.isAdded()) {
                 RefreshSupportedActivity r = (RefreshSupportedActivity) f;
                 r.recreateCursor();
