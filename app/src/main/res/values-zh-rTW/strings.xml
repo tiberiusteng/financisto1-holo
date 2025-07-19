@@ -260,6 +260,7 @@
   <string name="duplicate_keep_date_time">複製保留日期時間</string>
   <string name="change_to_transfer">改成轉帳</string>
   <string name="change_to_transaction">改成交易</string>
+  <string name="no_suitable_account_for_transfer">沒有可以轉帳的帳戶…</string>
   <string name="select_from_account">請選擇來源帳戶…</string>
   <string name="select_to_account">請選擇目標帳戶…</string>
   <string name="update_balance">調整餘額</string>

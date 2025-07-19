@@ -37,6 +37,7 @@ import tw.tib.financisto.rates.ExchangeRate;
 import tw.tib.financisto.rates.ExchangeRateProvider;
 
 import java.math.BigDecimal;
+import java.math.RoundingMode;
 
 public class Utils {
 
@@ -380,5 +381,28 @@ public class Utils {
         float radius = textView.getTextSize() / 3.0f;
         BlurMaskFilter filter = new BlurMaskFilter(radius, BlurMaskFilter.Blur.NORMAL);
         textView.getPaint().setMaskFilter(filter);
+    }
+
+    public static long roundAmount(Context context, Currency currency, long amount) {
+        if (MyPreferences.isRoundUpAmount(context) && currency != null) {
+            long sign, absAmount;
+            if (amount < 0) {
+                sign = -1;
+                absAmount = amount * -1;
+            }
+            else {
+                sign = 1;
+                absAmount = amount;
+            }
+            BigDecimal bd = new BigDecimal(absAmount).setScale(2, RoundingMode.UNNECESSARY);
+            BigDecimal hundred = new BigDecimal(100);
+
+            bd = bd.divide(hundred, RoundingMode.UNNECESSARY);
+            bd = bd.setScale(currency.decimals, RoundingMode.HALF_UP);
+            bd = bd.multiply(hundred);
+
+            return bd.longValue() * sign;
+        }
+        return amount;
     }
 }

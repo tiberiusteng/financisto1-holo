@@ -660,7 +660,7 @@ public class BlotterFragment extends AbstractListFragment<Cursor> implements Blo
     @Override
     public boolean onPopupItemSelected(int itemId, View view, int position, long id) {
         Transaction t;
-        Account a, toAccount = null;
+        Account fromAccount, toAccount = null;
 
         if (!super.onPopupItemSelected(itemId, view, position, id)) {
             switch (itemId) {
@@ -673,10 +673,10 @@ public class BlotterFragment extends AbstractListFragment<Cursor> implements Blo
                     return true;
                 case MENU_SHOW_IN_ACCOUNT_BLOTTER:
                     t = db.getTransaction(id);
-                    a = db.getAccount(t.fromAccountId);
+                    fromAccount = db.getAccount(t.fromAccountId);
                     Intent intent = new Intent(getContext(), BlotterActivity.class);
-                    Criteria.eq(BlotterFilter.FROM_ACCOUNT_ID, String.valueOf(a.id))
-                            .toIntent(a.title, intent);
+                    Criteria.eq(BlotterFilter.FROM_ACCOUNT_ID, String.valueOf(fromAccount.id))
+                            .toIntent(fromAccount.title, intent);
                     intent.putExtra(BlotterFilterActivity.IS_ACCOUNT_FILTER, true);
                     intent.putExtra(GO_TO_TRANSACTION, id);
                     startActivity(intent);
@@ -689,6 +689,7 @@ public class BlotterFragment extends AbstractListFragment<Cursor> implements Blo
                     // stay at the same account
                     long blotterAccountId = blotterFilter.getAccountId();
                     t = db.getTransaction(id);
+                    fromAccount = db.getAccount(t.fromAccountId);
 
                     var attrsMap = db.getAllAttributesForTransaction(id);
                     var attrs = new LinkedList<TransactionAttribute>();
@@ -701,22 +702,37 @@ public class BlotterFragment extends AbstractListFragment<Cursor> implements Blo
 
                     if (t.isTransfer()) {
                         // transfer to transaction
+                        toAccount = db.getAccount(t.toAccountId);
+
+                        // two side of transfer is not in the same currency, keep foreign currency value
+                        if (fromAccount.currency.id != toAccount.currency.id) {
+                            if (t.fromAccountId == blotterAccountId) {
+                                t.originalFromAmount = -t.toAmount;
+                                t.originalCurrencyId = toAccount.currency.id;
+                            }
+                            else { // (t.toAccountId == blotterAccountId)
+                                t.originalFromAmount = t.fromAmount;
+                                t.originalCurrencyId = fromAccount.currency.id;
+                            }
+                        }
+
                         if (t.toAccountId == blotterAccountId) {
                             t.fromAccountId = blotterAccountId;
                             t.fromAmount = t.toAmount;
+                            t.originalFromAmount *= -1;
                         }
                         t.toAccountId = 0;
                         t.toAmount = 0;
                     }
                     else {
                         // transaction to transfer
-                        a = db.getAccount(t.fromAccountId);
+
                         // if the transaction's account had transfer to other account,
                         // use the last used transfer target
-                        if (t.fromAmount < 0 && a.lastAccountId != 0) {
-                            toAccount = db.getAccount(a.lastAccountId);
+                        if (t.fromAmount < 0 && fromAccount.lastAccountId != 0) {
+                            toAccount = db.getAccount(fromAccount.lastAccountId);
                             if (toAccount != null) {
-                                t.toAccountId = a.lastAccountId;
+                                t.toAccountId = fromAccount.lastAccountId;
                             }
                         }
                         // (positive amount) look for accounts transferred to this account
@@ -727,7 +743,7 @@ public class BlotterFragment extends AbstractListFragment<Cursor> implements Blo
                                 if (t.fromAmount > 0) {
                                     while (c.moveToNext()) {
                                         toAccount = EntityManager.loadFromCursor(c, Account.class);
-                                        if (toAccount.lastAccountId == a.id) {
+                                        if (toAccount.lastAccountId == fromAccount.id) {
                                             t.toAccountId = toAccount.id;
                                             break;
                                         }
@@ -738,7 +754,7 @@ public class BlotterFragment extends AbstractListFragment<Cursor> implements Blo
                                 if (toAccount == null) {
                                     while (c.moveToNext()) {
                                         toAccount = EntityManager.loadFromCursor(c, Account.class);
-                                        if (toAccount.id != a.id && toAccount.currency.id == a.currency.id) {
+                                        if (toAccount.id != fromAccount.id && toAccount.currency.id == fromAccount.currency.id) {
                                             t.toAccountId = toAccount.id;
                                             break;
                                         }
@@ -747,23 +763,31 @@ public class BlotterFragment extends AbstractListFragment<Cursor> implements Blo
                             }
                             // give up
                             if (toAccount == null) {
-                                Toast.makeText(getContext(), R.string.select_to_account_differ_from_to_account,
+                                Toast.makeText(getContext(), R.string.no_suitable_account_for_transfer,
                                         Toast.LENGTH_SHORT).show();
                                 return true;
                             }
                         }
 
-                        var rateProvider = db.getLatestRates();
-                        var rate = rateProvider.getRate(a.currency, toAccount.currency);
-                        if (rate != ExchangeRate.NA) {
-                            t.toAmount = - (long) (t.fromAmount * rate.rate);
+                        // original entered foreign currency is same as transfer target
+                        // use the value directly
+                        if (t.originalCurrencyId == toAccount.currency.id) {
+                            t.toAmount = -t.originalFromAmount;
                         }
                         else {
-                            t.toAmount = -t.fromAmount;
+                            var rateProvider = db.getLatestRates();
+                            var rate = rateProvider.getRate(fromAccount.currency, toAccount.currency);
+                            if (rate != ExchangeRate.NA) {
+                                t.toAmount = -(long) (t.fromAmount * rate.rate);
+                            } else {
+                                t.toAmount = -t.fromAmount;
+                            }
+
+                            t.toAmount = Utils.roundAmount(getContext(), toAccount.currency, t.toAmount);
                         }
 
-                        t.fromAmount = Utils.roundAmount(getContext(), a.currency, t.fromAmount);
-                        t.toAmount = Utils.roundAmount(getContext(), toAccount.currency, t.toAmount);
+                        t.originalFromAmount = 0;
+                        t.originalCurrencyId = 0;
 
                         if (t.fromAmount > 0) {
                             var tempAccountId = t.fromAccountId;
