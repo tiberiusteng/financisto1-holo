@@ -46,7 +46,9 @@ import androidx.lifecycle.Lifecycle;
 import androidx.loader.content.Loader;
 
 import java.util.Calendar;
+import java.util.LinkedList;
 import java.util.List;
+import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -68,6 +70,8 @@ import tw.tib.financisto.model.Account;
 import tw.tib.financisto.model.AccountType;
 import tw.tib.financisto.model.Budget;
 import tw.tib.financisto.model.Transaction;
+import tw.tib.financisto.model.TransactionAttribute;
+import tw.tib.financisto.rates.ExchangeRate;
 import tw.tib.financisto.utils.IntegrityCheckRunningBalance;
 import tw.tib.financisto.utils.MenuItemInfo;
 import tw.tib.financisto.utils.MyPreferences;
@@ -656,7 +660,7 @@ public class BlotterFragment extends AbstractListFragment<Cursor> implements Blo
     @Override
     public boolean onPopupItemSelected(int itemId, View view, int position, long id) {
         Transaction t;
-        Account a;
+        Account a, toAccount = null;
 
         if (!super.onPopupItemSelected(itemId, view, position, id)) {
             switch (itemId) {
@@ -679,37 +683,98 @@ public class BlotterFragment extends AbstractListFragment<Cursor> implements Blo
                     return true;
                 case MENU_CHANGE_TO_TRANSACTION:
                 case MENU_CHANGE_TO_TRANSFER:
+                    // transfers in database is always stored as
+                    // from_account_id (negative amount) -> to_account_id (positive amount)
+                    // when the blotter is showing to_account_id, we want converted transaction
+                    // stay at the same account
+                    long blotterAccountId = blotterFilter.getAccountId();
                     t = db.getTransaction(id);
+
+                    var attrsMap = db.getAllAttributesForTransaction(id);
+                    var attrs = new LinkedList<TransactionAttribute>();
+                    for (Map.Entry<Long, String> attr : attrsMap.entrySet()) {
+                        var ta = new TransactionAttribute();
+                        ta.attributeId = attr.getKey();
+                        ta.value = attr.getValue();
+                        attrs.add(ta);
+                    }
+
                     if (t.isTransfer()) {
+                        // transfer to transaction
+                        if (t.toAccountId == blotterAccountId) {
+                            t.fromAccountId = blotterAccountId;
+                            t.fromAmount = t.toAmount;
+                        }
                         t.toAccountId = 0;
                         t.toAmount = 0;
                     }
                     else {
+                        // transaction to transfer
                         a = db.getAccount(t.fromAccountId);
                         // if the transaction's account had transfer to other account,
                         // use the last used transfer target
-                        if (a.lastAccountId != 0) {
-                            t.toAccountId = a.lastAccountId;
+                        if (t.fromAmount < 0 && a.lastAccountId != 0) {
+                            toAccount = db.getAccount(a.lastAccountId);
+                            if (toAccount != null) {
+                                t.toAccountId = a.lastAccountId;
+                            }
                         }
-                        // try to get a different account with same currency
-                        else {
+                        // (positive amount) look for accounts transferred to this account
+                        // or (+/- amount) try to get a different account with same currency
+                        if (toAccount == null) {
                             try (Cursor c = db.getAllActiveAccounts()) {
-                                while (c.moveToNext()) {
-                                    Account toAccount = EntityManager.loadFromCursor(c, Account.class);
-                                    if (toAccount.id != a.id && toAccount.currency.id == a.currency.id) {
-                                        t.toAccountId = toAccount.id;
-                                        break;
+                                // positive amount - look for accounts previously transfer to this account
+                                if (t.fromAmount > 0) {
+                                    while (c.moveToNext()) {
+                                        toAccount = EntityManager.loadFromCursor(c, Account.class);
+                                        if (toAccount.lastAccountId == a.id) {
+                                            t.toAccountId = toAccount.id;
+                                            break;
+                                        }
+                                    }
+                                    c.moveToFirst();
+                                }
+                                // negative amount / earlier block didn't found a suitable account
+                                if (toAccount == null) {
+                                    while (c.moveToNext()) {
+                                        toAccount = EntityManager.loadFromCursor(c, Account.class);
+                                        if (toAccount.id != a.id && toAccount.currency.id == a.currency.id) {
+                                            t.toAccountId = toAccount.id;
+                                            break;
+                                        }
                                     }
                                 }
                             }
                             // give up
-                            if (t.toAccountId == 0) {
+                            if (toAccount == null) {
                                 Toast.makeText(getContext(), R.string.select_to_account_differ_from_to_account,
                                         Toast.LENGTH_SHORT).show();
                                 return true;
                             }
                         }
-                        t.toAmount = -t.fromAmount;
+
+                        var rateProvider = db.getLatestRates();
+                        var rate = rateProvider.getRate(a.currency, toAccount.currency);
+                        if (rate != ExchangeRate.NA) {
+                            t.toAmount = - (long) (t.fromAmount * rate.rate);
+                        }
+                        else {
+                            t.toAmount = -t.fromAmount;
+                        }
+
+                        t.fromAmount = Utils.roundAmount(getContext(), a.currency, t.fromAmount);
+                        t.toAmount = Utils.roundAmount(getContext(), toAccount.currency, t.toAmount);
+
+                        if (t.fromAmount > 0) {
+                            var tempAccountId = t.fromAccountId;
+                            t.fromAccountId = t.toAccountId;
+                            t.toAccountId = tempAccountId;
+
+                            var tempAmount = t.toAmount;
+                            t.toAmount = t.fromAmount;
+                            t.fromAmount = tempAmount;
+                        }
+
                         if (!MyPreferences.isShowPayeeInTransfers(getContext())) {
                             t.payeeId = 0;
                         }
@@ -717,7 +782,10 @@ public class BlotterFragment extends AbstractListFragment<Cursor> implements Blo
                             t.categoryId = 0;
                         }
                     }
-                    db.insertOrUpdate(t);
+                    // delete then insert to properly update running balance
+                    db.deleteTransaction(t.id);
+                    t.id = -1;
+                    db.insertOrUpdate(t, attrs);
                     recreateCursor();
                     return true;
             }
