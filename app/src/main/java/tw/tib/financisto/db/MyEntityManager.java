@@ -88,7 +88,7 @@ public abstract class MyEntityManager extends EntityManager {
 					Expressions.like("title", "%" + StringUtil.capitalize(titleLike) + "%")
 			));
 		}
-		q.where(whereEx).asc("title");
+		q.where(whereEx).ascLocale("title");
 		return q.execute();
 	}
 

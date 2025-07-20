@@ -42,6 +42,11 @@ public class Query<T> {
 		whereArgs = args.toArray(new String[args.size()]);
 		return this;
 	}
+
+	public Query<T> ascLocale(String field) {
+		orderBy.add(ed.getColumnForField(field) + " COLLATE LOCALIZED ASC");
+		return this;
+	}
 	
 	public Query<T> asc(String field) {
 		orderBy.add(ed.getColumnForField(field)+" asc");
