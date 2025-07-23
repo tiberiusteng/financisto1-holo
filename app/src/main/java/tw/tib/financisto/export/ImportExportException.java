@@ -17,7 +17,6 @@ package tw.tib.financisto.export;
 public class ImportExportException extends Exception {
 
     public final int errorResId;
-    public final Throwable cause;
     public final Object[] formatArgs;
 
     public ImportExportException(int errorResId) {
@@ -29,8 +28,8 @@ public class ImportExportException extends Exception {
     }
 
     public ImportExportException(int errorResId, Throwable cause, Object... formatArgs) {
+        super(cause);
         this.errorResId = errorResId;
-        this.cause = cause;
         this.formatArgs = formatArgs;
     }
 

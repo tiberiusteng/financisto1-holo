@@ -115,18 +115,24 @@ public abstract class ImportExportAsyncTask extends AsyncTask<Uri, String, Objec
     protected void onPostExecute(Object result) {
         dialog.dismiss();
 
-        if (result instanceof ImportExportException) {
-            ImportExportException exception = (ImportExportException) result;
+        if (result instanceof UserRecoverableAuthIOException) {
+            context.startActivity(((UserRecoverableAuthIOException)result).getIntent());
+        }
+        else if (result instanceof Exception exception) {
             StringBuilder sb = new StringBuilder();
-            if (exception.formatArgs != null){
-                sb.append(context.getString(exception.errorResId, exception.formatArgs));
-            } else {
-                sb.append(context.getString(exception.errorResId));
-            }
 
-            if (exception.cause != null) {
-                StackTraceElement[] stack = exception.cause.getStackTrace();
-                sb.append(" : ").append(exception.cause).append("\n\n");
+            if (result instanceof ImportExportException importExportException) {
+                if (importExportException.formatArgs != null) {
+                    sb.append(context.getString(importExportException.errorResId, importExportException.formatArgs));
+                } else {
+                    sb.append(context.getString(importExportException.errorResId));
+                }
+            }
+            var cause = exception.getCause();
+
+            if (cause != null) {
+                StackTraceElement[] stack = cause.getStackTrace();
+                sb.append(" : ").append(cause).append("\n\n");
                 for (StackTraceElement e : stack) {
                     String fileName = e.getFileName();
                     if (fileName.equals("ImportExportAsyncTask.java")) break;
@@ -139,12 +145,6 @@ public abstract class ImportExportAsyncTask extends AsyncTask<Uri, String, Objec
                     .setPositiveButton(R.string.ok, null)
                     .show();
             return;
-        }
-        else if (result instanceof UserRecoverableAuthIOException) {
-            context.startActivity(((UserRecoverableAuthIOException)result).getIntent());
-        }
-        else if (result instanceof Exception) {
-            throw new RuntimeException((Exception) result);
         }
 
         String message = getSuccessMessage(result);
