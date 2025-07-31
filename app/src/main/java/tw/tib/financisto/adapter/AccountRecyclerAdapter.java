@@ -92,6 +92,7 @@ public class AccountRecyclerAdapter extends RecyclerView.Adapter<AccountRecycler
         v.icon.setTag(R.id.account, a.getId());
         v.iconText.setTag(R.id.account, a.getId());
         v.centerTouch.setTag(R.id.account, a.getId());
+        v.balanceTouch.setTag(R.id.account, a.getId());
 
         v.center.setText(a.title);
 
@@ -196,6 +197,9 @@ public class AccountRecyclerAdapter extends RecyclerView.Adapter<AccountRecycler
                 v.right.invalidate();
             });
         }
+        else {
+            v.balanceTouch.setOnClickListener(v.onClickListener);
+        }
 
         try {
             if (!Utils.isEmpty(a.accentColor)) {
@@ -244,6 +248,8 @@ public class AccountRecyclerAdapter extends RecyclerView.Adapter<AccountRecycler
         public final TextView right;
         public final ProgressBar progress;
 
+        public final View.OnClickListener onClickListener;
+
         public ViewHolder(View v, View.OnClickListener onClickListener, View.OnLongClickListener onLongClickListener) {
             super(v);
             view = v;
@@ -267,6 +273,9 @@ public class AccountRecyclerAdapter extends RecyclerView.Adapter<AccountRecycler
             iconText.setOnLongClickListener(onLongClickListener);
             centerTouch.setOnClickListener(onClickListener);
             centerTouch.setOnLongClickListener(onLongClickListener);
+            balanceTouch.setOnLongClickListener(onLongClickListener);
+
+            this.onClickListener = onClickListener;
         }
 
         @Override
