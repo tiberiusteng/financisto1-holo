@@ -181,6 +181,11 @@ public class MyPreferences {
 		return AccountSortOrder.valueOf(sortOrder);
 	}
 
+	public static boolean isBlurBalances(Context context) {
+		SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(context);
+		return sharedPreferences.getBoolean("blur_balances", false);
+	}
+
 	public static LocationsSortOrder getLocationsSortOrder(Context context) {
 		SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(context);
 		String sortOrder = sharedPreferences.getString("sort_locations", LocationsSortOrder.TITLE.name());
