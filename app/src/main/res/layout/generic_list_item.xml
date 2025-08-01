@@ -13,9 +13,8 @@
 	xmlns:app="http://schemas.android.com/apk/res-auto"
 	android:layout_width="match_parent"
 	android:layout_height="wrap_content"
-	android:background="#000000">
+	android:background="?android:selectableItemBackground">
 <androidx.constraintlayout.widget.ConstraintLayout
-	android:background="?android:selectableItemBackground"
 	android:layout_width="fill_parent"
 	android:layout_height="?android:attr/listPreferredItemHeight"
 	android:paddingStart="0dip" android:paddingEnd="12dip">
@@ -62,11 +61,25 @@
 		android:layout_width="wrap_content" android:layout_height="wrap_content"
 		app:layout_constraintStart_toStartOf="parent"
 		app:layout_constraintTop_toTopOf="parent"
-		app:layout_constraintBottom_toBottomOf='parent'
+		app:layout_constraintBottom_toTopOf="@id/line2"
+		app:layout_constraintVertical_chainStyle="packed"
 		android:textAppearance="?android:attr/textAppearanceLarge"
 		android:singleLine="true" android:gravity="center_vertical"
 		android:text="line1"
 		android:ellipsize="marquee" />
+
+	<TextView android:id="@+id/line2"
+		android:layout_width="wrap_content"	android:layout_height="wrap_content"
+		style="@style/Synonym"
+		android:singleLine="true"
+		android:ellipsize="end"
+		android:text="synonym for search"
+		android:paddingStart="12dp"
+		android:visibility="gone"
+		app:layout_constraintTop_toBottomOf="@id/line1"
+		app:layout_constraintStart_toStartOf="@id/line1"
+		app:layout_constraintBottom_toBottomOf="parent"
+		/>
 	<!-- android:layout_toRightOf="@+id/divider" -->
 
 </androidx.constraintlayout.widget.ConstraintLayout>

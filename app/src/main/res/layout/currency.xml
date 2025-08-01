@@ -76,12 +76,21 @@
                 <TableRow android:layout_width="wrap_content"
                           android:layout_height="wrap_content">
                     <TextView android:layout_height="wrap_content" android:layout_width="wrap_content"
-                              android:layout_marginLeft="3dp" android:text="@string/currency_symbol_format"/>
+                              android:layout_marginLeft="3dp" android:text="@string/currency_symbol_format"
+                        android:layout_weight="1" />
+                    <TextView android:layout_height="wrap_content" android:layout_width="wrap_content"
+                        android:layout_marginLeft="3dp" android:text="@string/currency_number_format"
+                        android:layout_weight="1" />
                 </TableRow>
                 <TableRow android:layout_width="wrap_content"
                           android:layout_height="wrap_content">
                     <Spinner android:layout_height="wrap_content" android:layout_width="wrap_content"
-                             android:id="@+id/spinnerSymbolFormat" android:entries="@array/symbol_formats"/>
+                             android:id="@+id/spinnerSymbolFormat" android:entries="@array/symbol_formats"
+                             android:layout_weight="1" />
+                    <EditText android:layout_height="wrap_content"
+                        android:layout_width="fill_parent" android:id="@+id/number_format"
+                        android:singleLine="true" android:layout_weight="1"
+                        android:hint="#,##0.00"/>
                 </TableRow>
             </TableLayout>
             <CheckBox android:id="@+id/is_default"

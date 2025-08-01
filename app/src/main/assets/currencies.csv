@@ -60,7 +60,7 @@ HTG,Haitian gourde,HTG,2,PERIOD,COMMA
 HUF,Hungarian forint,Ft,2,COMMA,SPACE
 IDR,Indonesian rupiah,Rp,0,COMMA,SPACE
 ILS,Israeli new sheqel,₪,2,PERIOD,COMMA
-INR,Indian rupee,IN₨,2,PERIOD,COMMA
+INR,Indian rupee,IN₨,2,PERIOD,COMMA,"#,##,##0.00"
 IQD,Iraqi dinar,IQD,0,PERIOD,COMMA
 IRR,Iranian rial,﷼,0,PERIOD,COMMA
 ISK,Icelandic króna,kr,0,COMMA,SPACE

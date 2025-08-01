@@ -1,0 +1,1 @@
+ALTER TABLE currency ADD number_format TEXT

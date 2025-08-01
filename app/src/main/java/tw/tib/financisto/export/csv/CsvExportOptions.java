@@ -16,7 +16,7 @@ import tw.tib.financisto.model.Currency;
 import tw.tib.financisto.utils.CurrencyCache;
 import tw.tib.financisto.utils.CurrencyExportPreferences;
 
-import java.text.NumberFormat;
+import java.text.Format;
 
 /**
  * Created by IntelliJ IDEA.
@@ -25,7 +25,7 @@ import java.text.NumberFormat;
  */
 public class CsvExportOptions {
 
-    public final NumberFormat amountFormat;
+    public final Format amountFormat;
     public final char fieldSeparator;
     public final boolean includeHeader;
     public final boolean includeTxStatus;

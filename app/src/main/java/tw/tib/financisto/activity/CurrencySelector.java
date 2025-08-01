@@ -88,6 +88,9 @@ public class CurrencySelector {
         c.decimals = Math.max(0, Math.min(2, Integer.parseInt(list.get(3))));
         c.decimalSeparator = decodeSeparator(list.get(4));
         c.groupSeparator = decodeSeparator(list.get(5));
+        if (list.size() > 6) {
+            c.numberFormat = list.get(6);
+        }
         c.isDefault = isTheFirstCurrencyAdded();
         c.updateExchangeRate = true;
         em.saveOrUpdate(c);
@@ -119,7 +122,7 @@ public class CurrencySelector {
                 List<List<String>> allLines = new ArrayList<List<String>>();
                 List<String> line;
                 while ((line = csv.readLine()) != null) {
-                    if (line.size() == 6) {
+                    if (line.size() == 6 || line.size() == 7) {
                         allLines.add(line);
                     }
                 }

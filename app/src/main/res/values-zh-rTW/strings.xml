@@ -658,6 +658,7 @@
   <string name="remember_last_category_for_payee">上次分類</string>
   <string name="remember_last_category_for_payee_summary">記住選定收款人上次使用的分類 (若關閉收款人則記住帳戶上次使用的分類)</string>
   <string name="currency_symbol_format">符號格式</string>
+  <string name="currency_number_format">數字格式</string>
   <string name="use_header_from_file">使用檔案的欄位名稱</string>
   <string name="info">資訊</string>
   <string name="balance">餘額</string>

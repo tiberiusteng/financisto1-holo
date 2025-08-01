@@ -58,6 +58,7 @@ public class CurrencyActivity extends Activity {
 	private Spinner decimalSeparators;
 	private Spinner groupSeparators;
 	private Spinner symbolFormat;
+	private EditText numberFormat;
 
 	private int maxDecimals;
 
@@ -98,6 +99,7 @@ public class CurrencyActivity extends Activity {
 		groupSeparators.setSelection(1);
 		symbolFormat = findViewById(R.id.spinnerSymbolFormat);
 		symbolFormat.setSelection(0);
+		numberFormat = findViewById(R.id.number_format);
 
 		maxDecimals = decimals.getCount() - 1;
 
@@ -119,6 +121,7 @@ public class CurrencyActivity extends Activity {
 				currency.decimalSeparator = decimalSeparators.getSelectedItem().toString();
 				currency.groupSeparator = groupSeparators.getSelectedItem().toString();
 				currency.symbolFormat = symbolFormats[symbolFormat.getSelectedItemPosition()];
+				currency.numberFormat = text(numberFormat);
 				long id = db.saveOrUpdate(currency);
 				CurrencyCache.initialize(db);
 				Intent data = new Intent();
@@ -162,6 +165,7 @@ public class CurrencyActivity extends Activity {
 		decimalSeparators.setSelection(indexOf(decimalSeparatorsItems, currency.decimalSeparator, s.getDecimalSeparator()));
 		groupSeparators.setSelection(indexOf(groupSeparatorsItems, currency.groupSeparator, s.getGroupingSeparator()));
 		symbolFormat.setSelection(currency.symbolFormat.ordinal());
+		numberFormat.setText(currency.numberFormat);
 	}
 
 	private int indexOf(String[] a, String v, char c) {

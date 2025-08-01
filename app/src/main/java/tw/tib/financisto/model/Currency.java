@@ -11,8 +11,7 @@
  ******************************************************************************/
 package tw.tib.financisto.model;
 
-import java.text.DecimalFormat;
-import java.text.NumberFormat;
+import java.text.Format;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -47,6 +46,9 @@ public class Currency extends MyEntity {
     @Column(name = "symbol_format")
     public SymbolFormat symbolFormat = SymbolFormat.RS;
 
+	@Column(name = "number_format")
+	public String numberFormat;
+
 	@Column(name = "is_default")
 	public boolean isDefault;
 
@@ -63,15 +65,15 @@ public class Currency extends MyEntity {
 	public String groupSeparator;
 
     @Transient
-	private volatile DecimalFormat format;
+	private volatile Format format;
 
     @Override
     public String toString() {
         return name;
     }
 
-    public NumberFormat getFormat() {
-		DecimalFormat f = format;
+    public Format getFormat() {
+		Format f = format;
 		if (f == null) {
 			f = CurrencyCache.createCurrencyFormat(this);
 			format = f;

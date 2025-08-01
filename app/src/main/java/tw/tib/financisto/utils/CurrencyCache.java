@@ -11,6 +11,7 @@
 package tw.tib.financisto.utils;
 
 import android.database.Cursor;
+import android.os.Build;
 import android.util.Log;
 
 import gnu.trove.map.hash.TLongObjectHashMap;
@@ -20,6 +21,7 @@ import tw.tib.orb.Query;
 
 import java.text.DecimalFormat;
 import java.text.DecimalFormatSymbols;
+import java.text.Format;
 import java.util.Collection;
 
 public class CurrencyCache {
@@ -60,19 +62,45 @@ public class CurrencyCache {
 		CURRENCIES.putAll(currencies);
 	}
 	
-	public static DecimalFormat createCurrencyFormat(Currency c) {
-		DecimalFormatSymbols dfs = new DecimalFormatSymbols();
-		dfs.setDecimalSeparator(charOrEmpty(c.decimalSeparator, dfs.getDecimalSeparator()));
-		dfs.setGroupingSeparator(charOrEmpty(c.groupSeparator, dfs.getGroupingSeparator()));
-		dfs.setMonetaryDecimalSeparator(dfs.getDecimalSeparator());
-		dfs.setCurrencySymbol(c.symbol);
+	public static Format createCurrencyFormat(Currency c) {
+		String numberFormat;
+		if (!Utils.isEmpty(c.numberFormat)) {
+			numberFormat = c.numberFormat;
+		}
+		else {
+			numberFormat = "#,##0.00";
+		}
 
-		DecimalFormat df = new DecimalFormat("#,##0.00", dfs);
-		df.setGroupingUsed(dfs.getGroupingSeparator() > 0);
-		df.setMinimumFractionDigits(c.decimals);
-		df.setMaximumFractionDigits(c.decimals);
-		df.setDecimalSeparatorAlwaysShown(false);
-		return df;
+		// android.icu.text.DecimalFormat in API level >= 24 support two grouping intervals,
+		// like that in "#,##,##0.00" for Indian decimal formatting
+		if (Build.VERSION.SDK_INT >= 24) {
+			var dfs = new android.icu.text.DecimalFormatSymbols();
+			dfs.setDecimalSeparator(charOrEmpty(c.decimalSeparator, dfs.getDecimalSeparator()));
+			dfs.setGroupingSeparator(charOrEmpty(c.groupSeparator, dfs.getGroupingSeparator()));
+			dfs.setMonetaryDecimalSeparator(dfs.getDecimalSeparator());
+			dfs.setCurrencySymbol(c.symbol);
+
+			var df = new android.icu.text.DecimalFormat(numberFormat, dfs);
+			df.setGroupingUsed(dfs.getGroupingSeparator() > 0);
+			df.setMinimumFractionDigits(c.decimals);
+			df.setMaximumFractionDigits(c.decimals);
+			df.setDecimalSeparatorAlwaysShown(false);
+			return df;
+		}
+		else {
+			DecimalFormatSymbols dfs = new DecimalFormatSymbols();
+			dfs.setDecimalSeparator(charOrEmpty(c.decimalSeparator, dfs.getDecimalSeparator()));
+			dfs.setGroupingSeparator(charOrEmpty(c.groupSeparator, dfs.getGroupingSeparator()));
+			dfs.setMonetaryDecimalSeparator(dfs.getDecimalSeparator());
+			dfs.setCurrencySymbol(c.symbol);
+
+			DecimalFormat df = new DecimalFormat(numberFormat, dfs);
+			df.setGroupingUsed(dfs.getGroupingSeparator() > 0);
+			df.setMinimumFractionDigits(c.decimals);
+			df.setMaximumFractionDigits(c.decimals);
+			df.setDecimalSeparatorAlwaysShown(false);
+			return df;
+		}
 	}
 
 	private static char charOrEmpty(String s, char c) {
