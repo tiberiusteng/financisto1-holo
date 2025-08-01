@@ -32,6 +32,10 @@
         <item name="android:textColor">?android:attr/textColorSecondary</item>
     </style>
 
+    <style name="Synonym" parent="@style/TextAppearance.AppCompat.Caption">
+        <item name="android:textColor">?android:attr/textColorTertiary</item>
+    </style>
+
     <style name="LightSpinner" parent="@style/AppTheme">
         <item name="android:spinnerItemStyle">@style/LightSpinnerItem</item>
     </style>
