@@ -531,6 +531,11 @@ public class MyPreferences {
 		return sharedPreferences.getBoolean("colorize_weekend_date", true);
 	}
 
+	public static boolean isBlotterShowTimeOfDay(Context context) {
+		SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(context);
+		return sharedPreferences.getBoolean("blotter_show_time_of_day", true);
+	}
+
 	private static final String DEFAULT = "default";
 
 	public static Context switchLocale(Context context) {

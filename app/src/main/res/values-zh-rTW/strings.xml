@@ -602,6 +602,8 @@
   <string name="update_copied_transaction_project_summary">複製有專案的交易時改用最新使用過的專案</string>
   <string name="colorize_weekend_date">彩色標記週末日期</string>
   <string name="colorize_weekend_date_summary">將週六、週日的日期時間以紅色顯示</string>
+  <string name="blotter_show_time_of_day">顯示交易時間</string>
+  <string name="blotter_show_time_of_day_summary">顯示交易在一日內的時間</string>
   <string name="new_currency">新幣值 ...</string>
   <string name="lock_time">鎖定時間</string>
   <string name="lock_time_summary">主畫面在自動鎖定前的顯示時間</string>

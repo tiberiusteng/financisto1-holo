@@ -65,6 +65,7 @@ public class BlotterListAdapter extends ResourceCursorAdapter {
     private final boolean showRunningBalance;
     private final boolean showProject;
     private final boolean colorizeWeekendDate;
+    private final boolean showTimeOfDay;
 
     public BlotterListAdapter(Context context, DatabaseAdapter db, Cursor c) {
         this(context, db, R.layout.blotter_list_item, c, false);
@@ -86,6 +87,7 @@ public class BlotterListAdapter extends ResourceCursorAdapter {
         this.showRunningBalance = MyPreferences.isShowRunningBalance(context);
         this.showProject = MyPreferences.isShowProjectInBlotter(context);
         this.colorizeWeekendDate = MyPreferences.isColorizeWeekendDate(context);
+        this.showTimeOfDay = MyPreferences.isBlotterShowTimeOfDay(context);
         this.transactionTitleUtils = new TransactionTitleUtils(context, MyPreferences.isColorizeBlotterItem(context));
         this.db = db;
     }
@@ -229,8 +231,12 @@ public class BlotterListAdapter extends ResourceCursorAdapter {
             } else {
                 long date = cursor.getLong(BlotterColumns.datetime.ordinal());
                 dt.setTime(date);
-                v.bottomView.setText(DateUtils.formatDateTime(context, dt.getTime(),
-                        DateUtils.FORMAT_SHOW_DATE|DateUtils.FORMAT_SHOW_WEEKDAY|DateUtils.FORMAT_ABBREV_WEEKDAY|DateUtils.FORMAT_SHOW_TIME|DateUtils.FORMAT_ABBREV_MONTH));
+                int dateTimeFlags = DateUtils.FORMAT_SHOW_DATE|DateUtils.FORMAT_SHOW_WEEKDAY|DateUtils.FORMAT_ABBREV_WEEKDAY|DateUtils.FORMAT_ABBREV_MONTH;
+                if (showTimeOfDay) {
+                    dateTimeFlags |= DateUtils.FORMAT_SHOW_TIME;
+                }
+                String t = DateUtils.formatDateTime(context, dt.getTime(), dateTimeFlags);
+                v.bottomView.setText(t);
 
                 if (isTemplate == 0 && date > System.currentTimeMillis()) {
                     u.setFutureTextColor(v.bottomView);

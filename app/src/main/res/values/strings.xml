@@ -683,6 +683,9 @@
     <string name="colorize_weekend_date">Colorize weekend date/time</string>
     <string name="colorize_weekend_date_summary">Show dates of Saturday/Sunday in red</string>
 
+    <string name="blotter_show_time_of_day">Show transaction time</string>
+    <string name="blotter_show_time_of_day_summary">Show the time of day transaction recorded</string>
+
     <string name="new_currency">New currency…</string>
     <string name="lock_time">Lock time</string>
     <string name="lock_time_summary">Time to keep main screen active before locking it off</string>

@@ -60,4 +60,9 @@
         android:key="colorize_weekend_date"
         android:summary="@string/colorize_weekend_date_summary"
         android:title="@string/colorize_weekend_date" />
+    <SwitchPreferenceCompat
+        android:defaultValue="true"
+        android:key="blotter_show_time_of_day"
+        android:summary="@string/blotter_show_time_of_day_summary"
+        android:title="@string/blotter_show_time_of_day" />
 </androidx.preference.PreferenceScreen>

@@ -1125,4 +1125,13 @@ public class BlotterFragment extends AbstractListFragment<Cursor> implements Blo
             getListView().setVisibility(View.INVISIBLE);
         }
     }
+
+    @Override
+    public void onDestroy() {
+        if (calculationTask != null) {
+            calculationTask.stop();
+            calculationTask.cancel(true);
+        }
+        super.onDestroy();
+    }
 }

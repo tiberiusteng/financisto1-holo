@@ -527,6 +527,15 @@ public class AccountRecyclerFragment extends AbstractRecyclerViewFragment
         }
     }
 
+    @Override
+    public void onDestroy() {
+        if (totalCalculationTask != null) {
+            totalCalculationTask.stop();
+            totalCalculationTask.cancel(true);
+        }
+        super.onDestroy();
+    }
+
     private void loadFilter() {
         SharedPreferences preferences = getContext().getSharedPreferences(TAG, 0);
         filter = preferences.getString(FILTER_PERF, "");
