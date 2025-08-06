@@ -25,6 +25,7 @@ import java.text.Format;
 import java.util.Collection;
 
 public class CurrencyCache {
+	public static final String DEFAULT_FORMAT = "#,##0.00";
 
     //@ProtectedBy("this")
 	private static final TLongObjectHashMap<Currency> CURRENCIES = new TLongObjectHashMap<Currency>();
@@ -68,7 +69,7 @@ public class CurrencyCache {
 			numberFormat = c.numberFormat;
 		}
 		else {
-			numberFormat = "#,##0.00";
+			numberFormat = DEFAULT_FORMAT;
 		}
 
 		// android.icu.text.DecimalFormat in API level >= 24 support two grouping intervals,
@@ -80,7 +81,12 @@ public class CurrencyCache {
 			dfs.setMonetaryDecimalSeparator(dfs.getDecimalSeparator());
 			dfs.setCurrencySymbol(c.symbol);
 
-			var df = new android.icu.text.DecimalFormat(numberFormat, dfs);
+			android.icu.text.DecimalFormat df;
+			try {
+				df = new android.icu.text.DecimalFormat(numberFormat, dfs);
+			} catch (Exception e) {
+				df = new android.icu.text.DecimalFormat(DEFAULT_FORMAT, dfs);
+			}
 			df.setGroupingUsed(dfs.getGroupingSeparator() > 0);
 			df.setMinimumFractionDigits(c.decimals);
 			df.setMaximumFractionDigits(c.decimals);
@@ -94,7 +100,12 @@ public class CurrencyCache {
 			dfs.setMonetaryDecimalSeparator(dfs.getDecimalSeparator());
 			dfs.setCurrencySymbol(c.symbol);
 
-			DecimalFormat df = new DecimalFormat(numberFormat, dfs);
+			DecimalFormat df;
+			try {
+				df = new DecimalFormat(numberFormat, dfs);
+			} catch (Exception e) {
+				df = new DecimalFormat(DEFAULT_FORMAT, dfs);
+			}
 			df.setGroupingUsed(dfs.getGroupingSeparator() > 0);
 			df.setMinimumFractionDigits(c.decimals);
 			df.setMaximumFractionDigits(c.decimals);
