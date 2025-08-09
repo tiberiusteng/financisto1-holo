@@ -16,6 +16,13 @@ public class PeriodValue {
 	 * The result value of the corresponding month.
 	 */
 	private double value;
+
+	/**
+	 * If false, this data point has not been set a value
+	 * used to fill chart when the value continues with last value
+	 * if this duration doesn't have any transactions (i.e. used for balance chart)
+	 */
+	private boolean hasValue;
 	
 	/**
 	 * Default constructor.
@@ -24,7 +31,14 @@ public class PeriodValue {
 	 */
 	public PeriodValue(Calendar month, double value) {
 		this.month = month;
-		this.value = value;		
+		this.value = value;
+		this.hasValue = true;
+	}
+
+	public PeriodValue(Calendar month) {
+		this.month = month;
+		this.value = 0;
+		this.hasValue = false;
 	}
 	
 
@@ -49,6 +63,15 @@ public class PeriodValue {
 	 */
 	public double getValue() {
 		return value;
+	}
+
+	public void setValue(double value) {
+		this.value = value;
+		this.hasValue = true;
+	}
+
+	public boolean hasValue() {
+		return hasValue;
 	}
 
 }

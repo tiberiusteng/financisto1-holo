@@ -403,6 +403,8 @@ public class Report2DChartActivity extends Activity implements OnChartValueSelec
      * Update the view reflecting data changes
      */
     private void refreshView() {
+        // onValueSelected uses currency formatting so it need to be set here
+        currency = reportData.getCurrency();
         // set data to plot
         if (reportData.hasDataToPlot()) {
             findViewById(R.id.report_empty).setVisibility(View.GONE);
@@ -664,7 +666,7 @@ public class Report2DChartActivity extends Activity implements OnChartValueSelec
     @Override
     public void onValueSelected(Entry e, Highlight h) {
         pointDate.setText(DateUtils.formatDateTime(this, (long) e.getX(), DateUtils.FORMAT_NO_MONTH_DAY));
-        pointAmount.setText(Utils.amountToString(currency, (long) e.getY() * 100));
+        pointAmount.setText(Utils.amountToString(currency, (long) (e.getY() * 100)));
         pointAmount.setTextColor(e.getY() >= 0 ? positive : negative);
     }
 

@@ -116,6 +116,7 @@ public class ReportDataByPeriod {
 
 	protected ValueAggregation aggregation = ValueAggregation.SUM;
 	protected boolean excludeTransfers = true;
+	protected boolean filterAccountByCurrency = true;
 	
 	/**
 	 * Constructor for report data builder that considers filters in a given period.
@@ -170,10 +171,11 @@ public class ReportDataByPeriod {
 	}
 
 	public ReportDataByPeriod(Context context, Calendar startDate, int periodLength, Currency currency,
-			String filterColumn, long filterId, MyEntityManager em, ValueAggregation aggregation, boolean excludeTransfers)
+			String filterColumn, long filterId, MyEntityManager em, ValueAggregation aggregation, boolean excludeTransfers, boolean filterAccountByCurrency)
 	{
 		this.aggregation = aggregation;
 		this.excludeTransfers = excludeTransfers;
+		this.filterAccountByCurrency = filterAccountByCurrency;
 		init(context, startDate, periodLength, currency, filterColumn, new long[]{filterId}, em);
 	}
 	
@@ -200,11 +202,14 @@ public class ReportDataByPeriod {
 		try {
 			long t0 = System.nanoTime();
 			// search accounts for which the reference currency is the given currency
-			int[] accounts = getAccountsByCurrency(currency, db);
-			if (accounts.length==0) {
-				max=min=0;
-				absMax=absMin=0;
-				return;
+			int[] accounts = new int[0];
+			if (filterAccountByCurrency) {
+				accounts = getAccountsByCurrency(currency, db);
+				if (accounts.length == 0) {
+					max = min = 0;
+					absMax = absMin = 0;
+					return;
+				}
 			}
 			
 			// prepare query based on given report parameters
@@ -315,7 +320,7 @@ public class ReportDataByPeriod {
 		Calendar month;
 		for(int index=0; index<periodLength; index++) {
 			month = new GregorianCalendar(startDate.get(Calendar.YEAR), startDate.get(Calendar.MONTH)+index, 1, 0, 0, 0);
-			PeriodValue periodValue = new PeriodValue(month, 0);
+			PeriodValue periodValue = new PeriodValue(month);
 			values.add(periodValue);
 		}		
 	}
@@ -375,6 +380,19 @@ public class ReportDataByPeriod {
 			}
 			else {
 				values.add(periodValue);
+			}
+		}
+
+		// fill chart with previous balance for data points that doesn't have any transaction
+		if (aggregation == ValueAggregation.LAST) {
+			double lastValue = 0;
+			for (PeriodValue v : values) {
+				if (!v.hasValue()) {
+					v.setValue(lastValue);
+				}
+				else {
+					lastValue = v.getValue();
+				}
 			}
 		}
 		

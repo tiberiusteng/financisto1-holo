@@ -10,6 +10,8 @@ import tw.tib.financisto.db.DatabaseHelper.TransactionColumns;
 import tw.tib.financisto.graph.Report2DChart;
 import tw.tib.financisto.model.Account;
 import tw.tib.financisto.model.Currency;
+import tw.tib.financisto.model.ReportDataByPeriod;
+
 import android.content.Context;
 
 /**
@@ -66,4 +68,15 @@ public class AccountByPeriodReport extends Report2DChart {
 		return context.getString(R.string.report_no_account);
 	}
 
+	@Override
+	public Currency getCurrency() {
+		return em.getAccount(filterIds.get(currentFilterOrder)).currency;
+	}
+
+	@Override
+	protected ReportDataByPeriod createDataBuilder() {
+		return new ReportDataByPeriod(context, startPeriod, periodLength, currency, columnFilter,
+				filterIds.get(currentFilterOrder), em, ReportDataByPeriod.ValueAggregation.SUM,
+				true, false);
+	}
 }

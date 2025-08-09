@@ -68,9 +68,14 @@ public class AccountBalanceByPeriodReport extends Report2DChart {
     }
 
     @Override
+    public Currency getCurrency() {
+        return em.getAccount(filterIds.get(currentFilterOrder)).currency;
+    }
+
+    @Override
     protected ReportDataByPeriod createDataBuilder() {
         return new ReportDataByPeriod(context, startPeriod, periodLength, currency, columnFilter,
-                filterIds.get(currentFilterOrder), em, ReportDataByPeriod.ValueAggregation.LAST, false) {
+                filterIds.get(currentFilterOrder), em, ReportDataByPeriod.ValueAggregation.LAST, false, false) {
             @Override
             protected Cursor queryData(SQLiteDatabase db, String filterColumn, String where, String[] args) {
                 Log.d(TAG, format("filterColumn:%s where:%s args:%s", filterColumn, where, Arrays.toString(args)));
