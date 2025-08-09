@@ -39,6 +39,7 @@ import tw.tib.financisto.graph.Report2DPoint;
 import tw.tib.financisto.model.Currency;
 import tw.tib.financisto.model.PeriodValue;
 import tw.tib.financisto.model.ReportDataByPeriod;
+import tw.tib.financisto.report.AccountBalanceByPeriodReport;
 import tw.tib.financisto.report.AccountByPeriodReport;
 import tw.tib.financisto.report.CategoryByPeriodReport;
 import tw.tib.financisto.report.LocationByPeriodReport;
@@ -177,6 +178,11 @@ public class Report2DChartActivity extends Activity implements OnChartValueSelec
                 break;
             case BY_PROJECT_BY_PERIOD:
                 reportData = new ProjectByPeriodReport(this, db, startPeriod, periodLength, currency);
+                break;
+            case BY_ACCOUNT_BALANCE_BY_PERIOD:
+                findViewById(R.id.report_sum_result).setVisibility(View.INVISIBLE);
+                findViewById(R.id.report_sum_label).setVisibility(View.INVISIBLE);
+                reportData = new AccountBalanceByPeriodReport(this, db, startPeriod, periodLength, currency);
                 break;
         }
 

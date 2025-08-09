@@ -108,6 +108,14 @@ public class ReportDataByPeriod {
 	 * The data points of the report (period x monthly result)
 	 */
 	private List<PeriodValue> values = new ArrayList<PeriodValue>();
+
+	public enum ValueAggregation {
+		SUM,
+		LAST
+	}
+
+	protected ValueAggregation aggregation = ValueAggregation.SUM;
+	protected boolean excludeTransfers = true;
 	
 	/**
 	 * Constructor for report data builder that considers filters in a given period.
@@ -160,6 +168,14 @@ public class ReportDataByPeriod {
 	public ReportDataByPeriod(Context context, Calendar startDate, int periodLength, Currency currency, String filterColumn, long filterId, MyEntityManager em) {
 		init(context, startDate, periodLength, currency, filterColumn, new long[]{filterId}, em);
 	}
+
+	public ReportDataByPeriod(Context context, Calendar startDate, int periodLength, Currency currency,
+			String filterColumn, long filterId, MyEntityManager em, ValueAggregation aggregation, boolean excludeTransfers)
+	{
+		this.aggregation = aggregation;
+		this.excludeTransfers = excludeTransfers;
+		init(context, startDate, periodLength, currency, filterColumn, new long[]{filterId}, em);
+	}
 	
 	/**
 	 * Initialize data.
@@ -195,8 +211,7 @@ public class ReportDataByPeriod {
 			String where = getWhereClause(filterColumn, filterId, accounts);
 			String[] args = getWhereArgs(startDate, periodLength, filterId, accounts);
 			// query data
-			cursor = db.query(TRANSACTION_TABLE, new String[]{filterColumn, TransactionColumns.from_amount.name(), TransactionColumns.datetime.name()},
-					   where, args, null, null, TransactionColumns.datetime.name());
+			cursor = queryData(db, filterColumn, where, args);
 			long t1 = System.nanoTime();
 			// extract data and fill statistics
 			extractData(cursor);
@@ -206,6 +221,11 @@ public class ReportDataByPeriod {
 		} finally {
 			if (cursor!=null) cursor.close();
 		}
+	}
+
+	protected Cursor queryData(SQLiteDatabase db, String filterColumn, String where, String[] args) {
+		return db.query(TRANSACTION_TABLE, new String[]{filterColumn, TransactionColumns.from_amount.name(), TransactionColumns.datetime.name()},
+				where, args, null, null, TransactionColumns.datetime.name());
 	}
 
 	/**
@@ -219,7 +239,10 @@ public class ReportDataByPeriod {
 		StringBuffer accountsWhere = new StringBuffer();
 		// no templates and scheduled transactions
 		// don't include transfer to other accounts (transfers to this account is inherently not included)
-		accountsWhere.append(TransactionColumns.is_template + "=0 and " + TransactionColumns.to_account_id + "=0");
+		accountsWhere.append(TransactionColumns.is_template + "=0");
+		if (excludeTransfers) {
+			accountsWhere.append(" and " + TransactionColumns.to_account_id + "=0");
+		}
 		
 		// report filtering (account, category, location or project)
 		accountsWhere.append(" and (");
@@ -311,12 +334,15 @@ public class ReportDataByPeriod {
 	 *   After getting data, generate statistics based on results.
 	 * */
 		// First loop: month by month
+		double result = 0;
 		while (c.moveToNext()) {
 			
 			// get month of reference  
 			Calendar month = getMonthInTransaction(c);
-			
-			double result=0;
+
+			if (aggregation == ValueAggregation.SUM) {
+				result = 0;
+			}
 			boolean stepMonth = false;
 			// get result from transactions in the reference month
 			do {
@@ -325,7 +351,14 @@ public class ReportDataByPeriod {
  					stepMonth = true;
 					break;
 				}
- 				result += c.getDouble(RESULT_AMOUNT_COLUMN);
+				switch (aggregation) {
+					case SUM:
+						result += c.getDouble(RESULT_AMOUNT_COLUMN);
+						break;
+					case LAST:
+						result = c.getDouble(RESULT_AMOUNT_COLUMN);
+						break;
+				}
 			} while(c.moveToNext());
 			
 			// If step month, get back to transaction of the new month in cursor.

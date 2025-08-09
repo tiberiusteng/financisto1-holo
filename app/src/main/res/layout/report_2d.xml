@@ -118,6 +118,7 @@
                 android:text="@string/report_init_res" />
 
             <TextView
+                android:id="@+id/report_sum_label"
                 android:layout_width="wrap_content"
                 android:layout_weight="1"
                 android:gravity="center|left"

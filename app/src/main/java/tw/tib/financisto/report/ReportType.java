@@ -107,6 +107,17 @@ public enum ReportType {
 		public boolean isConventionalBarReport() {
 			return false;
 		}
+	},
+	BY_ACCOUNT_BALANCE_BY_PERIOD(R.string.report_by_account_balance_by_period, R.string.report_by_account_balance_by_period_summary, R.drawable.report_icon_line){
+		@Override
+		public Report createReport(Context context, Currency currency) {
+			return null;
+		}
+
+		@Override
+		public boolean isConventionalBarReport() {
+			return false;
+		}
 	};
 	
 	public final int titleId;

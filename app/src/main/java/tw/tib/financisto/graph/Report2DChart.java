@@ -316,13 +316,17 @@ public abstract class Report2DChart {
 	 * Request data and fill data objects (list of points, max, min, etc.)
 	 */
 	protected void build() {
-		data = new ReportDataByPeriod(context, startPeriod, periodLength, currency, columnFilter, filterIds.get(currentFilterOrder), em);
+		data = createDataBuilder();
 		points = new ArrayList<Report2DPoint>();
 		List<PeriodValue> pvs = data.getPeriodValues();
 
 		for (int i=0; i<pvs.size(); i++) {
 			points.add(new Report2DPoint(pvs.get(i)));
 		}
+	}
+
+	protected ReportDataByPeriod createDataBuilder() {
+		return new ReportDataByPeriod(context, startPeriod, periodLength, currency, columnFilter, filterIds.get(currentFilterOrder), em);
 	}
 
 	/**

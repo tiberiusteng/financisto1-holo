@@ -165,6 +165,8 @@
     <string name="report_by_location_by_period_summary">Transactions report by location and period</string>
     <string name="report_by_project_by_period">By Project / Period</string>
     <string name="report_by_project_by_period_summary">Transactions report by project and period</string>
+    <string name="report_by_account_balance_by_period">By Account Balance / Period</string>
+    <string name="report_by_account_balance_by_period_summary">Account balance report by period</string>
     <string name="max_result_label">Max:</string>
     <string name="min_result_label">Min:</string>
     <string name="mean_result_label">Mean:</string>
