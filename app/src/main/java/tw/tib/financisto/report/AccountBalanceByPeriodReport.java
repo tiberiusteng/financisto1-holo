@@ -69,7 +69,12 @@ public class AccountBalanceByPeriodReport extends Report2DChart {
 
     @Override
     public Currency getCurrency() {
-        return em.getAccount(filterIds.get(currentFilterOrder)).currency;
+        if (filterIds.size() > 0) {
+            return em.getAccount(filterIds.get(currentFilterOrder)).currency;
+        }
+        else {
+            return em.getHomeCurrency();
+        }
     }
 
     @Override
