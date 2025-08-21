@@ -281,11 +281,7 @@ public class CategorySelectorActivity extends AbstractListActivity<Cursor> {
             } else {
                 v.centerView.setText(c.title);
             }
-            String spacedTag = c.tag;
-            if(spacedTag != null) {
-                spacedTag = spacedTag.replaceAll(",", ", ");
-            }
-            v.bottomView.setText(spacedTag);
+            v.bottomView.setText(c.tag);
             v.indicator.setBackgroundColor(c.isIncome() ? incomeColor : expenseColor);
             v.rightCenterView.setVisibility(View.INVISIBLE);
             v.iconView.setVisibility(View.INVISIBLE);
