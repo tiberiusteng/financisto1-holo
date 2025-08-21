@@ -76,7 +76,7 @@ public class CategoryTreeNavigator {
                 CategoryTree<Category> children = c.children;
                 for (Category child : children) {
                     if (sb.length() > 0) {
-                        sb.append(",");
+                        sb.append(", ");
                     }
                     sb.append(child.title);
                 }
