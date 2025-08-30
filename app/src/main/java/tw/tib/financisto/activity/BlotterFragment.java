@@ -162,7 +162,7 @@ public class BlotterFragment extends AbstractListFragment<Cursor> implements Blo
     }
 
     protected TotalCalculationTask createTotalCalculationTask(WhereFilter filter) {
-        Context context = getContext();
+        Context context = getContext().getApplicationContext();
         if (context == null) {
             return null;
         }

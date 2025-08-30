@@ -293,7 +293,7 @@ public class AccountListFragment extends AbstractListFragment<Cursor> {
         }
         TextView totalText = getView().findViewById(R.id.total);
         totalText.setOnClickListener(view -> showTotals());
-        totalCalculationTask = new AccountTotalsCalculationTask(getContext(), db, totalText, filter);
+        totalCalculationTask = new AccountTotalsCalculationTask(getContext().getApplicationContext(), db, totalText, filter);
         totalCalculationTask.execute();
     }
 

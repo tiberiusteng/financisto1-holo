@@ -310,7 +310,7 @@ public class AccountRecyclerFragment extends AbstractRecyclerViewFragment
             showTotals();
             return true;
         });
-        totalCalculationTask = new AccountTotalsCalculationTask(getContext(), db, totalText, filter);
+        totalCalculationTask = new AccountTotalsCalculationTask(getContext().getApplicationContext(), db, totalText, filter);
         totalCalculationTask.execute();
     }
 
