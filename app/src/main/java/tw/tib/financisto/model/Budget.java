@@ -116,7 +116,9 @@ public class Budget {
 			for (long id : ids) {
 				if (b.includeSubcategories) {
 					Category c = categories.get(id);
-					categoryCriterion.add(Criteria.btw(BlotterFilter.CATEGORY_LEFT, Integer.toString(c.left), Integer.toString(c.right)));
+					if (c != null) {
+						categoryCriterion.add(Criteria.btw(BlotterFilter.CATEGORY_LEFT, Integer.toString(c.left), Integer.toString(c.right)));
+					}
 				} else {
 					categoryCriterion.add(Criteria.eq(BlotterFilter.CATEGORY_ID, Long.toString(id)));
 				}
