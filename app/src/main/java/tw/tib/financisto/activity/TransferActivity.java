@@ -40,6 +40,8 @@ public class TransferActivity extends AbstractTransactionActivity {
 	private long selectedAccountFromId = -1;
 	private long selectedAccountToId = -1;
 
+	private boolean isShowCategoryInTransfer;
+
 	public TransferActivity() {
 	}
 
@@ -103,7 +105,8 @@ public class TransferActivity extends AbstractTransactionActivity {
 			createPayeeNode(layout);
 		}
 		// category
-		if (MyPreferences.isShowCategoryInTransferScreen(this)) {
+		isShowCategoryInTransfer = MyPreferences.isShowCategoryInTransferScreen(this);
+		if (isShowCategoryInTransfer) {
 			categorySelector.createNode(layout, TRANSFER);
 		} else {
 			categorySelector.createDummyNode();
@@ -164,28 +167,36 @@ public class TransferActivity extends AbstractTransactionActivity {
 	@Override
 	protected void onClick(View v, int id) {
 		super.onClick(v, id);
-		switch (id) {
-			case R.id.account_from:
-				x.select(this, R.id.account_from, R.string.account, accountCursor, accountAdapter,
-						AccountColumns.ID, selectedAccountFromId);
-				break;
-			case R.id.account_to:
-				x.select(this, R.id.account_to, R.string.account, accountCursor, accountAdapter,
-						AccountColumns.ID, selectedAccountToId);
-				break;
+		if (id == R.id.account_from) {
+			x.select(this, R.id.account_from, R.string.account, accountCursor, accountAdapter,
+					AccountColumns.ID, selectedAccountFromId);
+		} else if (id == R.id.account_to) {
+			x.select(this, R.id.account_to, R.string.account, accountCursor, accountAdapter,
+					AccountColumns.ID, selectedAccountToId);
+		}
+	}
+
+	@Override
+	public void onSelectedPos(int id, int selectedPos) {
+		super.onSelectedPos(id, selectedPos);
+		if (id == R.id.payee) {
+			if (isShowPayee && isRememberLastCategory) {
+				selectLastCategoryForPayee(payeeSelector.getSelectedEntityId());
+			}
 		}
 	}
 
 	@Override
 	public void onSelectedId(int id, long selectedId) {
 		super.onSelectedId(id, selectedId);
-		switch (id) {
-			case R.id.account_from:
-				selectFromAccount(selectedId);
-				break;
-			case R.id.account_to:
-				selectToAccount(selectedId);
-				break;
+		if (id == R.id.account_from) {
+			selectFromAccount(selectedId);
+		} else if (id == R.id.account_to) {
+			selectToAccount(selectedId);
+		} else if (id == R.id.payee) {
+			if (isRememberLastCategory) {
+				selectLastCategoryForPayee(selectedId);
+			}
 		}
 	}
 
@@ -215,8 +226,13 @@ public class TransferActivity extends AbstractTransactionActivity {
 
 	protected void selectAccount(Account account, TextView accountText, TextView accountBalanceText, TextView accountLimitText, boolean selectLast) {
 		u.setAccountTitleBalance(account, accountText, accountBalanceText, accountLimitText);
-		if (selectLast && isRememberLastAccount) {
-			selectToAccount(account.lastAccountId);
+		if (selectLast) {
+			if (isRememberLastAccount) {
+				selectToAccount(account.lastAccountId);
+			}
+			if (!isShowPayee && isShowCategoryInTransfer && isRememberLastCategory) {
+				categorySelector.selectCategory(account.lastCategoryId);
+			}
 		}
 	}
 

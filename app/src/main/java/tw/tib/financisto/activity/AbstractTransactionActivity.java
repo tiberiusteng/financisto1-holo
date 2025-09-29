@@ -756,6 +756,12 @@ public abstract class AbstractTransactionActivity extends AbstractActivity imple
 		}
 	}
 
+	protected void selectLastCategoryForPayee(long id) {
+		Payee p = db.get(Payee.class, id);
+		if (p != null) {
+			categorySelector.selectCategory(p.lastCategoryId);
+		}
+	}
 
 	@Override
 	protected void onDestroy() {
