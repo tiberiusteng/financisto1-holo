@@ -27,7 +27,8 @@ public enum CardIssuer implements EntityEnum {
 	DISCOVER(R.string.card_issuer_discover, R.drawable.account_type_card_discover),
 	MIR(R.string.card_issuer_mir, R.drawable.account_type_card_mir),
 	NETS(R.string.card_issuer_nets, R.drawable.account_type_card_nets),
-	UNIONPAY(R.string.card_issuer_unionpay, R.drawable.account_type_card_unionpay);
+	UNIONPAY(R.string.card_issuer_unionpay, R.drawable.account_type_card_unionpay),
+	RUPAY(R.string.card_issuer_rupay, R.drawable.account_type_card_rupay);
 
 	public final int titleId;
 	public final int iconId;
