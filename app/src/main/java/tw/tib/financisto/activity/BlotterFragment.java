@@ -190,6 +190,10 @@ public class BlotterFragment extends AbstractListFragment<Cursor> implements Blo
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
 
+        if (savedInstanceState != null) {
+            this.saveFilter = savedInstanceState.getBoolean(SAVE_FILTER);
+        }
+
         if (!this.saveFilter) {
             var toolbar = (Toolbar) view.findViewById(R.id.toolbar);
             if (toolbar != null) {
@@ -631,6 +635,7 @@ public class BlotterFragment extends AbstractListFragment<Cursor> implements Blo
     public void onSaveInstanceState(Bundle outState) {
         super.onSaveInstanceState(outState);
         blotterFilter.toBundle(outState);
+        outState.putBoolean(SAVE_FILTER, saveFilter);
     }
 
     protected void createFromTemplate() {
