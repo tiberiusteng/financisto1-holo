@@ -34,6 +34,8 @@ public class QifAccount {
         a.currency = currency;
         a.title = memo;
         a.type = encodeAccountType(type);
+        a.icon = "";
+        a.accentColor = "";
         return a;
     }
 
