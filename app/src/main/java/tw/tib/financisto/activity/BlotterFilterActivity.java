@@ -329,7 +329,12 @@ public class BlotterFilterActivity extends FilterAbstractActivity {
 					statuses.add(((TransactionStatusMultiChoiceItem) item).status.name());
 				}
 			}
-			filter.put(Criteria.in(BlotterFilter.STATUS, statuses.toArray(new String[0])));
+			if (!statuses.isEmpty()) {
+				filter.put(Criteria.in(BlotterFilter.STATUS, statuses.toArray(new String[0])));
+			}
+			else {
+				clear(BlotterFilter.STATUS, status);
+			}
 			updateStatusFromFilter();
 		}
 	}
