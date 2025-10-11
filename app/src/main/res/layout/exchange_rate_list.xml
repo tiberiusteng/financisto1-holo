@@ -37,7 +37,7 @@
         <ImageButton
             android:id="@+id/bFlip"
             style="@style/BottomBarButton"
-            android:src="@drawable/ic_swap_horiz_24dp" />
+            android:src="@drawable/sync_alt" />
 
         <Spinner
             android:id="@+id/spinnerToCurrency"
@@ -50,12 +50,12 @@
         <ImageButton
             android:id="@+id/bAdd"
             style="@style/BottomBarButton"
-            android:src="@drawable/actionbar_add_big" />
+            android:src="@drawable/add" />
 
         <ImageButton
             android:id="@+id/bRefresh"
             style="@style/BottomBarButton"
-            android:src="@drawable/ic_refresh_24dp"
+            android:src="@drawable/refresh"
             android:layout_marginRight="@dimen/action_button_margin" />
     </LinearLayout>
 

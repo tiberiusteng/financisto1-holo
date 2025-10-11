@@ -98,7 +98,7 @@
         <ImageButton
             android:id="@+id/bMenu"
             style="@style/BottomBarButton"
-            android:src="@drawable/actionbar_dot_menu" />
+            android:src="@drawable/more_vert" />
 
         <ImageButton
             android:id="@+id/bAddSeparator"
