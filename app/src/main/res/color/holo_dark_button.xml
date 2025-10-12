@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="utf-8"?>
+<selector xmlns:android="http://schemas.android.com/apk/res/android">
+    <item android:state_window_focused="false" android:state_enabled="true"
+        android:color="#ff707070" />
+    <item android:state_window_focused="false" android:state_enabled="false"
+        android:color="#ff404040" />
+    <item android:state_pressed="true"
+        android:color="#ff909090" />
+    <item android:state_focused="true" android:state_enabled="true"
+        android:color="#ffade1f5" />
+    <item android:state_enabled="true"
+        android:color="#ff707070" />
+    <item android:state_focused="true"
+        android:color="#ff33b5e5" />
+    <item
+        android:color="#ff404040" />
+</selector>
