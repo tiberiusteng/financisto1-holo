@@ -18,17 +18,17 @@
 			android:layout_width="fill_parent" android:layout_height="fill_parent"
 			android:orientation="vertical" android:id="@+id/list">
 			<LinearLayout android:layout_height="wrap_content"
-				android:layout_width="fill_parent" style="@style/WhiteBackgroundButtonBar">
+				android:layout_width="fill_parent" style="@style/BottomBar">
 				<ImageButton android:id="@+id/status" android:layout_width="wrap_content" 
 					android:layout_height="match_parent" android:src="@drawable/transaction_status_unreconciled_2"/>
-				<Button android:layout_width="wrap_content" android:gravity="center"
+				<Button android:layout_width="0dp" android:gravity="center"
 					android:text="04/03/09" android:id="@+id/date"
-					android:layout_height="wrap_content" android:layout_weight="1"
-					style="TransactionDateTimeButton" />
+					android:layout_height="@dimen/action_button_size" android:layout_weight="1"
+					style="@style/TransactionDateTimeButton" />
 				<Button android:layout_width="wrap_content" android:gravity="center"
 					android:text="12:56 PM" android:id="@+id/time"
-					android:layout_height="wrap_content"
-					style="TransactionDateTimeButton" />
+					android:layout_height="@dimen/action_button_size"
+					style="@style/TransactionDateTimeButton" />
 			</LinearLayout>
 		</LinearLayout>
 	</ScrollView>
