@@ -5,7 +5,7 @@
     <item android:state_window_focused="false" android:state_enabled="false"
         android:color="#ff404040" />
     <item android:state_pressed="true"
-        android:color="#ff909090" />
+        android:color="#ff505050" />
     <item android:state_focused="true" android:state_enabled="true"
         android:color="#ffade1f5" />
     <item android:state_enabled="true"
