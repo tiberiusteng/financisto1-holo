@@ -4,6 +4,7 @@ import android.database.Cursor;
 import tw.tib.financisto.model.Account;
 import tw.tib.financisto.model.Category;
 import tw.tib.financisto.model.Transaction;
+import tw.tib.financisto.model.TransactionStatus;
 import tw.tib.financisto.utils.Utils;
 
 import java.io.IOException;
@@ -204,7 +205,13 @@ public class QifTransaction {
     public Transaction toTransaction() {
         Transaction t = new Transaction();
         t.id = -1;
-        t.dateTime = date.getTime();
+        if (date != null) {
+            t.dateTime = date.getTime();
+        }
+        else {
+            t.dateTime = System.currentTimeMillis();
+            t.status = TransactionStatus.RS;
+        }
         t.fromAmount = amount;
         t.note = memo;
         return t;
