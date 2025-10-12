@@ -14,5 +14,5 @@ package tw.tib.financisto.export.qif;
  * Date: 11/12/11 1:57 AM
  */
 public enum QifDateFormat {
-    US_FORMAT, EU_FORMAT
+    US_FORMAT, EU_FORMAT, ISO_FORMAT
 }

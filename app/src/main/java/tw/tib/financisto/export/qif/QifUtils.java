@@ -76,13 +76,21 @@ public class QifUtils {
             } catch (Exception e) {
                 Log.e("QifUtils", "Unable to parse EU date", e);
             }
+        } else if (format == ISO_FORMAT) {
+            try {
+                year = Integer.parseInt(chunks[0].trim());
+                month = Integer.parseInt(chunks[1].trim());
+                day = Integer.parseInt(chunks[2].trim());
+            } catch (Exception e) {
+                Log.e("QifUtils", "Unable to parse ISO date", e);
+            }
         } else {
             Log.e("QifUtils", "Invalid date format specified");
             return new Date();
         }
 
         if (year < 100) {
-            if (year < 29) {
+            if (year < 40) {
                 year += 2000;
             } else {
                 year += 1900;
