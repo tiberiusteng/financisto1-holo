@@ -1032,7 +1032,13 @@ public class BlotterFragment extends AbstractListFragment<Cursor> implements Blo
         int multiplier = data.getIntExtra(SelectTemplateFragment.MULTIPLIER, 1);
         boolean edit = data.getBooleanExtra(SelectTemplateFragment.EDIT_AFTER_CREATION, false);
         if (templateId > 0) {
-            long id = duplicateTransaction(templateId, multiplier);
+            long id;
+            if (blotterFilter != null && blotterFilter.isSchedule()) {
+                // create scheduled transaction from template (isTemplate = 2)
+                id = db.duplicateTransactionAsScheduled(templateId, multiplier);
+            } else {
+                id = duplicateTransaction(templateId, multiplier);
+            }
             Transaction t = db.getTransaction(id);
             if (t.fromAmount == 0 || edit) {
                 new BlotterOperations(getContext(), this, db, id).asNewFromTemplate().editTransaction();
