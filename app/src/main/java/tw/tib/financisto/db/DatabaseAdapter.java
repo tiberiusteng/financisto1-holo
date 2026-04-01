@@ -256,6 +256,16 @@ public class DatabaseAdapter extends MyEntityManager {
         return duplicateTransaction(id, 1, 1, CURRENT_TIMESTAMP, false);
     }
 
+    /**
+     * Duplicate an existing transaction as a scheduled transaction (isTemplate = 2).
+     * @param id source transaction id (typically a template)
+     * @param multiplier multiplier for amounts
+     * @return new transaction id
+     */
+    public long duplicateTransactionAsScheduled(long id, int multiplier) {
+        return duplicateTransaction(id, 2, multiplier, CURRENT_TIMESTAMP, false);
+    }
+
     private long duplicateTransaction(long id, int isTemplate, int multiplier, long timestamp, boolean skipDuplicatedRecurrence) {
         SQLiteDatabase db = db();
         db.beginTransaction();
