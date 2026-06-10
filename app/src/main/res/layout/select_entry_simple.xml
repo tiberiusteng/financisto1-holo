@@ -29,6 +29,6 @@
 			android:layout_height="wrap_content" android:layout_below="@+id/label"
 			android:layout_alignLeft="@+id/label" 
 			android:textAppearance="?android:attr/textAppearanceMedium"
-			android:maxLines="3" android:duplicateParentState="true" />
+			android:duplicateParentState="true" />
 	</RelativeLayout>
 </LinearLayout>
