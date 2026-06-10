@@ -401,8 +401,6 @@ public class DatabaseAdapter extends MyEntityManager {
         }
         transaction.id = transactionId;
         insertSplits(transaction);
-        updateAccountLastTransactionDate(transaction.fromAccountId);
-        updateAccountLastTransactionDate(transaction.toAccountId);
         return transactionId;
     }
 
@@ -483,10 +481,13 @@ public class DatabaseAdapter extends MyEntityManager {
                 if (t.isSplitChild()) {
                     if (t.isTransfer()) {
                         updateToAccountBalance(t, id);
+                        updateAccountLastTransactionDate(t.toAccountId);
                     }
                 } else {
                     updateFromAccountBalance(t, id);
                     updateToAccountBalance(t, id);
+                    updateAccountLastTransactionDate(t.fromAccountId);
+                    updateAccountLastTransactionDate(t.toAccountId);
                     updateLocationCount(t.locationId, 1);
                     updateLastUsed(t);
                 }
