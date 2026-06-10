@@ -70,7 +70,15 @@ public class IntegrityCheckTask extends AsyncTask<IntegrityCheck, Void, Integrit
         if (v == null || !fragment.isResumed()) {
             return null;
         }
-        return v.findViewById(R.id.integrity_error);
+
+        // try to fix:
+        // java.lang.NullPointerException: Attempt to read from field 'int android.view.View.mPrivateFlags'
+        // on a null object reference in method 'android.view.View android.view.ViewGroup.findViewTraversal(int)'
+        try {
+            return v.findViewById(R.id.integrity_error);
+        } catch (Exception e) {
+            return null;
+        }
     }
 
 }
