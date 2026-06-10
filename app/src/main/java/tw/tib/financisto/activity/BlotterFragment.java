@@ -54,6 +54,7 @@ import java.util.regex.Pattern;
 
 import greendroid.widget.QuickActionGrid;
 import greendroid.widget.QuickActionWidget;
+import tw.tib.financisto.Application;
 import tw.tib.financisto.R;
 import tw.tib.financisto.adapter.BlotterListAdapter;
 import tw.tib.financisto.adapter.TransactionsListAdapter;
@@ -897,7 +898,7 @@ public class BlotterFragment extends AbstractListFragment<Cursor> implements Blo
     @Override
     protected Cursor loadInBackground() {
         Cursor c;
-        blotterFilter.recalculatePeriod(getContext());
+        blotterFilter.recalculatePeriod(Application.getInstance().getApplicationContext());
         WhereFilter blotterFilterCopy = WhereFilter.copyOf(blotterFilter);
 
         new Handler(Looper.getMainLooper()).post(()-> {

@@ -191,7 +191,7 @@ abstract public class AbstractListFragment<D> extends ListFragment
     @SuppressLint("StaticFieldLeak")
     @Override
     public Loader<D> onCreateLoader(int id, @Nullable Bundle args) {
-        return new AsyncTaskLoader<D>(getContext()) {
+        return new AsyncTaskLoader<D>(Application.getInstance().getApplicationContext()) {
             @Override
             protected void onStartLoading() {
                 forceLoad();
