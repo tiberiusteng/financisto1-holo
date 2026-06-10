@@ -318,7 +318,9 @@
 		<activity android:name=".activity.Report2DChartActivity" android:label="@string/report"
 			android:configChanges="screenSize|smallestScreenSize|orientation|screenLayout|keyboardHidden" />
 		<activity android:name=".activity.ReportPieChartActivity" android:label="@string/report"/>
-		<activity android:name=".activity.ReportPreferencesActivity" android:label="@string/report_preferences"/>
+        <activity android:name=".activity.ReportPreferencesActivity2"
+            android:theme="@style/AppThemeCompat"
+            android:label="@string/report_preferences"/>
 		<activity android:name=".activity.AboutActivity" android:label="@string/about"
 			android:theme="@style/AppThemeCompat" />
 

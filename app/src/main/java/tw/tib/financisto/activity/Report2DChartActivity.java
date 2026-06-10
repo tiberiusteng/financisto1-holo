@@ -544,7 +544,7 @@ public class Report2DChartActivity extends Activity implements OnChartValueSelec
         // save preferences status before call report preferences activity
         initialPrefs = MyPreferences.getReportPreferences(this);
         // call report preferences activity asking for result when closed
-        Intent intent = new Intent(this, ReportPreferencesActivity.class);
+        Intent intent = new Intent(this, ReportPreferencesActivity2.class);
         startActivityForResult(intent, REPORT_PREFERENCES);
     }
 
