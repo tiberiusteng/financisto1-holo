@@ -824,15 +824,15 @@ public class BlotterFragment extends AbstractListFragment<Cursor> implements Blo
         return false;
     }
 
-    private long duplicateTransactionKeepTime(long id) {
+    protected long duplicateTransactionKeepTime(long id) {
         return duplicateTransaction(id, 1, KeepTime.KEEP_TIME);
     }
 
-    private long duplicateTransactionKeepDateTime(long id) {
+    protected long duplicateTransactionKeepDateTime(long id) {
         return duplicateTransaction(id, 1, KeepTime.KEEP_DATE_TIME);
     }
 
-    private long duplicateTransaction(long id, int multiplier) {
+    protected long duplicateTransaction(long id, int multiplier) {
         return duplicateTransaction(id, multiplier, KeepTime.NONE);
     }
 
@@ -842,7 +842,7 @@ public class BlotterFragment extends AbstractListFragment<Cursor> implements Blo
         KEEP_DATE_TIME,
     }
 
-    private long duplicateTransaction(long id, int multiplier, KeepTime keepTime) {
+    protected long duplicateTransaction(long id, int multiplier, KeepTime keepTime) {
         long newId;
         String toastText;
         if (keepTime == KeepTime.KEEP_TIME) {
@@ -1020,25 +1020,12 @@ public class BlotterFragment extends AbstractListFragment<Cursor> implements Blo
             }
             applyFilter();
         } else if (resultCode == RESULT_OK && requestCode == NEW_TRANSACTION_FROM_TEMPLATE_REQUEST) {
-            createTransactionFromTemplate(data);
+            // do nothing - transaction is created in templacte list activity
         }
         if (resultCode == RESULT_OK || resultCode == RESULT_FIRST_USER) {
             Log.d(getClass().getSimpleName(), "RESULT_OK || RESULT_FIRST_USER");
         }
         recreateCursor();
-    }
-
-    private void createTransactionFromTemplate(Intent data) {
-        long templateId = data.getLongExtra(SelectTemplateFragment.TEMPLATE_ID, -1);
-        int multiplier = data.getIntExtra(SelectTemplateFragment.MULTIPLIER, 1);
-        boolean edit = data.getBooleanExtra(SelectTemplateFragment.EDIT_AFTER_CREATION, false);
-        if (templateId > 0) {
-            long id = duplicateTransaction(templateId, multiplier);
-            Transaction t = db.getTransaction(id);
-            if (t.fromAmount == 0 || edit) {
-                new BlotterOperations(getContext(), this, db, id).asNewFromTemplate().editTransaction();
-            }
-        }
     }
 
     private void saveFilter() {

@@ -22,4 +22,15 @@
             android:targetPackage="tw.tib.financisto"
             android:targetClass="tw.tib.financisto.activity.TransferActivity" />
     </shortcut>
+    <shortcut
+        android:shortcutId="template"
+        android:enabled="true"
+        android:icon="@drawable/actionbar_tiles_large"
+        android:shortcutShortLabel="@string/template"
+        android:shortcutLongLabel="@string/new_from_template">
+        <intent
+            android:action="android.intent.action.MAIN"
+            android:targetPackage="tw.tib.financisto"
+            android:targetClass="tw.tib.financisto.activity.SelectTemplateActivity" />
+    </shortcut>
 </shortcuts>

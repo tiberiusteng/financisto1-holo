@@ -498,6 +498,7 @@
     <string name="transfer_template">Transfer (Template)</string>
     <string name="no_templates">No templates</string>
     <string name="template">Template</string>
+    <string name="new_from_template">New transaction/transfer from template</string>
     <string name="delete_template_confirm">Delete template?</string>
     <string name="save_as_template">Save as template</string>
     <string name="save_as_template_success">Transaction saved as template…</string>

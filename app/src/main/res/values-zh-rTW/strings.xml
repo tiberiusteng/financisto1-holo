@@ -430,6 +430,7 @@
   <string name="transfer_template">移轉 (樣版)</string>
   <string name="no_templates">無樣版</string>
   <string name="template">樣版</string>
+  <string name="new_from_template">以樣板新增交易/移轉</string>
   <string name="delete_template_confirm">確定刪除樣版?</string>
   <string name="save_as_template">儲存為樣板</string>
   <string name="save_as_template_success">已將交易儲存為樣板</string>
