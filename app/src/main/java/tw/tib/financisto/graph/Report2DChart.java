@@ -6,7 +6,7 @@ import java.util.GregorianCalendar;
 import java.util.List;
 
 import tw.tib.financisto.R;
-import tw.tib.financisto.db.MyEntityManager;
+import tw.tib.financisto.db.DatabaseAdapter;
 import tw.tib.financisto.model.Currency;
 import tw.tib.financisto.model.PeriodValue;
 import tw.tib.financisto.model.ReportDataByPeriod;
@@ -44,18 +44,18 @@ public abstract class Report2DChart {
 	protected List<Report2DPoint> points;
 	protected int selectedPoint;
 	
-	protected MyEntityManager em;
+	protected DatabaseAdapter em;
 	protected Context context;
 
 	/**
 	 * Basic constructor
-	 * @param em entity manager to query data from database
+	 * @param db database adapter to query data from database
 	 * @param periodLength The number of months to plot the chart
 	 * @param currency The reference currency to filter transactions in same currency
 	 */
-	public Report2DChart(Context context, MyEntityManager em, int periodLength, Currency currency) {
+	public Report2DChart(Context context, DatabaseAdapter db, int periodLength, Currency currency) {
 		setDefaultStartPeriod(periodLength);
-		init(context, em, startPeriod, periodLength, currency);
+		init(context, db, startPeriod, periodLength, currency);
 	}
 	
 	/**
@@ -65,7 +65,7 @@ public abstract class Report2DChart {
 	 * @param periodLength The number of months to plot the chart
 	 * @param currency The reference currency to filter transactions in same currency
 	 */
-	public Report2DChart(Context context, MyEntityManager em, Calendar startPeriod, int periodLength, Currency currency) {
+	public Report2DChart(Context context, DatabaseAdapter em, Calendar startPeriod, int periodLength, Currency currency) {
 		init(context, em, startPeriod, periodLength, currency);
 	}
 	
@@ -77,7 +77,7 @@ public abstract class Report2DChart {
 	 * @param currency The reference currency to filter transactions in same currency
 	 * @param level The level in the hierarchy (0 = root)
 	 */
-	public Report2DChart(Context context, MyEntityManager em, Calendar startPeriod, int periodLength, Currency currency, int level) {
+	public Report2DChart(Context context, DatabaseAdapter em, Calendar startPeriod, int periodLength, Currency currency, int level) {
 		init(context, em, startPeriod, periodLength, currency);
 		this.level = level;
 	}
@@ -90,7 +90,7 @@ public abstract class Report2DChart {
 	 * @param periodLength The number of months to plot the chart
 	 * @param currency The reference currency to filter transactions in same currency
 	 */
-	public void rebuild(Context context, MyEntityManager em,  Calendar startPeriod, int periodLength, Currency currency) {
+	public void rebuild(Context context, DatabaseAdapter em,  Calendar startPeriod, int periodLength, Currency currency) {
 		init(context, em, startPeriod, periodLength, currency);
 	}
 
@@ -130,9 +130,9 @@ public abstract class Report2DChart {
 	 * @param periodLength The number of months to plot the chart
 	 * @param currency
 	 */
-	private void init(Context context, MyEntityManager em, Calendar startPeriod, int periodLength, Currency currency) {
+	private void init(Context context, DatabaseAdapter db, Calendar startPeriod, int periodLength, Currency currency) {
 		this.context = context;
-		this.em = em;
+		this.em = db;
 		this.startPeriod = startPeriod;
 		this.periodLength = periodLength;
 		this.currency = currency;

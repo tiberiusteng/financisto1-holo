@@ -6,7 +6,7 @@ import java.util.Calendar;
 import java.util.List;
 
 import tw.tib.financisto.R;
-import tw.tib.financisto.db.MyEntityManager;
+import tw.tib.financisto.db.DatabaseAdapter;
 import tw.tib.financisto.db.DatabaseHelper.TransactionColumns;
 import tw.tib.financisto.graph.Report2DChart;
 import tw.tib.financisto.model.Currency;
@@ -20,7 +20,7 @@ import android.content.Context;
  */
 public class ProjectByPeriodReport extends Report2DChart {
 	
-	public ProjectByPeriodReport(Context context, MyEntityManager em, Calendar startPeriod, int periodLength, Currency currency) {
+	public ProjectByPeriodReport(Context context, DatabaseAdapter em, Calendar startPeriod, int periodLength, Currency currency) {
 		super(context, em, startPeriod, periodLength, currency);
 	}
 

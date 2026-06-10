@@ -8,8 +8,8 @@ import java.util.Calendar;
 import java.util.List;
 
 import tw.tib.financisto.R;
+import tw.tib.financisto.db.DatabaseAdapter;
 import tw.tib.financisto.db.DatabaseHelper;
-import tw.tib.financisto.db.MyEntityManager;
 import tw.tib.financisto.db.DatabaseHelper.CategoryColumns;
 import tw.tib.financisto.db.DatabaseHelper.TransactionColumns;
 import tw.tib.financisto.graph.Report2DChart;
@@ -29,8 +29,8 @@ import android.database.sqlite.SQLiteDatabase;
  */
 public class CategoryByPeriodReport extends Report2DChart {
 	
-	public CategoryByPeriodReport(Context context, MyEntityManager em, Calendar startPeriod, int periodLength, Currency currency) {
-		super(context, em, startPeriod, periodLength, currency);
+	public CategoryByPeriodReport(Context context, DatabaseAdapter db, Calendar startPeriod, int periodLength, Currency currency) {
+		super(context, db, startPeriod, periodLength, currency);
 	}
 
 	@Override
@@ -66,17 +66,17 @@ public class CategoryByPeriodReport extends Report2DChart {
 		filterIds = new ArrayList<>();
 		filterTitles = new ArrayList<>();
 		currentFilterOrder = 0;
-		List<Category> categories = em.getAllCategoriesList(includeNoCategory);
+		List<Category> categories = em.getCategoriesList(includeNoCategory);
 		for (Category c : categories) {
 			if (includeSubCategories) {
 				filterIds.add(c.id);
-				filterTitles.add(c.title);
+				filterTitles.add(c.getTitle());
 			} else {
 				// do not include sub categories
 				if (c.level == 1) {
 					// filter root categories only
 					filterIds.add(c.id);
-					filterTitles.add(c.title);
+					filterTitles.add(c.getTitle());
 				}
 			}
 		}

@@ -15,8 +15,8 @@ import java.util.Collections;
 import java.util.List;
 
 import tw.tib.financisto.R;
+import tw.tib.financisto.db.DatabaseAdapter;
 import tw.tib.financisto.db.DatabaseHelper;
-import tw.tib.financisto.db.MyEntityManager;
 import tw.tib.financisto.graph.Report2DChart;
 import tw.tib.financisto.model.Account;
 import tw.tib.financisto.model.Currency;
@@ -25,7 +25,7 @@ import tw.tib.financisto.model.ReportDataByPeriod;
 public class AccountBalanceByPeriodReport extends Report2DChart {
     private static final String TAG = "AcctBalanceReport";
 
-    public AccountBalanceByPeriodReport(Context context, MyEntityManager em, Calendar startPeriod, int periodLength, Currency currency) {
+    public AccountBalanceByPeriodReport(Context context, DatabaseAdapter em, Calendar startPeriod, int periodLength, Currency currency) {
         super(context, em, startPeriod, periodLength, currency);
     }
 

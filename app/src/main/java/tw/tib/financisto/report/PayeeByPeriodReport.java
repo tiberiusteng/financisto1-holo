@@ -2,8 +2,8 @@ package tw.tib.financisto.report;
 
 import android.content.Context;
 import tw.tib.financisto.R;
+import tw.tib.financisto.db.DatabaseAdapter;
 import tw.tib.financisto.db.DatabaseHelper.TransactionColumns;
-import tw.tib.financisto.db.MyEntityManager;
 import tw.tib.financisto.graph.Report2DChart;
 import tw.tib.financisto.model.Currency;
 import tw.tib.financisto.model.Payee;
@@ -18,7 +18,7 @@ import java.util.List;
  */
 public class PayeeByPeriodReport extends Report2DChart {
 
-	public PayeeByPeriodReport(Context context, MyEntityManager em, Calendar startPeriod, int periodLength, Currency currency) {
+	public PayeeByPeriodReport(Context context, DatabaseAdapter em, Calendar startPeriod, int periodLength, Currency currency) {
 		super(context, em, startPeriod, periodLength, currency);
 	}
 
