@@ -94,7 +94,7 @@ public class FinancistoService extends JobIntentService {
         String number = intent.getStringExtra(SMS_TRANSACTION_NUMBER);
         String body = intent.getStringExtra(SMS_TRANSACTION_BODY);
         if (number != null && body != null) {
-            Transaction t = smsProcessor.createTransactionBySms(number, body, getSmsTransactionStatus(this),
+            Transaction t = smsProcessor.createTransactionBySms(this, number, body, getSmsTransactionStatus(this),
                     shouldSaveSmsToTransactionNote(this));
             if (t != null) {
                 TransactionInfo transactionInfo = db.getTransactionInfo(t.id);

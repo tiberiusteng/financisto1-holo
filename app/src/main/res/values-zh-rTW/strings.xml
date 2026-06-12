@@ -836,7 +836,7 @@
   <string name="sms_number_hint">發送通知的程式名稱或發送簡訊的門號, 可用 % 代表任意字串</string>
   <string name="sms_tpl">通知 / 簡訊模板</string>
   <string name="sms_tpl_title">模板 (?)</string>
-  <string name="sms_tpl_desc">佔位標籤: \n{{p}} - 金額\n{{a}} - 帳號/卡號片段\n{{c}} - 帳號名稱\n{{x}} - 轉帳對象帳號名稱\n{{e}} - 受款人名稱 (不能有空白)\n{{r}} - 專案名稱 (不能有空白)\n{{t}} - 交易內容敘述 (盡可能短)\n{{u}} - 交易內容敘述 (盡可能長)\n{{*}} - 任意內容 (不處理)</string>
+  <string name="sms_tpl_desc">佔位標籤: \n{{p}} - 金額\n{{a}} - 帳號/卡號片段\n{{c}} - 帳號名稱\n{{x}} - 轉帳對象帳號名稱\n{{f}} - ISO 4217 貨幣代碼\n{{e}} - 受款人名稱 (不能有空白)\n{{r}} - 專案名稱 (不能有空白)\n{{t}} - 交易內容敘述 (盡可能短)\n{{u}} - 交易內容敘述 (盡可能長)\n{{*}} - 任意內容 (不處理)</string>
   <string name="sms_tpl_hint">在此輸入模板，並以佔位標籤標記資料</string>
   <string name="sms_note_title">備註 (?)</string>
   <string name="sms_note_desc">佔位標籤: \n{{t}} - 會被換成模板取得的交易內容敘述</string>
@@ -866,6 +866,7 @@
   <string name="pref_tpl_transaction_status">從模板自動產生的交易狀態: %s</string>
   <string name="pref_tpl_adding_to_note_title">儲存通知內文</string>
   <string name="pref_tpl_adding_to_note">將通知內文存到自動產生的交易</string>
+  <string name="sms_tpl_error_log">處理模板時找不到帳戶或無法解讀金額, 發送者 `%1$s`, 模板 `%2$s`, 通知內容 `%3$s`</string>
 
   <string name="preferences_summary">變更程式設定</string>
   <string name="entities_summary">修改分類、受款人、專案、地點等等</string>

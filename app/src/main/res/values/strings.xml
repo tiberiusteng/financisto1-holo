@@ -1049,7 +1049,7 @@
     <string name="sms_number_hint">Notification sender app name or SMS sender number, use % to indicate wildcard match</string>
     <string name="sms_tpl">Notification / SMS Template</string>
     <string name="sms_tpl_title">Template (?)</string>
-    <string name="sms_tpl_desc">Placeholders: \n{{p}} - price\n{{a}} - account last digits\n{{c}} - account name\n{{x}} - transfer to account name\n{{e}} - payee title (can\'t contain space)\n{{r}} - project title (can\'t contain space)\n{{t}} - note text (non-greedy)\n{{u}} - note text (greedy)\n{{*}} - any symbols/words</string>
+    <string name="sms_tpl_desc">Placeholders: \n{{p}} - price\n{{a}} - account last digits\n{{c}} - account name\n{{x}} - transfer to account name\n{{f}} - ISO 4217 currency code\n{{e}} - payee title (can\'t contain space)\n{{r}} - project title (can\'t contain space)\n{{t}} - note text (non-greedy)\n{{u}} - note text (greedy)\n{{*}} - any symbols/words</string>
     <string name="sms_tpl_hint">Specify template with placeholders here</string>
     <string name="sms_note_title">Note (?)</string>
     <string name="sms_note_desc">Placeholders: \n{{t}} - note text extracted by template</string>
@@ -1080,6 +1080,7 @@
     <string name="pref_tpl_adding_to_note_title">Saving notification text</string>
     <string name="pref_tpl_adding_to_note">Add notification text to transaction note</string>
     <string name="sms_tpl_list_category_payee_project_name">%1$s, %2$s, %3$s</string>
+    <string name="sms_tpl_error_log">Account not found or cannot parse price for notification template from sender `%1$s`, template `%2$s`, content `%3$s`</string>
 
     <string name="card_issuer_default">Default</string>
     <string name="electronic_payment_type">Payment type</string>

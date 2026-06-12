@@ -1858,6 +1858,19 @@ public class DatabaseAdapter extends MyEntityManager {
         }
     }
 
+    /**
+     * @param name ISO 4217 currency code
+     * @return currency id, 0 if not found
+     */
+    public long findCurrencyByName(String name) {
+        try (Cursor c = db().rawQuery("select _id from " + DatabaseHelper.CURRENCY_TABLE + " where name = ?",
+                new String[]{name}))
+        {
+            if (!c.moveToNext()) return 0;
+            return c.getLong(0);
+        }
+    }
+
     public boolean singleCurrencyOnly() {
         long currencyId = getSingleCurrencyId();
         return currencyId > 0;

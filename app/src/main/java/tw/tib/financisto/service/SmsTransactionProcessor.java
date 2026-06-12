@@ -1,6 +1,9 @@
 package tw.tib.financisto.service;
 
+import android.content.Context;
 import android.util.Log;
+
+import tw.tib.financisto.R;
 import tw.tib.financisto.db.DatabaseAdapter;
 import tw.tib.financisto.model.Account;
 import tw.tib.financisto.model.Payee;
@@ -37,7 +40,7 @@ public class SmsTransactionProcessor {
      * Parses sms and adds new transaction if it matches any sms template
      * @return new transaction or null if not matched/parsed
      */
-    public Transaction createTransactionBySms(String addr, String fullSmsBody, TransactionStatus status, boolean updateNote) {
+    public Transaction createTransactionBySms(Context context, String addr, String fullSmsBody, TransactionStatus status, boolean updateNote) {
         List<SmsTemplate> addrTemplates = db.getSmsTemplatesByNumber(addr);
         for (final SmsTemplate template : addrTemplates) {
             String[] match = findTemplateMatches(template.template, fullSmsBody);
@@ -52,6 +55,7 @@ public class SmsTransactionProcessor {
                 String greedy_text = match[GREEDY_TEXT.ordinal()];
                 String payeeText =  match[PAYEE.ordinal()];
                 String projectText = match[PROJECT.ordinal()];
+                String currencyText = match[CURRENCY.ordinal()];
                 if (text == null && greedy_text != null) {
                     text = greedy_text;
                 }
@@ -70,7 +74,7 @@ public class SmsTransactionProcessor {
                 }
                 try {
                     BigDecimal price = toBigDecimal(parsedPrice);
-                    return createNewTransaction(template, price, account, account_name,
+                    return createNewTransaction(context, addr, fullSmsBody, template, currencyText, price, account, account_name,
                             transfer_to_account_name, payeeText, projectText, note, status);
                 } catch (Exception e) {
                     Log.e(TAG, format("Failed to parse price value: \"%s\"", parsedPrice), e);
@@ -140,14 +144,17 @@ public class SmsTransactionProcessor {
         throw new NumberFormatException("Unexpected number format. Cannot convert '" + value + "' to BigDecimal.");
     }
 
-    private Transaction createNewTransaction(SmsTemplate smsTemplate, BigDecimal price,
+    private Transaction createNewTransaction(Context context, String sender, String body,
+        SmsTemplate smsTemplate,
+        String currency, BigDecimal price,
         String accountDigits,
         String accountName,
         String transferToAccountName,
         String payeeText,
         String projectText,
         String note,
-        TransactionStatus status) {
+        TransactionStatus status)
+    {
         Transaction res = null;
         long accountId = 0;
         long transferToAccountId = 0;
@@ -199,7 +206,20 @@ public class SmsTransactionProcessor {
                 }
             }
 
-            res.fromAmount = (smsTemplate.isIncome ? 1 : -1) * Math.abs(price.multiply(HUNDRED).longValue());
+            long fromAmount = (smsTemplate.isIncome ? 1 : -1) * Math.abs(price.multiply(HUNDRED).longValue());
+            if (currency != null) {
+                long currencyId = db.findCurrencyByName(currency);
+                if (currencyId != 0) {
+                    Account a = db.getAccount(accountId);
+                    if (a.currency.id != currencyId) {
+                        res.originalCurrencyId = currencyId;
+                        res.originalFromAmount = fromAmount;
+                    }
+                }
+            }
+            if (res.originalCurrencyId == 0) {
+                res.fromAmount = fromAmount;
+            }
             if (transferToAccountId != 0) {
                 res.toAccountId = transferToAccountId;
                 res.toAmount = (smsTemplate.isIncome ? -1 : 1) * Math.abs(price.multiply(HUNDRED).longValue());
@@ -214,7 +234,7 @@ public class SmsTransactionProcessor {
 
             Log.i(TAG, format("Transaction `%s` was added with id=%s", res, id));
         } else {
-            Log.e(TAG, format("Account not found or price wrong for `%s` sms template", smsTemplate));
+            db.log(context.getString(R.string.sms_tpl_error_log, sender, body, smsTemplate.template));
         }
         return res;
     }
@@ -334,6 +354,7 @@ public class SmsTransactionProcessor {
         ACCOUNT_NAME("<:C:>", "(\\w+?)", "{{c}}"),
         DATE("<:D:>", "\\s{0,3}(\\d[\\d\\. /:-]{12,14}\\d)\\s*?", "{{d}}"),
         PAYEE("<:E:>", "(\\w+?)", "{{e}}"),
+        CURRENCY("<:F:>", "([A-Z]{3})", "{{f}}"),
         PRICE("<:P:>", BALANCE.regexp, "{{p}}"),
         PROJECT("<:R:>", "(\\w+?)", "{{r}}"),
         TEXT("<:T:>", "(.*?)", "{{t}}"),
