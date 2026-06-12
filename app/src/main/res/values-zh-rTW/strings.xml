@@ -829,6 +829,8 @@
   <string name="privacy_policy">Privacy Policy</string>
 
   <!-- SMS stuff >> -->
+  <string name="sms_description">規則說明</string>
+  <string name="sms_description_hint">顯示為列表標題方便識別; 非必要</string>
   <string name="sms_sender">發送通知的程式 / 簡訊發送門號</string>
   <string name="sms_tpl_filter_hint">輸入數字或文字過濾</string>
   <string name="sms_number_hint">發送通知的程式名稱或發送簡訊的門號, 可用 % 代表任意字串</string>

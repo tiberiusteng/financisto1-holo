@@ -32,6 +32,9 @@ public class SmsTemplate extends MyEntity implements SortableEntity {
     @Column(name = "note")
     public String note;
 
+    @Column(name = "description")
+    public String description;
+
     @Column(name = "category_id")
     public long categoryId;
 
@@ -69,6 +72,7 @@ public class SmsTemplate extends MyEntity implements SortableEntity {
         SmsTemplate t = new SmsTemplate();
         t.id = c.getLong(SmsTemplateColumns._id.ordinal());
         t.title = c.getString(SmsTemplateColumns.title.ordinal());
+        t.description = c.getString(SmsTemplateColumns.description.ordinal());
         t.template = c.getString(SmsTemplateColumns.template.ordinal());
         t.note = c.getString(SmsTemplateColumns.note.ordinal());
         t.categoryId = c.getLong(SmsTemplateColumns.category_id.ordinal());

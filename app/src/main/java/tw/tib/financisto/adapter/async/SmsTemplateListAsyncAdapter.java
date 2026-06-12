@@ -62,7 +62,7 @@ public class SmsTemplateListAsyncAdapter extends AsyncAdapter<SmsTemplate, SmsTe
 
     @Override
     public LocalViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
-        View view = LayoutInflater.from(context).inflate(R.layout.generic_list_item, parent, false);
+        View view = LayoutInflater.from(context).inflate(R.layout.sms_template_item, parent, false);
         view.setOnClickListener(clickedView -> {
             final PopupMenu popupMenu = new PopupMenu(context, clickedView);
             int i = 0;
@@ -165,20 +165,18 @@ public class SmsTemplateListAsyncAdapter extends AsyncAdapter<SmsTemplate, SmsTe
     }
 
     class LocalViewHolder extends RecyclerView.ViewHolder implements ItemTouchHelperViewHolder {
-        public TextView lineView;
-        public TextView labelView;
-        public TextView numberView;
-        public TextView amountView;
-        public ImageView iconView;
+        public TextView titleView;
+        public TextView senderView;
+        public TextView templateView;
+        public TextView extraView;
 
         public LocalViewHolder(View view) {
             super(view);
 
-            lineView = view.findViewById(R.id.line1);
-            labelView = view.findViewById(R.id.label);
-            numberView = view.findViewById(R.id.number);
-            amountView = view.findViewById(R.id.date);
-            iconView = view.findViewById(R.id.icon);
+            titleView = view.findViewById(R.id.title);
+            senderView = view.findViewById(R.id.sender);
+            templateView = view.findViewById(R.id.template);
+            extraView = view.findViewById(R.id.extra);
         }
 
         public void bindView(SmsTemplate item, Integer ignore) {
@@ -187,10 +185,10 @@ public class SmsTemplateListAsyncAdapter extends AsyncAdapter<SmsTemplate, SmsTe
                 if (payeeName == null) payeeName = context.getString(R.string.no_payee);
 
                 itemView.setTag(R.id.sms_tpl_id, item.getId());
-                lineView.setText(item.title);
-                numberView.setText(item.template);
-                amountView.setVisibility(View.VISIBLE);
-                amountView.setText(activity.getString(R.string.sms_tpl_list_category_payee_project_name,
+                titleView.setText(item.description);
+                senderView.setText(item.title);
+                templateView.setText(item.template);
+                extraView.setText(activity.getString(R.string.sms_tpl_list_category_payee_project_name,
                         Category.getTitle(item.categoryName, item.categoryLevel),
                         payeeName, item.projectName));
             }
@@ -199,7 +197,7 @@ public class SmsTemplateListAsyncAdapter extends AsyncAdapter<SmsTemplate, SmsTe
         @Override
         public void onItemSelected() {
             //numberView.setTextColor(Color.RED);
-            Log.i(TAG, String.format("selected: %s", numberView.getText()));
+            Log.i(TAG, String.format("selected: %s", templateView.getText()));
         }
 
         @Override
@@ -208,7 +206,7 @@ public class SmsTemplateListAsyncAdapter extends AsyncAdapter<SmsTemplate, SmsTe
             long targetId = draggedItemId.get();
             if (targetId > 0) { // dragged up or down
                 long srcId = (long) itemView.getTag(R.id.sms_tpl_id);
-                Log.d(TAG, String.format("`%s` moving to `%s`...", numberView.getText(), targetId));
+                Log.d(TAG, String.format("`%s` moving to `%s`...", templateView.getText(), targetId));
 
                 new UpdateSortOrderTask().execute(srcId, targetId);
                 draggedItemId.set(0);

@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:background="?android:selectableItemBackground"
+    android:paddingTop="4sp" android:paddingBottom="4sp"
+    android:paddingStart="0dip" android:paddingEnd="12dip">
+
+    <TextView android:id="@+id/title"
+        android:layout_width="wrap_content" android:layout_height="wrap_content"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_chainStyle="packed"
+        android:textColor="?android:textColorPrimary"
+        android:textAppearance="?android:attr/textAppearanceLarge"
+        android:singleLine="true" android:gravity="center_vertical"
+        android:text="title"
+        android:ellipsize="end" />
+
+    <TextView android:id="@+id/sender"
+        android:layout_width="wrap_content" android:layout_height="wrap_content"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintBaseline_toBaselineOf="@id/title"
+        app:layout_constraintVertical_chainStyle="packed"
+        android:textColor="@color/material_teal"
+        android:textAppearance="?android:attr/textAppearanceLarge"
+        android:singleLine="true" android:gravity="center_vertical"
+        android:text="sender"
+        android:ellipsize="end" />
+
+    <TextView android:id="@+id/template"
+        android:layout_width="wrap_content" android:layout_height="wrap_content"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/title"
+        app:layout_constraintVertical_chainStyle="packed"
+        android:layout_marginStart="24dp"
+        android:textColor="?android:textColorSecondary"
+        android:textAppearance="?android:attr/textAppearanceSmall"
+        android:singleLine="true" android:gravity="center_vertical"
+        android:text="template"
+        android:ellipsize="end" />
+
+    <TextView android:id="@+id/extra"
+        android:layout_width="wrap_content" android:layout_height="wrap_content"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/template"
+        app:layout_constraintVertical_chainStyle="packed"
+        android:layout_marginStart="24dp"
+        android:textColor="?android:textColorTertiary"
+        android:textAppearance="?android:attr/textAppearanceSmall"
+        android:singleLine="true" android:gravity="center_vertical"
+        android:text="category project location"
+        android:ellipsize="end" />
+
+</androidx.constraintlayout.widget.ConstraintLayout>

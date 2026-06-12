@@ -1042,6 +1042,8 @@
     <string name="go_to_menu_tab">Go to Menu</string>
 
     <!-- SMS stuff >> -->
+    <string name="sms_description">Description of rule</string>
+    <string name="sms_description_hint">Show in list title to help identify; not required</string>
     <string name="sms_sender">Notification Sender / SMS Number</string>
     <string name="sms_tpl_filter_hint">Filter by number or text</string>
     <string name="sms_number_hint">Notification sender app name or SMS sender number, use % to indicate wildcard match</string>

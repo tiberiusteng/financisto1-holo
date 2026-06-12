@@ -43,6 +43,7 @@ public class SmsTemplateActivity extends AbstractActivity {
 
     private DatabaseAdapter db;
 
+    private EditText smsDescription;
     private EditText smsNumber;
     private EditText templateTxt;
     private EditText noteTxt;
@@ -84,6 +85,7 @@ public class SmsTemplateActivity extends AbstractActivity {
         db = new DatabaseAdapter(this);
         db.open();
 
+        smsDescription = findViewById(R.id.sms_description);
         smsNumber = findViewById(R.id.sms_number);
         initTitleAndDynamicDescription();
         templateTxt = findViewById(R.id.sms_template);
@@ -231,6 +233,7 @@ public class SmsTemplateActivity extends AbstractActivity {
     }
 
     private void updateSmsTemplateFromUI() {
+        smsTemplate.description = smsDescription.getText().toString();
         smsTemplate.title = smsNumber.getText().toString();
         smsTemplate.template = templateTxt.getText().toString();
         smsTemplate.note = noteTxt.getText().toString();
@@ -258,6 +261,7 @@ public class SmsTemplateActivity extends AbstractActivity {
     }
 
     private void editSmsTemplate() {
+        smsDescription.setText(smsTemplate.description);
         smsNumber.setText(smsTemplate.title);
         templateTxt.setText(smsTemplate.template);
         noteTxt.setText(smsTemplate.note);

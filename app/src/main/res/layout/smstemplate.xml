@@ -19,6 +19,9 @@
 			a:layout_width="fill_parent" a:layout_height="wrap_content"
 			a:orientation="vertical" a:id="@+id/list">
 
+			<TextView a:layout_height="wrap_content" a:layout_width="fill_parent" a:text="@string/sms_description" />
+			<EditText a:layout_height="wrap_content" a:hint="@string/sms_description_hint"
+				a:layout_width="fill_parent" a:id="@+id/sms_description"/>
 			<TextView a:layout_height="wrap_content" a:layout_width="fill_parent" a:text="@string/sms_sender" />
 			<EditText a:layout_height="wrap_content" a:hint="@string/sms_number_hint"
 				a:layout_width="fill_parent" a:id="@+id/sms_number"/>

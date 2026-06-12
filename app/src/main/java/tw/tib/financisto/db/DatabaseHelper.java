@@ -301,6 +301,7 @@ public class DatabaseHelper extends DatabaseSchemaEvolution {
     public enum SmsTemplateColumns {
         _id,
         title,
+        description,
         template,
         note,
         category_id,

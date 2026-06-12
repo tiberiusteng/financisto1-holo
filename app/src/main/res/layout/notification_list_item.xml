@@ -11,7 +11,7 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
         android:textAppearance="?android:attr/textAppearanceMedium"
-        android:textColor="@color/colorPrimary" />
+        android:textColor="@color/material_teal" />
 
     <TextView android:id="@+id/body"
         android:layout_width="wrap_content"
