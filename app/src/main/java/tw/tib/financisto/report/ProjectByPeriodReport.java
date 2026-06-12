@@ -20,8 +20,8 @@ import android.content.Context;
  */
 public class ProjectByPeriodReport extends Report2DChart {
 	
-	public ProjectByPeriodReport(Context context, DatabaseAdapter em, Calendar startPeriod, int periodLength, Currency currency) {
-		super(context, em, startPeriod, periodLength, currency);
+	public ProjectByPeriodReport(Context context, DatabaseAdapter em, Calendar startPeriod, int periodLength, Currency currency, MyPreferences.ReportAggregateUnit aggregateUnit) {
+		super(context, em, startPeriod, periodLength, currency, aggregateUnit);
 	}
 
 	@Override

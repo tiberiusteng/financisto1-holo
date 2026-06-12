@@ -18,6 +18,9 @@
        	<ListPreference android:key="report_reference_month"
             android:title="@string/report_reference_month" android:summary="@string/report_reference_month_summary"
             android:entries="@array/report_reference_month_entities" android:entryValues="@array/report_reference_month_values" />
+		<ListPreference android:key="report_aggregate_unit"
+			android:title="@string/report_aggregate_unit" android:summary="@string/report_aggregate_unit_summary"
+			android:entries="@array/report_aggregate_unit_entities" android:entryValues="@array/report_aggregate_unit_values" />
         <SwitchPreferenceCompat android:key="report_consider_null_results"
 			android:title="@string/report_consider_null_results" android:summary="@string/report_consider_null_results_summary"
 			android:defaultValue="true" />

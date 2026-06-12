@@ -7,6 +7,7 @@ import tw.tib.financisto.db.DatabaseHelper.TransactionColumns;
 import tw.tib.financisto.graph.Report2DChart;
 import tw.tib.financisto.model.Currency;
 import tw.tib.financisto.model.Payee;
+import tw.tib.financisto.utils.MyPreferences;
 
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -18,8 +19,8 @@ import java.util.List;
  */
 public class PayeeByPeriodReport extends Report2DChart {
 
-	public PayeeByPeriodReport(Context context, DatabaseAdapter em, Calendar startPeriod, int periodLength, Currency currency) {
-		super(context, em, startPeriod, periodLength, currency);
+	public PayeeByPeriodReport(Context context, DatabaseAdapter em, Calendar startPeriod, int periodLength, Currency currency, MyPreferences.ReportAggregateUnit aggregateUnit) {
+		super(context, em, startPeriod, periodLength, currency, aggregateUnit);
 	}
 
 	@Override

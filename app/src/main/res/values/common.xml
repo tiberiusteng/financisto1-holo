@@ -138,6 +138,11 @@
 		<item>DESC</item>
 		<item>ASC</item>
 	</string-array>
+	<string-array name="report_aggregate_unit_values">
+		<item>MONTH</item>
+		<item>YEAR</item>
+		<item>FISCAL_YEAR</item>
+	</string-array>
 	<string-array name="report_reference_period_values">
 		<item>3</item>
 		<item>6</item>

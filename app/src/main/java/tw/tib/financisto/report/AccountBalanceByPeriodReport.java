@@ -21,12 +21,13 @@ import tw.tib.financisto.graph.Report2DChart;
 import tw.tib.financisto.model.Account;
 import tw.tib.financisto.model.Currency;
 import tw.tib.financisto.model.ReportDataByPeriod;
+import tw.tib.financisto.utils.MyPreferences;
 
 public class AccountBalanceByPeriodReport extends Report2DChart {
     private static final String TAG = "AcctBalanceReport";
 
-    public AccountBalanceByPeriodReport(Context context, DatabaseAdapter em, Calendar startPeriod, int periodLength, Currency currency) {
-        super(context, em, startPeriod, periodLength, currency);
+    public AccountBalanceByPeriodReport(Context context, DatabaseAdapter em, Calendar startPeriod, int periodLength, Currency currency, MyPreferences.ReportAggregateUnit aggregateUnit) {
+        super(context, em, startPeriod, periodLength, currency, aggregateUnit);
     }
 
     @Override
@@ -80,7 +81,7 @@ public class AccountBalanceByPeriodReport extends Report2DChart {
     @Override
     protected ReportDataByPeriod createDataBuilder() {
         return new ReportDataByPeriod(context, startPeriod, periodLength, currency, columnFilter,
-                filterIds.get(currentFilterOrder), em, ReportDataByPeriod.ValueAggregation.LAST, false, false) {
+                filterIds.get(currentFilterOrder), em, ReportDataByPeriod.ValueAggregation.LAST, false, false, aggregateUnit) {
             @Override
             protected Cursor queryData(SQLiteDatabase db, String filterColumn, String where, String[] args) {
                 Log.d(TAG, format("filterColumn:%s where:%s args:%s", filterColumn, where, Arrays.toString(args)));

@@ -12,6 +12,8 @@ import tw.tib.financisto.db.MyEntityManager;
 import tw.tib.financisto.db.DatabaseHelper.AccountColumns;
 import tw.tib.financisto.db.DatabaseHelper.TransactionColumns;
 import tw.tib.financisto.graph.Report2DChart;
+import tw.tib.financisto.utils.MyPreferences;
+
 import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
@@ -109,6 +111,10 @@ public class ReportDataByPeriod {
 	 */
 	private List<PeriodValue> values = new ArrayList<PeriodValue>();
 
+	private MyPreferences.ReportAggregateUnit aggregateUnit;
+	private int fiscalYearStartMonth;
+	private int fiscalYearStartDay;
+
 	public enum ValueAggregation {
 		SUM,
 		LAST
@@ -126,9 +132,9 @@ public class ReportDataByPeriod {
 	 * @param filterId The report filtering id in transactions table 
 	 * @param em Database adapter to query data
 	 */
-	public ReportDataByPeriod(Context context, int periodLength, Currency currency, String filterColumn, long[] filterId, MyEntityManager em) {
+	public ReportDataByPeriod(Context context, int periodLength, Currency currency, String filterColumn, long[] filterId, MyEntityManager em, MyPreferences.ReportAggregateUnit aggregateUnit) {
 		Calendar startPeriod = Report2DChart.getDefaultStartPeriod(periodLength);
-		init(context, startPeriod, periodLength, currency, filterColumn, filterId, em);
+		init(context, startPeriod, periodLength, currency, filterColumn, filterId, em, aggregateUnit);
 	}
 	
 	/**
@@ -139,9 +145,9 @@ public class ReportDataByPeriod {
 	 * @param filterId The report filtering id in transactions table 
 	 * @param em Database adapter to query data
 	 */
-	public ReportDataByPeriod(Context context, int periodLength, Currency currency, String filterColumn, long filterId, MyEntityManager em) {
+	public ReportDataByPeriod(Context context, int periodLength, Currency currency, String filterColumn, long filterId, MyEntityManager em, MyPreferences.ReportAggregateUnit aggregateUnit) {
 		Calendar startPeriod = Report2DChart.getDefaultStartPeriod(periodLength);
-		init(context, startPeriod, periodLength, currency, filterColumn, new long[]{filterId}, em);
+		init(context, startPeriod, periodLength, currency, filterColumn, new long[]{filterId}, em, aggregateUnit);
 	}
 
 	/**
@@ -153,8 +159,8 @@ public class ReportDataByPeriod {
 	 * @param filterId The report filtering id in transactions table 
 	 * @param em Database adapter to query data
 	 */
-	public ReportDataByPeriod(Context context, Calendar startDate, int periodLength, Currency currency, String filterColumn, long[] filterId, MyEntityManager em) {
-		init(context, startDate, periodLength, currency, filterColumn, filterId, em);
+	public ReportDataByPeriod(Context context, Calendar startDate, int periodLength, Currency currency, String filterColumn, long[] filterId, MyEntityManager em, MyPreferences.ReportAggregateUnit aggregateUnit) {
+		init(context, startDate, periodLength, currency, filterColumn, filterId, em, aggregateUnit);
 	}
 	
 	/**
@@ -166,17 +172,17 @@ public class ReportDataByPeriod {
 	 * @param filterId The report filtering id in transactions table 
 	 * @param em Database adapter to query data
 	 */
-	public ReportDataByPeriod(Context context, Calendar startDate, int periodLength, Currency currency, String filterColumn, long filterId, MyEntityManager em) {
-		init(context, startDate, periodLength, currency, filterColumn, new long[]{filterId}, em);
+	public ReportDataByPeriod(Context context, Calendar startDate, int periodLength, Currency currency, String filterColumn, long filterId, MyEntityManager em, MyPreferences.ReportAggregateUnit aggregateUnit) {
+		init(context, startDate, periodLength, currency, filterColumn, new long[]{filterId}, em, aggregateUnit);
 	}
 
 	public ReportDataByPeriod(Context context, Calendar startDate, int periodLength, Currency currency,
-			String filterColumn, long filterId, MyEntityManager em, ValueAggregation aggregation, boolean excludeTransfers, boolean filterAccountByCurrency)
+	                          String filterColumn, long filterId, MyEntityManager em, ValueAggregation aggregation, boolean excludeTransfers, boolean filterAccountByCurrency, MyPreferences.ReportAggregateUnit aggregateUnit)
 	{
 		this.aggregation = aggregation;
 		this.excludeTransfers = excludeTransfers;
 		this.filterAccountByCurrency = filterAccountByCurrency;
-		init(context, startDate, periodLength, currency, filterColumn, new long[]{filterId}, em);
+		init(context, startDate, periodLength, currency, filterColumn, new long[]{filterId}, em, aggregateUnit);
 	}
 	
 	/**
@@ -188,11 +194,18 @@ public class ReportDataByPeriod {
 	 * @param filterId The report filtering id in transactions table 
 	 * @param em Database adapter to query data
 	 */
-	private void init(Context context, Calendar startDate, int periodLength, Currency currency, String filterColumn, long[] filterId, MyEntityManager em) {
+	private void init(Context context, Calendar startDate, int periodLength, Currency currency, String filterColumn, long[] filterId, MyEntityManager em, MyPreferences.ReportAggregateUnit aggregateUnit) {
 		this.context = context;
 		this.periodLength = periodLength;
 		startDate.set(startDate.get(Calendar.YEAR), startDate.get(Calendar.MONTH), 01, 00, 00, 00);
 		this.startDate = startDate;
+
+		this.aggregateUnit = aggregateUnit;
+		if (this.aggregateUnit == MyPreferences.ReportAggregateUnit.FISCAL_YEAR) {
+			int fiscalYearStart = MyPreferences.getFiscalYearStart(context);
+			this.fiscalYearStartMonth = fiscalYearStart / 100;
+			this.fiscalYearStartDay = fiscalYearStart % 100;
+		}
 		
 		SQLiteDatabase db = em.db();
 		Cursor cursor = null;
@@ -317,12 +330,31 @@ public class ReportDataByPeriod {
 	 * @param periodLength The number of months in the report period
 	 */
 	private void fillEmptyList(Calendar startDate, int periodLength) {
-		Calendar month;
-		for(int index=0; index<periodLength; index++) {
-			month = new GregorianCalendar(startDate.get(Calendar.YEAR), startDate.get(Calendar.MONTH)+index, 1, 0, 0, 0);
-			PeriodValue periodValue = new PeriodValue(month);
-			values.add(periodValue);
-		}		
+		Calendar entry;
+
+		switch (aggregateUnit) {
+			case MONTH -> {
+				for(int index=0; index<periodLength; index++) {
+					entry = new GregorianCalendar(startDate.get(Calendar.YEAR), startDate.get(Calendar.MONTH)+index, 1, 0, 0, 0);
+					PeriodValue periodValue = new PeriodValue(entry);
+					values.add(periodValue);
+				}
+			}
+			case YEAR -> {
+				for(int index=0; index<periodLength/12; index++) {
+					entry = new GregorianCalendar(startDate.get(Calendar.YEAR)+index, 0, 1, 0, 0, 0);
+					PeriodValue periodValue = new PeriodValue(entry);
+					values.add(periodValue);
+				}
+			}
+			case FISCAL_YEAR -> {
+				for(int index=0; index<periodLength/12; index++) {
+					entry = new GregorianCalendar(startDate.get(Calendar.YEAR)+index, fiscalYearStartMonth, fiscalYearStartDay, 0, 0, 0);
+					PeriodValue periodValue = new PeriodValue(entry);
+					values.add(periodValue);
+				}
+			}
+		}
 	}
 
 	/**
@@ -343,17 +375,17 @@ public class ReportDataByPeriod {
 		while (c.moveToNext()) {
 			
 			// get month of reference  
-			Calendar month = getMonthInTransaction(c);
+			Calendar timeframe = getTransactionTimeframe(c);
 
 			if (aggregation == ValueAggregation.SUM) {
 				result = 0;
 			}
-			boolean stepMonth = false;
+			boolean stepTimeframe = false;
 			// get result from transactions in the reference month
 			do {
-				Calendar transactionMonth = getMonthInTransaction(c);
- 				if(transactionMonth.compareTo(month)!=0) {
- 					stepMonth = true;
+				Calendar transactionTimeframe = getTransactionTimeframe(c);
+				if(transactionTimeframe.compareTo(timeframe)!=0) {
+					stepTimeframe = true;
 					break;
 				}
 				switch (aggregation) {
@@ -367,16 +399,22 @@ public class ReportDataByPeriod {
 			} while(c.moveToNext());
 			
 			// If step month, get back to transaction of the new month in cursor.
-			if (stepMonth)
+			if (stepTimeframe)
 				c.moveToPrevious();
 			
 			// store the result of the month
-			PeriodValue periodValue = new PeriodValue(month, result);
-			int monthPosition = (month.get(Calendar.YEAR)-startDate.get(Calendar.YEAR))*12+
-								 month.get(Calendar.MONTH)-startDate.get(Calendar.MONTH);
+			PeriodValue periodValue = new PeriodValue(timeframe, result);
+			int position = 0;
+			switch (aggregateUnit) {
+				case MONTH ->
+					position = (timeframe.get(Calendar.YEAR) - startDate.get(Calendar.YEAR)) * 12 +
+						timeframe.get(Calendar.MONTH) - startDate.get(Calendar.MONTH);
+				case YEAR, FISCAL_YEAR ->
+					position = timeframe.get(Calendar.YEAR) - startDate.get(Calendar.YEAR);
+			}
 			// FIXME date range edge case
-			if (monthPosition < values.size()) {
-				values.set(monthPosition, periodValue);
+			if (position < values.size()) {
+				values.set(position, periodValue);
 			}
 			else {
 				values.add(periodValue);
@@ -441,16 +479,32 @@ public class ReportDataByPeriod {
 	}
 	
 	/**
-	 * Get the month of a given transaction in the given cursor.
+	 * Get the timeframe of a given transaction in the given cursor.
 	 * @param c The transactions cursor.
-	 * @return The Calendar month.
+	 * @return The Calendar timeframe.
 	 */
-	private Calendar getMonthInTransaction(Cursor c) {
-		Calendar month = new GregorianCalendar();
-		month.setTimeInMillis(c.getLong(RESULT_DATETIME_COLUMN));
-		month.set(month.get(Calendar.YEAR), month.get(Calendar.MONTH), 1, 0, 0, 0);
-		month.set(Calendar.MILLISECOND, 0);
-		return month;
+	private Calendar getTransactionTimeframe(Cursor c) {
+		Calendar timeframe = new GregorianCalendar();
+		timeframe.setTimeInMillis(c.getLong(RESULT_DATETIME_COLUMN));
+		switch (aggregateUnit) {
+			case MONTH -> {
+				timeframe.set(timeframe.get(Calendar.YEAR), timeframe.get(Calendar.MONTH), 1, 0, 0, 0);
+				timeframe.set(Calendar.MILLISECOND, 0);
+			}
+			case YEAR -> {
+				timeframe.set(timeframe.get(Calendar.YEAR), 0, 1, 0, 0, 0);
+				timeframe.set(Calendar.MILLISECOND, 0);
+			}
+			case FISCAL_YEAR -> {
+				Calendar original = (Calendar) timeframe.clone();
+				timeframe.set(timeframe.get(Calendar.YEAR), fiscalYearStartMonth, fiscalYearStartDay, 0, 0, 0);
+				timeframe.set(Calendar.MILLISECOND, 0);
+				if (timeframe.getTimeInMillis() > original.getTimeInMillis()) {
+					timeframe.add(Calendar.YEAR, -1);
+				}
+			}
+		}
+		return timeframe;
 	}
 		
 	/**

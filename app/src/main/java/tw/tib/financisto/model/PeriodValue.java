@@ -10,7 +10,7 @@ public class PeriodValue {
 	/**
 	 * The reference month.
 	 */
-	private Calendar month;
+	private Calendar timeframe;
 	
 	/**
 	 * The result value of the corresponding month.
@@ -26,17 +26,17 @@ public class PeriodValue {
 	
 	/**
 	 * Default constructor.
-	 * @param month The month of reference.
+	 * @param timeframe The month of reference.
 	 * @param value The result value in the given month.
 	 */
-	public PeriodValue(Calendar month, double value) {
-		this.month = month;
+	public PeriodValue(Calendar timeframe, double value) {
+		this.timeframe = timeframe;
 		this.value = value;
 		this.hasValue = true;
 	}
 
-	public PeriodValue(Calendar month) {
-		this.month = month;
+	public PeriodValue(Calendar timeframe) {
+		this.timeframe = timeframe;
 		this.value = 0;
 		this.hasValue = false;
 	}
@@ -45,16 +45,16 @@ public class PeriodValue {
 	/**
 	 * @return The reference month. 
 	 */
-	public Calendar getMonth() {
-		return month;
+	public Calendar getTimeframe() {
+		return timeframe;
 	}
 
 
 	/**
 	 * @return The reference month in time milliseconds.
 	 */
-	public long getMonthTimeInMillis() {
-		return month.getTimeInMillis();
+	public long getTimeframeTimeInMillis() {
+		return timeframe.getTimeInMillis();
 	}
 
 

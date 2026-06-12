@@ -19,8 +19,8 @@ import android.content.Context;
  */
 public class LocationByPeriodReport extends Report2DChart {
 
-	public LocationByPeriodReport(Context context, DatabaseAdapter em, Calendar startPeriod, int periodLength, Currency currency) {
-		super(context, em, startPeriod, periodLength, currency);
+	public LocationByPeriodReport(Context context, DatabaseAdapter em, Calendar startPeriod, int periodLength, Currency currency, MyPreferences.ReportAggregateUnit aggregateUnit) {
+		super(context, em, startPeriod, periodLength, currency, aggregateUnit);
 	}
 
 	/* (non-Javadoc)

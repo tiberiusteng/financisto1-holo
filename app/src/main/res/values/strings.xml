@@ -439,6 +439,13 @@
     <string name="report_include_no_filter_summary">Include non classified transactions to reports filters lists (No category, No Project and Unknown Location)</string>
     <string name="report_reference_month">Reference Month</string>
     <string name="report_reference_month_summary">Define the Reference Month that represents the end of the report period</string>
+    <string name="report_aggregate_unit">Aggregate Unit</string>
+    <string name="report_aggregate_unit_summary">Select the aggregate unit of report</string>
+    <string-array name="report_aggregate_unit_entities">
+        <item>Month</item>
+        <item>Year</item>
+        <item>Fiscal year</item>
+    </string-array>
     <string name="report_last_quarter">Last quarter</string>
     <string name="report_last_half_year">Last half year</string>
     <string name="report_last_9_months">Last 9 months</string>

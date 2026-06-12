@@ -11,6 +11,7 @@ import tw.tib.financisto.graph.Report2DChart;
 import tw.tib.financisto.model.Account;
 import tw.tib.financisto.model.Currency;
 import tw.tib.financisto.model.ReportDataByPeriod;
+import tw.tib.financisto.utils.MyPreferences;
 
 import android.content.Context;
 
@@ -20,8 +21,8 @@ import android.content.Context;
  */
 public class AccountByPeriodReport extends Report2DChart {
 
-	public AccountByPeriodReport(Context context, DatabaseAdapter em, Calendar startPeriod, int periodLength, Currency currency) {
-		super(context, em, startPeriod, periodLength, currency);
+	public AccountByPeriodReport(Context context, DatabaseAdapter em, Calendar startPeriod, int periodLength, Currency currency, MyPreferences.ReportAggregateUnit aggregateUnit) {
+		super(context, em, startPeriod, periodLength, currency, aggregateUnit);
 	}
 
 	/* (non-Javadoc)
@@ -82,6 +83,6 @@ public class AccountByPeriodReport extends Report2DChart {
 	protected ReportDataByPeriod createDataBuilder() {
 		return new ReportDataByPeriod(context, startPeriod, periodLength, currency, columnFilter,
 				filterIds.get(currentFilterOrder), em, ReportDataByPeriod.ValueAggregation.SUM,
-				true, false);
+				true, false, aggregateUnit);
 	}
 }

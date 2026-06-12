@@ -8,10 +8,12 @@ import java.util.Calendar;
 import java.util.List;
 
 import tw.tib.financisto.R;
+import tw.tib.financisto.blotter.BlotterFilter;
 import tw.tib.financisto.db.DatabaseAdapter;
 import tw.tib.financisto.db.DatabaseHelper;
 import tw.tib.financisto.db.DatabaseHelper.CategoryColumns;
 import tw.tib.financisto.db.DatabaseHelper.TransactionColumns;
+import tw.tib.financisto.filter.Criteria;
 import tw.tib.financisto.graph.Report2DChart;
 import tw.tib.financisto.graph.Report2DPoint;
 import tw.tib.financisto.model.Category;
@@ -29,8 +31,8 @@ import android.database.sqlite.SQLiteDatabase;
  */
 public class CategoryByPeriodReport extends Report2DChart {
 	
-	public CategoryByPeriodReport(Context context, DatabaseAdapter db, Calendar startPeriod, int periodLength, Currency currency) {
-		super(context, db, startPeriod, periodLength, currency);
+	public CategoryByPeriodReport(Context context, DatabaseAdapter db, Calendar startPeriod, int periodLength, Currency currency, MyPreferences.ReportAggregateUnit aggregateUnit) {
+		super(context, db, startPeriod, periodLength, currency, aggregateUnit);
 	}
 
 	@Override
@@ -104,13 +106,13 @@ public class CategoryByPeriodReport extends Report2DChart {
 					i++;
 				}
 				categories[i] = filterIds.get(currentFilterOrder);
-				data = new ReportDataByPeriod(context, startPeriod, periodLength, currency, columnFilter, categories, em);
+				data = new ReportDataByPeriod(context, startPeriod, periodLength, currency, columnFilter, categories, em, aggregateUnit);
 			} finally {
 				if (cursor!=null) cursor.close();
 			}
 		} else {
 			// only root category
-			data = new ReportDataByPeriod(context, startPeriod, periodLength, currency, columnFilter, filterIds.get(currentFilterOrder), em);
+			data = new ReportDataByPeriod(context, startPeriod, periodLength, currency, columnFilter, filterIds.get(currentFilterOrder), em, aggregateUnit);
 		}
 		
 		points = new ArrayList<Report2DPoint>();
@@ -119,6 +121,18 @@ public class CategoryByPeriodReport extends Report2DChart {
         for (PeriodValue pv : pvs) {
             points.add(new Report2DPoint(pv));
         }
+	}
+
+	@Override
+	public Criteria getCriteria() {
+		boolean addSubs = MyPreferences.addSubCategoriesToSum(context);
+		if (addSubs) {
+			long categoryId = filterIds.get(currentFilterOrder);
+			Category parent = em.getCategory(categoryId);
+			return Criteria.btw(BlotterFilter.CATEGORY_LEFT, String.valueOf(parent.left), String.valueOf(parent.right));
+		} else {
+			return Criteria.eq(columnFilter, filterIds.get(currentFilterOrder).toString());
+		}
 	}
 
 	@Override

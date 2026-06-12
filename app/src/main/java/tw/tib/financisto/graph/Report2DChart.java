@@ -7,9 +7,11 @@ import java.util.List;
 
 import tw.tib.financisto.R;
 import tw.tib.financisto.db.DatabaseAdapter;
+import tw.tib.financisto.filter.Criteria;
 import tw.tib.financisto.model.Currency;
 import tw.tib.financisto.model.PeriodValue;
 import tw.tib.financisto.model.ReportDataByPeriod;
+import tw.tib.financisto.utils.MyPreferences;
 
 import android.content.Context;
 
@@ -36,6 +38,7 @@ public abstract class Report2DChart {
 	protected List<String> filterTitles;
 	protected String noFilterMessage;
 	protected Currency currency;
+	protected MyPreferences.ReportAggregateUnit aggregateUnit;
 	
 	protected Calendar startPeriod;
 	protected int periodLength;
@@ -53,9 +56,9 @@ public abstract class Report2DChart {
 	 * @param periodLength The number of months to plot the chart
 	 * @param currency The reference currency to filter transactions in same currency
 	 */
-	public Report2DChart(Context context, DatabaseAdapter db, int periodLength, Currency currency) {
+	public Report2DChart(Context context, DatabaseAdapter db, int periodLength, Currency currency, MyPreferences.ReportAggregateUnit aggregateUnit) {
 		setDefaultStartPeriod(periodLength);
-		init(context, db, startPeriod, periodLength, currency);
+		init(context, db, startPeriod, periodLength, currency, aggregateUnit);
 	}
 	
 	/**
@@ -65,8 +68,8 @@ public abstract class Report2DChart {
 	 * @param periodLength The number of months to plot the chart
 	 * @param currency The reference currency to filter transactions in same currency
 	 */
-	public Report2DChart(Context context, DatabaseAdapter em, Calendar startPeriod, int periodLength, Currency currency) {
-		init(context, em, startPeriod, periodLength, currency);
+	public Report2DChart(Context context, DatabaseAdapter em, Calendar startPeriod, int periodLength, Currency currency, MyPreferences.ReportAggregateUnit aggregateUnit) {
+		init(context, em, startPeriod, periodLength, currency, aggregateUnit);
 	}
 	
 	/**
@@ -77,8 +80,8 @@ public abstract class Report2DChart {
 	 * @param currency The reference currency to filter transactions in same currency
 	 * @param level The level in the hierarchy (0 = root)
 	 */
-	public Report2DChart(Context context, DatabaseAdapter em, Calendar startPeriod, int periodLength, Currency currency, int level) {
-		init(context, em, startPeriod, periodLength, currency);
+	public Report2DChart(Context context, DatabaseAdapter em, Calendar startPeriod, int periodLength, Currency currency, MyPreferences.ReportAggregateUnit aggregateUnit, int level) {
+		init(context, em, startPeriod, periodLength, currency, aggregateUnit);
 		this.level = level;
 	}
 	
@@ -90,8 +93,8 @@ public abstract class Report2DChart {
 	 * @param periodLength The number of months to plot the chart
 	 * @param currency The reference currency to filter transactions in same currency
 	 */
-	public void rebuild(Context context, DatabaseAdapter em,  Calendar startPeriod, int periodLength, Currency currency) {
-		init(context, em, startPeriod, periodLength, currency);
+	public void rebuild(Context context, DatabaseAdapter em, Calendar startPeriod, int periodLength, Currency currency, MyPreferences.ReportAggregateUnit aggregateUnit) {
+		init(context, em, startPeriod, periodLength, currency, aggregateUnit);
 	}
 
 	/**
@@ -130,12 +133,13 @@ public abstract class Report2DChart {
 	 * @param periodLength The number of months to plot the chart
 	 * @param currency
 	 */
-	private void init(Context context, DatabaseAdapter db, Calendar startPeriod, int periodLength, Currency currency) {
+	private void init(Context context, DatabaseAdapter db, Calendar startPeriod, int periodLength, Currency currency, MyPreferences.ReportAggregateUnit aggregateUnit) {
 		this.context = context;
 		this.em = db;
 		this.startPeriod = startPeriod;
 		this.periodLength = periodLength;
 		this.currency = currency;
+		this.aggregateUnit = aggregateUnit;
 
 		// classes shall implement to determine query filters
 		createFilter();
@@ -311,6 +315,13 @@ public abstract class Report2DChart {
 	public Calendar getStartPeriod() {
 		return startPeriod;
 	}
+
+	/**
+	 * @return the criteria to get transactions matching current selected filter
+	 */
+	public Criteria getCriteria() {
+		return Criteria.eq(columnFilter, filterIds.get(currentFilterOrder).toString());
+	}
 	
 	/**
 	 * Request data and fill data objects (list of points, max, min, etc.)
@@ -326,7 +337,7 @@ public abstract class Report2DChart {
 	}
 
 	protected ReportDataByPeriod createDataBuilder() {
-		return new ReportDataByPeriod(context, startPeriod, periodLength, currency, columnFilter, filterIds.get(currentFilterOrder), em);
+		return new ReportDataByPeriod(context, startPeriod, periodLength, currency, columnFilter, filterIds.get(currentFilterOrder), em, aggregateUnit);
 	}
 
 	/**

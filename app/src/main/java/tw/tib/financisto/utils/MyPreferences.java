@@ -125,6 +125,16 @@ public class MyPreferences {
 		EntitySelectorType(String tag) { this.tag = tag; }
 	}
 
+	public enum ReportAggregateUnit {
+		MONTH("MONTH"),
+		YEAR("YEAR"),
+		FISCAL_YEAR("FISCAL_YEAR");
+
+		public final String tag;
+
+		ReportAggregateUnit(String tag) { this.tag = tag; }
+	}
+
 	private static Method hasSystemFeatureMethod;
 
 	static {
@@ -347,6 +357,16 @@ public class MyPreferences {
 	public static String getGoogleDriveBackupFolder(Context context) {
 		SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(context);
 		return sharedPreferences.getString("google_drive_backup_folder", null);
+	}
+
+	public static ReportAggregateUnit getReportAggregateUnit(Context context) {
+		SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(context);
+		try {
+			return ReportAggregateUnit.valueOf(sharedPreferences.getString("report_aggregate_unit", ReportAggregateUnit.MONTH.name()));
+		}
+		catch (Exception e) {
+			return ReportAggregateUnit.MONTH;
+		}
 	}
 
 	/**
@@ -657,7 +677,7 @@ public class MyPreferences {
 	}
 
 	public static String[] getReportPreferences(Context context) {
-		String[] preferences = new String[7];
+		String[] preferences = new String[8];
 		preferences[0] = getReferenceCurrencyTitle(context);
 		preferences[1] = Integer.toString(getPeriodOfReference(context));
 		preferences[2] = Integer.toString(getReferenceMonth(context));
@@ -665,6 +685,7 @@ public class MyPreferences {
 		preferences[4] = Boolean.toString(includeNoFilterInReport(context));
 		preferences[5] = Boolean.toString(includeSubCategoriesInReport(context));
 		preferences[6] = Boolean.toString(addSubCategoriesToSum(context));
+		preferences[7] = getReportAggregateUnit(context).name();
 		return preferences;
 	}
 

@@ -36,6 +36,11 @@
             android:src="@android:drawable/ic_media_next" />
 
         <ImageButton
+            android:id="@+id/bt_view_transactions"
+            style="@style/BottomBarButton"
+            android:src="@android:drawable/ic_menu_search" />
+
+        <ImageButton
             android:id="@+id/bt_preferences"
             style="@style/BottomBarButton"
             android:src="@android:drawable/ic_menu_preferences"

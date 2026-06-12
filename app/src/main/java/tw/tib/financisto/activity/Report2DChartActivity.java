@@ -34,6 +34,8 @@ import java.util.List;
 
 import tw.tib.financisto.R;
 import tw.tib.financisto.db.DatabaseAdapter;
+import tw.tib.financisto.filter.DateTimeCriteria;
+import tw.tib.financisto.filter.WhereFilter;
 import tw.tib.financisto.graph.Report2DChart;
 import tw.tib.financisto.graph.Report2DPoint;
 import tw.tib.financisto.model.Currency;
@@ -75,6 +77,7 @@ public class Report2DChartActivity extends Activity implements OnChartValueSelec
     private Currency currency;
     private Calendar startPeriod;
     private ReportType reportType;
+    private MyPreferences.ReportAggregateUnit aggregateUnit;
 
     private LineChart chart;
     private List<Entry> vals;
@@ -96,6 +99,8 @@ public class Report2DChartActivity extends Activity implements OnChartValueSelec
     private boolean prefCurNotSet = false;
     // boolean to check if preferred period is set
     private boolean prefPerNotSet = false;
+
+    private PeriodValue currentPoint = null;
 
     @Override
     protected void attachBaseContext(Context base) {
@@ -158,6 +163,7 @@ public class Report2DChartActivity extends Activity implements OnChartValueSelec
         // Period of Reference
         int periodLength = getPeriodOfReference();
         selectedPeriod = selectPeriodFromLength(periodLength);
+        aggregateUnit = MyPreferences.getReportAggregateUnit(this);
 
         // check report preferences for reference month different of current month
         setStartPeriod(periodLength);
@@ -165,24 +171,24 @@ public class Report2DChartActivity extends Activity implements OnChartValueSelec
         boolean built = false;
         switch (reportType) {
             case BY_ACCOUNT_BY_PERIOD:
-                reportData = new AccountByPeriodReport(this, db, startPeriod, periodLength, currency);
+                reportData = new AccountByPeriodReport(this, db, startPeriod, periodLength, currency, aggregateUnit);
                 break;
             case BY_CATEGORY_BY_PERIOD:
-                reportData = new CategoryByPeriodReport(this, db, startPeriod, periodLength, currency);
+                reportData = new CategoryByPeriodReport(this, db, startPeriod, periodLength, currency, aggregateUnit);
                 break;
             case BY_PAYEE_BY_PERIOD:
-                reportData = new PayeeByPeriodReport(this, db, startPeriod, periodLength, currency);
+                reportData = new PayeeByPeriodReport(this, db, startPeriod, periodLength, currency, aggregateUnit);
                 break;
             case BY_LOCATION_BY_PERIOD:
-                reportData = new LocationByPeriodReport(this, db, startPeriod, periodLength, currency);
+                reportData = new LocationByPeriodReport(this, db, startPeriod, periodLength, currency, aggregateUnit);
                 break;
             case BY_PROJECT_BY_PERIOD:
-                reportData = new ProjectByPeriodReport(this, db, startPeriod, periodLength, currency);
+                reportData = new ProjectByPeriodReport(this, db, startPeriod, periodLength, currency, aggregateUnit);
                 break;
             case BY_ACCOUNT_BALANCE_BY_PERIOD:
                 findViewById(R.id.report_sum_result).setVisibility(View.INVISIBLE);
                 findViewById(R.id.report_sum_label).setVisibility(View.INVISIBLE);
-                reportData = new AccountBalanceByPeriodReport(this, db, startPeriod, periodLength, currency);
+                reportData = new AccountBalanceByPeriodReport(this, db, startPeriod, periodLength, currency, aggregateUnit);
                 break;
         }
 
@@ -239,6 +245,32 @@ public class Report2DChartActivity extends Activity implements OnChartValueSelec
                             })
                     .setTitle(reportData.getFilterItemTypeName())
                     .show();
+        });
+
+        // search transactions
+        ImageButton bViewTransactions = findViewById(R.id.bt_view_transactions);
+        bViewTransactions.setOnClickListener((view) -> {
+            if (currentPoint == null) return;
+            WhereFilter filter = WhereFilter.empty();
+            // get the current selected filter from report
+            filter.put(reportData.getCriteria());
+            // current selected point's timeframe
+            Calendar timeframe = currentPoint.getTimeframe();
+            Calendar end = (Calendar) timeframe.clone();
+            switch (aggregateUnit) {
+                case MONTH -> {
+                    end.add(Calendar.MONTH, 1);
+                }
+                case YEAR, FISCAL_YEAR -> {
+                    end.add(Calendar.YEAR, 1);
+                }
+            }
+            end.add(Calendar.DAY_OF_MONTH, -1);
+            filter.put(new DateTimeCriteria(timeframe.getTimeInMillis(),
+                    tw.tib.financisto.datetime.DateUtils.endOfDay(end).getTimeInMillis()));
+            Intent intent = new Intent(this, BlotterActivity.class);
+            filter.toIntent(intent);
+            startActivity(intent);
         });
 
         // prefs
@@ -417,7 +449,7 @@ public class Report2DChartActivity extends Activity implements OnChartValueSelec
                 // x value is 32-bit floating point, on recent timestamps the step size is 131.072 seconds
                 // so sometimes it will become 1~2 minutes earlier in the previous month when converting to float
                 // we are only using the month part, so add 86400*1000*14 ms to shift it to middle of month
-                vals.add(new Entry(v.getMonthTimeInMillis() + 1209600000f, (float) v.getValue() / 100.0f));
+                vals.add(new Entry(v.getTimeframeTimeInMillis() + 1209600000f, (float) v.getValue() / 100.0f, v));
             }
 
             ds.notifyDataSetChanged();
@@ -555,7 +587,7 @@ public class Report2DChartActivity extends Activity implements OnChartValueSelec
             boolean changed = preferencesChanged(initialPrefs, MyPreferences.getReportPreferences(this));
             if (changed) {
                 // rebuild data
-                reportData.rebuild(this, db, startPeriod, periods[selectedPeriod], currency);
+                reportData.rebuild(this, db, startPeriod, periods[selectedPeriod], currency, aggregateUnit);
                 refreshView();
             }
         }
@@ -599,6 +631,11 @@ public class Report2DChartActivity extends Activity implements OnChartValueSelec
         // 4 include <no filter> (rebuild will regenerate the filter Ids list)
         if (!initial[4].equals(actual[4])) {
             // the change will be processed in rebuild
+            changed = true;
+        }
+        // 5 aggregate unit
+        if (!initial[7].equals(actual[7])) {
+            aggregateUnit = MyPreferences.getReportAggregateUnit(this);
             changed = true;
         }
 
@@ -665,6 +702,7 @@ public class Report2DChartActivity extends Activity implements OnChartValueSelec
 
     @Override
     public void onValueSelected(Entry e, Highlight h) {
+        currentPoint = (PeriodValue) e.getData();
         pointDate.setText(DateUtils.formatDateTime(this, (long) e.getX(), DateUtils.FORMAT_NO_MONTH_DAY));
         pointAmount.setText(Utils.amountToString(currency, (long) (e.getY() * 100)));
         pointAmount.setTextColor(e.getY() >= 0 ? positive : negative);

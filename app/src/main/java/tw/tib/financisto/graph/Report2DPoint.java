@@ -43,7 +43,7 @@ public class Report2DPoint {
 	 * @return The complete string representing the month.
 	 */
 	public String getMonthLongString(Context context) {
-		return new SimpleDateFormat("MMMM").format(pointData.getMonth().getTime());
+		return new SimpleDateFormat("MMMM").format(pointData.getTimeframe().getTime());
 	}
 	
 	/**
@@ -53,14 +53,14 @@ public class Report2DPoint {
 	 * @return The short string representing the month.
 	 */
 	public String getMonthShortString(Context context) {
-		return new SimpleDateFormat("MMM").format(pointData.getMonth().getTime());
+		return new SimpleDateFormat("MMM").format(pointData.getTimeframe().getTime());
 	}
 	
 	/**
 	 * @return The string representing the year.
 	 */
 	public String getYearString() {
-		return Integer.toString(pointData.getMonth().get(Calendar.YEAR));
+		return Integer.toString(pointData.getTimeframe().get(Calendar.YEAR));
 	}
 
 	/**

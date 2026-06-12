@@ -390,6 +390,13 @@
   <string name="report_include_no_filter_summary">在報告過濾清單內包含未分類的資料 (無分類、無專案、位置不明等)</string>
   <string name="report_reference_month">基準月份</string>
   <string name="report_reference_month_summary">定義報告統計終點的月份。</string>
+  <string name="report_aggregate_unit">小計單位</string>
+  <string name="report_aggregate_unit_summary">選擇報表的小計單位</string>
+  <string-array name="report_aggregate_unit_entities">
+    <item>月</item>
+    <item>年</item>
+    <item>會計年度</item>
+  </string-array>
   <string name="report_last_quarter">前一季</string>
   <string name="report_last_half_year">前半年</string>
   <string name="report_last_9_months">前 9 個月</string>
