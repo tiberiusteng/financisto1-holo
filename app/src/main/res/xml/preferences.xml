@@ -43,6 +43,10 @@
             android:key="first_day_of_week"
             android:summary="@string/first_day_of_week_summary"
             android:title="@string/first_day_of_week" />
+        <Preference
+            android:key="fiscal_year_start"
+            android:summary="@string/fiscal_year_start_summary"
+            android:title="@string/fiscal_year_start" />
     </PreferenceCategory>
 
     <PreferenceCategory android:title="@string/pref_tpl">

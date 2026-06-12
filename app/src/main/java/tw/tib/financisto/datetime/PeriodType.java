@@ -92,6 +92,29 @@ public enum PeriodType implements LocalizableEnum {
             return new Period(PeriodType.THIS_YEAR, start, end);
         }
     },
+    THIS_FISCAL_YEAR(R.string.period_this_fiscal_year, true, true) {
+        public Period calculatePeriod(Context context, long refTime) {
+            int fiscalYearStart = MyPreferences.getFiscalYearStart(context);
+            Calendar c = Calendar.getInstance();
+            c.setTimeInMillis(refTime);
+            c.set(Calendar.MONTH, fiscalYearStart / 100);
+            c.set(Calendar.DAY_OF_MONTH, fiscalYearStart % 100);
+            long start, end;
+            if (DateUtils.startOfDay(c).getTimeInMillis() > refTime) {
+                // refTime is before the fiscal year start date in this calendar year
+                end = DateUtils.startOfDay(c).getTimeInMillis() - 1;
+                c.add(Calendar.YEAR, -1);
+                start = DateUtils.startOfDay(c).getTimeInMillis();
+            }
+            else {
+                // refTime is after the fiscal year start date in this calendar year
+                start = DateUtils.startOfDay(c).getTimeInMillis();
+                c.add(Calendar.YEAR, 1);
+                end = DateUtils.startOfDay(c).getTimeInMillis() - 1;
+            }
+            return new Period(PeriodType.THIS_FISCAL_YEAR, start, end);
+        }
+    },
     LAST_WEEK(R.string.period_last_week, true, false) {
         @Override
         public Period calculatePeriod(Context context, long refTime) {
@@ -145,6 +168,30 @@ public enum PeriodType implements LocalizableEnum {
             return new Period(PeriodType.LAST_YEAR, start, end);
         }
     },
+    LAST_FISCAL_YEAR(R.string.period_last_fiscal_year, true, false) {
+        public Period calculatePeriod(Context context, long refTime) {
+            int fiscalYearStart = MyPreferences.getFiscalYearStart(context);
+            Calendar c = Calendar.getInstance();
+            c.setTimeInMillis(refTime);
+            c.set(Calendar.MONTH, fiscalYearStart / 100);
+            c.set(Calendar.DAY_OF_MONTH, fiscalYearStart % 100);
+            long start, end;
+            if (DateUtils.startOfDay(c).getTimeInMillis() > refTime) {
+                // refTime is before the fiscal year start date in this calendar year
+                c.add(Calendar.YEAR, -1);
+                end = DateUtils.startOfDay(c).getTimeInMillis() - 1;
+                c.add(Calendar.YEAR, -1);
+                start = DateUtils.startOfDay(c).getTimeInMillis();
+            }
+            else {
+                // refTime is after the fiscal year start date in this calendar year
+                end = DateUtils.startOfDay(c).getTimeInMillis() - 1;
+                c.add(Calendar.YEAR, -1);
+                start = DateUtils.startOfDay(c).getTimeInMillis();
+            }
+            return new Period(PeriodType.LAST_FISCAL_YEAR, start, end);
+        }
+    },
     THIS_AND_LAST_WEEK(R.string.period_this_and_last_week, true, false) {
         @Override
         public Period calculatePeriod(Context context, long refTime) {
@@ -178,6 +225,30 @@ public enum PeriodType implements LocalizableEnum {
             long end = DateUtils.endOfDay(c).getTimeInMillis();
 
             return new Period(PeriodType.THIS_AND_LAST_YEAR, start, end);
+        }
+    },
+    THIS_AND_LAST_FISCAL_YEAR(R.string.period_this_and_last_fiscal_year, true, true) {
+        public Period calculatePeriod(Context context, long refTime) {
+            int fiscalYearStart = MyPreferences.getFiscalYearStart(context);
+            Calendar c = Calendar.getInstance();
+            c.setTimeInMillis(refTime);
+            c.set(Calendar.MONTH, fiscalYearStart / 100);
+            c.set(Calendar.DAY_OF_MONTH, fiscalYearStart % 100);
+            long start, end;
+            if (DateUtils.startOfDay(c).getTimeInMillis() > refTime) {
+                // refTime is before the fiscal year start date in this calendar year
+                end = DateUtils.startOfDay(c).getTimeInMillis() - 1;
+                c.add(Calendar.YEAR, -2);
+                start = DateUtils.startOfDay(c).getTimeInMillis();
+            }
+            else {
+                // refTime is after the fiscal year start date in this calendar year
+                c.add(Calendar.YEAR, 1);
+                end = DateUtils.startOfDay(c).getTimeInMillis() - 1;
+                c.add(Calendar.YEAR, -2);
+                start = DateUtils.startOfDay(c).getTimeInMillis();
+            }
+            return new Period(PeriodType.THIS_AND_LAST_FISCAL_YEAR, start, end);
         }
     },
     TOMORROW(R.string.period_tomorrow, false, true) {

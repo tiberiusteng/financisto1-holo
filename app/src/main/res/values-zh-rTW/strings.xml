@@ -168,9 +168,11 @@
   <string name="period_this_week">本週</string>
   <string name="period_this_month">本月</string>
   <string name="period_this_year">本年</string>
+  <string name="period_this_fiscal_year">本會計年度</string>
   <string name="period_last_week">上一週</string>
   <string name="period_last_month">上個月</string>
   <string name="period_last_year">去年</string>
+  <string name="period_last_fiscal_year">上一會計年度</string>
   <string name="currency_name">名稱</string>
   <string name="currency_symbol">符號</string>
   <string name="currency_code">貨幣碼</string>
@@ -790,6 +792,7 @@
   <string name="period_this_and_last_week">本週與上週</string>
   <string name="period_this_and_last_month">本月與上月</string>
   <string name="period_this_and_last_year">本年與去年</string>
+  <string name="period_this_and_last_fiscal_year">本會計年度與上一會計年度</string>
   <string name="period_custom">自訂</string>
   <string name="original_amount">原始總額</string>
   <string name="original_currency_as_account">與帳戶相同</string>
@@ -1006,4 +1009,7 @@
     <item>星期日</item>
     <item>星期一</item>
   </string-array>
+
+  <string name="fiscal_year_start">會計年度開始</string>
+  <string name="fiscal_year_start_summary">報表與統計使用的會計年度起始日: %s</string>
 </resources>

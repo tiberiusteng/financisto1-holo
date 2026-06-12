@@ -20,6 +20,8 @@ import android.content.res.Resources;
 import android.preference.PreferenceManager;
 import android.util.Log;
 
+import androidx.preference.PreferenceManager;
+
 import java.lang.reflect.Method;
 import java.util.Collection;
 import java.util.Locale;
@@ -574,6 +576,16 @@ public class MyPreferences {
 		} catch (IllegalArgumentException e) {
 			return FirstDayOfWeek.SYSTEM_DEFAULT;
 		}
+	}
+
+	public static int getFiscalYearStart(Context context) {
+		SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(context);
+		return sharedPreferences.getInt("fiscal_year_start", 301);
+	}
+
+	public static void setFiscalYearStart(Context context, int month, int date) {
+		PreferenceManager.getDefaultSharedPreferences(context)
+				.edit().putInt("fiscal_year_start", month * 100 + date).apply();
 	}
 
 	public static boolean isCameraSupported(Context context) {

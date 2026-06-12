@@ -190,9 +190,11 @@
     <string name="period_this_week">This week</string>
     <string name="period_this_month">This month</string>
     <string name="period_this_year">This year</string>
+    <string name="period_this_fiscal_year">This fiscal year</string>
     <string name="period_last_week">Last week</string>
     <string name="period_last_month">Last month</string>
     <string name="period_last_year">Last year</string>
+    <string name="period_last_fiscal_year">Last fiscal year</string>
     <string name="currency_name">Name</string>
     <string name="currency_symbol">Symbol</string>
     <string name="currency_code">Code</string>
@@ -918,6 +920,7 @@
     <string name="period_this_and_last_week">This and last week</string>
     <string name="period_this_and_last_month">This and last month</string>
     <string name="period_this_and_last_year">This and last year</string>
+    <string name="period_this_and_last_fiscal_year">This and last fiscal year</string>
     <string name="period_custom">Custom</string>
 
     <string name="original_amount">Original Amount</string>
@@ -1170,4 +1173,7 @@
         <item>Sunday</item>
         <item>Monday</item>
     </string-array>
+
+    <string name="fiscal_year_start">Fiscal year start</string>
+    <string name="fiscal_year_start_summary">First day of fiscal year for period and reports: %s</string>
 </resources>

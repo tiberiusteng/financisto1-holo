@@ -41,7 +41,10 @@ public class PeriodReport extends Report {
             PeriodType.THIS_AND_LAST_MONTH,
             PeriodType.THIS_YEAR,
             PeriodType.LAST_YEAR,
-            PeriodType.THIS_AND_LAST_YEAR
+            PeriodType.THIS_AND_LAST_YEAR,
+            PeriodType.THIS_FISCAL_YEAR,
+            PeriodType.LAST_FISCAL_YEAR,
+            PeriodType.THIS_AND_LAST_FISCAL_YEAR
     };
 
 	private final Period[] periods = new Period[periodTypes.length];
