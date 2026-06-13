@@ -413,7 +413,7 @@ public class ReportDataByPeriod {
 					position = timeframe.get(Calendar.YEAR) - startDate.get(Calendar.YEAR);
 			}
 			// FIXME date range edge case
-			if (position < values.size()) {
+			if (position >= 0 && position < values.size()) {
 				values.set(position, periodValue);
 			}
 			else {
