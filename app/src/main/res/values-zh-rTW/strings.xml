@@ -658,6 +658,7 @@
   <string name="csv_time_required">匯入資料必須有 time (時間) 欄位</string>
   <string name="csv_time_format_error">time 欄位必須使用 HH:mm:ss 格式: %1$s</string>
   <string name="csv_amount_required">新建交易必須有 amount 欄位</string>
+  <string name="csv_to_amount_required">新建轉帳必須有 `to amount` 欄位</string>
   <string name="csv_txid_not_found">txid %1$s 不是一筆現有交易</string>
   <string name="csv_currency_not_found">currency (幣值) %1$s 不存在</string>
   <string name="csv_account_not_found">account (帳戶) %1$s 不存在</string>
@@ -1007,6 +1008,7 @@
   <string name="export_tx_ids">匯出交易 ID</string>
   <string name="export_attributes">匯出交易屬性</string>
   <string name="export_running_balance">匯出逐筆餘額</string>
+  <string name="export_transfer_as_single_line">以一行匯出轉帳交易</string>
 
   <string name="transfer_current_balance">轉出所有餘額</string>
   <string name="show_transfer_current_balance">顯示「轉出目前餘額」</string>

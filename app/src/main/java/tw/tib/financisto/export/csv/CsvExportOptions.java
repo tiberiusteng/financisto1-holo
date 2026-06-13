@@ -34,6 +34,7 @@ public class CsvExportOptions {
     public final boolean exportTxIDs;
     public final boolean exportAttributes;
     public final boolean exportRunningBalance;
+    public final boolean exportTransferInSingleLine;
     public final boolean uploadToDropbox;
     public final boolean uploadToGDrive;
     public final WhereFilter filter;
@@ -42,6 +43,7 @@ public class CsvExportOptions {
     public CsvExportOptions(Currency currency, char fieldSeparator, boolean includeHeader,
                             boolean includeTxStatus, boolean exportSplits, boolean exportSplitParents,
                             boolean exportTxIDs, boolean exportAttributes, boolean exportRunningBalance,
+                            boolean exportTransferInSingleLine,
                             boolean uploadToDropbox, boolean uploadToGDrive,
                             WhereFilter filter, boolean writeUtfBom) {
         this.filter = filter;
@@ -54,6 +56,7 @@ public class CsvExportOptions {
         this.exportTxIDs = exportTxIDs;
         this.exportAttributes = exportAttributes;
         this.exportRunningBalance = exportRunningBalance;
+        this.exportTransferInSingleLine = exportTransferInSingleLine;
         this.uploadToDropbox = uploadToDropbox;
         this.uploadToGDrive = uploadToGDrive;
         this.writeUtfBom = writeUtfBom;
@@ -70,10 +73,12 @@ public class CsvExportOptions {
         boolean exportTxIDs = data.getBooleanExtra(CsvExportActivity.CSV_EXPORT_TX_IDS, false);
         boolean exportAttributes = data.getBooleanExtra(CsvExportActivity.CSV_EXPORT_ATTRIBUTES, false);
         boolean exportRunningBalance = data.getBooleanExtra(CsvExportActivity.CSV_EXPORT_RUNNING_BALANCE, false);
+        boolean exportTransferInSingleLine = data.getBooleanExtra(CsvExportActivity.CSV_EXPORT_TRANSFER_IN_SINGLE_LINE, false);
         boolean uploadToDropbox = data.getBooleanExtra(CsvExportActivity.CSV_EXPORT_UPLOAD_TO_DROPBOX, false);
         boolean uploadToGDrive = data.getBooleanExtra(CsvExportActivity.CSV_EXPORT_UPLOAD_TO_GDRIVE, false);
         return new CsvExportOptions(currency, fieldSeparator, includeHeader, includeTxStatus,
                 exportSplits, exportSplitParents, exportTxIDs, exportAttributes, exportRunningBalance,
+                exportTransferInSingleLine,
                 uploadToDropbox, uploadToGDrive, filter, true);
     }
 

@@ -2075,6 +2075,15 @@ public class DatabaseAdapter extends MyEntityManager {
         }
     }
 
+    public long getEarliestTransactionTimestamp() {
+        try (Cursor c = db().rawQuery("select datetime from transactions order by datetime asc limit 1", new String[0])) {
+            if (c.moveToNext()) {
+                return c.getLong(0);
+            }
+            return System.currentTimeMillis();
+        }
+    }
+
     public void log(String note) {
         Cursor c = getAllActiveAccounts();
         if (c.getCount() < 1) return;

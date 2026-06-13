@@ -33,6 +33,8 @@ public class CsvTransaction {
     public String account;
     public Account defaultAccount;
     public Long fromAmount;
+    public String toAccount;
+    public Long toAmount;
     public Long originalAmount;
     public String originalCurrency;
     public String payee;
@@ -41,6 +43,7 @@ public class CsvTransaction {
     public String note;
     public String project;
     public String currency;
+    public String toCurrency;
     public long delta;
 
     void updateTransaction(
@@ -75,6 +78,23 @@ public class CsvTransaction {
         }
         if (fromAmount != null) {
             t.fromAmount = fromAmount;
+        }
+        if (toAccount != null) {
+            Account entity = accountsByName.get(toAccount);
+            if (entity == null) {
+                throw new ImportExportException(R.string.csv_account_not_found, null, toAccount);
+            }
+            t.toAccountId = entity.id;
+        }
+        if (toCurrency != null && toAccount != null) {
+            Account entity = accountsById.get(t.toAccountId);
+            if (!toCurrency.equals(entity.currency.name)) {
+                throw new ImportExportException(R.string.import_wrong_currency_2, null, currency,
+                        entity.currency.name);
+            }
+        }
+        if (toAmount != null) {
+            t.toAmount = toAmount;
         }
         if (category != null) {
             t.categoryId = getEntityIdOrZero(categories, category);
@@ -132,6 +152,21 @@ public class CsvTransaction {
             throw new ImportExportException(R.string.csv_amount_required);
         }
         t.fromAmount = fromAmount;
+        if (toAccount != null) {
+            Account entity = accounts.get(toAccount);
+            if (entity == null) {
+                throw new ImportExportException(R.string.csv_account_not_found, null, toAccount);
+            }
+            t.toAccountId = entity.id;
+            if (toCurrency != null && !toCurrency.equals(entity.currency.name)) {
+                throw new ImportExportException(R.string.import_wrong_currency_2, null, currency,
+                        entity.currency.name);
+            }
+            if (toAmount == null) {
+                throw new ImportExportException(R.string.csv_to_amount_required);
+            }
+            t.toAmount = toAmount;
+        }
         t.categoryId = getEntityIdOrZero(categories, category);
         t.payeeId = getEntityIdOrZero(payees, payee);
         t.projectId = getEntityIdOrZero(projects, project);

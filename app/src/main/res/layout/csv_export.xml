@@ -185,6 +185,14 @@
                     android:checked="false"
                     android:text="@string/export_running_balance" />
 
+                <CheckBox
+                    android:id="@+id/checkboxExportTransferInSingleLine"
+                    android:layout_columnWeight="1"
+                    android:layout_width="0dp"
+                    android:layout_gravity="fill"
+                    android:checked="false"
+                    android:text="@string/export_transfer_as_single_line" />
+
             </GridLayout>
         </LinearLayout>
     </ScrollView>

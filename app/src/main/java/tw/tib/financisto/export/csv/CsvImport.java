@@ -223,6 +223,8 @@ public class CsvImport {
                                         transaction.id = Long.parseLong(fieldValue);
                                     } else if (transactionField.equals("account")) {
                                         transaction.account = fieldValue;
+                                    } else if (transactionField.equals("to account")) {
+                                        transaction.toAccount = fieldValue;
                                     } else if (transactionField.equals("date")) {
                                         try {
                                             transaction.date = options.dateFormat.parse(fieldValue);
@@ -240,6 +242,9 @@ public class CsvImport {
                                     } else if (transactionField.equals("amount")) {
                                         Double fromAmountDouble = parseAmount(fieldValue);
                                         transaction.fromAmount = fromAmountDouble.longValue();
+                                    } else if (transactionField.equals("to amount")) {
+                                        Double toAmountDouble = parseAmount(fieldValue);
+                                        transaction.toAmount = toAmountDouble.longValue();
                                     } else if (transactionField.equals("original amount")) {
                                         Double originalAmountDouble = parseAmount(fieldValue);
                                         transaction.originalAmount = originalAmountDouble.longValue();
@@ -261,6 +266,8 @@ public class CsvImport {
                                                     null, fieldValue, account.currency.name);
                                         }
                                         transaction.currency = fieldValue;
+                                    } else if (transactionField.equals("to currency")) {
+                                        transaction.toCurrency = fieldValue;
                                     }
                                 }
                             } catch (IllegalArgumentException e) {

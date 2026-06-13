@@ -38,10 +38,14 @@ import java.util.Set;
 
 public class CsvExport extends Export {
 
-    static final String[] HEADER = "txid,date,time,status,account,amount,balance,currency,original amount,original currency,category,parent,payee,location,project,note".split(",");
+    static final String[] HEADER = "txid,date,time,status,account,amount,balance,currency,to account,to amount,to balance,to currency,original amount,original currency,category,parent,payee,location,project,note".split(",");
     static final String TXID_HEADER = "txid";
     static final String STATUS_HEADER = "status";
     static final String BALANCE_HEADER = "balance";
+    static final String TO_ACCOUNT_HEADER = "to account";
+    static final String TO_AMOUNT_HEADER = "to amount";
+    static final String TO_BALANCE_HEADER = "to balance";
+    static final String TO_CURRENCY_HEADER = "to currency";
 
     private static final MyLocation TRANSFER_IN = new MyLocation();
     private static final MyLocation TRANSFER_OUT = new MyLocation();
@@ -88,6 +92,10 @@ public class CsvExport extends Export {
                 if (h.equals(TXID_HEADER) && !options.exportTxIDs) continue;
                 if (h.equals(STATUS_HEADER) && !options.includeTxStatus) continue;
                 if (h.equals(BALANCE_HEADER) && !options.exportRunningBalance) continue;
+                if (h.equals(TO_ACCOUNT_HEADER) && !options.exportTransferInSingleLine) continue;
+                if (h.equals(TO_AMOUNT_HEADER) && !options.exportTransferInSingleLine) continue;
+                if (h.equals(TO_BALANCE_HEADER) && !(options.exportTransferInSingleLine && options.exportRunningBalance)) continue;
+                if (h.equals(TO_CURRENCY_HEADER) && !options.exportTransferInSingleLine) continue;
                 w.value(h);
             }
             if (options.exportAttributes) {
@@ -136,8 +144,22 @@ public class CsvExport extends Export {
         Account fromAccount = getAccount(t.fromAccountId);
         if (t.isTransfer()) {
             Account toAccount = getAccount(t.toAccountId);
-            writeLine(w, t.id, dt, t.status, fromAccount.title, t.fromAmount, t.fromAccountBalance, fromAccount.currency.id, 0, 0, category, null, TRANSFER_OUT, project, t.note);
-            writeLine(w, t.id, dt, t.status, toAccount.title, t.toAmount, t.toAccountBalance, toAccount.currency.id, 0, 0, category, null, TRANSFER_IN, project, t.note);
+            if (options.exportTransferInSingleLine) {
+                writeLine(w, t.id, dt, t.status, fromAccount.title, t.fromAmount, t.fromAccountBalance, fromAccount.currency.id,
+                        toAccount.title, t.toAmount, t.toAccountBalance, toAccount.currency.id,
+                        0, 0,
+                        category, null, null, project, t.note);
+            }
+            else {
+                writeLine(w, t.id, dt, t.status, fromAccount.title, t.fromAmount, t.fromAccountBalance, fromAccount.currency.id,
+                        null, 0, 0, 0,
+                        0, 0,
+                        category, null, TRANSFER_OUT, project, t.note);
+                writeLine(w, t.id, dt, t.status, toAccount.title, t.toAmount, t.toAccountBalance, toAccount.currency.id,
+                        null, 0, 0, 0,
+                        0, 0,
+                        category, null, TRANSFER_IN, project, t.note);
+            }
         } else {
             boolean isSplit = (category != null && category.isSplit());
             MyLocation location = getLocationById(t.locationId);
@@ -145,14 +167,17 @@ public class CsvExport extends Export {
             if ((t.parentId == 0 && (!isSplit || options.exportSplitParents)) ||
                 (t.parentId != 0 && options.exportSplits))
             {
-                writeLine(w, t.id, dt, t.status, fromAccount.title, t.fromAmount, t.fromAccountBalance, fromAccount.currency.id, t.originalFromAmount, t.originalCurrencyId,
+                writeLine(w, t.id, dt, t.status, fromAccount.title, t.fromAmount, t.fromAccountBalance, fromAccount.currency.id,
+                        null, 0, 0, 0,
+                        t.originalFromAmount, t.originalCurrencyId,
                         category, payee, location, project, t.note);
             }
         }
     }
 
-    private void writeLine(Csv.Writer w, long transactionId, Date dt, TransactionStatus status, String account,
-                           long amount, long balance, long currencyId,
+    private void writeLine(Csv.Writer w, long transactionId, Date dt, TransactionStatus status,
+                           String account, long amount, long balance, long currencyId,
+                           String toAccount, long toAmount, long toBalance, long toCurrencyId,
                            long originalAmount, long originalCurrencyId,
                            Category category, Payee payee, MyLocation location, Project project, String note) {
         if (options.exportTxIDs) {
@@ -168,6 +193,7 @@ public class CsvExport extends Export {
         if (options.includeTxStatus) {
             w.value(status.toString());
         }
+        // from account
         w.value(account);
         String amountFormatted = options.amountFormat.format(new BigDecimal(amount).divide(Utils.HUNDRED));
         w.value(amountFormatted);
@@ -177,6 +203,27 @@ public class CsvExport extends Export {
         }
         Currency c = CurrencyCache.getCurrency(db, currencyId);
         w.value(c.name);
+        // to account
+        if (options.exportTransferInSingleLine) {
+            w.value(toAccount);
+            if (toAccount == null) {
+                w.value(null); // to amount
+                if (options.exportRunningBalance) {
+                    w.value(null); // to balance
+                }
+                w.value(null); // to currency
+            }
+            else {
+                amountFormatted = options.amountFormat.format(new BigDecimal(toAmount).divide(Utils.HUNDRED));
+                w.value(amountFormatted);
+                if (options.exportRunningBalance) {
+                    String balanceFormatted = options.amountFormat.format(new BigDecimal(toBalance).divide(Utils.HUNDRED));
+                    w.value(balanceFormatted);
+                }
+                c = CurrencyCache.getCurrency(db, toCurrencyId);
+                w.value(c.name);
+            }
+        }
         if (originalCurrencyId > 0) {
             w.value(options.amountFormat.format(new BigDecimal(originalAmount).divide(Utils.HUNDRED)));
             Currency originalCurrency = CurrencyCache.getCurrency(db, originalCurrencyId);

@@ -755,6 +755,7 @@
     <string name="csv_time_required">time field is required</string>
     <string name="csv_time_format_error">time field must in HH:MM:SS format: %1$s</string>
     <string name="csv_amount_required">amount field is required when creating new transaction</string>
+    <string name="csv_to_amount_required">`to amount` field is required when creating new transfer</string>
     <string name="csv_txid_not_found">txid %1$s is not an existing transaction</string>
     <string name="csv_currency_not_found">currency %1$s is invalid</string>
     <string name="csv_account_not_found">account %1$s is invalid</string>
@@ -1171,6 +1172,7 @@
     <string name="export_tx_ids">Export TX ID</string>
     <string name="export_attributes">Export attributes</string>
     <string name="export_running_balance">Export running balance</string>
+    <string name="export_transfer_as_single_line">Export transfer in single line</string>
 
     <string name="transfer_current_balance">Transfer current balance</string>
     <string name="show_transfer_current_balance">Show \'Transfer current balance\'</string>
