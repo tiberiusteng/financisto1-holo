@@ -734,6 +734,7 @@
     <item>2 év</item>
     <item>5 év</item>
     <item>10 év</item>
+    <item>all data</item>
   </string-array>
   <string-array name="lock_time_entities">
     <item>Kikapcsolva</item>

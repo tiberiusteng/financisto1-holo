@@ -734,6 +734,7 @@
     <item>2 años</item>
     <item>5 años</item>
     <item>10 años</item>
+    <item>all data</item>
   </string-array>
   <string-array name="lock_time_entities">
     <item>Desactivar</item>

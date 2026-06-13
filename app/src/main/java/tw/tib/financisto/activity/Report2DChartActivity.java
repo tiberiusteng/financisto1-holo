@@ -148,6 +148,7 @@ public class Report2DChartActivity extends Activity implements OnChartValueSelec
         for (int i=0; i<periods.length; ++i) {
             if (periods[i] == months) return i;
         }
+        if (months > 0) return (periods.length - 1);
         return 0;
     }
 
@@ -427,7 +428,7 @@ public class Report2DChartActivity extends Activity implements OnChartValueSelec
      */
     private void processPeriodLengthChange(int previousPeriod, boolean refresh) {
         if (previousPeriod != selectedPeriod) {
-            reportData.changePeriodLength(periods[selectedPeriod]);
+            reportData.changePeriodLength(getPeriodOfReference());
             setStartPeriod(periods[selectedPeriod]);
             reportData.changeStartPeriod(startPeriod);
             if (refresh) refreshView();
@@ -590,7 +591,8 @@ public class Report2DChartActivity extends Activity implements OnChartValueSelec
             boolean changed = preferencesChanged(initialPrefs, MyPreferences.getReportPreferences(this));
             if (changed) {
                 // rebuild data
-                reportData.rebuild(this, db, startPeriod, periods[selectedPeriod], currency, aggregateUnit);
+                int periodLength = getPeriodOfReference();
+                reportData.rebuild(this, db, startPeriod, periodLength, currency, aggregateUnit);
                 refreshView();
             }
         }
@@ -667,8 +669,17 @@ public class Report2DChartActivity extends Activity implements OnChartValueSelec
         if (refMonth != 0) {
             startPeriod.add(Calendar.MONTH, refMonth);
         }
-        // move to start period (reference month - <periodLength> months)
-        startPeriod.add(Calendar.MONTH, (-1) * periodLength + 1);
+
+        if (periodLength != -1) {
+            // move to start period (reference month - <periodLength> months)
+            startPeriod.add(Calendar.MONTH, (-1) * periodLength + 1);
+        }
+        else {
+            // use earliest transaction time as start period
+            startPeriod = Calendar.getInstance();
+            startPeriod.setTimeInMillis(db.getEarliestTransactionTimestamp());
+            startPeriod.set(Calendar.DAY_OF_MONTH, 1);
+        }
     }
 
     /**
@@ -681,6 +692,16 @@ public class Report2DChartActivity extends Activity implements OnChartValueSelec
         if (periodLength == 0) {
             periodLength = ReportDataByPeriod.DEFAULT_PERIOD;
             prefPerNotSet = true;
+        }
+        if (periodLength == -1) {
+            Calendar start = Calendar.getInstance();
+            Calendar now = Calendar.getInstance();
+
+            start.setTimeInMillis(db.getEarliestTransactionTimestamp());
+            start.set(Calendar.DAY_OF_MONTH, 1);
+
+            periodLength = (now.get(Calendar.YEAR) * 12 + now.get(Calendar.MONTH))
+                    - (start.get(Calendar.YEAR) * 12 + start.get(Calendar.MONTH)) + 1;
         }
         return periodLength;
     }

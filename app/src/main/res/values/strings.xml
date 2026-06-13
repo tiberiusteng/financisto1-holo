@@ -469,6 +469,7 @@
         <item>2 years</item>
         <item>5 years</item>
         <item>10 years</item>
+        <item>all data</item>
     </string-array>
     <string name="report_reference_currency">Reference Currency</string>
     <string name="report_reference_currency_summary">Define the reference currency to be considered when request data for report charts</string>

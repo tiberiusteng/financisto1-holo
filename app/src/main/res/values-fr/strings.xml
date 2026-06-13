@@ -700,6 +700,7 @@
     <item>2 ans</item>
     <item>5 années</item>
     <item>10 années</item>
+    <item>all data</item>
   </string-array>
   <string-array name="lock_time_entities">
     <item>Off</item>

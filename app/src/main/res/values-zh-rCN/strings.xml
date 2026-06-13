@@ -734,6 +734,7 @@
     <item>2 年</item>
     <item>5 年</item>
     <item>10 年</item>
+    <item>所有資料</item>
   </string-array>
   <string-array name="lock_time_entities">
     <item>关闭</item>

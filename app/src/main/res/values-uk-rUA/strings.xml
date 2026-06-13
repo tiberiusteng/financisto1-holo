@@ -445,6 +445,7 @@
         <item>2 роки</item>
         <item>5 років</item>
         <item>10 років</item>
+        <item>all data</item>
     </string-array>
     <string name="report_reference_currency">Звітна валюта</string>
     <string name="report_reference_currency_summary">Визначте валюту для використання у звітах</string>

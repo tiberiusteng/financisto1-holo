@@ -734,6 +734,7 @@
     <item>2 roky</item>
     <item>5 rokov</item>
     <item>10 rokov</item>
+    <item>all data</item>
   </string-array>
   <string-array name="lock_time_entities">
     <item>Vypnuté</item>

@@ -430,6 +430,7 @@
         <item>2 года</item>
         <item>5 лет</item>
         <item>10 лет</item>
+        <item>all data</item>
     </string-array>
     <string name="report_reference_currency">Отчётная валюта</string>
     <string name="report_reference_currency_summary">Укажите валюту для использования в отчётах.</string>
