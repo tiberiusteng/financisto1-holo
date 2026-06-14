@@ -27,6 +27,7 @@ import androidx.loader.content.Loader;
 import java.util.LinkedList;
 import java.util.List;
 
+import tw.tib.financisto.Application;
 import tw.tib.financisto.R;
 import tw.tib.financisto.db.DatabaseAdapter;
 import tw.tib.financisto.utils.MenuItemInfo;

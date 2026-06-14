@@ -17,7 +17,6 @@ import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.content.res.Configuration;
 import android.content.res.Resources;
-import android.preference.PreferenceManager;
 import android.util.Log;
 
 import androidx.preference.PreferenceManager;
