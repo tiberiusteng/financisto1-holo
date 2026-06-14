@@ -15,10 +15,14 @@ import android.content.Intent;
 import android.database.Cursor;
 import android.os.Bundle;
 import android.text.TextUtils;
+import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AbsListView;
 import android.widget.EditText;
+import android.widget.ImageButton;
 import android.widget.ListAdapter;
+import android.widget.ListView;
 import android.widget.TextView;
 
 import androidx.core.graphics.Insets;
@@ -27,14 +31,17 @@ import androidx.core.view.WindowInsetsCompat;
 
 import tw.tib.financisto.R;
 import tw.tib.financisto.adapter.EntityListAdapter;
+import tw.tib.financisto.adapter.EntityListMultiChoiceAdapter;
 import tw.tib.financisto.filter.Criteria;
 import tw.tib.financisto.model.MyEntity;
 import tw.tib.financisto.utils.MyPreferences;
 import tw.tib.financisto.widget.SearchFilterTextWatcherListener;
 
+import java.util.Arrays;
 import java.util.List;
 
 public abstract class MyEntityListActivity<T extends MyEntity> extends AbstractListActivity<List<T>> {
+	private static final String TAG = "MyEntityListActivity";
 
 	private static final int NEW_ENTITY_REQUEST = 1;
 	private static final int EDIT_ENTITY_REQUEST = 2;
@@ -45,16 +52,25 @@ public abstract class MyEntityListActivity<T extends MyEntity> extends AbstractL
 	private final int emptyResId;
 
 	private EditText searchFilter;
+	protected ListView listView;
 	protected volatile String titleFilter;
 
+	private boolean supportMerge = false;
+	private boolean selectMode = false;
+
 	public MyEntityListActivity(Class<T> clazz, int emptyResId) {
-		this(clazz, R.layout.entity_list, emptyResId);
+		this(clazz, R.layout.entity_list, emptyResId, false);
 	}
 
-	public MyEntityListActivity(Class<T> clazz, int layoutId, int emptyResId) {
+	public MyEntityListActivity(Class<T> clazz, int emptyResId, boolean supportMerge) {
+		this(clazz, R.layout.entity_list, emptyResId, supportMerge);
+	}
+
+	public MyEntityListActivity(Class<T> clazz, int layoutId, int emptyResId, boolean supportMerge) {
 		super(layoutId);
 		this.clazz = clazz;
 		this.emptyResId = emptyResId;
+		this.supportMerge = supportMerge;
 	}
 
 	@Override
@@ -94,6 +110,29 @@ public abstract class MyEntityListActivity<T extends MyEntity> extends AbstractL
 				}
 			});
 		}
+
+		listView = findViewById(android.R.id.list);
+
+		ImageButton bMerge = findViewById(R.id.bMerge);
+		bMerge.setOnClickListener(view -> mergeSelectedEntities() );
+		bMerge.setVisibility(View.GONE);
+
+		ImageButton bSelect = findViewById(R.id.bSelect);
+		if (!supportMerge) {
+			bSelect.setVisibility(View.GONE);
+		}
+		bSelect.setOnClickListener(view -> {
+			selectMode = !selectMode;
+			if (selectMode) {
+				bMerge.setVisibility(View.VISIBLE);
+				listView.setChoiceMode(AbsListView.CHOICE_MODE_MULTIPLE);
+			}
+			else {
+				bMerge.setVisibility(View.GONE);
+				listView.setChoiceMode(AbsListView.CHOICE_MODE_NONE);
+			}
+			recreateCursor();
+		});
 	}
 
 	@Override
@@ -106,7 +145,12 @@ public abstract class MyEntityListActivity<T extends MyEntity> extends AbstractL
 
 	@Override
 	protected ListAdapter createAdapter(List<T> entities) {
-		return new EntityListAdapter<>(this, entities);
+		if (selectMode) {
+			return new EntityListMultiChoiceAdapter<>(this, entities);
+		}
+		else{
+			return new EntityListAdapter<>(this, entities);
+		}
 	}
 
 	@Override
@@ -142,6 +186,21 @@ public abstract class MyEntityListActivity<T extends MyEntity> extends AbstractL
 		Criteria blotterFilter = createBlotterCriteria(e);
 		blotterFilter.toIntent(e.title, intent);
 		startActivity(intent);
+	}
+
+	@Override
+	protected void onItemClick(View v, int position, long id) {
+		if (selectMode) {
+			Log.d(TAG, String.format("position=%s itemChecked=%s", position, listView.isItemChecked(position)));
+			Log.d(TAG, Arrays.toString(listView.getCheckedItemIds()));
+		}
+		else {
+			viewItem(v, position, id);
+		}
+	}
+
+	protected void mergeSelectedEntities() {
+
 	}
 
 	protected abstract Criteria createBlotterCriteria(T e);

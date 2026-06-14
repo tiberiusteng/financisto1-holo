@@ -11,6 +11,7 @@
 <LinearLayout xmlns:a="http://schemas.android.com/apk/res/android"
     a:layout_width="fill_parent"
     a:layout_height="fill_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     a:orientation="vertical"
     a:id="@+id/entity_list">
 
@@ -31,10 +32,30 @@
         a:text="@string/no_projects"
         a:layout_weight="1" />
 
-    <LinearLayout style="@style/BottomBar">
+    <androidx.constraintlayout.widget.ConstraintLayout style="@style/BottomBar">
         <ImageButton
             a:id="@+id/bAdd"
             style="@style/BottomBarButton"
-            a:src="@drawable/actionbar_add_big" />
-    </LinearLayout>
+            a:src="@drawable/actionbar_add_big"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintBottom_toBottomOf="parent" />
+
+        <ImageButton
+            a:id="@+id/bMerge"
+            style="@style/BottomBarButton"
+            a:src="@drawable/cell_merge"
+            a:layout_marginRight="@dimen/action_button_margin"
+            app:layout_constraintEnd_toStartOf="@id/bSelect"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintBottom_toBottomOf="parent" />
+
+        <ImageButton
+            a:id="@+id/bSelect"
+            style="@style/BottomBarButton"
+            a:src="@drawable/select_check_box"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintBottom_toBottomOf="parent" />
+    </androidx.constraintlayout.widget.ConstraintLayout>
 </LinearLayout>

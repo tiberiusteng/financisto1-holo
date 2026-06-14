@@ -1025,4 +1025,9 @@
 
   <string name="fiscal_year_start">會計年度開始</string>
   <string name="fiscal_year_start_summary">報表與統計使用的會計年度起始日: %s</string>
+
+  <string name="merge_payee_confirm">確認合併受款人</string>
+  <string name="merge_payee_message">這會保留受款人 %1$s, 將下列受款人的交易歸為此受款人, 並刪除下列受款人:</string>
+  <string name="merge_payee_message_continue">確認進行?</string>
+  <string name="merge_payee_success">受款人合併成功</string>
 </resources>

@@ -1189,4 +1189,9 @@
 
     <string name="fiscal_year_start">Fiscal year start</string>
     <string name="fiscal_year_start_summary">First day of fiscal year for period and reports: %s</string>
+
+    <string name="merge_payee_confirm">Confirm merging Payees</string>
+    <string name="merge_payee_message">This will keep payee %1$s, merge transactions from following payees into it, and delete following payees:</string>
+    <string name="merge_payee_message_continue">Continue?</string>
+    <string name="merge_payee_success">Payees successfully merged.</string>
 </resources>
