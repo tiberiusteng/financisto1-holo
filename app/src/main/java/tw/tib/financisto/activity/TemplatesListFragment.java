@@ -10,6 +10,7 @@
  ******************************************************************************/
 package tw.tib.financisto.activity;
 
+import android.content.Context;
 import android.widget.ListAdapter;
 
 import tw.tib.financisto.R;
@@ -59,8 +60,8 @@ public class TemplatesListFragment extends BlotterFragment {
     }
 
     @Override
-    protected ListAdapter createAdapter(Cursor cursor) {
-        return new BlotterListAdapter(getContext(), db, cursor) {
+    protected ListAdapter createAdapter(Context context, Cursor cursor) {
+        return new BlotterListAdapter(context, db, cursor) {
             @Override
             protected boolean isShowRunningBalance() {
                 return false;

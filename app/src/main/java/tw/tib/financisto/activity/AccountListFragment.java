@@ -322,9 +322,9 @@ public class AccountListFragment extends AbstractListFragment<Cursor> {
     }
 
     @Override
-    protected ListAdapter createAdapter(Cursor cursor) {
+    protected ListAdapter createAdapter(Context context, Cursor cursor) {
         long t1 = System.currentTimeMillis();
-        ListAdapter a = new AccountListAdapter(getContext(), cursor);
+        ListAdapter a = new AccountListAdapter(context, cursor);
         if (a.getCount() == 0) {
             emptyText.setVisibility(View.VISIBLE);
         }

@@ -7,6 +7,7 @@ import static android.content.Context.MODE_PRIVATE;
 import static java.lang.String.format;
 
 import android.app.AlertDialog;
+import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.AsyncTask;
@@ -156,9 +157,9 @@ public class BudgetListFragment extends AbstractListFragment<ArrayList<Budget>> 
     }
 
     @Override
-    protected ListAdapter createAdapter(ArrayList<Budget> budgets) {
+    protected ListAdapter createAdapter(Context context, ArrayList<Budget> budgets) {
         calculateTotals(budgets);
-        return new BudgetListAdapter(getContext(), budgets);
+        return new BudgetListAdapter(context, budgets);
     }
 
     @Override

@@ -17,6 +17,7 @@ import tw.tib.financisto.R;
 import tw.tib.financisto.adapter.TemplateListAdapter;
 import tw.tib.financisto.model.Transaction;
 
+import android.content.Context;
 import android.content.Intent;
 import android.database.Cursor;
 import android.os.Bundle;
@@ -88,8 +89,8 @@ public class SelectTemplateFragment extends TemplatesListFragment {
     }
 
     @Override
-    protected ListAdapter createAdapter(Cursor cursor) {
-        return new TemplateListAdapter(getContext(), db, cursor);
+    protected ListAdapter createAdapter(Context context, Cursor cursor) {
+        return new TemplateListAdapter(context, db, cursor);
     }
 
     @Override

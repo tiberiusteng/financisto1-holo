@@ -354,9 +354,9 @@ public class AccountRecyclerFragment extends AbstractRecyclerViewFragment
     }
 
     @Override
-    protected AccountRecyclerAdapter createAdapter(Cursor cursor) {
+    protected AccountRecyclerAdapter createAdapter(Context context, Cursor cursor) {
         long t1 = System.nanoTime();
-        var a = new AccountRecyclerAdapter(getContext(), cursor, showSortOrder, clickedView -> {
+        var a = new AccountRecyclerAdapter(context, cursor, showSortOrder, clickedView -> {
             selectedId = (long) clickedView.getTag(R.id.account);
             if (MyPreferences.isQuickMenuEnabledForAccount()) {
                 prepareAccountActionGrid();

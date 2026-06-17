@@ -77,7 +77,7 @@ abstract public class AbstractListFragment<D> extends ListFragment
 
     protected abstract D loadInBackground();
 
-    protected abstract ListAdapter createAdapter(D cursor);
+    protected abstract ListAdapter createAdapter(Context context, D cursor);
 
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
@@ -192,7 +192,7 @@ abstract public class AbstractListFragment<D> extends ListFragment
     @SuppressLint("StaticFieldLeak")
     @Override
     public Loader<D> onCreateLoader(int id, @Nullable Bundle args) {
-        return new AsyncTaskLoader<D>(Application.getInstance().getApplicationContext()) {
+        return new AsyncTaskLoader<D>(Application.getInstance()) {
             @Override
             protected void onStartLoading() {
                 forceLoad();
@@ -214,7 +214,9 @@ abstract public class AbstractListFragment<D> extends ListFragment
 
     @Override
     public void onLoadFinished(@NonNull Loader<D> loader, D data) {
-        adapter = createAdapter(data);
+        Context context = getContext();
+        if (context == null) return;
+        adapter = createAdapter(context, data);
         long t1 = System.nanoTime();
         Parcelable listViewState = getListView().onSaveInstanceState();
         setListAdapter(adapter);

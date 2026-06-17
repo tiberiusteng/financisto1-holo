@@ -12,6 +12,7 @@ package tw.tib.financisto.activity;
 
 import static android.app.Activity.RESULT_OK;
 
+import android.content.Context;
 import android.content.Intent;
 import android.database.Cursor;
 import android.os.Bundle;
@@ -62,8 +63,8 @@ public class ScheduledListFragment extends BlotterFragment {
     }
 
     @Override
-    protected ListAdapter createAdapter(Cursor cursor) {
-        return new ScheduledListAdapter(getContext(), transactions);
+    protected ListAdapter createAdapter(Context context, Cursor cursor) {
+        return new ScheduledListAdapter(context, transactions);
     }
 
     @Override

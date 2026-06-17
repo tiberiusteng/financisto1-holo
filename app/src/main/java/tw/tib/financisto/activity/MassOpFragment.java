@@ -195,12 +195,12 @@ public class MassOpFragment extends BlotterFragment {
     }
 
     @Override
-    protected ListAdapter createAdapter(Cursor cursor) {
+    protected ListAdapter createAdapter(Context context, Cursor cursor) {
         if (cursor.getCount() == 0) {
             emptyText.setVisibility(View.VISIBLE);
         }
         progressBar.setVisibility(View.GONE);
-        return new BlotterListAdapter(getContext(), db, R.layout.blotter_mass_op_list_item, cursor, true);
+        return new BlotterListAdapter(context, db, R.layout.blotter_mass_op_list_item, cursor, true);
     }
 
     private enum MassOp implements LocalizableEnum{

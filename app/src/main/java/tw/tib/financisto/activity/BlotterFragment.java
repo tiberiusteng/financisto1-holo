@@ -898,7 +898,7 @@ public class BlotterFragment extends AbstractListFragment<Cursor> implements Blo
     @Override
     protected Cursor loadInBackground() {
         Cursor c;
-        blotterFilter.recalculatePeriod(Application.getInstance().getApplicationContext());
+        blotterFilter.recalculatePeriod(Application.getInstance());
         WhereFilter blotterFilterCopy = WhereFilter.copyOf(blotterFilter);
 
         new Handler(Looper.getMainLooper()).post(()-> {
@@ -928,14 +928,14 @@ public class BlotterFragment extends AbstractListFragment<Cursor> implements Blo
     }
 
     @Override
-    protected ListAdapter createAdapter(Cursor cursor) {
+    protected ListAdapter createAdapter(Context context, Cursor cursor) {
         ListAdapter a;
         long t1 = System.currentTimeMillis();
         long accountId = blotterFilter.getAccountId();
         if (accountId != -1) {
-            a = new TransactionsListAdapter(getContext(), db, cursor);
+            a = new TransactionsListAdapter(context, db, cursor);
         } else {
-            a = new BlotterListAdapter(getContext(), db, cursor);
+            a = new BlotterListAdapter(context, db, cursor);
         }
         if (a.getCount() == 0) {
             emptyText.setVisibility(View.VISIBLE);

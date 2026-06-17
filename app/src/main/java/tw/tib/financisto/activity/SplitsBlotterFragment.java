@@ -10,6 +10,7 @@
  ******************************************************************************/
 package tw.tib.financisto.activity;
 
+import android.content.Context;
 import android.database.Cursor;
 import android.os.Bundle;
 import android.os.Handler;
@@ -43,8 +44,8 @@ public class SplitsBlotterFragment extends BlotterFragment {
     }
 
     @Override
-    protected ListAdapter createAdapter(Cursor cursor) {
-        return new TransactionsListAdapter(getContext(), db, cursor);
+    protected ListAdapter createAdapter(Context context, Cursor cursor) {
+        return new TransactionsListAdapter(context, db, cursor);
     }
 
     @Override

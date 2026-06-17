@@ -11,6 +11,7 @@
 package tw.tib.financisto.activity;
 
 import android.annotation.SuppressLint;
+import android.content.Context;
 import android.content.Intent;
 import android.database.Cursor;
 import android.os.Bundle;
@@ -62,8 +63,8 @@ public class BudgetBlotterFragment extends BlotterFragment {
     }
 
     @Override
-    protected ListAdapter createAdapter(Cursor cursor) {
-        return new TransactionsListAdapter(getContext(), db, cursor);
+    protected ListAdapter createAdapter(Context context, Cursor cursor) {
+        return new TransactionsListAdapter(context, db, cursor);
     }
 
     private Cursor getBlotterForBudget(long budgetId) {
