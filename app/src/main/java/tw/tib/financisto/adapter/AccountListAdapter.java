@@ -38,7 +38,7 @@ public class AccountListAdapter extends ResourceCursorAdapter {
 		super(context, R.layout.account_list_item, c);
 		this.u = new Utils(context);
 		this.df = DateUtils.getShortDateFormat(context);
-        this.accountListDateType = MyPreferences.getAccountListDateType(context);
+        this.accountListDateType = MyPreferences.getAccountListDateType();
 	}		
 
 	@Override

@@ -202,7 +202,7 @@ public class ReportDataByPeriod {
 
 		this.aggregateUnit = aggregateUnit;
 		if (this.aggregateUnit == MyPreferences.ReportAggregateUnit.FISCAL_YEAR) {
-			int fiscalYearStart = MyPreferences.getFiscalYearStart(context);
+			int fiscalYearStart = MyPreferences.getFiscalYearStart();
 			this.fiscalYearStartMonth = fiscalYearStart / 100;
 			this.fiscalYearStartDay = fiscalYearStart % 100;
 		}

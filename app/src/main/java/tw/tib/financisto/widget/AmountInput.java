@@ -225,7 +225,7 @@ public class AmountInput extends LinearLayout implements AmountListener {
         secondary.addTextChangedListener(textWatcher);
         secondary.setOnFocusChangeListener(selectAllOnFocusListener);
 
-        if (!MyPreferences.isEnterCurrencyDecimalPlaces(getContext())) {
+        if (!MyPreferences.isEnterCurrencyDecimalPlaces()) {
             secondary.setVisibility(GONE);
             delimiter.setVisibility(GONE);
         }
@@ -356,12 +356,12 @@ public class AmountInput extends LinearLayout implements AmountListener {
     public void setAmount(long amount) {
         long absAmount = Math.abs(amount);
 
-        absAmount = Utils.roundAmount(getContext(), currency, absAmount);
+        absAmount = Utils.roundAmount(currency, absAmount);
 
         long x = absAmount / 100;
         primary.setText(String.valueOf(x));
 
-        if (MyPreferences.isEnterCurrencyDecimalPlaces(getContext())) {
+        if (MyPreferences.isEnterCurrencyDecimalPlaces()) {
             long y = absAmount - 100 * x;
             secondary.setText(String.format("%02d", y));
         }

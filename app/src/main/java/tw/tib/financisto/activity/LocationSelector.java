@@ -25,10 +25,10 @@ public class LocationSelector<A extends AbstractActivity> extends MyEntitySelect
     }
 
     public LocationSelector(A activity, MyEntityManager em, ActivityLayout x, int actBtnId, int clearBtnId, int emptyId) {
-        super(MyLocation.class, activity, em, x, MyPreferences.isShowLocation(activity),
+        super(MyLocation.class, activity, em, x, MyPreferences.isShowLocation(),
                 R.id.location, actBtnId, clearBtnId, R.string.location, emptyId,
                 R.id.location_filter_toggle, R.id.location_show_list, R.id.location_create);
-        if (MyPreferences.getLocationSelectorType(activity) == MyPreferences.EntitySelectorType.SEARCH) {
+        if (MyPreferences.getLocationSelectorType() == MyPreferences.EntitySelectorType.SEARCH) {
             setUseSearchAsPrimary(true);
         }
     }

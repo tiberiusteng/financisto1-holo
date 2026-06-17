@@ -66,7 +66,7 @@ public class Utils {
             this.splitColor = r.getColor(R.color.split_color);
             this.context = context;
 
-            this.isShowAccountBalanceOnSelector = MyPreferences.isShowAccountBalanceOnSelector(context);
+            this.isShowAccountBalanceOnSelector = MyPreferences.isShowAccountBalanceOnSelector();
         }
     }
 
@@ -383,8 +383,8 @@ public class Utils {
         textView.getPaint().setMaskFilter(filter);
     }
 
-    public static long roundAmount(Context context, Currency currency, long amount) {
-        if (MyPreferences.isRoundUpAmount(context) && currency != null) {
+    public static long roundAmount(Currency currency, long amount) {
+        if (MyPreferences.isRoundUpAmount() && currency != null) {
             long sign, absAmount;
             if (amount < 0) {
                 sign = -1;

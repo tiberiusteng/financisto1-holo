@@ -92,7 +92,7 @@ public class AccountWidget extends AppWidgetProvider {
             AppWidgetProviderInfo appWidgetInfo = manager.getAppWidgetInfo(id);
             if (appWidgetInfo != null) {
                 int layoutId = appWidgetInfo.initialLayout;
-                if (MyPreferences.isWidgetEnabled(context)) {
+                if (MyPreferences.isWidgetEnabled()) {
                     long accountId = loadAccountForWidget(context, id);
                     Class providerClass = getProviderClass(appWidgetInfo);
                     Log.d("Financisto", "using provider " + providerClass);

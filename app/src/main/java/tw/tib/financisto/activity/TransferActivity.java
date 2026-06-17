@@ -75,7 +75,7 @@ public class TransferActivity extends AbstractTransactionActivity {
 	}
 
 	protected int getLayoutId() {
-		return MyPreferences.isUseFixedLayout(this) ? R.layout.transfer_fixed : R.layout.transfer_free;
+		return MyPreferences.isUseFixedLayout() ? R.layout.transfer_fixed : R.layout.transfer_free;
 	}
 
 	@Override
@@ -100,12 +100,12 @@ public class TransferActivity extends AbstractTransactionActivity {
 			accountToText = x.addListNode(layout, R.id.account_to, R.string.account_to, R.string.select_account);
 		}
 		// payee
-		isShowPayee = MyPreferences.isShowPayeeInTransfers(this);
+		isShowPayee = MyPreferences.isShowPayeeInTransfers();
 		if (isShowPayee) {
 			createPayeeNode(layout);
 		}
 		// category
-		isShowCategoryInTransfer = MyPreferences.isShowCategoryInTransferScreen(this);
+		isShowCategoryInTransfer = MyPreferences.isShowCategoryInTransferScreen();
 		if (isShowCategoryInTransfer) {
 			categorySelector.createNode(layout, TRANSFER);
 		} else {

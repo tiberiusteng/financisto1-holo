@@ -192,7 +192,7 @@ public class AccountRecyclerFragment extends AbstractRecyclerViewFragment
 
     private void setupMenuButton() {
         final ImageButton bMenu = getView().findViewById(R.id.bMenu);
-        if (MyPreferences.isShowMenuButtonOnAccountsScreen(getContext())) {
+        if (MyPreferences.isShowMenuButtonOnAccountsScreen()) {
             bMenu.setOnClickListener(v -> {
                 PopupMenu popupMenu = new PopupMenu(getActivity(), bMenu);
                 MenuInflater inflater = getActivity().getMenuInflater();
@@ -235,7 +235,7 @@ public class AccountRecyclerFragment extends AbstractRecyclerViewFragment
             accountActionGrid.addQuickAction(new MyQuickAction(getContext(), R.drawable.ic_action_lock_open, R.string.reopen_account));
         }
         accountActionGrid.addQuickAction(new MyQuickAction(getContext(), R.drawable.ic_action_trash, R.string.delete_account));
-        if (MyPreferences.isShowTransferCurrentBalance(getContext())) {
+        if (MyPreferences.isShowTransferCurrentBalance()) {
             accountActionGrid.addQuickAction(new MyQuickAction(getContext(), R.drawable.share_windows_32dp, R.string.transfer_current_balance));
         }
         accountActionGrid.setOnQuickActionClickListener(accountActionListener);
@@ -308,7 +308,7 @@ public class AccountRecyclerFragment extends AbstractRecyclerViewFragment
         }
         TextView totalText = getView().findViewById(R.id.total);
         totalText.setOnClickListener((view) -> {
-            if (MyPreferences.isBlurBalances(getContext())) {
+            if (MyPreferences.isBlurBalances()) {
                 if (totalText.getPaint().getMaskFilter() != null) {
                     totalText.getPaint().setMaskFilter(null);
                     totalText.invalidate();
@@ -358,7 +358,7 @@ public class AccountRecyclerFragment extends AbstractRecyclerViewFragment
         long t1 = System.nanoTime();
         var a = new AccountRecyclerAdapter(getContext(), cursor, showSortOrder, clickedView -> {
             selectedId = (long) clickedView.getTag(R.id.account);
-            if (MyPreferences.isQuickMenuEnabledForAccount(getContext())) {
+            if (MyPreferences.isQuickMenuEnabledForAccount()) {
                 prepareAccountActionGrid();
                 accountActionGrid.show(clickedView);
             } else {
@@ -393,7 +393,7 @@ public class AccountRecyclerFragment extends AbstractRecyclerViewFragment
         });
         Log.d(TAG, "createCursor start");
         long t1 = System.nanoTime();
-        if (MyPreferences.isHideClosedAccounts(getContext())) {
+        if (MyPreferences.isHideClosedAccounts()) {
             c = db.getAllActiveAccountsWithFilter(filter);
         } else {
             c = db.getAllAccountsWithFilter(filter);

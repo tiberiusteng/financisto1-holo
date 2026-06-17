@@ -50,7 +50,7 @@ public class ProjectByPeriodReport extends Report2DChart {
 	@Override
 	protected void createFilter() {
 		columnFilter = TransactionColumns.project_id.name();
-		boolean includeNoProject = MyPreferences.includeNoFilterInReport(context);
+		boolean includeNoProject = MyPreferences.includeNoFilterInReport();
 		filterIds = new ArrayList<>();
 		filterTitles = new ArrayList<>();
 		currentFilterOrder = 0;

@@ -84,11 +84,11 @@ public class BlotterListAdapter extends ResourceCursorAdapter {
         this.u = new Utils(context);
         this.colors = initializeColors(context);
         this.projectColor = context.getResources().getColor(R.color.project_color);
-        this.showRunningBalance = MyPreferences.isShowRunningBalance(context);
-        this.showProject = MyPreferences.isShowProjectInBlotter(context);
-        this.colorizeWeekendDate = MyPreferences.isColorizeWeekendDate(context);
-        this.showTimeOfDay = MyPreferences.isBlotterShowTimeOfDay(context);
-        this.transactionTitleUtils = new TransactionTitleUtils(context, MyPreferences.isColorizeBlotterItem(context));
+        this.showRunningBalance = MyPreferences.isShowRunningBalance();
+        this.showProject = MyPreferences.isShowProjectInBlotter();
+        this.colorizeWeekendDate = MyPreferences.isColorizeWeekendDate();
+        this.showTimeOfDay = MyPreferences.isBlotterShowTimeOfDay();
+        this.transactionTitleUtils = new TransactionTitleUtils(context, MyPreferences.isColorizeBlotterItem());
         this.db = db;
     }
 

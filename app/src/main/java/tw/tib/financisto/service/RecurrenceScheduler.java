@@ -49,7 +49,7 @@ public class RecurrenceScheduler {
     public int scheduleAll(Context context) {
         long now = System.currentTimeMillis();
         int restoredTransactionsCount = 0;
-        if (MyPreferences.isRestoreMissedScheduledTransactions(context)) {
+        if (MyPreferences.isRestoreMissedScheduledTransactions()) {
             restoredTransactionsCount = restoreMissedSchedules(now);
             // all transactions up to and including now has already been restored
             now += 1000;

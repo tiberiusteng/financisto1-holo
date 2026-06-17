@@ -24,7 +24,7 @@ import java.util.*;
 public enum PeriodType implements LocalizableEnum {
     TODAY(R.string.period_today, true, true) {
         @Override
-        public Period calculatePeriod(Context context, long refTime) {
+        public Period calculatePeriod(long refTime) {
             Calendar c = Calendar.getInstance();
             c.setTimeInMillis(refTime);
             long start = DateUtils.startOfDay(c).getTimeInMillis();
@@ -34,7 +34,7 @@ public enum PeriodType implements LocalizableEnum {
     },
     YESTERDAY(R.string.period_yesterday, true, false) {
         @Override
-        public Period calculatePeriod(Context context, long refTime) {
+        public Period calculatePeriod(long refTime) {
             Calendar c = Calendar.getInstance();
             c.setTimeInMillis(refTime);
             c.add(Calendar.DAY_OF_MONTH, -1);
@@ -45,12 +45,12 @@ public enum PeriodType implements LocalizableEnum {
     },
     THIS_WEEK(R.string.period_this_week, true, true) {
         @Override
-        public Period calculatePeriod(Context context, long refTime) {
+        public Period calculatePeriod(long refTime) {
             Calendar c = Calendar.getInstance();
             c.setTimeInMillis(refTime);
             int dayOfWeek = c.get(Calendar.DAY_OF_WEEK);
             int firstDayOfWeek;
-            switch (MyPreferences.getFirstDayOfWeek(context)) {
+            switch (MyPreferences.getFirstDayOfWeek()) {
                 case SUNDAY -> firstDayOfWeek = Calendar.SUNDAY;
                 case MONDAY -> firstDayOfWeek = Calendar.MONDAY;
                 default -> firstDayOfWeek = c.getFirstDayOfWeek();
@@ -69,7 +69,7 @@ public enum PeriodType implements LocalizableEnum {
     },
     THIS_MONTH(R.string.period_this_month, true, true) {
         @Override
-        public Period calculatePeriod(Context context, long refTime) {
+        public Period calculatePeriod(long refTime) {
             Calendar c = Calendar.getInstance();
             c.setTimeInMillis(refTime);
             c.set(Calendar.DAY_OF_MONTH, 1);
@@ -81,7 +81,7 @@ public enum PeriodType implements LocalizableEnum {
         }
     },
     THIS_YEAR(R.string.period_this_year, true, true) {
-        public Period calculatePeriod(Context context, long refTime) {
+        public Period calculatePeriod(long refTime) {
             Calendar c = Calendar.getInstance();
             c.setTimeInMillis(refTime);
             c.set(Calendar.DAY_OF_YEAR, 1);
@@ -93,8 +93,8 @@ public enum PeriodType implements LocalizableEnum {
         }
     },
     THIS_FISCAL_YEAR(R.string.period_this_fiscal_year, true, true) {
-        public Period calculatePeriod(Context context, long refTime) {
-            int fiscalYearStart = MyPreferences.getFiscalYearStart(context);
+        public Period calculatePeriod(long refTime) {
+            int fiscalYearStart = MyPreferences.getFiscalYearStart();
             Calendar c = Calendar.getInstance();
             c.setTimeInMillis(refTime);
             c.set(Calendar.MONTH, fiscalYearStart / 100);
@@ -117,13 +117,13 @@ public enum PeriodType implements LocalizableEnum {
     },
     LAST_WEEK(R.string.period_last_week, true, false) {
         @Override
-        public Period calculatePeriod(Context context, long refTime) {
+        public Period calculatePeriod(long refTime) {
             Calendar c = Calendar.getInstance();
             c.setTimeInMillis(refTime);
             c.add(Calendar.DAY_OF_YEAR, -7);
             int dayOfWeek = c.get(Calendar.DAY_OF_WEEK);
             int firstDayOfWeek;
-            switch (MyPreferences.getFirstDayOfWeek(context)) {
+            switch (MyPreferences.getFirstDayOfWeek()) {
                 case SUNDAY -> firstDayOfWeek = Calendar.SUNDAY;
                 case MONDAY -> firstDayOfWeek = Calendar.MONDAY;
                 default -> firstDayOfWeek = c.getFirstDayOfWeek();
@@ -142,7 +142,7 @@ public enum PeriodType implements LocalizableEnum {
     },
     LAST_MONTH(R.string.period_last_month, true, false) {
         @Override
-        public Period calculatePeriod(Context context, long refTime) {
+        public Period calculatePeriod(long refTime) {
             Calendar c = Calendar.getInstance();
             c.setTimeInMillis(refTime);
             c.add(Calendar.MONTH, -1);
@@ -156,7 +156,7 @@ public enum PeriodType implements LocalizableEnum {
     },
     LAST_YEAR(R.string.period_last_year, true, false) {
         @Override
-        public Period calculatePeriod(Context context, long refTime) {
+        public Period calculatePeriod(long refTime) {
             Calendar c = Calendar.getInstance();
             c.setTimeInMillis(refTime);
             c.add(Calendar.YEAR, -1);
@@ -169,8 +169,8 @@ public enum PeriodType implements LocalizableEnum {
         }
     },
     LAST_FISCAL_YEAR(R.string.period_last_fiscal_year, true, false) {
-        public Period calculatePeriod(Context context, long refTime) {
-            int fiscalYearStart = MyPreferences.getFiscalYearStart(context);
+        public Period calculatePeriod(long refTime) {
+            int fiscalYearStart = MyPreferences.getFiscalYearStart();
             Calendar c = Calendar.getInstance();
             c.setTimeInMillis(refTime);
             c.set(Calendar.MONTH, fiscalYearStart / 100);
@@ -194,23 +194,23 @@ public enum PeriodType implements LocalizableEnum {
     },
     THIS_AND_LAST_WEEK(R.string.period_this_and_last_week, true, false) {
         @Override
-        public Period calculatePeriod(Context context, long refTime) {
-            Period lastWeek = LAST_WEEK.calculatePeriod(context, refTime);
-            Period thisWeek = THIS_WEEK.calculatePeriod(context, refTime);
+        public Period calculatePeriod(long refTime) {
+            Period lastWeek = LAST_WEEK.calculatePeriod(refTime);
+            Period thisWeek = THIS_WEEK.calculatePeriod(refTime);
             return new Period(PeriodType.THIS_AND_LAST_WEEK, lastWeek.start, thisWeek.end);
         }
     },
     THIS_AND_LAST_MONTH(R.string.period_this_and_last_month, true, false) {
         @Override
-        public Period calculatePeriod(Context context, long refTime) {
-            Period lastMonth = LAST_MONTH.calculatePeriod(context, refTime);
-            Period thisMonth = THIS_MONTH.calculatePeriod(context, refTime);
+        public Period calculatePeriod(long refTime) {
+            Period lastMonth = LAST_MONTH.calculatePeriod(refTime);
+            Period thisMonth = THIS_MONTH.calculatePeriod(refTime);
             return new Period(PeriodType.THIS_AND_LAST_MONTH, lastMonth.start, thisMonth.end);
         }
     },
     THIS_AND_LAST_YEAR(R.string.period_this_and_last_year, true, false) {
         @Override
-        public Period calculatePeriod(Context context, long refTime) {
+        public Period calculatePeriod(long refTime) {
             Calendar c = Calendar.getInstance();
             c.setTimeInMillis(refTime);
             c.add(Calendar.YEAR, -1);
@@ -228,8 +228,8 @@ public enum PeriodType implements LocalizableEnum {
         }
     },
     THIS_AND_LAST_FISCAL_YEAR(R.string.period_this_and_last_fiscal_year, true, true) {
-        public Period calculatePeriod(Context context, long refTime) {
-            int fiscalYearStart = MyPreferences.getFiscalYearStart(context);
+        public Period calculatePeriod(long refTime) {
+            int fiscalYearStart = MyPreferences.getFiscalYearStart();
             Calendar c = Calendar.getInstance();
             c.setTimeInMillis(refTime);
             c.set(Calendar.MONTH, fiscalYearStart / 100);
@@ -253,7 +253,7 @@ public enum PeriodType implements LocalizableEnum {
     },
     TOMORROW(R.string.period_tomorrow, false, true) {
         @Override
-        public Period calculatePeriod(Context context, long refTime) {
+        public Period calculatePeriod(long refTime) {
             Calendar c = Calendar.getInstance();
             c.setTimeInMillis(refTime);
             c.add(Calendar.DAY_OF_MONTH, 1);
@@ -264,8 +264,8 @@ public enum PeriodType implements LocalizableEnum {
     },
     NEXT_WEEK(R.string.period_next_week, false, true) {
         @Override
-        public Period calculatePeriod(Context context, long refTime) {
-            Period thisWeek = THIS_WEEK.calculatePeriod(context, refTime);
+        public Period calculatePeriod(long refTime) {
+            Period thisWeek = THIS_WEEK.calculatePeriod(refTime);
             Calendar start = Calendar.getInstance();
             start.setTimeInMillis(thisWeek.start);
             start.add(Calendar.DAY_OF_MONTH, 7);
@@ -277,7 +277,7 @@ public enum PeriodType implements LocalizableEnum {
     },
     NEXT_MONTH(R.string.period_next_month, false, true) {
         @Override
-        public Period calculatePeriod(Context context, long refTime) {
+        public Period calculatePeriod(long refTime) {
             Calendar c = Calendar.getInstance();
             c.setTimeInMillis(refTime);
             c.add(Calendar.MONTH, 1);
@@ -291,15 +291,15 @@ public enum PeriodType implements LocalizableEnum {
     },
     THIS_AND_NEXT_MONTH(R.string.period_this_and_next_month, false, true) {
         @Override
-        public Period calculatePeriod(Context context, long refTime) {
-            Period thisMonth = THIS_MONTH.calculatePeriod(context, refTime);
-            Period nextMonth = NEXT_MONTH.calculatePeriod(context, refTime);
+        public Period calculatePeriod(long refTime) {
+            Period thisMonth = THIS_MONTH.calculatePeriod(refTime);
+            Period nextMonth = NEXT_MONTH.calculatePeriod(refTime);
             return new Period(PeriodType.THIS_AND_NEXT_MONTH, thisMonth.start, nextMonth.end);
         }
     },
     NEXT_3_MONTHS(R.string.period_next_3_months, false, true) {
         @Override
-        public Period calculatePeriod(Context context, long refTime) {
+        public Period calculatePeriod(long refTime) {
             Calendar c = Calendar.getInstance();
             c.setTimeInMillis(refTime);
             c.set(Calendar.DAY_OF_MONTH, 1);
@@ -312,7 +312,7 @@ public enum PeriodType implements LocalizableEnum {
     },
     CUSTOM(R.string.period_custom, true, true) {
         @Override
-        public Period calculatePeriod(Context context, long refTime) {
+        public Period calculatePeriod(long refTime) {
             return null;
         }
     };
@@ -351,9 +351,9 @@ public enum PeriodType implements LocalizableEnum {
         return titleId;
     }
 
-    public abstract Period calculatePeriod(Context context, long refTime);
+    public abstract Period calculatePeriod(long refTime);
 
-    public Period calculatePeriod(Context context) {
-        return calculatePeriod(context, System.currentTimeMillis());
+    public Period calculatePeriod() {
+        return calculatePeriod(System.currentTimeMillis());
     }
 }

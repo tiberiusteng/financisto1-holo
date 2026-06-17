@@ -412,7 +412,7 @@ public class MonthlyViewActivity extends ListActivity {
 
 		@Override
 		protected TransactionList doInBackground(Void... voids) {
-			boolean treatTransferToCCardAsPayment = MyPreferences.isTreatTransferToCCardAsPayment(context);
+			boolean treatTransferToCCardAsPayment = MyPreferences.isTreatTransferToCCardAsPayment();
 			MonthlyViewPlanner planner = new MonthlyViewPlanner(context, db, account, isStatementPreview, treatTransferToCCardAsPayment, open, close, now);
 			TransactionList transactions;
 			if (isStatementPreview) {

@@ -44,8 +44,8 @@ public class TransactionsListAdapter extends BlotterListAdapter {
         this.dateColor = r.getColor(R.color.transaction_date);
         this.dateWeekendColor = r.getColor(R.color.transaction_date_weekend);
         this.projectColor = r.getColor(R.color.project_color);
-        this.showProject = MyPreferences.isShowProjectInBlotter(context);
-        this.colorizeWeekendDate = MyPreferences.isColorizeWeekendDate(context);
+        this.showProject = MyPreferences.isShowProjectInBlotter();
+        this.colorizeWeekendDate = MyPreferences.isColorizeWeekendDate();
     }
 
     @Override

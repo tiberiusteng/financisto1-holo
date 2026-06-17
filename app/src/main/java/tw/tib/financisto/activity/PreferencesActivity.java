@@ -181,7 +181,7 @@ public class PreferencesActivity extends PreferenceActivity {
     }
 
     private Account getSelectedAccount() {
-        String accountName = MyPreferences.getGoogleDriveAccount(this);
+        String accountName = MyPreferences.getGoogleDriveAccount();
         if (accountName != null) {
             AccountManager accountManager = AccountManager.get(this);
             Account[] accounts = accountManager.getAccountsByType("com.google");
@@ -195,7 +195,7 @@ public class PreferencesActivity extends PreferenceActivity {
     }
 
     private void linkToDropbox() {
-        boolean dropboxAuthorized = MyPreferences.isDropboxAuthorized(this);
+        boolean dropboxAuthorized = MyPreferences.isDropboxAuthorized();
         PreferenceScreen preferenceScreen = getPreferenceScreen();
         preferenceScreen.findPreference("dropbox_authorize").setEnabled(!dropboxAuthorized);
         preferenceScreen.findPreference("dropbox_unlink").setEnabled(dropboxAuthorized);
@@ -212,7 +212,7 @@ public class PreferencesActivity extends PreferenceActivity {
     }
 
     private void enableOpenExchangeApp() {
-        pOpenExchangeRatesAppId.setEnabled(MyPreferences.isOpenExchangeRatesProviderSelected(this));
+        pOpenExchangeRatesAppId.setEnabled(MyPreferences.isOpenExchangeRatesProviderSelected());
     }
 
     private String getDatabaseBackupFolder() {
@@ -236,7 +236,7 @@ public class PreferencesActivity extends PreferenceActivity {
                         Log.i("Financisto", "backup folder uri: " + backupFolderUri.toString());
                         getContentResolver().takePersistableUriPermission(backupFolderUri,
                                 Intent.FLAG_GRANT_READ_URI_PERMISSION | Intent.FLAG_GRANT_WRITE_URI_PERMISSION);
-                        MyPreferences.setDatabaseBackupFolder(this, backupFolderUri.toString());
+                        MyPreferences.setDatabaseBackupFolder(backupFolderUri.toString());
                         setCurrentDatabaseBackupFolder();
                     }
                     else {
@@ -247,7 +247,7 @@ public class PreferencesActivity extends PreferenceActivity {
                 case CHOOSE_ACCOUNT:
                     GoogleSignInAccount account = GoogleSignIn.getSignedInAccountFromIntent(data).getResult();
                     new GoogleDriveAuthorizeFolderTask(this,
-                            MyPreferences.getGoogleDriveBackupFolder(this),
+                            MyPreferences.getGoogleDriveBackupFolder(),
                             REQUEST_AUTHORIZATION).execute();
                     String signedInAs = getString(R.string.google_drive_signed_in_as,
                             account.getEmail());

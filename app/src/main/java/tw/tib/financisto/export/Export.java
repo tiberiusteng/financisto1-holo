@@ -98,7 +98,7 @@ public abstract class Export {
     protected abstract String getExtension();
 
     public static String getBackupFolder(Context context) {
-        String backupFolderUri = MyPreferences.getDatabaseBackupFolder(context);
+        String backupFolderUri = MyPreferences.getDatabaseBackupFolder();
         Log.i("Financisto", "getBackupFolder: " + backupFolderUri);
         return backupFolderUri;
     }

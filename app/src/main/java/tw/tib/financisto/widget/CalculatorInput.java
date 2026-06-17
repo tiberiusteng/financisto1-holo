@@ -130,7 +130,7 @@ public class CalculatorInput extends DialogFragment {
     }
 
     private void onButtonClick(char c, View v) {
-        if (MyPreferences.isPinHapticFeedbackEnabled(getActivity())) {
+        if (MyPreferences.isPinHapticFeedbackEnabled()) {
             v.performHapticFeedback(HapticFeedbackConstants.KEYBOARD_TAP);
         }
         switch (c) {

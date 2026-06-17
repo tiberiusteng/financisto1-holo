@@ -19,11 +19,11 @@ public class IntegrityCheckAutobackup implements IntegrityCheck {
 
     @Override
     public Result check() {
-        if (MyPreferences.isAutoBackupEnabled(context)) {
-            if (MyPreferences.isAutoBackupWarningEnabled(context)) {
-                MyPreferences.AutobackupStatus status = MyPreferences.getAutobackupStatus(context);
+        if (MyPreferences.isAutoBackupEnabled()) {
+            if (MyPreferences.isAutoBackupWarningEnabled()) {
+                MyPreferences.AutobackupStatus status = MyPreferences.getAutobackupStatus();
                 if (status.notify) {
-                    MyPreferences.notifyAutobackupSucceeded(context);
+                    MyPreferences.notifyAutobackupSucceeded();
                     return new Result(Level.ERROR,
                             context.getString(R.string.autobackup_failed_message,
                                     DateUtils.getTimeFormat(context).format(new Date(status.timestamp)),
@@ -31,14 +31,14 @@ public class IntegrityCheckAutobackup implements IntegrityCheck {
                 }
             }
         } else {
-            if (MyPreferences.isAutoBackupReminderEnabled(context)) {
-                long lastCheck = MyPreferences.getLastAutobackupCheck(context);
+            if (MyPreferences.isAutoBackupReminderEnabled()) {
+                long lastCheck = MyPreferences.getLastAutobackupCheck();
                 if (lastCheck == 0) {
-                    MyPreferences.updateLastAutobackupCheck(context);
+                    MyPreferences.updateLastAutobackupCheck();
                 } else {
                     long delta = System.currentTimeMillis() - lastCheck;
                     if (delta > threshold) {
-                        MyPreferences.updateLastAutobackupCheck(context);
+                        MyPreferences.updateLastAutobackupCheck();
                         return new Result(Level.INFO, context.getString(R.string.auto_backup_is_not_enabled));
                     }
                 }

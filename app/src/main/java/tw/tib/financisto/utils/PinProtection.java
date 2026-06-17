@@ -32,6 +32,7 @@ public class PinProtection {
         @Override
         public LockState unlock(Context c) {
             if (MyPreferences.isPinProtected(c)) {
+            if (MyPreferences.isPinProtected()) {
                 askForPin(c);
                 return this;
             }
@@ -51,6 +52,7 @@ public class PinProtection {
         @Override
         public LockState unlock(Context c) {
             int lockWaitTime = MyPreferences.getLockTimeSeconds(c);
+            int lockWaitTime = MyPreferences.getLockTimeSeconds();
             if (lockWaitTime > 0) {
                 long curTime = System.currentTimeMillis();
                 long lockTimeMs = Math.max(MIN_DELTA_TIME_MS, TimeUnit.MILLISECONDS.convert(lockWaitTime, TimeUnit.SECONDS));

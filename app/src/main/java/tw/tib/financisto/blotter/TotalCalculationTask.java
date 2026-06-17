@@ -63,7 +63,7 @@ public abstract class TotalCalculationTask extends AsyncTask<Object, Total, Tota
             }
             Utils u = new Utils(context);
     	    u.setTotal(totalText, result);
-			if (MyPreferences.isBlurBalances(context)) {
+			if (MyPreferences.isBlurBalances()) {
 				u.applyBlur(totalText);
 				totalText.invalidate();
 			}

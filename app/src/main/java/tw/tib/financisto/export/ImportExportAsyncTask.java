@@ -83,7 +83,7 @@ public abstract class ImportExportAsyncTask extends AsyncTask<Uri, String, Objec
     }
 
     protected void doUploadToDropbox(Context context, Uri backupFileUri) throws Exception {
-        if (MyPreferences.isDropboxUploadBackups(context)) {
+        if (MyPreferences.isDropboxUploadBackups()) {
             doForceUploadToDropbox(context, backupFileUri);
         }
     }
@@ -94,7 +94,7 @@ public abstract class ImportExportAsyncTask extends AsyncTask<Uri, String, Objec
     }
 
     void doUploadToGoogleDrive(Context context, Uri backupFileUri) throws Exception {
-        if (MyPreferences.isGoogleDriveUploadBackups(context)) {
+        if (MyPreferences.isGoogleDriveUploadBackups()) {
             doForceUploadToGoogleDrive(context, backupFileUri);
         }
     }

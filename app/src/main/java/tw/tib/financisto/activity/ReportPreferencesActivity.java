@@ -68,7 +68,7 @@ public class ReportPreferencesActivity extends PreferenceActivity {
 	 * Get the list of currencies.
 	 */
 	private void getCurrenciesList() {
-		String selectedCurrenceTitle = MyPreferences.getReferenceCurrencyTitle(this);
+		String selectedCurrenceTitle = MyPreferences.getReferenceCurrencyTitle();
 		Collection<Currency> currenciesList = CurrencyCache.getAllCurrencies();
 		
 		int count = currenciesList.size();

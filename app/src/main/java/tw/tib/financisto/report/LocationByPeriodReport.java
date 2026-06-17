@@ -52,7 +52,7 @@ public class LocationByPeriodReport extends Report2DChart {
 	@Override
 	protected void createFilter() {
 		columnFilter = TransactionColumns.location_id.name();
-		boolean includeNoLocation = MyPreferences.includeNoFilterInReport(context);
+		boolean includeNoLocation = MyPreferences.includeNoFilterInReport();
 		filterIds = new ArrayList<>();
 		filterTitles = new ArrayList<>();
 		List<MyLocation> locations = em.getAllLocationsList(includeNoLocation);

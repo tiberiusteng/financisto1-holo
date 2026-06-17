@@ -118,7 +118,7 @@ public class RateLayoutView implements RateNodeOwner {
         rateNode = new RateNode(this, activity, x, layout);
         AbstractActivity.setVisibility(rateNode.rateInfoNode, View.GONE);
 
-        if (MyPreferences.isSetFocusOnAmountField(activity)) {
+        if (MyPreferences.isSetFocusOnAmountField()) {
             amountInputFrom.requestFocusFromTouch();
             activity.getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_VISIBLE);
         }

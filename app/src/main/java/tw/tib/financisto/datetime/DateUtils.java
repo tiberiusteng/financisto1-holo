@@ -25,7 +25,7 @@ public class DateUtils {
 	public static final DateFormat FORMAT_DATE_RFC_2445 = new SimpleDateFormat("yyyyMMdd'T'HHmmss");
 
     public static Period getPeriod(Context context, PeriodType period) {
-        return period.calculatePeriod(context);
+        return period.calculatePeriod();
 	}
 
 	public static Calendar startOfDay(Calendar c) {

@@ -52,8 +52,8 @@ public class AccountRecyclerAdapter extends RecyclerView.Adapter<AccountRecycler
                                   View.OnLongClickListener onLongClickListener) {
         this.u = new Utils(context);
         this.df = DateUtils.getShortDateFormat(context);
-        this.accountListDateType = MyPreferences.getAccountListDateType(context);
-        this.blurBalances = MyPreferences.isBlurBalances(context);
+        this.accountListDateType = MyPreferences.getAccountListDateType();
+        this.blurBalances = MyPreferences.isBlurBalances();
         this.showSortOrder = showSortOrder;
         this.context = context;
         this.cursor = c;

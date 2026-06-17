@@ -166,7 +166,7 @@ public class Report2DChartActivity extends Activity implements OnChartValueSelec
         // Period of Reference
         int periodLength = getPeriodOfReference();
         selectedPeriod = selectPeriodFromLength(periodLength);
-        aggregateUnit = MyPreferences.getReportAggregateUnit(this);
+        aggregateUnit = MyPreferences.getReportAggregateUnit();
 
         // check report preferences for reference month different of current month
         setStartPeriod(periodLength);
@@ -490,7 +490,7 @@ public class Report2DChartActivity extends Activity implements OnChartValueSelec
      * Fill statistics panel based on report data
      */
     private void fillStatistics() {
-        boolean considerNull = MyPreferences.considerNullResultsInReport(this);
+        boolean considerNull = MyPreferences.considerNullResultsInReport();
         Double max;
         Double min;
         Double mean;
@@ -546,7 +546,7 @@ public class Report2DChartActivity extends Activity implements OnChartValueSelec
      * @return The currency registered as a reference to display chart reports or the default currency if not configured yet.
      */
     private Currency getReferenceCurrency() {
-        Currency c = MyPreferences.getReferenceCurrency(this);
+        Currency c = MyPreferences.getReferenceCurrency();
         if (c == null) {
             prefCurNotSet = true;
             Collection<Currency> currencies = CurrencyCache.getAllCurrencies();
@@ -578,7 +578,7 @@ public class Report2DChartActivity extends Activity implements OnChartValueSelec
 
     private void showPreferences() {
         // save preferences status before call report preferences activity
-        initialPrefs = MyPreferences.getReportPreferences(this);
+        initialPrefs = MyPreferences.getReportPreferences();
         // call report preferences activity asking for result when closed
         Intent intent = new Intent(this, ReportPreferencesActivity2.class);
         startActivityForResult(intent, REPORT_PREFERENCES);
@@ -588,7 +588,7 @@ public class Report2DChartActivity extends Activity implements OnChartValueSelec
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         // See which child activity is calling us back.
         if (initialPrefs != null) {
-            boolean changed = preferencesChanged(initialPrefs, MyPreferences.getReportPreferences(this));
+            boolean changed = preferencesChanged(initialPrefs, MyPreferences.getReportPreferences());
             if (changed) {
                 // rebuild data
                 int periodLength = getPeriodOfReference();
@@ -640,7 +640,7 @@ public class Report2DChartActivity extends Activity implements OnChartValueSelec
         }
         // 5 aggregate unit
         if (!initial[7].equals(actual[7])) {
-            aggregateUnit = MyPreferences.getReportAggregateUnit(this);
+            aggregateUnit = MyPreferences.getReportAggregateUnit();
             changed = true;
         }
 
@@ -663,7 +663,7 @@ public class Report2DChartActivity extends Activity implements OnChartValueSelec
      * @param periodLength The number of months to be represented in the 2D report.
      */
     private void setStartPeriod(int periodLength) {
-        int refMonth = MyPreferences.getReferenceMonth(this);
+        int refMonth = MyPreferences.getReferenceMonth();
         Calendar now = Calendar.getInstance();
         startPeriod = new GregorianCalendar(now.get(Calendar.YEAR), now.get(Calendar.MONTH), 1);
         if (refMonth != 0) {
@@ -688,7 +688,7 @@ public class Report2DChartActivity extends Activity implements OnChartValueSelec
      * @return The number of months to be represented in the 2D report.
      */
     private int getPeriodOfReference() {
-        int periodLength = MyPreferences.getPeriodOfReference(this);
+        int periodLength = MyPreferences.getPeriodOfReference();
         if (periodLength == 0) {
             periodLength = ReportDataByPeriod.DEFAULT_PERIOD;
             prefPerNotSet = true;

@@ -60,13 +60,13 @@ public class PicturesUtil {
         executor.execute(() -> {
             try {
                 boolean haveFile = true;
-                Uri pictureUri = getPictureFileUri(context, pictureFileName);
+                Uri pictureUri = getPictureFileUri(pictureFileName);
                 DocumentFile pictureFile = DocumentFile.fromSingleUri(context, pictureUri);
 
                 if (!pictureFile.exists()) {
                     haveFile = false;
 
-                    if (MyPreferences.isGoogleDriveDownloadPictures(context)) {
+                    if (MyPreferences.isGoogleDriveDownloadPictures()) {
                         handler.post(() -> imageDescView.setText(R.string.downloading_picture_from_google_drive));
 
                         try {
@@ -87,7 +87,7 @@ public class PicturesUtil {
                         }
                     }
 
-                    if (!haveFile && MyPreferences.isDropboxDownloadPictures(context)) {
+                    if (!haveFile && MyPreferences.isDropboxDownloadPictures()) {
                         handler.post(() -> imageDescView.setText(R.string.downloading_picture_from_dropbox));
 
                         try {
@@ -131,7 +131,7 @@ public class PicturesUtil {
     public static Uri getPictureFolderUri(Context context) {
         try {
             // backup folder
-            Uri backupFolderUri = Uri.parse(MyPreferences.getDatabaseBackupFolder(context));
+            Uri backupFolderUri = Uri.parse(MyPreferences.getDatabaseBackupFolder());
             Log.i(TAG, "backupFolderUri: " + backupFolderUri);
             String backupFolderId = DocumentsContract.getTreeDocumentId(backupFolderUri);
             Log.i(TAG, "backupFolderId: " + backupFolderId);
@@ -169,8 +169,8 @@ public class PicturesUtil {
         return null;
     }
 
-    public static Uri getPictureFileUri(Context context, String fileName) {
-        Uri backupFolderUri = Uri.parse(MyPreferences.getDatabaseBackupFolder(context));
+    public static Uri getPictureFileUri(String fileName) {
+        Uri backupFolderUri = Uri.parse(MyPreferences.getDatabaseBackupFolder());
         Log.i(TAG, "backupFolderUri: " + backupFolderUri);
         String backupFolderId = DocumentsContract.getTreeDocumentId(backupFolderUri);
         Log.i(TAG, "backupFolderId: " + backupFolderId);
@@ -207,7 +207,7 @@ public class PicturesUtil {
             DocumentFile targetFile = DocumentFile.fromSingleUri(context, targetFileUri);
             Log.i(TAG, "targetFile name: " + targetFile.getName());
 
-            if (MyPreferences.isGoogleDriveUploadPictures(context)) {
+            if (MyPreferences.isGoogleDriveUploadPictures()) {
                 var executor = Executors.newSingleThreadExecutor();
                 executor.execute(() -> {
                     try {
@@ -220,7 +220,7 @@ public class PicturesUtil {
                 });
             }
 
-            if (MyPreferences.isDropboxUploadPictures(context)) {
+            if (MyPreferences.isDropboxUploadPictures()) {
                 var executor = Executors.newSingleThreadExecutor();
                 executor.execute(() -> {
                     try {

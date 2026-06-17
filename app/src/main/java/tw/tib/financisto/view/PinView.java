@@ -87,7 +87,7 @@ public class PinView implements OnClickListener {
 	public void onClick(View v) {
 		Button b = (Button)v;
 		char c = b.getText().charAt(0);
-		if (vibrator != null && MyPreferences.isPinHapticFeedbackEnabled(context)) {
+		if (vibrator != null && MyPreferences.isPinHapticFeedbackEnabled()) {
 			v.performHapticFeedback(HapticFeedbackConstants.KEYBOARD_TAP);
 		}
 		switch (c) {

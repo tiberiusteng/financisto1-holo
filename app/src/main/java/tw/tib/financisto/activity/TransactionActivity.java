@@ -68,7 +68,7 @@ public class TransactionActivity extends AbstractTransactionActivity {
     }
 
     protected int getLayoutId() {
-        return MyPreferences.isUseFixedLayout(this) ? R.layout.transaction_fixed : R.layout.transaction_free;
+        return MyPreferences.isUseFixedLayout() ? R.layout.transaction_fixed : R.layout.transaction_free;
     }
 
     @Override
@@ -183,14 +183,14 @@ public class TransactionActivity extends AbstractTransactionActivity {
             accountText = x.addListNode(layout, R.id.account, R.string.account, R.string.select_account);
         }
         //payee
-        isShowPayee = MyPreferences.isShowPayee(this);
+        isShowPayee = MyPreferences.isShowPayee();
         if (isShowPayee) {
             createPayeeNode(layout);
         }
         //category
         categorySelector.createNode(layout, CategorySelector.SelectorType.TRANSACTION);
         //amount
-        if (!isUpdateBalanceMode && MyPreferences.isShowCurrency(this)) {
+        if (!isUpdateBalanceMode && MyPreferences.isShowCurrency()) {
             currencyText = x.addListNode(layout, R.id.original_currency, R.string.currency, R.string.original_currency_as_account);
         } else {
             currencyText = new TextView(this);

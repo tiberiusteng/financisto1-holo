@@ -48,35 +48,35 @@ public class AutoBackupWorker extends Worker {
             DatabaseExport export = new DatabaseExport(context, db.db(), true);
             Uri backupFileUri = export.export();
             boolean successful = true;
-            if (MyPreferences.isDropboxUploadAutoBackups(context)) {
+            if (MyPreferences.isDropboxUploadAutoBackups()) {
                 try {
                     Export.uploadBackupFileToDropbox(context, backupFileUri);
                 } catch (Exception e) {
                     Log.e(TAG, "Unable to upload auto-backup to Dropbox", e);
                     log.append("Unable to upload auto-backup to Dropbox\n").append(e);
-                    MyPreferences.notifyAutobackupFailed(context, e);
+                    MyPreferences.notifyAutobackupFailed(e);
                     successful = false;
                 }
             }
-            if (MyPreferences.isGoogleDriveUploadAutoBackups(context)) {
+            if (MyPreferences.isGoogleDriveUploadAutoBackups()) {
                 try {
                     Export.uploadBackupFileToGoogleDrive(context, backupFileUri);
                 } catch (Exception e) {
                     Log.e(TAG, "Unable to upload auto-backup to Google Drive", e);
                     log.append("Unable to upload auto-backup to Google Drive\n").append(e);
-                    MyPreferences.notifyAutobackupFailed(context, e);
+                    MyPreferences.notifyAutobackupFailed(e);
                     successful = false;
                 }
             }
             Log.e(TAG, "Auto-backup completed in " + (System.currentTimeMillis() - t0) + "ms");
             log.append("Auto-backup completed in ").append(System.currentTimeMillis() - t0).append("ms");
             if (successful) {
-                MyPreferences.notifyAutobackupSucceeded(context);
+                MyPreferences.notifyAutobackupSucceeded();
             }
 
         } catch (Exception e) {
             Log.e(TAG, "Auto-backup unsuccessful", e);
-            MyPreferences.notifyAutobackupFailed(context, e);
+            MyPreferences.notifyAutobackupFailed(e);
 
             return Result.failure();
         }

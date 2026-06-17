@@ -275,7 +275,7 @@ public class NodeInflater {
 			imageView.setOnClickListener(arg0 -> {
 				String fileName = (String) imageView.getTag(R.id.attached_picture);
 				if (fileName != null) {
-					Uri target = PicturesUtil.getPictureFileUri(context, fileName);
+					Uri target = PicturesUtil.getPictureFileUri(fileName);
 					Log.i("withPicture", "fileName: " + fileName + ", target: " + target);
 					DocumentFile pictureFile = DocumentFile.fromSingleUri(context, target);
 					Intent intent = new Intent();

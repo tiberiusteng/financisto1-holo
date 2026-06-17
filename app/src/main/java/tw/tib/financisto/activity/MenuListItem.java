@@ -342,7 +342,7 @@ public enum MenuListItem implements SummaryEntityEnum {
 
     private static boolean checkBackupFolderConfigured(Context context) {
         try {
-            Uri backupFolderUri = Uri.parse(MyPreferences.getDatabaseBackupFolder(context));
+            Uri backupFolderUri = Uri.parse(MyPreferences.getDatabaseBackupFolder());
             Log.i(TAG, "backupFolderUri: " + backupFolderUri);
             String backupFolderId = DocumentsContract.getTreeDocumentId(backupFolderUri);
             Log.i(TAG, "backupFolderId: " + backupFolderId);

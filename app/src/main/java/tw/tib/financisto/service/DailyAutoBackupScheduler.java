@@ -44,8 +44,8 @@ public class DailyAutoBackupScheduler {
     }
 
     public static void scheduleNextAutoBackupAfterTimestamp(Context context, long timestamp) {
-        if (MyPreferences.isAutoBackupEnabled(context)) {
-            int hhmm = MyPreferences.getAutoBackupTime(context);
+        if (MyPreferences.isAutoBackupEnabled()) {
+            int hhmm = MyPreferences.getAutoBackupTime();
             int hh = hhmm/100;
             int mm = hhmm - 100*hh;
             new DailyAutoBackupScheduler(hh, mm, timestamp).scheduleBackup(context);
@@ -77,8 +77,8 @@ public class DailyAutoBackupScheduler {
 
         builder.setNextScheduleTimeOverride(scheduledTime.getTime());
 
-        if (MyPreferences.isDropboxUploadAutoBackups(context)
-                || MyPreferences.isGoogleDriveUploadAutoBackups(context))
+        if (MyPreferences.isDropboxUploadAutoBackups()
+                || MyPreferences.isGoogleDriveUploadAutoBackups())
         {
             builder.setConstraints(new Constraints.Builder()
                     .setRequiredNetworkType(NetworkType.CONNECTED).build());

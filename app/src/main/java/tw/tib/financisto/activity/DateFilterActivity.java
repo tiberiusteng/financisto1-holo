@@ -251,7 +251,7 @@ public class DateFilterActivity extends Activity {
 
     private void selectPeriod(PeriodType periodType) {
         disableButtons();
-        updateDate(periodType.calculatePeriod(this));
+        updateDate(periodType.calculatePeriod());
     }
 
 	protected void selectCustom() {

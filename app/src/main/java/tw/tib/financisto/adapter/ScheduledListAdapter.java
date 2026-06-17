@@ -69,8 +69,8 @@ public class ScheduledListAdapter extends BaseAdapter {
 		this.icBlotterTransfer = context.getResources().getDrawable(R.drawable.ic_blotter_transfer);
 		this.u = new Utils(context);
 		this.transactions = transactions;
-		this.transactionTitleUtils = new TransactionTitleUtils(context, MyPreferences.isColorizeBlotterItem(context));
-		this.showProject = MyPreferences.isShowProjectInBlotter(context);
+		this.transactionTitleUtils = new TransactionTitleUtils(context, MyPreferences.isColorizeBlotterItem());
+		this.showProject = MyPreferences.isShowProjectInBlotter();
 	}
 
 	public void setTransactions(ArrayList<TransactionInfo> transactions) {

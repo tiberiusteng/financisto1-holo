@@ -24,7 +24,7 @@ public class BlotterActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        if (MyPreferences.isSecureWindow(this)) {
+        if (MyPreferences.isSecureWindow()) {
             getWindow().addFlags(WindowManager.LayoutParams.FLAG_SECURE);
         }
 

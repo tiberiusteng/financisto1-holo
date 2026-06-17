@@ -19,12 +19,14 @@ import android.content.res.Configuration;
 import android.content.res.Resources;
 import android.util.Log;
 
+import androidx.annotation.StyleRes;
 import androidx.preference.PreferenceManager;
 
 import java.lang.reflect.Method;
 import java.util.Collection;
 import java.util.Locale;
 
+import tw.tib.financisto.Application;
 import tw.tib.financisto.R;
 import tw.tib.financisto.export.ImportExportException;
 import tw.tib.financisto.export.Export;
@@ -34,6 +36,7 @@ import tw.tib.financisto.rates.ExchangeRateProvider;
 import tw.tib.financisto.rates.ExchangeRateProviderFactory;
 
 public class MyPreferences {
+	private static final String TAG = "MyPreferences";
 
 	private static final String DROPBOX_AUTH_TOKEN = "dropbox_auth_token";
 	private static final String DROPBOX_AUTHORIZE = "dropbox_authorize";
@@ -98,11 +101,20 @@ public class MyPreferences {
 		LAST_TX("LAST_TX"),
 		ACCOUNT_CREATION("ACCOUNT_CREATION"),
 		ACCOUNT_UPDATE("ACCOUNT_UPDATE"),
-		HIDDEN("HIDDEN");
+		HIDDEN("HgeIDDEN");
 
 		public final String tag;
 
 		AccountListDateType(String tag) { this.tag = tag; }
+	}
+
+	public enum Theme {
+		DARK("DARK"),
+		LIGHT("LIGHT");
+
+		public final String tag;
+
+		Theme(String tag) { this.tag = tag; }
 	}
 
 	public enum FirstDayOfWeek {
@@ -146,60 +158,49 @@ public class MyPreferences {
 
 	}
 
-	public static boolean isSecureWindow(Context context) {
-		SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(context);
-		return sharedPreferences.getBoolean("secure_window", true);
+	public static boolean isSecureWindow() {
+		return getBoolean("secure_window", true);
 	}
 
-	public static boolean isPinProtected(Context context) {
-		SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(context);
-		return sharedPreferences.getBoolean("pin_protection", false);
+	public static boolean isPinProtected() {
+		return getBoolean("pin_protection", false);
 	}
 
-	public static boolean isPinProtectedNewTransaction(Context context) {
-		SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(context);
-		return sharedPreferences.getBoolean("pin_protection_lock_transaction", true);
+	public static boolean isPinProtectedNewTransaction() {
+		return getBoolean("pin_protection_lock_transaction", true);
 	}
 
-	public static boolean isPinLockEnabled(Context context) {
-		SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(context);
-		return isPinProtected(context) && sharedPreferences.getBoolean("pin_protection_lock", true);
+	public static boolean isPinLockEnabled() {
+		return isPinProtected() && getBoolean("pin_protection_lock", true);
 	}
 
-	public static boolean isPinLockUseFingerprint(Context context) {
-		SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(context);
-		return isPinProtected(context) && sharedPreferences.getBoolean("pin_protection_use_fingerprint", false);
+	public static boolean isPinLockUseFingerprint() {
+		return isPinProtected() && getBoolean("pin_protection_use_fingerprint", false);
 	}
 
-	public static boolean isUseFingerprintFallbackToPinEnabled(Context context) {
-		SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(context);
-		return isPinProtected(context) && sharedPreferences.getBoolean("pin_protection_use_fingerprint_fallback_to_pin", true);
+	public static boolean isUseFingerprintFallbackToPinEnabled() {
+		return isPinProtected() && getBoolean("pin_protection_use_fingerprint_fallback_to_pin", true);
 	}
 
-	public static int getLockTimeSeconds(Context context) {
-		SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(context);
-		return isPinLockEnabled(context) ? 60 * Integer.parseInt(sharedPreferences.getString("pin_protection_lock_time", "5")) : 0;
+	public static int getLockTimeSeconds() {
+		return isPinLockEnabled() ? 60 * Integer.parseInt(getString("pin_protection_lock_time", "5")) : 0;
 	}
 
-	public static String getPin(Context context) {
-		SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(context);
-		return sharedPreferences.getString("pin", null);
+	public static String getPin() {
+		return getString("pin", null);
 	}
 
-	public static AccountSortOrder getAccountSortOrder(Context context) {
-		SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(context);
-		String sortOrder = sharedPreferences.getString("sort_accounts", AccountSortOrder.SORT_ORDER_ASC.name());
+	public static AccountSortOrder getAccountSortOrder() {
+		String sortOrder = getString("sort_accounts", AccountSortOrder.SORT_ORDER_ASC.name());
 		return AccountSortOrder.valueOf(sortOrder);
 	}
 
-	public static boolean isBlurBalances(Context context) {
-		SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(context);
-		return sharedPreferences.getBoolean("blur_balances", false);
+	public static boolean isBlurBalances() {
+		return getBoolean("blur_balances", false);
 	}
 
-	public static LocationsSortOrder getLocationsSortOrder(Context context) {
-		SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(context);
-		String sortOrder = sharedPreferences.getString("sort_locations", LocationsSortOrder.TITLE.name());
+	public static LocationsSortOrder getLocationsSortOrder() {
+		String sortOrder = getString("sort_locations", LocationsSortOrder.TITLE.name());
 		try {
 			return LocationsSortOrder.valueOf(sortOrder);
 		} catch (IllegalArgumentException e) {
@@ -207,45 +208,37 @@ public class MyPreferences {
 		}
 	}
 
-	public static TemplatesSortOrder getTemplatessSortOrder(Context context) {
-		SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(context);
-		String sortOrder = sharedPreferences.getString("sort_templates", TemplatesSortOrder.DATE.name());
+	public static TemplatesSortOrder getTemplatessSortOrder() {
+		String sortOrder = getString("sort_templates", TemplatesSortOrder.DATE.name());
 		return TemplatesSortOrder.valueOf(sortOrder);
 	}
 
-	public static long getLastAccount(Context context) {
-		SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(context);
-		return sharedPreferences.getLong("last_account_id", -1);
+	public static long getLastAccount() {
+		return getLong("last_account_id", -1);
 	}
 
-	public static void setLastAccount(Context context, long accountId) {
-		SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(context);
-		sharedPreferences.edit().putLong("last_account_id", accountId).commit();
+	public static void setLastAccount(long accountId) {
+		edit().putLong("last_account_id", accountId).apply();
 	}
 
-	public static boolean isRememberAccount(Context context) {
-		SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(context);
-		return sharedPreferences.getBoolean("remember_last_account", true);
+	public static boolean isRememberAccount() {
+		return getBoolean("remember_last_account", true);
 	}
 
-	public static boolean isRememberCategory(Context context) {
-		SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(context);
-		return sharedPreferences.getBoolean("remember_last_category", false);
+	public static boolean isRememberCategory() {
+		return getBoolean("remember_last_category", false);
 	}
 
-	public static boolean isRememberLocation(Context context) {
-		SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(context);
-		return sharedPreferences.getBoolean("remember_last_location", false);
+	public static boolean isRememberLocation() {
+		return getBoolean("remember_last_location", false);
 	}
 
-	public static boolean isRememberProject(Context context) {
-		SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(context);
-		return sharedPreferences.getBoolean("remember_last_project", false);
+	public static boolean isRememberProject() {
+		return getBoolean("remember_last_project", false);
 	}
 
-	private static EntitySelectorType getEntitySelectorType(Context context, String key) {
-		SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(context);
-		String selectorType = sharedPreferences.getString(key, EntitySelectorType.SEARCH.name());
+	private static EntitySelectorType getEntitySelectorType(String key) {
+		String selectorType = getString(key, EntitySelectorType.SEARCH.name());
 		try {
 			return EntitySelectorType.valueOf(selectorType);
 		} catch (IllegalArgumentException e) {
@@ -253,115 +246,80 @@ public class MyPreferences {
 		}
 	}
 
-	public static boolean isShowAccountBalanceOnSelector(Context context) {
-		SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(context);
-		return sharedPreferences.getBoolean("ntsl_show_account_balance_on_selector", false);
+	public static boolean isShowAccountBalanceOnSelector() {
+		return getBoolean("ntsl_show_account_balance_on_selector", false);
 	}
 
-	public static EntitySelectorType getPayeeSelectorType(Context context) {
-		return getEntitySelectorType(context, "payee_selector_type");
+	public static EntitySelectorType getPayeeSelectorType() {
+		return getEntitySelectorType("payee_selector_type");
 	}
 
-	public static EntitySelectorType getProjectSelectorType(Context context) {
-		return getEntitySelectorType(context, "project_selector_type");
+	public static EntitySelectorType getProjectSelectorType() {
+		return getEntitySelectorType("project_selector_type");
 	}
 
-	public static EntitySelectorType getLocationSelectorType(Context context) {
-		return getEntitySelectorType(context, "location_selector_type");
+	public static EntitySelectorType getLocationSelectorType() {
+		return getEntitySelectorType("location_selector_type");
 	}
 
-	public static boolean isShowTakePicture(Context context) {
-		SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(context);
-		return sharedPreferences.getBoolean("ntsl_show_picture", true);
+	public static boolean isShowTakePicture() {
+		return getBoolean("ntsl_show_picture", true);
 	}
 
-	public static boolean isShowCategoryInTransferScreen(Context context) {
-		SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(context);
-		return sharedPreferences.getBoolean("ntsl_show_category_in_transfer", true);
+	public static boolean isShowCategoryInTransferScreen() {
+		return getBoolean("ntsl_show_category_in_transfer", true);
 	}
 
-	public static boolean isShowPayee(Context context) {
-		SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(context);
-		return sharedPreferences.getBoolean("ntsl_show_payee", true);
+	public static boolean isShowPayee() {
+		return getBoolean("ntsl_show_payee", true);
 	}
 
-	public static boolean isShowPayeeInTransfers(Context context) {
-		SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(context);
-		return sharedPreferences.getBoolean("ntsl_show_payee_in_transfers", false);
+	public static boolean isShowPayeeInTransfers() {
+		return getBoolean("ntsl_show_payee_in_transfers", false);
 	}
 
-	public static boolean isShowCurrency(Context context) {
-		SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(context);
-		return sharedPreferences.getBoolean("ntsl_show_currency", true);
+	public static boolean isShowCurrency() {
+		return getBoolean("ntsl_show_currency", true);
 	}
 
-	public static boolean isEnterCurrencyDecimalPlaces(Context context) {
-		SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(context);
-		return sharedPreferences.getBoolean("ntsl_enter_currency_decimal_places", true);
+	public static boolean isEnterCurrencyDecimalPlaces() {
+		return getBoolean("ntsl_enter_currency_decimal_places", true);
 	}
 
-	public static boolean isRoundUpAmount(Context context) {
-		SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(context);
-		return sharedPreferences.getBoolean("ntsl_round_up_amount", true);
+	public static boolean isRoundUpAmount() {
+		return getBoolean("ntsl_round_up_amount", true);
 	}
 
-	public static int getPayeeOrder(Context context) {
-		SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(context);
-		return Integer.parseInt(sharedPreferences.getString("ntsl_show_payee_order", "1"));
+	public static boolean isShowLocation() {
+		return isLocationSupported() && getBoolean("ntsl_show_location", true);
 	}
 
-	public static boolean isShowLocation(Context context) {
-		SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(context);
-		return isLocationSupported(context) && sharedPreferences.getBoolean("ntsl_show_location", true);
+	public static int getLocationOrder() {
+		return Integer.parseInt(getString("ntsl_show_location_order", "1"));
 	}
 
-	public static int getLocationOrder(Context context) {
-		SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(context);
-		return Integer.parseInt(sharedPreferences.getString("ntsl_show_location_order", "1"));
+	public static boolean isShowIsCCardPayment() {
+		return getBoolean("ntsl_show_is_ccard_payment", true);
 	}
 
-	public static boolean isShowIsCCardPayment(Context context) {
-		SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(context);
-		return sharedPreferences.getBoolean("ntsl_show_is_ccard_payment", true);
+	public static boolean isOpenCalculatorForTemplates() {
+		return getBoolean("ntsl_open_calculator_for_template_transactions", true);
 	}
 
-	public static boolean isOpenCalculatorForTemplates(Context context) {
-		SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(context);
-		return sharedPreferences.getBoolean("ntsl_open_calculator_for_template_transactions", true);
-	}
-
-	public static boolean isSetFocusOnAmountField(Context context) {
-		return PreferenceManager.getDefaultSharedPreferences(context).getBoolean("ntsl_set_focus_on_amount_field", false);
+	public static boolean isSetFocusOnAmountField() {
+		return getBoolean("ntsl_set_focus_on_amount_field", false);
 	}
 
 	/**
-	 * Get google docs user login registered on preferences
+	 * Get Google Drive backup folder registered on preferences
 	 */
-	public static String getUserLogin(Context context) {
-		SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(context);
-		return sharedPreferences.getString("user_login", null);
+	public static String getGoogleDriveBackupFolder() {
+		return getString("google_drive_backup_folder", null);
 	}
 
-	/**
-	 * Get google docs user password registered on preferences
-	 */
-	public static String getUserPassword(Context context) {
-		SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(context);
-		return sharedPreferences.getString("user_password", null);
-	}
-
-	/**
-	 * Get google docs backup folder registered on preferences
-	 */
-	public static String getGoogleDriveBackupFolder(Context context) {
-		SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(context);
-		return sharedPreferences.getString("google_drive_backup_folder", null);
-	}
-
-	public static ReportAggregateUnit getReportAggregateUnit(Context context) {
-		SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(context);
+	public static ReportAggregateUnit getReportAggregateUnit() {
 		try {
-			return ReportAggregateUnit.valueOf(sharedPreferences.getString("report_aggregate_unit", ReportAggregateUnit.MONTH.name()));
+			return ReportAggregateUnit.valueOf(getString("report_aggregate_unit", ReportAggregateUnit.MONTH.name()));
 		}
 		catch (Exception e) {
 			return ReportAggregateUnit.MONTH;
@@ -371,28 +329,23 @@ public class MyPreferences {
 	/**
 	 * Gets the string representing reference currency registered on preferences to display chart reports.
 	 *
-	 * @param context The activity context
 	 * @return The string representing the currency registered as a reference to display chart reports or null if not configured yet.
 	 */
-	public static String getReferenceCurrencyTitle(Context context) {
-		SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(context);
-		return sharedPreferences.getString("report_reference_currency", "");
+	public static String getReferenceCurrencyTitle() {
+		return getString("report_reference_currency", "");
 	}
 
 	/**
 	 * Gets the reference currency registered on preferences to display chart reports.
 	 *
-	 * @param context The activity context
 	 * @return The currency registered as a reference to display chart reports or null if not configured yet.
 	 */
-	public static Currency getReferenceCurrency(Context context) {
-		SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(context);
-
+	public static Currency getReferenceCurrency() {
 		Collection<Currency> currencies = CurrencyCache.getAllCurrencies();
 		Currency cur = null;
 		try {
-			String refCurrency = sharedPreferences.getString("report_reference_currency", null);
-			if (currencies != null && currencies.size() > 0) {
+			String refCurrency = getString("report_reference_currency", null);
+			if (currencies != null && !currencies.isEmpty()) {
 				for (Currency currency : currencies) {
 					if (currency.title.equals(refCurrency)) cur = currency;
 				}
@@ -406,163 +359,130 @@ public class MyPreferences {
 	/**
 	 * Gets the period of reference (number of Months to display the 2D report) registered on preferences.
 	 *
-	 * @param context The activity context
 	 * @return The number of months registered as a period of reference to display chart reports or 0 if not configured yet.
 	 */
-	public static int getPeriodOfReference(Context context) {
-		SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(context);
-		String p = sharedPreferences.getString("report_reference_period", "0");
-		return Integer.parseInt(p);
+	public static int getPeriodOfReference() {
+		return Integer.parseInt(getString("report_reference_period", "0"));
 	}
 
 	/**
 	 * Gets the reference month.
 	 *
-	 * @param context The activity context.
 	 * @return The reference month that represents the end of the report period.
 	 */
-	public static int getReferenceMonth(Context context) {
-		SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(context);
-		String month = sharedPreferences.getString("report_reference_month", "0");
-		return Integer.parseInt(month);
+	public static int getReferenceMonth() {
+		return Integer.parseInt(getString("report_reference_month", "0"));
 	}
 
 	/**
 	 * Gets the flag that indicates if the sub categories will be available individually in 2D report or not.
 	 *
-	 * @param context The activity context.
 	 * @return True if the sub categories shall be displayed in the Report 2D list of categories, false otherwise.
 	 */
-	public static boolean includeSubCategoriesInReport(Context context) {
-		SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(context);
-		return sharedPreferences.getBoolean("report_include_sub_categories", true);
+	public static boolean includeSubCategoriesInReport() {
+		return getBoolean("report_include_sub_categories", true);
 	}
 
 	/**
 	 * Gets the flag that indicates if the list of filter ids will include No Filter (no category, no project or current location) or not.
 	 *
-	 * @param context The activity context.
 	 * @return True if no category, no project and current location shall be displayed in 2D Reports, false otherwise.
 	 */
-	public static boolean includeNoFilterInReport(Context context) {
-		SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(context);
-		return sharedPreferences.getBoolean("report_include_no_filter", true);
+	public static boolean includeNoFilterInReport() {
+		return getBoolean("report_include_no_filter", true);
 	}
 
 	/**
 	 * Get the flag that indicates if the category monthly result will consider the result of its sub categories or not.
 	 *
-	 * @param context The activity context.
 	 * @return True if the category result shall include the result of its categories, false otherwise.
 	 */
-	public static boolean addSubCategoriesToSum(Context context) {
-		SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(context);
-		return sharedPreferences.getBoolean("report_add_sub_categories_result", false);
+	public static boolean addSubCategoriesToSum() {
+		return getBoolean("report_add_sub_categories_result", false);
 	}
 
 	/**
 	 * Gets the flag that indicates if the statistics calculation will consider null values or not.
 	 *
-	 * @param context The activity context.
 	 * @return True if the null values shall impact the statistics, false otherwise.
 	 */
-	public static boolean considerNullResultsInReport(Context context) {
-		SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(context);
-		return sharedPreferences.getBoolean("report_consider_null_results", true);
+	public static boolean considerNullResultsInReport() {
+		return getBoolean("report_consider_null_results", true);
 	}
 
-	public static boolean isShowNote(Context context) {
-		SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(context);
-		return sharedPreferences.getBoolean("ntsl_show_note", true);
+	public static boolean isShowNote() {
+		return getBoolean("ntsl_show_note", true);
 	}
 
-	public static int getNoteOrder(Context context) {
-		SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(context);
-		return Integer.parseInt(sharedPreferences.getString("ntsl_show_note_order", "3"));
+	public static int getNoteOrder() {
+		return Integer.parseInt(getString("ntsl_show_note_order", "3"));
 	}
 
-	public static boolean isShowProject(Context context) {
-		SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(context);
-		return sharedPreferences.getBoolean("ntsl_show_project", true);
+	public static boolean isShowProject() {
+		return getBoolean("ntsl_show_project", true);
 	}
 
-	public static int getProjectOrder(Context context) {
-		SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(context);
-		return Integer.parseInt(sharedPreferences.getString("ntsl_show_project_order", "4"));
+	public static int getProjectOrder() {
+		return Integer.parseInt(getString("ntsl_show_project_order", "4"));
 	}
 
-	public static boolean isUseTwinDatePicker(Context context) {
-		SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(context);
-		return sharedPreferences.getBoolean("ntsl_use_twin_date_picker", false);
+	public static boolean isUseTwinDatePicker() {
+		return getBoolean("ntsl_use_twin_date_picker", false);
 
 	}
 
-	public static boolean isUseFixedLayout(Context context) {
-		SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(context);
-		return sharedPreferences.getBoolean("ntsl_use_fixed_layout", true);
+	public static boolean isUseFixedLayout() {
+		return getBoolean("ntsl_use_fixed_layout", true);
 	}
 
-	public static boolean isWidgetEnabled(Context context) {
-		SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(context);
-		return sharedPreferences.getBoolean("enable_widget", true);
+	public static boolean isWidgetEnabled() {
+		return getBoolean("enable_widget", true);
 	}
 
-	public static boolean isTreatTransferToCCardAsPayment(Context context) {
-		SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(context);
-		return sharedPreferences.getBoolean("treat_transfer_to_ccard_as_payment", true);
+	public static boolean isTreatTransferToCCardAsPayment() {
+		return getBoolean("treat_transfer_to_ccard_as_payment", true);
 	}
 
-	public static boolean isRestoreMissedScheduledTransactions(Context context) {
-		SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(context);
-		return sharedPreferences.getBoolean("restore_missed_scheduled_transactions", true);
+	public static boolean isRestoreMissedScheduledTransactions() {
+		return getBoolean("restore_missed_scheduled_transactions", true);
 	}
 
-	public static boolean isShowRunningBalance(Context context) {
-		SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(context);
-		return sharedPreferences.getBoolean("show_running_balance", true);
+	public static boolean isShowRunningBalance() {
+		return getBoolean("show_running_balance", true);
 	}
 
-	public static boolean isColorizeBlotterItem(Context context) {
-		SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(context);
-		return sharedPreferences.getBoolean("colorize_blotter_item", true);
+	public static boolean isColorizeBlotterItem() {
+		return getBoolean("colorize_blotter_item", true);
 	}
 
-	public static boolean isShowProjectInBlotter(Context context) {
-		SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(context);
-		return sharedPreferences.getBoolean("show_project_in_blotter", true);
+	public static boolean isShowProjectInBlotter() {
+		return getBoolean("show_project_in_blotter", true);
 	}
 
-	public static boolean isResetCopiedTransactionStatus(Context context) {
-		SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(context);
-		return sharedPreferences.getBoolean("reset_copied_transaction_status", true);
+	public static boolean isResetCopiedTransactionStatus() {
+		return getBoolean("reset_copied_transaction_status", true);
 	}
 
-	public static boolean isResetCopiedForeignTransactionStatus(Context context) {
-		SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(context);
-		return sharedPreferences.getBoolean("reset_copied_foreign_transaction_status", false);
+	public static boolean isResetCopiedForeignTransactionStatus() {
+		return getBoolean("reset_copied_foreign_transaction_status", false);
 	}
 
-	public static boolean isUpdateCopiedTransactionProject(Context context) {
-		SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(context);
-		return sharedPreferences.getBoolean("update_copied_transaction_project", false);
+	public static boolean isUpdateCopiedTransactionProject() {
+		return getBoolean("update_copied_transaction_project", false);
 	}
 
-	public static boolean isColorizeWeekendDate(Context context) {
-		SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(context);
-		return sharedPreferences.getBoolean("colorize_weekend_date", true);
+	public static boolean isColorizeWeekendDate() {
+		return getBoolean("colorize_weekend_date", true);
 	}
 
-	public static boolean isBlotterShowTimeOfDay(Context context) {
-		SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(context);
-		return sharedPreferences.getBoolean("blotter_show_time_of_day", true);
+	public static boolean isBlotterShowTimeOfDay() {
+		return getBoolean("blotter_show_time_of_day", true);
 	}
 
 	private static final String DEFAULT = "default";
 
 	public static Context switchLocale(Context context) {
-		SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(context);
-		String locale = sharedPreferences.getString("ui_language", DEFAULT);
-		return switchLocale(context, locale);
+		return switchLocale(context, getString("ui_language", DEFAULT));
 	}
 
 	public static Context switchLocale(Context context, String locale) {
@@ -587,9 +507,8 @@ public class MyPreferences {
 		return context;
 	}
 
-	public static FirstDayOfWeek getFirstDayOfWeek(Context context) {
-		SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(context);
-		String firstDayOfWeek = sharedPreferences.getString("first_day_of_week", FirstDayOfWeek.SYSTEM_DEFAULT.name());
+	public static FirstDayOfWeek getFirstDayOfWeek() {
+		String firstDayOfWeek = getString("first_day_of_week", FirstDayOfWeek.SYSTEM_DEFAULT.name());
 		try {
 			return FirstDayOfWeek.valueOf(firstDayOfWeek);
 		} catch (IllegalArgumentException e) {
@@ -597,42 +516,33 @@ public class MyPreferences {
 		}
 	}
 
-	public static int getFiscalYearStart(Context context) {
-		SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(context);
-		return sharedPreferences.getInt("fiscal_year_start", 301);
+	public static int getFiscalYearStart() {
+		return getInt("fiscal_year_start", 301);
 	}
 
-	public static void setFiscalYearStart(Context context, int month, int date) {
-		PreferenceManager.getDefaultSharedPreferences(context)
-				.edit().putInt("fiscal_year_start", month * 100 + date).apply();
+	public static void setFiscalYearStart(int month, int date) {
+		edit().putInt("fiscal_year_start", month * 100 + date).apply();
 	}
 
-	public static boolean isCameraSupported(Context context) {
-		return isFeatureSupported(context, PackageManager.FEATURE_CAMERA);
+	public static boolean isLocationSupported() {
+		return isFeatureSupported(PackageManager.FEATURE_LOCATION);
 	}
 
-	public static boolean isLocationSupported(Context context) {
-		return isFeatureSupported(context, PackageManager.FEATURE_LOCATION);
+	public static boolean isAutoBackupEnabled() {
+		return getBoolean("auto_backup_enabled", false);
 	}
 
-	public static boolean isAutoBackupEnabled(Context context) {
-		SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(context);
-		return sharedPreferences.getBoolean("auto_backup_enabled", false);
+	public static int getAutoBackupTime() {
+		return getInt("auto_backup_time", 600);
 	}
 
-	public static int getAutoBackupTime(Context context) {
-		SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(context);
-		return sharedPreferences.getInt("auto_backup_time", 600);
+	public static boolean isCollapseBlotterButtons() {
+		return getBoolean("collapse_blotter_buttons", false);
 	}
 
-	public static boolean isCollapseBlotterButtons(Context context) {
-		SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(context);
-		return sharedPreferences.getBoolean("collapse_blotter_buttons", false);
-	}
-
-	private static boolean isFeatureSupported(Context context, String feature) {
+	private static boolean isFeatureSupported(String feature) {
 		if (hasSystemFeatureMethod != null) {
-			PackageManager pm = context.getPackageManager();
+			PackageManager pm = Application.getInstance().getPackageManager();
 			try {
 				return (Boolean) hasSystemFeatureMethod.invoke(pm, feature);
 			} catch (Exception e) {
@@ -644,163 +554,153 @@ public class MyPreferences {
 		return true;
 	}
 
-	public static boolean shouldRebuildRunningBalance(Context context) {
-		return getOneTimeFlag(context, "should_rebuild_running_balance");
+	public static boolean shouldRebuildRunningBalance() {
+		return getOneTimeFlag("should_rebuild_running_balance");
 	}
 
-	public static boolean shouldUpdateHomeCurrency(Context context) {
-		return getOneTimeFlag(context, "should_update_home_currency");
+	public static boolean shouldUpdateHomeCurrency() {
+		return getOneTimeFlag("should_update_home_currency");
 	}
 
-	public static boolean shouldUpdateAccountsLastTransactionDate(Context context) {
-		return getOneTimeFlag(context, "should_update_accounts_last_transaction_date");
+	public static boolean shouldUpdateAccountsLastTransactionDate() {
+		return getOneTimeFlag("should_update_accounts_last_transaction_date");
 	}
 
-	private static boolean getOneTimeFlag(Context context, String name) {
-		SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(context);
-		boolean result = sharedPreferences.getBoolean(name, true);
+	private static boolean getOneTimeFlag(String name) {
+		boolean result = getBoolean(name, true);
 		if (result) {
-			sharedPreferences.edit().putBoolean(name, false).commit();
+			edit().putBoolean(name, false).apply();
 		}
 		return result;
 	}
 
-	public static String getDatabaseBackupFolder(Context context) {
-		SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(context);
-		return sharedPreferences.getString("database_backup_folder", context.getExternalFilesDir(Export.BACKUP_DIRECTORY_NAME).getAbsolutePath());
+	public static String getDatabaseBackupFolder() {
+		return getString("database_backup_folder", Application.getInstance().getExternalFilesDir(Export.BACKUP_DIRECTORY_NAME).getAbsolutePath());
 	}
 
-	public static void setDatabaseBackupFolder(Context context, String databaseBackupFolder) {
-		SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(context);
-		sharedPreferences.edit().putString("database_backup_folder", databaseBackupFolder).commit();
+	public static void setDatabaseBackupFolder(String databaseBackupFolder) {
+		edit().putString("database_backup_folder", databaseBackupFolder).apply();
 	}
 
-	public static String[] getReportPreferences(Context context) {
+	public static String[] getReportPreferences() {
 		String[] preferences = new String[8];
-		preferences[0] = getReferenceCurrencyTitle(context);
-		preferences[1] = Integer.toString(getPeriodOfReference(context));
-		preferences[2] = Integer.toString(getReferenceMonth(context));
-		preferences[3] = Boolean.toString(considerNullResultsInReport(context));
-		preferences[4] = Boolean.toString(includeNoFilterInReport(context));
-		preferences[5] = Boolean.toString(includeSubCategoriesInReport(context));
-		preferences[6] = Boolean.toString(addSubCategoriesToSum(context));
-		preferences[7] = getReportAggregateUnit(context).name();
+		preferences[0] = getReferenceCurrencyTitle();
+		preferences[1] = Integer.toString(getPeriodOfReference());
+		preferences[2] = Integer.toString(getReferenceMonth());
+		preferences[3] = Boolean.toString(considerNullResultsInReport());
+		preferences[4] = Boolean.toString(includeNoFilterInReport());
+		preferences[5] = Boolean.toString(includeSubCategoriesInReport());
+		preferences[6] = Boolean.toString(addSubCategoriesToSum());
+		preferences[7] = getReportAggregateUnit().name();
 		return preferences;
 	}
 
-	public static boolean isQuickMenuEnabledForAccount(Context context) {
-		return getBoolean(context, "quick_menu_account_enabled", true);
+	public static boolean isQuickMenuEnabledForAccount() {
+		return getBoolean("quick_menu_account_enabled", true);
 	}
 
-	public static boolean isQuickMenuEnabledForTransaction(Context context) {
-		return getBoolean(context, "quick_menu_transaction_enabled", true);
+	public static boolean isQuickMenuEnabledForTransaction() {
+		return getBoolean("quick_menu_transaction_enabled", true);
 	}
 
-	public static boolean isQuickMenuShowAdditionalTransactionStatus(Context context) {
-		return getBoolean(context, "quick_menu_transaction_additional_status", false);
+	public static boolean isQuickMenuShowAdditionalTransactionStatus() {
+		return getBoolean("quick_menu_transaction_additional_status", false);
 	}
 
-	public static boolean isQuickMenuShowDuplicateKeepTime(Context context) {
-		return getBoolean(context, "quick_menu_transaction_duplicate_keep_time", false);
+	public static boolean isQuickMenuShowDuplicateKeepTime() {
+		return getBoolean("quick_menu_transaction_duplicate_keep_time", false);
 	}
 
-	public static boolean isQuickMenuShowDuplicateKeepDateTime(Context context) {
-		return getBoolean(context, "quick_menu_transaction_duplicate_keep_date_time", false);
+	public static boolean isQuickMenuShowDuplicateKeepDateTime() {
+		return getBoolean("quick_menu_transaction_duplicate_keep_date_time", false);
 	}
 
-	public static String getDropboxAuthToken(Context context) {
-		SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(context);
-		return sharedPreferences.getString(DROPBOX_AUTH_TOKEN, null);
+	public static String getDropboxAuthToken() {
+		return getString(DROPBOX_AUTH_TOKEN, null);
 	}
 
-	public static void storeDropboxKeys(Context context, String sessionToken) {
-		SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(context);
-		SharedPreferences.Editor e = sharedPreferences.edit();
-		e.putString(DROPBOX_AUTH_TOKEN, sessionToken);
-		e.putBoolean(DROPBOX_AUTHORIZE, true);
-		e.apply();
+	public static void storeDropboxKeys(String sessionToken) {
+		edit().putString(DROPBOX_AUTH_TOKEN, sessionToken)
+			.putBoolean(DROPBOX_AUTHORIZE, true)
+			.apply();
 	}
 
-	public static void removeDropboxKeys(Context context) {
-		SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(context);
-		SharedPreferences.Editor e = sharedPreferences.edit();
-		e.remove(DROPBOX_AUTH_TOKEN);
-		e.remove(DROPBOX_AUTHORIZE);
-		e.apply();
+	public static void removeDropboxKeys() {
+		edit().remove(DROPBOX_AUTH_TOKEN)
+			.remove(DROPBOX_AUTHORIZE)
+			.apply();
 	}
 
-	public static boolean isDropboxAuthorized(Context context) {
-		return getBoolean(context, DROPBOX_AUTHORIZE, false);
+	public static boolean isDropboxAuthorized() {
+		return getBoolean(DROPBOX_AUTHORIZE, false);
 	}
 
-	public static boolean isDropboxUploadBackups(Context context) {
-		return isDropboxAuthorized(context) && getBoolean(context, "dropbox_upload_backup", false);
+	public static boolean isDropboxUploadBackups() {
+		return isDropboxAuthorized() && getBoolean("dropbox_upload_backup", false);
 	}
 
-	public static boolean isDropboxUploadAutoBackups(Context context) {
-		return isDropboxAuthorized(context) && getBoolean(context, "dropbox_upload_autobackup", false);
+	public static boolean isDropboxUploadAutoBackups() {
+		return isDropboxAuthorized() && getBoolean("dropbox_upload_autobackup", false);
 	}
 
-	public static boolean isDropboxUploadPictures(Context context) {
-		return isDropboxAuthorized(context) && getBoolean(context, "dropbox_upload_pictures", false);
+	public static boolean isDropboxUploadPictures() {
+		return isDropboxAuthorized() && getBoolean("dropbox_upload_pictures", false);
 	}
 
-	public static boolean isDropboxDownloadPictures(Context context) {
-		return isDropboxAuthorized(context) && getBoolean(context, "dropbox_download_pictures", false);
+	public static boolean isDropboxDownloadPictures() {
+		return isDropboxAuthorized() && getBoolean("dropbox_download_pictures", false);
 	}
 
-	public static boolean isUseHierarchicalCategorySelector(Context context) {
-		return getBoolean(context, "use_hierarchical_category_selector", true);
+	public static boolean isUseHierarchicalCategorySelector() {
+		return getBoolean("use_hierarchical_category_selector", true);
 	}
 
-	public static boolean isShowRecentlyUsedCategory(Context context) {
-		return getBoolean(context, "show_recently_used_category", true);
+	public static boolean isShowRecentlyUsedCategory() {
+		return getBoolean("show_recently_used_category", true);
 	}
 
-	public static boolean isAutoSelectChildCategory(Context context) {
-		return getBoolean(context, "hierarchical_category_selector_select_child_immediately", true);
+	public static boolean isAutoSelectChildCategory() {
+		return getBoolean("hierarchical_category_selector_select_child_immediately", true);
 	}
 
-	public static boolean isSeparateIncomeExpense(Context context) {
-		return getBoolean(context, "hierarchical_category_selector_income_expense", false);
+	public static boolean isSeparateIncomeExpense() {
+		return getBoolean("hierarchical_category_selector_income_expense", false);
 	}
 
-	public static AccountListDateType getAccountListDateType(Context context) {
-		SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(context);
-		String accountListDateType = sharedPreferences.getString("account_list_date_type", AccountListDateType.LAST_TX.name());
+	public static AccountListDateType getAccountListDateType() {
+		String accountListDateType = getString("account_list_date_type", AccountListDateType.LAST_TX.name());
 		return AccountListDateType.valueOf(accountListDateType);
 	}
 
-	public static boolean isHideClosedAccounts(Context context) {
-		return getBoolean(context, "hide_closed_accounts", false);
+	public static boolean isHideClosedAccounts() {
+		return getBoolean("hide_closed_accounts", false);
 	}
 
-	public static boolean isPinHapticFeedbackEnabled(Context context) {
-		return getBoolean(context, "pin_protection_haptic_feedback", true);
+	public static boolean isPinHapticFeedbackEnabled() {
+		return getBoolean("pin_protection_haptic_feedback", true);
 	}
 
-	public static boolean isShowMenuButtonOnAccountsScreen(Context context) {
-		return getBoolean(context, "show_menu_button_on_accounts_screen", true);
+	public static boolean isShowMenuButtonOnAccountsScreen() {
+		return getBoolean("show_menu_button_on_accounts_screen", true);
 	}
 
-	public static boolean isShowTransferCurrentBalance(Context context) {
-		return getBoolean(context, "show_transfer_current_balance", false);
+	public static boolean isShowTransferCurrentBalance() {
+		return getBoolean("show_transfer_current_balance", false);
 	}
 
-	public static StartupScreen getStartupScreen(Context context) {
-		SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(context);
-		String screen = sharedPreferences.getString("startup_screen", StartupScreen.ACCOUNTS.name());
+	public static StartupScreen getStartupScreen() {
+		String screen = getString("startup_screen", StartupScreen.ACCOUNTS.name());
 		return StartupScreen.valueOf(screen);
 	}
 
 	public static ExchangeRateProvider createExchangeRatesProvider(Context context) {
-		SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(context);
-		ExchangeRateProviderFactory factory = getExchangeRateProviderFactory(sharedPreferences);
+		SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(Application.getInstance());
+		ExchangeRateProviderFactory factory = getExchangeRateProviderFactory();
 		return factory.createProvider(sharedPreferences, context);
 	}
 
-	private static ExchangeRateProviderFactory getExchangeRateProviderFactory(SharedPreferences sharedPreferences) {
-		String provider = sharedPreferences.getString("exchange_rate_provider", ExchangeRateProviderFactory.freeCurrency.name());
+	private static ExchangeRateProviderFactory getExchangeRateProviderFactory() {
+		String provider = getString("exchange_rate_provider", ExchangeRateProviderFactory.freeCurrency.name());
 		ExchangeRateProviderFactory r;
 		try {
 			r = ExchangeRateProviderFactory.valueOf(provider);
@@ -810,99 +710,90 @@ public class MyPreferences {
 		return r;
 	}
 
-	public static boolean isOpenExchangeRatesProviderSelected(Context context) {
-		SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(context);
-		return getExchangeRateProviderFactory(sharedPreferences) == ExchangeRateProviderFactory.openexchangerates;
+	public static boolean isOpenExchangeRatesProviderSelected() {
+		return getExchangeRateProviderFactory() == ExchangeRateProviderFactory.openexchangerates;
 	}
 
-	private static boolean getBoolean(Context context, String name, boolean defaultValue) {
-		SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(context);
+	private static boolean getBoolean(String name, boolean defaultValue) {
+		SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(Application.getInstance());
 		return sharedPreferences.getBoolean(name, defaultValue);
 	}
 
-	public static String getGoogleDriveFolder(Context context) {
-		SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(context);
-		return sharedPreferences.getString("googledrive_folder", "financial_docs");
+	private static String getString(String name, String defaultValue) {
+		SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(Application.getInstance());
+		return sharedPreferences.getString(name, defaultValue);
 	}
 
-	public static boolean doGoogleDriveUpload(Context context) {
-		return getBoolean(context, "googledrive_upload", false);
+	private static long getLong(String name, long defaultValue) {
+		SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(Application.getInstance());
+		return sharedPreferences.getLong(name, defaultValue);
 	}
 
-
-	public static String getGoogleDriveAccount(Context context) {
-		SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(context);
-		return sharedPreferences.getString("google_drive_backup_account", null);
+	private static int getInt(String name, int defaultValue) {
+		SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(Application.getInstance());
+		return sharedPreferences.getInt(name, defaultValue);
 	}
 
-	public static void setGoogleDriveAccount(Context context, String accountName) {
-		SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(context);
-		sharedPreferences.edit().putString("google_drive_backup_account", accountName).apply();
+	private static SharedPreferences.Editor edit() {
+		SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(Application.getInstance());
+		return sharedPreferences.edit();
 	}
 
-	public static boolean isGoogleDriveFullReadonly(Context context) {
-		return getBoolean(context, "google_drive_backup_full_readonly", false);
+	public static String getGoogleDriveAccount() {
+		return getString("google_drive_backup_account", null);
 	}
 
-	public static boolean isGoogleDriveUploadBackups(Context context) {
-		return getBoolean(context, "google_drive_upload_backup", false);
+	public static boolean isGoogleDriveUploadBackups() {
+		return getBoolean("google_drive_upload_backup", false);
 	}
 
-	public static boolean isGoogleDriveUploadAutoBackups(Context context) {
-		return getBoolean(context, "google_drive_upload_autobackup", false);
+	public static boolean isGoogleDriveUploadAutoBackups() {
+		return getBoolean("google_drive_upload_autobackup", false);
 	}
 
-	public static boolean isGoogleDriveUploadPictures(Context context) {
-		return getBoolean(context, "google_drive_upload_pictures", false);
+	public static boolean isGoogleDriveUploadPictures() {
+		return getBoolean("google_drive_upload_pictures", false);
 	}
 
-	public static boolean isGoogleDriveDownloadPictures(Context context) {
-		return getBoolean(context, "google_drive_download_pictures", false);
+	public static boolean isGoogleDriveDownloadPictures() {
+		return getBoolean("google_drive_download_pictures", false);
 	}
 
-	public static TransactionStatus getSmsTransactionStatus(Context context) {
-		SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(context);
-		return TransactionStatus.valueOf(sharedPreferences.getString("sms_transaction_status", "PN"));
+	public static TransactionStatus getSmsTransactionStatus() {
+		return TransactionStatus.valueOf(getString("sms_transaction_status", "PN"));
 	}
 
-	public static boolean shouldSaveSmsToTransactionNote(Context context) {
-		SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(context);
-		return sharedPreferences.getBoolean("sms_transaction_note", true);
+	public static boolean shouldSaveSmsToTransactionNote() {
+		return getBoolean("sms_transaction_note", true);
 	}
 
-	public static long getLastAutobackupCheck(Context context) {
-		SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(context);
-		return sharedPreferences.getLong("last_autobackup_check", 0);
+	public static long getLastAutobackupCheck() {
+		return getLong("last_autobackup_check", 0);
 	}
 
-	public static void updateLastAutobackupCheck(Context context) {
-		SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(context);
-		sharedPreferences.edit().putLong("last_autobackup_check", System.currentTimeMillis()).apply();
+	public static void updateLastAutobackupCheck() {
+		edit().putLong("last_autobackup_check", System.currentTimeMillis()).apply();
 	}
 
-	public static boolean isAutoBackupReminderEnabled(Context context) {
-		SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(context);
-		return sharedPreferences.getBoolean("auto_backup_reminder_enabled", true);
+	public static boolean isAutoBackupReminderEnabled() {
+		return getBoolean("auto_backup_reminder_enabled", true);
 	}
 
-	public static boolean isAutoBackupWarningEnabled(Context context) {
-		SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(context);
-		return sharedPreferences.getBoolean("auto_backup_warning_enabled", true);
+	public static boolean isAutoBackupWarningEnabled() {
+		return getBoolean("auto_backup_warning_enabled", true);
 	}
 
-	public static void notifyAutobackupFailed(Context context, Exception e) {
-		SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(context);
-		sharedPreferences.edit()
-				.putBoolean("auto_backup_failed_notify", isAutoBackupWarningEnabled(context))
-				.putString("auto_backup_failed_error", messageForException(context, e))
+	public static void notifyAutobackupFailed(Exception e) {
+		edit()
+				.putBoolean("auto_backup_failed_notify", isAutoBackupWarningEnabled())
+				.putString("auto_backup_failed_error", messageForException(e))
 				.putLong("auto_backup_failed_timestamp", System.currentTimeMillis())
 				.apply();
 	}
 
-	private static String messageForException(Context context, Exception e) {
-		if (e instanceof ImportExportException) {
-			ImportExportException importExportException = (ImportExportException) e;
-			String message = context.getString(importExportException.errorResId);
+	private static String messageForException(Exception e) {
+		if (e instanceof ImportExportException importExportException) {
+            String message = Application.getInstance().getString(importExportException.errorResId);
 			if (e.getCause() != null) {
 				message += " - " + e.getCause().getMessage();
 			}
@@ -912,17 +803,15 @@ public class MyPreferences {
 		}
 	}
 
-	public static void notifyAutobackupSucceeded(Context context) {
-		SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(context);
-		sharedPreferences.edit().putBoolean("auto_backup_failed_notify", false).apply();
+	public static void notifyAutobackupSucceeded() {
+		edit().putBoolean("auto_backup_failed_notify", false).apply();
 	}
 
-	public static AutobackupStatus getAutobackupStatus(Context context) {
-		SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(context);
+	public static AutobackupStatus getAutobackupStatus() {
 		return new AutobackupStatus(
-				sharedPreferences.getBoolean("auto_backup_failed_notify", false),
-				sharedPreferences.getString("auto_backup_failed_error", null),
-				sharedPreferences.getLong("auto_backup_failed_timestamp", 0)
+				getBoolean("auto_backup_failed_notify", false),
+				getString("auto_backup_failed_error", null),
+				getLong("auto_backup_failed_timestamp", 0)
 		);
 	}
 

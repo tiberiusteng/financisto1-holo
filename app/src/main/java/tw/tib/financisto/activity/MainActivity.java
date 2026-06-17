@@ -54,7 +54,7 @@ public class MainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        if (MyPreferences.isSecureWindow(this)) {
+        if (MyPreferences.isSecureWindow()) {
             getWindow().addFlags(WindowManager.LayoutParams.FLAG_SECURE);
         }
 
@@ -138,7 +138,7 @@ public class MainActivity extends AppCompatActivity {
                     }
                 }).attach();
 
-        viewPager.setCurrentItem(MyPreferences.getStartupScreen(this).ordinal(), false);
+        viewPager.setCurrentItem(MyPreferences.getStartupScreen().ordinal(), false);
     }
 
     @Override
@@ -182,15 +182,15 @@ public class MainActivity extends AppCompatActivity {
                 x.endTransaction();
             }
             t2 = System.currentTimeMillis();
-            if (MyPreferences.shouldUpdateHomeCurrency(this)) {
+            if (MyPreferences.shouldUpdateHomeCurrency()) {
                 db.setDefaultHomeCurrency();
             }
             CurrencyCache.initialize(db);
             t3 = System.currentTimeMillis();
-            if (MyPreferences.shouldRebuildRunningBalance(this)) {
+            if (MyPreferences.shouldRebuildRunningBalance()) {
                 db.rebuildRunningBalances();
             }
-            if (MyPreferences.shouldUpdateAccountsLastTransactionDate(this)) {
+            if (MyPreferences.shouldUpdateAccountsLastTransactionDate()) {
                 db.updateAccountsLastTransactionDate();
             }
         } finally {

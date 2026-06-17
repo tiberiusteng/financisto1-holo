@@ -144,10 +144,10 @@ public class TransactionInfoDialog {
         add(layout, R.string.account_to, ti.toAccount.title, toAccountType);
         amountView = add(layout, R.string.amount_to, "");
         u.setAmountText(amountView, ti.toAccount.currency, ti.toAmount, true);
-        if (MyPreferences.isShowPayeeInTransfers(context)) {
+        if (MyPreferences.isShowPayeeInTransfers()) {
             add(layout, R.string.payee, ti.payee != null ? ti.payee.title : "");
         }
-        if (MyPreferences.isShowCategoryInTransferScreen(context)) {
+        if (MyPreferences.isShowCategoryInTransferScreen()) {
             add(layout, R.string.category, ti.category != null ? ti.category.title : "");
         }
     }

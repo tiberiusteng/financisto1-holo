@@ -69,7 +69,7 @@ public class Dropbox {
                 try {
                     Log.d(Dropbox.class.getSimpleName(), "dbxCredential = " + dbxCredential.toString());
                     Toast.makeText(context, R.string.dropbox_authorized, Toast.LENGTH_LONG).show();
-                    MyPreferences.storeDropboxKeys(context, dbxCredential.toString());
+                    MyPreferences.storeDropboxKeys(dbxCredential.toString());
                 } catch (IllegalStateException e) {
                     Log.i(Dropbox.class.getSimpleName(), "Error authenticating Dropbox", e);
                 }
@@ -80,7 +80,7 @@ public class Dropbox {
     }
 
     public void deAuth() {
-        MyPreferences.removeDropboxKeys(context);
+        MyPreferences.removeDropboxKeys();
         if (dropboxClient != null) {
             try {
                 dropboxClient.auth().tokenRevoke();
@@ -95,7 +95,7 @@ public class Dropbox {
     }
 
     private boolean authSession() {
-        String serializedCredential = MyPreferences.getDropboxAuthToken(context);
+        String serializedCredential = MyPreferences.getDropboxAuthToken();
         if (serializedCredential != null) {
             try {
                 if (dropboxClient == null) {

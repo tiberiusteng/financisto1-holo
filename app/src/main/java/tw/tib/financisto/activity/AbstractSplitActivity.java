@@ -161,7 +161,7 @@ public abstract class AbstractSplitActivity extends AbstractActivity {
 
     @Override
     protected boolean shouldLock() {
-        return MyPreferences.isPinProtectedNewTransaction(this);
+        return MyPreferences.isPinProtectedNewTransaction();
     }
 
     @Override

@@ -50,7 +50,7 @@ public class PreferencesActivity2 extends AppCompatActivity {
             });
         }
 
-        if (MyPreferences.isSecureWindow(this)) {
+        if (MyPreferences.isSecureWindow()) {
             getWindow().addFlags(WindowManager.LayoutParams.FLAG_SECURE);
         }
 

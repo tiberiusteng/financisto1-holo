@@ -309,12 +309,12 @@ public class DatabaseAdapter extends MyEntityManager {
             }
             else {
                 // if configured, set copied transaction's status to unreconciled
-                if (MyPreferences.isResetCopiedTransactionStatus(context)) {
+                if (MyPreferences.isResetCopiedTransactionStatus()) {
                     transaction.status = TransactionStatus.UR;
                 }
                 // if configured and transaction is in foreign currency,
                 // set copied transaction's status to pending
-                if (MyPreferences.isResetCopiedForeignTransactionStatus(context) &&
+                if (MyPreferences.isResetCopiedForeignTransactionStatus() &&
                         transaction.originalCurrencyId != 0) {
                     transaction.status = TransactionStatus.PN;
                 }
@@ -329,7 +329,7 @@ public class DatabaseAdapter extends MyEntityManager {
             }
 
             if (transaction.projectId != Project.NO_PROJECT_ID &&
-                    MyPreferences.isUpdateCopiedTransactionProject(context))
+                    MyPreferences.isUpdateCopiedTransactionProject())
             {
                 // Get recently used project ID in a week
                 // TODO make the time span configurable?

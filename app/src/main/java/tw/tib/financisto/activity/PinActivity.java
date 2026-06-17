@@ -53,13 +53,13 @@ public class PinActivity extends AppCompatActivity implements PinView.PinListene
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        String pin = MyPreferences.getPin(this);
+        String pin = MyPreferences.getPin();
         BiometricManager biometricManager = BiometricManager.from(this);
 
         if (pin == null) {
             onSuccess(null);
         } else if (biometricManager.canAuthenticate(BIOMETRIC_WEAK) == BIOMETRIC_SUCCESS
-                && MyPreferences.isPinLockUseFingerprint(this))
+                && MyPreferences.isPinLockUseFingerprint())
         {
             setContentView(R.layout.lock_fingerprint);
             findViewById(R.id.try_biometric_again).setOnClickListener(v -> askForFingerprint());
@@ -77,7 +77,7 @@ public class PinActivity extends AppCompatActivity implements PinView.PinListene
     }
 
     private void usePinLock() {
-        String pin = MyPreferences.getPin(this);
+        String pin = MyPreferences.getPin();
         PinView v = new PinView(this, this, pin, R.layout.lock);
         setContentView(v.getView());
 
@@ -94,7 +94,7 @@ public class PinActivity extends AppCompatActivity implements PinView.PinListene
         View usePinButton = findViewById(R.id.use_pin);
         View tryBiometricAgain = findViewById(R.id.try_biometric_again);
         tryBiometricAgain.setVisibility(View.INVISIBLE);
-        if (MyPreferences.isUseFingerprintFallbackToPinEnabled(this)) {
+        if (MyPreferences.isUseFingerprintFallbackToPinEnabled()) {
             usePinButton.setOnClickListener(v -> {
                 usePinLock();
             });

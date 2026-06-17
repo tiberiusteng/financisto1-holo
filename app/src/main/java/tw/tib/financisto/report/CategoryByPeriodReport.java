@@ -63,8 +63,8 @@ public class CategoryByPeriodReport extends Report2DChart {
 	@Override
 	protected void createFilter() {
 		columnFilter = TransactionColumns.category_id.name();
-		boolean includeSubCategories = MyPreferences.includeSubCategoriesInReport(context);
-		boolean includeNoCategory = MyPreferences.includeNoFilterInReport(context);
+		boolean includeSubCategories = MyPreferences.includeSubCategoriesInReport();
+		boolean includeNoCategory = MyPreferences.includeNoFilterInReport();
 		filterIds = new ArrayList<>();
 		filterTitles = new ArrayList<>();
 		currentFilterOrder = 0;
@@ -89,7 +89,7 @@ public class CategoryByPeriodReport extends Report2DChart {
 	 */
 	@Override
 	protected void build() {
-		boolean addSubs = MyPreferences.addSubCategoriesToSum(context);
+		boolean addSubs = MyPreferences.addSubCategoriesToSum();
 		if (addSubs) {
 			SQLiteDatabase db = em.db();
 			Cursor cursor = null;
@@ -125,7 +125,7 @@ public class CategoryByPeriodReport extends Report2DChart {
 
 	@Override
 	public Criteria getCriteria() {
-		boolean addSubs = MyPreferences.addSubCategoriesToSum(context);
+		boolean addSubs = MyPreferences.addSubCategoriesToSum();
 		if (addSubs) {
 			long categoryId = filterIds.get(currentFilterOrder);
 			Category parent = em.getCategory(categoryId);

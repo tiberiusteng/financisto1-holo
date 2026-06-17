@@ -245,12 +245,12 @@ public class BlotterFragment extends AbstractListFragment<Cursor> implements Blo
 
         getActivity().getOnBackPressedDispatcher().addCallback(backCallback);
 
-        showAllBlotterButtons = !MyPreferences.isCollapseBlotterButtons(getContext());
+        showAllBlotterButtons = !MyPreferences.isCollapseBlotterButtons();
 
-        isQuickMenuEnabledForTransaction = MyPreferences.isQuickMenuEnabledForTransaction(getContext());
-        isQuickMenuShowAdditionalTransactionStatus = MyPreferences.isQuickMenuShowAdditionalTransactionStatus(getContext());
-        isQuickMenuShowDuplicateKeepTime = MyPreferences.isQuickMenuShowDuplicateKeepTime(getContext());
-        isQuickMenuShowDuplicateKeepDateTime = MyPreferences.isQuickMenuShowDuplicateKeepDateTime(getContext());
+        isQuickMenuEnabledForTransaction = MyPreferences.isQuickMenuEnabledForTransaction();
+        isQuickMenuShowAdditionalTransactionStatus = MyPreferences.isQuickMenuShowAdditionalTransactionStatus();
+        isQuickMenuShowDuplicateKeepTime = MyPreferences.isQuickMenuShowDuplicateKeepTime();
+        isQuickMenuShowDuplicateKeepDateTime = MyPreferences.isQuickMenuShowDuplicateKeepDateTime();
 
         if (showAllBlotterButtons) {
             bTransfer = view.findViewById(R.id.bTransfer);
@@ -279,7 +279,7 @@ public class BlotterFragment extends AbstractListFragment<Cursor> implements Blo
         totalText = view.findViewById(R.id.total);
         if (totalText != null) {
             totalText.setOnClickListener((v) -> {
-                if (MyPreferences.isBlurBalances(getContext())) {
+                if (MyPreferences.isBlurBalances()) {
                     if (totalText.getPaint().getMaskFilter() != null) {
                         totalText.getPaint().setMaskFilter(null);
                         totalText.invalidate();
@@ -790,7 +790,7 @@ public class BlotterFragment extends AbstractListFragment<Cursor> implements Blo
                                 t.toAmount = -t.fromAmount;
                             }
 
-                            t.toAmount = Utils.roundAmount(getContext(), toAccount.currency, t.toAmount);
+                            t.toAmount = Utils.roundAmount(toAccount.currency, t.toAmount);
                         }
 
                         t.originalFromAmount = 0;
@@ -806,10 +806,10 @@ public class BlotterFragment extends AbstractListFragment<Cursor> implements Blo
                             t.fromAmount = tempAmount;
                         }
 
-                        if (!MyPreferences.isShowPayeeInTransfers(getContext())) {
+                        if (!MyPreferences.isShowPayeeInTransfers()) {
                             t.payeeId = 0;
                         }
-                        if (!MyPreferences.isShowCategoryInTransferScreen(getContext())) {
+                        if (!MyPreferences.isShowCategoryInTransferScreen()) {
                             t.categoryId = 0;
                         }
                     }

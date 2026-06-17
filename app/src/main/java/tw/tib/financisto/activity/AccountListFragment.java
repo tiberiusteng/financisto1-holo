@@ -177,7 +177,7 @@ public class AccountListFragment extends AbstractListFragment<Cursor> {
 
     private void setupMenuButton() {
         final ImageButton bMenu = getView().findViewById(R.id.bMenu);
-        if (MyPreferences.isShowMenuButtonOnAccountsScreen(getContext())) {
+        if (MyPreferences.isShowMenuButtonOnAccountsScreen()) {
             bMenu.setOnClickListener(v -> {
                 PopupMenu popupMenu = new PopupMenu(getActivity(), bMenu);
                 MenuInflater inflater = getActivity().getMenuInflater();
@@ -220,7 +220,7 @@ public class AccountListFragment extends AbstractListFragment<Cursor> {
             accountActionGrid.addQuickAction(new MyQuickAction(getContext(), R.drawable.ic_action_lock_open, R.string.reopen_account));
         }
         accountActionGrid.addQuickAction(new MyQuickAction(getContext(), R.drawable.ic_action_trash, R.string.delete_account));
-        if (MyPreferences.isShowTransferCurrentBalance(getContext())) {
+        if (MyPreferences.isShowTransferCurrentBalance()) {
             accountActionGrid.addQuickAction(new MyQuickAction(getContext(), R.drawable.share_windows_32dp, R.string.transfer_current_balance));
         }
         accountActionGrid.setOnQuickActionClickListener(accountActionListener);
@@ -344,7 +344,7 @@ public class AccountListFragment extends AbstractListFragment<Cursor> {
 
         Log.d(this.getClass().getSimpleName(), "createCursor start");
         long t1 = System.currentTimeMillis();
-        if (MyPreferences.isHideClosedAccounts(context)) {
+        if (MyPreferences.isHideClosedAccounts()) {
             c = db.getAllActiveAccountsWithFilter(filter);
         } else {
             c = db.getAllAccountsWithFilter(filter);
@@ -414,7 +414,7 @@ public class AccountListFragment extends AbstractListFragment<Cursor> {
 
     @Override
     protected void onItemClick(View v, int position, long id) {
-        if (MyPreferences.isQuickMenuEnabledForAccount(getContext())) {
+        if (MyPreferences.isQuickMenuEnabledForAccount()) {
             selectedId = id;
             prepareAccountActionGrid();
             accountActionGrid.show(v);

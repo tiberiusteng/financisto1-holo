@@ -124,7 +124,7 @@ public abstract class MyEntityManager extends EntityManager {
 		if (!includeCurrentLocation) {
 			q.where(Expressions.gt("id", 0));
 		}
-		MyPreferences.LocationsSortOrder sortOrder = MyPreferences.getLocationsSortOrder(context);
+		MyPreferences.LocationsSortOrder sortOrder = MyPreferences.getLocationsSortOrder();
 		if (sortOrder.asc) {
 			q.asc(sortOrder.property);
 		} else {
@@ -255,7 +255,7 @@ public abstract class MyEntityManager extends EntityManager {
 	}
 
 	private Cursor getAllAccounts(boolean isActiveOnly, String filter, long... includeAccounts) {
-		MyPreferences.AccountSortOrder sortOrder = MyPreferences.getAccountSortOrder(context);
+		MyPreferences.AccountSortOrder sortOrder = MyPreferences.getAccountSortOrder();
 		Query<AccountForSearch> q = createQuery(AccountForSearch.class);
 		ArrayList<Expression> e = new ArrayList<>();
 
@@ -308,7 +308,7 @@ public abstract class MyEntityManager extends EntityManager {
 	public List<Account> getAllAccountsListWithFilter(String filter, boolean canHideClosed) {
 		List<Account> list = new ArrayList<>();
 		Cursor c;
-		if (canHideClosed && MyPreferences.isHideClosedAccounts(context)) {
+		if (canHideClosed && MyPreferences.isHideClosedAccounts()) {
 			c = getAllActiveAccountsWithFilter(filter);
 		} else {
 			c = getAllAccountsWithFilter(filter);

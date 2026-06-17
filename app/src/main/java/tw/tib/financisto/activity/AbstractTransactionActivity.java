@@ -159,7 +159,7 @@ public abstract class AbstractTransactionActivity extends AbstractActivity imple
 
 		u = new Utils(this);
 
-		if (MyPreferences.isSecureWindow(this)) {
+		if (MyPreferences.isSecureWindow()) {
 			getWindow().addFlags(WindowManager.LayoutParams.FLAG_SECURE);
 		}
 
@@ -181,17 +181,17 @@ public abstract class AbstractTransactionActivity extends AbstractActivity imple
 			return WindowInsetsCompat.CONSUMED;
 		});
 
-		isRememberLastAccount = MyPreferences.isRememberAccount(this);
-		isRememberLastCategory = isRememberLastAccount && MyPreferences.isRememberCategory(this);
-		isRememberLastLocation = isRememberLastCategory && MyPreferences.isRememberLocation(this);
-		isRememberLastProject = isRememberLastCategory && MyPreferences.isRememberProject(this);
-		isShowLocation = MyPreferences.isShowLocation(this);
-		isShowProject = MyPreferences.isShowProject(this);
-		isShowNote = MyPreferences.isShowNote(this);
-		isShowTakePicture = MyPreferences.isShowTakePicture(this);
-		isShowIsCCardPayment = MyPreferences.isShowIsCCardPayment(this);
-		isOpenCalculatorForTemplates = MyPreferences.isOpenCalculatorForTemplates(this);
-		isShowAccountBalanceOnSelector = MyPreferences.isShowAccountBalanceOnSelector(this);
+		isRememberLastAccount = MyPreferences.isRememberAccount();
+		isRememberLastCategory = isRememberLastAccount && MyPreferences.isRememberCategory();
+		isRememberLastLocation = isRememberLastCategory && MyPreferences.isRememberLocation();
+		isRememberLastProject = isRememberLastCategory && MyPreferences.isRememberProject();
+		isShowLocation = MyPreferences.isShowLocation();
+		isShowProject = MyPreferences.isShowProject();
+		isShowNote = MyPreferences.isShowNote();
+		isShowTakePicture = MyPreferences.isShowTakePicture();
+		isShowIsCCardPayment = MyPreferences.isShowIsCCardPayment();
+		isOpenCalculatorForTemplates = MyPreferences.isOpenCalculatorForTemplates();
+		isShowAccountBalanceOnSelector = MyPreferences.isShowAccountBalanceOnSelector();
 
 		categorySelector = new CategorySelector<>(this, db, x);
 		categorySelector.setListener(this);
@@ -243,7 +243,7 @@ public abstract class AbstractTransactionActivity extends AbstractActivity imple
 		dateText = findViewById(R.id.date);
 		dateText.setText(df.format(date));
 		dateText.setOnClickListener(arg0 -> {
-			if (MyPreferences.isUseTwinDatePicker(this) && Build.VERSION.SDK_INT >= 22) {
+			if (MyPreferences.isUseTwinDatePicker() && Build.VERSION.SDK_INT >= 22) {
 				DatePickerTwinDialog dpd = DatePickerTwinDialog.newInstance(
 						dateTime.get(Calendar.YEAR),
 						dateTime.get(Calendar.MONTH),
@@ -348,7 +348,7 @@ public abstract class AbstractTransactionActivity extends AbstractActivity imple
 			if (accountId != -1) {
 				selectAccount(accountId);
 			} else {
-				long lastAccountId = MyPreferences.getLastAccount(this);
+				long lastAccountId = MyPreferences.getLastAccount();
 				if (isRememberLastAccount && lastAccountId != -1) {
 					selectAccount(lastAccountId);
 				}
@@ -417,7 +417,7 @@ public abstract class AbstractTransactionActivity extends AbstractActivity imple
 			boolean isNew = transaction.id == -1;
 			long id = db.insertOrUpdate(transaction, getAttributes());
 			if (isNew) {
-				MyPreferences.setLastAccount(this, transaction.fromAccountId);
+				MyPreferences.setLastAccount(transaction.fromAccountId);
 			}
 			AccountWidget.updateWidgets(this);
 			return id;
@@ -439,13 +439,13 @@ public abstract class AbstractTransactionActivity extends AbstractActivity imple
 
 	@Override
 	protected boolean shouldLock() {
-		return MyPreferences.isPinProtectedNewTransaction(this);
+		return MyPreferences.isPinProtectedNewTransaction();
 	}
 
 	protected void createCommonNodes(LinearLayout layout) {
-		int locationOrder = MyPreferences.getLocationOrder(this);
-		int noteOrder = MyPreferences.getNoteOrder(this);
-		int projectOrder = MyPreferences.getProjectOrder(this);
+		int locationOrder = MyPreferences.getLocationOrder();
+		int noteOrder = MyPreferences.getNoteOrder();
+		int projectOrder = MyPreferences.getProjectOrder();
 		for (int i = 0; i < 6; i++) {
 			if (i == locationOrder) {
 				locationSelector.createNode(layout);
