@@ -899,7 +899,7 @@ public class BlotterFragment extends AbstractListFragment<Cursor> implements Blo
     @Override
     protected Cursor loadInBackground() {
         Cursor c;
-        blotterFilter.recalculatePeriod(Application.getInstance());
+        blotterFilter.recalculatePeriod();
         WhereFilter blotterFilterCopy = WhereFilter.copyOf(blotterFilter);
 
         new Handler(Looper.getMainLooper()).post(()-> {

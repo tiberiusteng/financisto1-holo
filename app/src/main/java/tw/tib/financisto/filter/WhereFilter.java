@@ -10,7 +10,6 @@
  ******************************************************************************/
 package tw.tib.financisto.filter;
 
-import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.SharedPreferences.Editor;
@@ -410,17 +409,17 @@ public class WhereFilter {
 		remove(BlotterFilter.DATETIME);
 	}
 
-	public void recalculatePeriod(Context context) {
+	public void recalculatePeriod() {
 		DateTimeCriterion c = getDateTime();
 		if (c != null) {
 			PeriodType t = c.getPeriod().type;
 			if (t != PeriodType.CUSTOM) {
-				put(new DateTimeCriterion(context, t));
+				put(new DateTimeCriterion(t));
 			}
 		}
 	}
 
-	public static DateTimeCriterion dateTimeFromIntent(Context context, Intent data) {
+	public static DateTimeCriterion dateTimeFromIntent(Intent data) {
 		String periodType = data.getStringExtra(DateFilterActivity.EXTRA_FILTER_PERIOD_TYPE);
 		PeriodType p = PeriodType.valueOf(periodType);
 		if (PeriodType.CUSTOM == p) {
@@ -428,7 +427,7 @@ public class WhereFilter {
 			long periodTo = data.getLongExtra(DateFilterActivity.EXTRA_FILTER_PERIOD_TO, 0);
 			return new DateTimeCriterion(periodFrom, periodTo);
 		} else {
-			return new DateTimeCriterion(context, p);
+			return new DateTimeCriterion(p);
 		}
 
 	}

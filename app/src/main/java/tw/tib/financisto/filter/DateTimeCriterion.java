@@ -30,8 +30,8 @@ public class DateTimeCriterion extends Criterion {
         this.period = period;
     }
 
-    public DateTimeCriterion(Context context, PeriodType period) {
-        this(DateUtils.getPeriod(context, period));
+    public DateTimeCriterion(PeriodType period) {
+        this(DateUtils.getPeriod(period));
     }
 
     public DateTimeCriterion(long start, long end) {

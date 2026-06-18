@@ -35,7 +35,7 @@ public class CriterionAdapter implements JsonSerializer<Criterion>, JsonDeserial
                 return new DateTimeCriterion(start, end);
             }
             else {
-                return new DateTimeCriterion(Application.getInstance(), p);
+                return new DateTimeCriterion(p);
             }
         }
     }

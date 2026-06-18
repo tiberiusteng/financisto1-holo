@@ -200,7 +200,7 @@ public class ReportActivity extends ListActivity implements RefreshSupportedActi
 
     private void selectReport() {
         cancelCurrentReportTask();
-        filter.recalculatePeriod(this);
+        filter.recalculatePeriod();
         reportTask = new ReportAsyncTask(currentReport, incomeExpenseState);
         reportTask.execute();
         applyFilter();

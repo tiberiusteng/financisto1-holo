@@ -98,7 +98,7 @@ public class PlannerActivity extends AbstractListActivity<TransactionList> {
         if (criteria == null) {
             Calendar date = Calendar.getInstance();
             date.add(Calendar.MONTH, 1);
-            criteria = new DateTimeCriterion(this, PeriodType.THIS_MONTH);
+            criteria = new DateTimeCriterion(PeriodType.THIS_MONTH);
         }
         long now = System.currentTimeMillis();
         if (now > criteria.getLongValue1()) {
