@@ -370,7 +370,7 @@ public class WhereFilter {
 	}
 
 	public enum Operation {
-		NOPE(""), EQ("=?"), NEQ("!=?"), GT(">?"), GTE(">=?"), LT("<?"), LTE("<=?"), BTW("BETWEEN ? AND ?", "OR", 2),
+		RAW(""), EQ("=?"), NEQ("!=?"), GT(">?"), GTE(">=?"), LT("<?"), LTE("<=?"), BTW("BETWEEN ? AND ?", "OR", 2),
 		IN("IN (?)") {
 			@Override
 			public String getOp(int operands) {

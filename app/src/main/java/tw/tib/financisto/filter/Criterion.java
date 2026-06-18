@@ -82,7 +82,7 @@ public class Criterion {
     }
 
     public static Criterion raw(String text) {
-        return new Criterion("(" + text + ")", WhereFilter.Operation.NOPE);
+        return new Criterion("(" + text + ")", WhereFilter.Operation.RAW);
     }
 
     public static Criterion or(Criterion... children) {
