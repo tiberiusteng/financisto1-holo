@@ -10,13 +10,10 @@
  ******************************************************************************/
 package tw.tib.financisto.activity;
 
-import android.view.View;
 import tw.tib.financisto.R;
 import tw.tib.financisto.blotter.BlotterFilter;
-import tw.tib.financisto.filter.Criteria;
+import tw.tib.financisto.filter.Criterion;
 import tw.tib.financisto.model.MyLocation;
-
-import java.util.List;
 
 public class LocationsListActivity extends MyEntityListActivity<MyLocation> {
 
@@ -30,8 +27,8 @@ public class LocationsListActivity extends MyEntityListActivity<MyLocation> {
 	}
 
 	@Override
-	protected Criteria createBlotterCriteria(MyLocation location) {
-		return Criteria.eq(BlotterFilter.LOCATION_ID, String.valueOf(location.id));
+	protected Criterion createBlotterCriteria(MyLocation location) {
+		return Criterion.eq(BlotterFilter.LOCATION_ID, String.valueOf(location.id));
 	}
 
 }

@@ -42,8 +42,8 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.text.SimpleDateFormat;
 import java.util.Date;
-import java.util.concurrent.Executors;
 
+import tw.tib.financisto.Application;
 import tw.tib.financisto.R;
 import tw.tib.financisto.export.drive.GoogleDriveRESTClient;
 import tw.tib.financisto.export.dropbox.Dropbox;
@@ -55,9 +55,8 @@ public class PicturesUtil {
 
     public static void showImage(Context context, ImageView imageView, TextView imageDescView, String pictureFileName) {
         if (pictureFileName == null || imageView == null) return;
-        var executor = Executors.newSingleThreadExecutor();
         var handler = new Handler(Looper.getMainLooper());
-        executor.execute(() -> {
+        Application.getExecutor().execute(() -> {
             try {
                 boolean haveFile = true;
                 Uri pictureUri = getPictureFileUri(pictureFileName);
@@ -208,8 +207,7 @@ public class PicturesUtil {
             Log.i(TAG, "targetFile name: " + targetFile.getName());
 
             if (MyPreferences.isGoogleDriveUploadPictures()) {
-                var executor = Executors.newSingleThreadExecutor();
-                executor.execute(() -> {
+                Application.getExecutor().execute(() -> {
                     try {
                         GoogleDriveRESTClient client = new GoogleDriveRESTClient(context);
                         String pictureFolderId = client.getPictureFolderID(true);
@@ -221,8 +219,7 @@ public class PicturesUtil {
             }
 
             if (MyPreferences.isDropboxUploadPictures()) {
-                var executor = Executors.newSingleThreadExecutor();
-                executor.execute(() -> {
+                Application.getExecutor().execute(() -> {
                     try {
                         Dropbox dropbox = new Dropbox(context);
                         dropbox.uploadPictureFile(targetFileUri);

@@ -14,8 +14,8 @@ import static tw.tib.financisto.db.DatabaseHelper.V_REPORT_LOCATIONS;
 
 import tw.tib.financisto.R;
 import tw.tib.financisto.blotter.BlotterFilter;
+import tw.tib.financisto.filter.Criterion;
 import tw.tib.financisto.filter.WhereFilter;
-import tw.tib.financisto.filter.Criteria;
 import tw.tib.financisto.db.DatabaseAdapter;
 import android.content.Context;
 import tw.tib.financisto.model.Currency;
@@ -38,8 +38,8 @@ public class LocationsReport extends Report {
 	}
 
 	@Override
-	public Criteria getCriteriaForId(DatabaseAdapter db, long id) {
-		return Criteria.eq(BlotterFilter.LOCATION_ID, String.valueOf(id));
+	public Criterion getCriteriaForId(DatabaseAdapter db, long id) {
+		return Criterion.eq(BlotterFilter.LOCATION_ID, String.valueOf(id));
 	}		
 	
 }

@@ -13,7 +13,7 @@ package tw.tib.financisto.activity;
 import android.view.View;
 import tw.tib.financisto.R;
 import tw.tib.financisto.blotter.BlotterFilter;
-import tw.tib.financisto.filter.Criteria;
+import tw.tib.financisto.filter.Criterion;
 import tw.tib.financisto.model.Project;
 
 public class ProjectListActivity extends MyEntityListActivity<Project> {
@@ -28,8 +28,8 @@ public class ProjectListActivity extends MyEntityListActivity<Project> {
     }
 
     @Override
-    protected Criteria createBlotterCriteria(Project p) {
-        return Criteria.eq(BlotterFilter.PROJECT_ID, String.valueOf(p.id));
+    protected Criterion createBlotterCriteria(Project p) {
+        return Criterion.eq(BlotterFilter.PROJECT_ID, String.valueOf(p.id));
     }
 
     @Override

@@ -21,7 +21,7 @@ import tw.tib.financisto.blotter.BlotterFilter;
 import tw.tib.financisto.db.DatabaseAdapter;
 import tw.tib.financisto.db.DatabaseHelper;
 import tw.tib.financisto.export.BackupExportTask;
-import tw.tib.financisto.filter.Criteria;
+import tw.tib.financisto.filter.Criterion;
 import tw.tib.financisto.model.Payee;
 
 public class PayeeListActivity extends MyEntityListActivity<Payee> {
@@ -36,8 +36,8 @@ public class PayeeListActivity extends MyEntityListActivity<Payee> {
     }
 
     @Override
-    protected Criteria createBlotterCriteria(Payee p) {
-        return Criteria.eq(BlotterFilter.PAYEE_ID, String.valueOf(p.id));
+    protected Criterion createBlotterCriteria(Payee p) {
+        return Criterion.eq(BlotterFilter.PAYEE_ID, String.valueOf(p.id));
     }
 
     @Override

@@ -12,10 +12,11 @@ import android.content.Intent;
 import android.util.Log;
 
 import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonParser;
-import com.google.gson.JsonPrimitive;
 
+import java.lang.reflect.Type;
 import java.util.Arrays;
 import java.util.LinkedList;
 
@@ -28,68 +29,75 @@ import tw.tib.orb.Expressions;
  * User: denis.solonenko
  * Date: 12/17/12 9:06 PM
  */
-public class Criteria {
-    private static final String TAG = "Criteria";
+public class Criterion {
+    private static final String TAG = "Criterion";
 
-    public static Criteria eq(String column, String value) {
-        return new Criteria(column, WhereFilter.Operation.EQ, value);
+    private static Gson gson = new GsonBuilder()
+            .registerTypeAdapter(Criterion.class, new CriterionAdapter())
+            .registerTypeAdapter(DateTimeCriterion.class, new DateTimeCriterionAdapter())
+            .create();
+
+    private static Type criterionType = Criterion.class;
+
+    public static Criterion eq(String column, String value) {
+        return new Criterion(column, WhereFilter.Operation.EQ, value);
     }
 
-    public static Criteria neq(String column, String value) {
-        return new Criteria(column, WhereFilter.Operation.NEQ, value);
+    public static Criterion neq(String column, String value) {
+        return new Criterion(column, WhereFilter.Operation.NEQ, value);
     }
 
-    public static Criteria btw(String column, String... values) {
+    public static Criterion btw(String column, String... values) {
         if (values.length < 2) throw new IllegalArgumentException("No values for BTW filter!");
-        return new Criteria(column, WhereFilter.Operation.BTW, values);
+        return new Criterion(column, WhereFilter.Operation.BTW, values);
     }
 
-    public static Criteria in(String column, String... values) {
+    public static Criterion in(String column, String... values) {
         if (values.length == 0) throw new IllegalArgumentException("No values for IN filter!");
-        return new Criteria(column, WhereFilter.Operation.IN, values);
+        return new Criterion(column, WhereFilter.Operation.IN, values);
     }
 
-    public static Criteria gt(String column, String value) {
-        return new Criteria(column, WhereFilter.Operation.GT, value);
+    public static Criterion gt(String column, String value) {
+        return new Criterion(column, WhereFilter.Operation.GT, value);
     }
 
-    public static Criteria gte(String column, String value) {
-        return new Criteria(column, WhereFilter.Operation.GTE, value);
+    public static Criterion gte(String column, String value) {
+        return new Criterion(column, WhereFilter.Operation.GTE, value);
     }
 
-    public static Criteria lt(String column, String value) {
-        return new Criteria(column, WhereFilter.Operation.LT, value);
+    public static Criterion lt(String column, String value) {
+        return new Criterion(column, WhereFilter.Operation.LT, value);
     }
 
-    public static Criteria lte(String column, String value) {
-        return new Criteria(column, WhereFilter.Operation.LTE, value);
+    public static Criterion lte(String column, String value) {
+        return new Criterion(column, WhereFilter.Operation.LTE, value);
     }
 
-    public static Criteria isNull(String column) {
-        return new Criteria(column, WhereFilter.Operation.ISNULL);
+    public static Criterion isNull(String column) {
+        return new Criterion(column, WhereFilter.Operation.ISNULL);
     }
 
-    public static Criteria like(String column, String text) {
-        return new Criteria(column, WhereFilter.Operation.LIKE, text);
+    public static Criterion like(String column, String text) {
+        return new Criterion(column, WhereFilter.Operation.LIKE, text);
     }
 
-    public static Criteria raw(String text) {
-        return new Criteria("(" + text + ")", WhereFilter.Operation.NOPE);
+    public static Criterion raw(String text) {
+        return new Criterion("(" + text + ")", WhereFilter.Operation.NOPE);
     }
 
-    public static Criteria or(Criteria... children) {
-        Log.d(TAG, "Criteria or() children.length=" + children.length);
-        return new Criteria(children[0].columnName, WhereFilter.Operation.OR, combineValues(children), children);
+    public static Criterion or(Criterion... children) {
+        Log.d(TAG, "Criterion or() children.length=" + children.length);
+        return new Criterion(children[0].columnName, WhereFilter.Operation.OR, combineValues(children), children);
     }
 
-    public static Criteria and(Criteria... children) {
-        Log.d(TAG, "Criteria and() children.length=" + children.length);
-        return new Criteria(children[0].columnName, WhereFilter.Operation.AND, combineValues(children), children);
+    public static Criterion and(Criterion... children) {
+        Log.d(TAG, "Criterion and() children.length=" + children.length);
+        return new Criterion(children[0].columnName, WhereFilter.Operation.AND, combineValues(children), children);
     }
 
-    private static String[] combineValues(Criteria... children) {
+    private static String[] combineValues(Criterion... children) {
         LinkedList<String> values = new LinkedList<>();
-        for (Criteria c : children) {
+        for (Criterion c : children) {
             values.addAll(Arrays.asList(c.getValues()));
         }
         String[] ret = new String[values.size()];
@@ -99,16 +107,16 @@ public class Criteria {
     public final String columnName;
     public final WhereFilter.Operation operation;
     private final String[] values;
-    private final Criteria[] children;
+    private final Criterion[] children;
 
-    public Criteria(String columnName, WhereFilter.Operation operation, String... values) {
+    public Criterion(String columnName, WhereFilter.Operation operation, String... values) {
         this.columnName = columnName;
         this.operation = operation;
         this.values = values;
-        this.children = new Criteria[0];
+        this.children = new Criterion[0];
     }
 
-    public Criteria(String columnName, WhereFilter.Operation operation, String[] values, Criteria... children) {
+    public Criterion(String columnName, WhereFilter.Operation operation, String[] values, Criterion... children) {
         this.columnName = columnName;
         this.operation = operation;
         this.values = values;
@@ -140,32 +148,29 @@ public class Criteria {
         throw new IllegalArgumentException();
     }
 
-    public String toStringExtra() {
-        JsonArray ret = new JsonArray();
-        if (this instanceof DateTimeCriteria) {
-            ret.add(new JsonPrimitive(DateTimeCriteria.TAG));
-        }
-        else {
-            ret.add(new JsonPrimitive(Criteria.TAG));
-        }
-        ret.add(new Gson().toJsonTree(this));
-        return ret.toString();
+    public JsonArray toJsonArray() {
+        return gson.toJsonTree(this).getAsJsonArray();
     }
 
-    public static Criteria fromStringExtra(String extra) {
+    public String toStringExtra() {
+        return toJsonArray().toString();
+    }
+
+    public static Criterion fromJsonArray(JsonArray array) {
+        return gson.fromJson(array, criterionType);
+    }
+
+    public static Criterion fromStringExtra(String extra) {
         Log.d(TAG, "fromStringExtra: " + extra);
-
-        JsonArray array = new JsonParser().parse(extra).getAsJsonArray();
-        String typeTag = array.get(0).getAsString();
-        if (typeTag.equals(DateTimeCriteria.TAG)) {
-            return new Gson().fromJson(array.get(1), DateTimeCriteria.class);
-        }
-
-        return new Gson().fromJson(array.get(1), Criteria.class);
+        return fromJsonArray(JsonParser.parseString(extra).getAsJsonArray());
     }
 
     public String[] getValues() {
         return values;
+    }
+
+    public Criterion[] getChildren() {
+        return children;
     }
 
     public String getStringValue() {
@@ -210,7 +215,7 @@ public class Criteria {
     public String[] getSelectionArgs() {
         if (children.length > 0) {
             LinkedList<String> args = new LinkedList<>();
-            for (Criteria c : children) {
+            for (Criterion c : children) {
                 args.addAll(Arrays.asList(c.getSelectionArgs()));
             }
             String[] ret = new String[args.size()];

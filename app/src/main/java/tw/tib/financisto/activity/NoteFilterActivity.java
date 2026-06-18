@@ -21,7 +21,7 @@ import android.widget.*;
 
 import tw.tib.financisto.R;
 import tw.tib.financisto.blotter.BlotterFilter;
-import tw.tib.financisto.filter.Criteria;
+import tw.tib.financisto.filter.Criterion;
 import tw.tib.financisto.filter.WhereFilter;
 
 public class NoteFilterActivity extends Activity {
@@ -75,7 +75,7 @@ public class NoteFilterActivity extends Activity {
             edNoteContaining.setText("");
         } else {
             WhereFilter filter = WhereFilter.fromIntent(intent);
-            Criteria c = filter.get(BlotterFilter.NOTE);
+            Criterion c = filter.get(BlotterFilter.NOTE);
             if (c != null) {
                 String v = c.getStringValue();
                 edNoteContaining.setText(v.substring(1, v.length() - 1).replace("%", " "));

@@ -15,7 +15,7 @@ import android.content.pm.PackageManager;
 import android.database.Cursor;
 
 import tw.tib.financisto.blotter.BlotterFilter;
-import tw.tib.financisto.filter.Criteria;
+import tw.tib.financisto.filter.Criterion;
 import tw.tib.financisto.filter.WhereFilter;
 import tw.tib.financisto.db.DatabaseAdapter;
 import tw.tib.financisto.export.Export;
@@ -140,7 +140,7 @@ public class QifExport extends Export {
 
     private Cursor getBlotterForAccount(Account account) {
         WhereFilter accountFilter = WhereFilter.copyOf(options.filter);
-        accountFilter.put(Criteria.eq(BlotterFilter.FROM_ACCOUNT_ID, String.valueOf(account.id)));
+        accountFilter.put(Criterion.eq(BlotterFilter.FROM_ACCOUNT_ID, String.valueOf(account.id)));
         return db.getBlotterForAccount(accountFilter);
     }
 

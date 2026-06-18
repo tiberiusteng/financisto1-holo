@@ -14,8 +14,8 @@ import android.content.Context;
 
 import tw.tib.financisto.activity.SplitsBlotterActivity;
 import tw.tib.financisto.blotter.BlotterFilter;
+import tw.tib.financisto.filter.Criterion;
 import tw.tib.financisto.filter.WhereFilter;
-import tw.tib.financisto.filter.Criteria;
 import tw.tib.financisto.db.DatabaseAdapter;
 import tw.tib.financisto.model.Category;
 import tw.tib.financisto.model.Currency;
@@ -37,9 +37,9 @@ public class CategoryReportAll extends Report {
 	}
 	
 	@Override
-	public Criteria getCriteriaForId(DatabaseAdapter db, long id) {
+	public Criterion getCriteriaForId(DatabaseAdapter db, long id) {
 		Category c = db.getCategory(id);
-		return Criteria.btw(BlotterFilter.CATEGORY_LEFT, String.valueOf(c.left), String.valueOf(c.right));
+		return Criterion.btw(BlotterFilter.CATEGORY_LEFT, String.valueOf(c.left), String.valueOf(c.right));
 	}
 
     @Override

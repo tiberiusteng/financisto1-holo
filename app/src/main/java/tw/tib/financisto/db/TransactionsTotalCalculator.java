@@ -16,7 +16,7 @@ import android.util.Log;
 import android.widget.Toast;
 
 import tw.tib.financisto.R;
-import tw.tib.financisto.filter.Criteria;
+import tw.tib.financisto.filter.Criterion;
 import tw.tib.financisto.filter.WhereFilter;
 import tw.tib.financisto.model.Currency;
 import tw.tib.financisto.model.Total;
@@ -110,7 +110,7 @@ public class TransactionsTotalCalculator {
 
     private WhereFilter selectedAccountOnly(WhereFilter filter, long accountId) {
         WhereFilter copy = DatabaseAdapter.enhanceFilterForAccountBlotter(filter);
-        copy.put(Criteria.eq("from_account_id", String.valueOf(accountId)));
+        copy.put(Criterion.eq("from_account_id", String.valueOf(accountId)));
         return copy;
     }
 

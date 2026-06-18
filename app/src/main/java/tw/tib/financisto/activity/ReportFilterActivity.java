@@ -18,8 +18,8 @@ import tw.tib.financisto.datetime.DateUtils;
 import tw.tib.financisto.datetime.Period;
 import tw.tib.financisto.blotter.BlotterFilter;
 import tw.tib.financisto.db.DatabaseHelper.ReportColumns;
-import tw.tib.financisto.filter.Criteria;
-import tw.tib.financisto.filter.DateTimeCriteria;
+import tw.tib.financisto.filter.Criterion;
+import tw.tib.financisto.filter.DateTimeCriterion;
 import tw.tib.financisto.filter.WhereFilter;
 import tw.tib.financisto.model.Account;
 import tw.tib.financisto.model.Currency;
@@ -130,7 +130,7 @@ public class ReportFilterActivity extends FilterAbstractActivity {
     }
 
     private void updatePeriodFromFilter() {
-        DateTimeCriteria c = (DateTimeCriteria)filter.get(BlotterFilter.DATETIME);
+        DateTimeCriterion c = (DateTimeCriterion)filter.get(BlotterFilter.DATETIME);
         if (c != null) {
             Period p = c.getPeriod();
             if (p.isCustom()) {
@@ -155,7 +155,7 @@ public class ReportFilterActivity extends FilterAbstractActivity {
     }
 
     private void updateStatusFromFilter() {
-        Criteria c = filter.get(BlotterFilter.STATUS);
+        Criterion c = filter.get(BlotterFilter.STATUS);
         if (c != null) {
             TransactionStatus s = TransactionStatus.valueOf(c.getStringValue());
             status.setText(getString(s.titleId));
@@ -167,7 +167,7 @@ public class ReportFilterActivity extends FilterAbstractActivity {
     }
 
     private void updateTransferFromFilter() {
-        Criteria c = filter.get(ReportColumns.IS_TRANSFER);
+        Criterion c = filter.get(ReportColumns.IS_TRANSFER);
         if (c != null) {
             transfer.setText(getString(R.string.filter_transfer_exclude));
             showMinusButton(transfer);
@@ -193,7 +193,7 @@ public class ReportFilterActivity extends FilterAbstractActivity {
                 Cursor cursor = db.getAllAccounts();
                 startManagingCursor(cursor);
                 ListAdapter adapter = TransactionUtils.createAccountAdapter(this, cursor);
-                Criteria c = filter.get(BlotterFilter.FROM_ACCOUNT_ID);
+                Criterion c = filter.get(BlotterFilter.FROM_ACCOUNT_ID);
                 long selectedId = c != null ? c.getLongValue1() : -1;
                 x.select(this, R.id.account, R.string.account, cursor, adapter, "_id", selectedId);
             } break;
@@ -204,7 +204,7 @@ public class ReportFilterActivity extends FilterAbstractActivity {
                 Cursor cursor = db.getAllCurrencies("name");
                 startManagingCursor(cursor);
                 ListAdapter adapter = TransactionUtils.createCurrencyAdapter(this, cursor);
-                Criteria c = filter.get(BlotterFilter.FROM_ACCOUNT_CURRENCY_ID);
+                Criterion c = filter.get(BlotterFilter.FROM_ACCOUNT_CURRENCY_ID);
                 long selectedId = c != null ? c.getLongValue1() : -1;
                 x.select(this, R.id.currency, R.string.currency, cursor, adapter, "_id", selectedId);
             } break;
@@ -213,13 +213,13 @@ public class ReportFilterActivity extends FilterAbstractActivity {
                 break;
             case R.id.status: {
                 ArrayAdapter<String> adapter = EnumUtils.createDropDownAdapter(this, statuses);
-                Criteria c = filter.get(BlotterFilter.STATUS);
+                Criterion c = filter.get(BlotterFilter.STATUS);
                 int selectedPos = c != null ? TransactionStatus.valueOf(c.getStringValue()).ordinal() : -1;
                 x.selectPosition(this, R.id.status, R.string.transaction_status, adapter, selectedPos);
             } break;
             case R.id.transfer: {
                 ArrayAdapter<String> adapter = EnumUtils.createDropDownAdapter(this, filterTransfer);
-                Criteria c = filter.get(ReportColumns.IS_TRANSFER);
+                Criterion c = filter.get(ReportColumns.IS_TRANSFER);
                 int selectedPos = c != null ? 1 : 0;
                 x.selectPosition(this, R.id.transfer, R.string.filter_transfer, adapter, selectedPos);
             } break;
@@ -237,11 +237,11 @@ public class ReportFilterActivity extends FilterAbstractActivity {
         super.onSelectedId(id, selectedId);
         switch (id) {
             case R.id.account:
-                filter.put(Criteria.eq(BlotterFilter.FROM_ACCOUNT_ID, String.valueOf(selectedId)));
+                filter.put(Criterion.eq(BlotterFilter.FROM_ACCOUNT_ID, String.valueOf(selectedId)));
                 updateAccountFromFilter();
                 break;
             case R.id.currency:
-                filter.put(Criteria.eq(BlotterFilter.FROM_ACCOUNT_CURRENCY_ID, String.valueOf(selectedId)));
+                filter.put(Criterion.eq(BlotterFilter.FROM_ACCOUNT_CURRENCY_ID, String.valueOf(selectedId)));
                 updateCurrencyFromFilter();
                 break;
         }
@@ -252,7 +252,7 @@ public class ReportFilterActivity extends FilterAbstractActivity {
         super.onSelectedPos(id, selectedPos);
         switch (id) {
             case R.id.status:
-                filter.put(Criteria.eq(BlotterFilter.STATUS, statuses[selectedPos].name()));
+                filter.put(Criterion.eq(BlotterFilter.STATUS, statuses[selectedPos].name()));
                 updateStatusFromFilter();
                 break;
             case R.id.transfer:
@@ -260,7 +260,7 @@ public class ReportFilterActivity extends FilterAbstractActivity {
                     filter.remove(ReportColumns.IS_TRANSFER);
                 }
                 else {
-                    filter.put(Criteria.eq(ReportColumns.IS_TRANSFER, "0"));
+                    filter.put(Criterion.eq(ReportColumns.IS_TRANSFER, "0"));
                 }
                 updateTransferFromFilter();
                 break;
@@ -274,7 +274,7 @@ public class ReportFilterActivity extends FilterAbstractActivity {
             if (resultCode == RESULT_FIRST_USER) {
                 onClick(period, R.id.period_clear);
             } else if (resultCode == RESULT_OK) {
-                DateTimeCriteria c = WhereFilter.dateTimeFromIntent(this, data);
+                DateTimeCriterion c = WhereFilter.dateTimeFromIntent(this, data);
                 filter.put(c);
                 updatePeriodFromFilter();
             }

@@ -14,7 +14,6 @@ import android.app.ListActivity;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
-import android.graphics.Color;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.text.format.DateUtils;
@@ -43,7 +42,7 @@ import tw.tib.financisto.R;
 import tw.tib.financisto.adapter.ReportAdapter;
 import tw.tib.financisto.db.DatabaseAdapter;
 import tw.tib.financisto.db.DatabaseHelper.ReportColumns;
-import tw.tib.financisto.filter.Criteria;
+import tw.tib.financisto.filter.Criterion;
 import tw.tib.financisto.filter.WhereFilter;
 import tw.tib.financisto.graph.GraphUnit;
 import tw.tib.financisto.model.Total;
@@ -219,7 +218,7 @@ public class ReportActivity extends ListActivity implements RefreshSupportedActi
             enableFilter();
             tv.setVisibility(View.GONE);
         } else {
-            Criteria c = filter.get(ReportColumns.DATETIME);
+            Criterion c = filter.get(ReportColumns.DATETIME);
             if (c != null) {
                 tv.setText(DateUtils.formatDateRange(this, c.getLongValue1(), c.getLongValue2(),
                         DateUtils.FORMAT_SHOW_DATE | DateUtils.FORMAT_SHOW_TIME | DateUtils.FORMAT_ABBREV_MONTH));

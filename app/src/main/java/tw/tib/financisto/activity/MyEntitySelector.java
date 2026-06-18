@@ -12,10 +12,15 @@ import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.Intent;
 import androidx.core.util.Pair;
+
+import android.os.Handler;
+import android.os.Looper;
 import android.text.InputType;
 import android.util.Log;
 import android.view.View;
 import android.widget.*;
+
+import tw.tib.financisto.Application;
 import tw.tib.financisto.R;
 import tw.tib.financisto.adapter.MyEntityAdapter;
 import tw.tib.financisto.db.DatabaseAdapter;
@@ -52,7 +57,9 @@ public abstract class MyEntitySelector<T extends MyEntity, A extends AbstractAct
     private AutoCompleteTextView autoCompleteFilter;
     private SimpleCursorAdapter filterAdapter;
     private List<T> entities = Collections.emptyList();
-    private ListAdapter adapter;
+    private ListAdapter adapter = null;
+    private boolean loaded = false;
+    private boolean pendingSelect = false;
     private boolean includeZero;
     private boolean multiSelect;
     private boolean useSearchAsPrimary;
@@ -118,10 +125,16 @@ public abstract class MyEntitySelector<T extends MyEntity, A extends AbstractAct
     }
 
     public void fetchEntities() {
-        entities = fetchEntities(em);
-        if (!multiSelect) {
-            adapter = createAdapter(activity, entities);
-        }
+        Application.getExecutor().execute(() -> {
+            entities = fetchEntities(em);
+            if (!multiSelect) {
+                adapter = createAdapter(activity, entities);
+            }
+            loaded = true;
+            if (pendingSelect) {
+                new Handler(Looper.getMainLooper()).post(this::pickEntity);
+            }
+        });
     }
 
     protected List<T> fetchEntities(MyEntityManager em) {
@@ -230,6 +243,10 @@ public abstract class MyEntitySelector<T extends MyEntity, A extends AbstractAct
     }
 
     private void pickEntity() {
+        if (!loaded) {
+            pendingSelect = true;
+            return;
+        }
         if (multiSelect) {
             x.selectMultiChoice(activity, layoutId, labelResId, entities);
         } else {

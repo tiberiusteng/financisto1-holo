@@ -13,7 +13,7 @@ import android.database.Cursor;
 
 import tw.tib.financisto.blotter.BlotterFilter;
 import tw.tib.financisto.db.DatabaseHelper;
-import tw.tib.financisto.filter.Criteria;
+import tw.tib.financisto.filter.Criterion;
 import tw.tib.financisto.filter.WhereFilter;
 import tw.tib.financisto.db.TransactionsTotalCalculator;
 import tw.tib.financisto.db.DatabaseAdapter;
@@ -43,8 +43,8 @@ public class FuturePlanner extends AbstractPlanner {
     protected List<TransactionInfo> getScheduledTransactions() {
         WhereFilter blotterFilter = WhereFilter.copyOf(filter);
         blotterFilter.remove(BlotterFilter.DATETIME);
-        blotterFilter.put(Criteria.eq("is_template", "2"));
-        blotterFilter.put(Criteria.eq("parent_id", "0"));
+        blotterFilter.put(Criterion.eq("is_template", "2"));
+        blotterFilter.put(Criterion.eq("parent_id", "0"));
 
         return asTransactionList(db.db().query(
                 DatabaseHelper.V_ALL_TRANSACTIONS,

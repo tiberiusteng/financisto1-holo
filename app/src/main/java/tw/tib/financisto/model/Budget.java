@@ -11,10 +11,9 @@
 package tw.tib.financisto.model;
 
 import tw.tib.financisto.blotter.BlotterFilter;
-import tw.tib.financisto.filter.Criteria;
+import tw.tib.financisto.filter.Criterion;
 import tw.tib.financisto.filter.WhereFilter;
 import tw.tib.financisto.utils.RecurUtils;
-import tw.tib.financisto.utils.Utils;
 
 import javax.persistence.*;
 
@@ -111,56 +110,56 @@ public class Budget {
 
 		// categories & projects
 		long[] ids = MyEntity.splitIds(b.categories);
-		LinkedList<Criteria> categoryCriterion = new LinkedList<>();
+		LinkedList<Criterion> categoryCriteria = new LinkedList<>();
 		if (ids != null) {
 			for (long id : ids) {
 				if (b.includeSubcategories) {
 					Category c = categories.get(id);
 					if (c != null) {
-						categoryCriterion.add(Criteria.btw(BlotterFilter.CATEGORY_LEFT, Integer.toString(c.left), Integer.toString(c.right)));
+						categoryCriteria.add(Criterion.btw(BlotterFilter.CATEGORY_LEFT, Integer.toString(c.left), Integer.toString(c.right)));
 					}
 				} else {
-					categoryCriterion.add(Criteria.eq(BlotterFilter.CATEGORY_ID, Long.toString(id)));
+					categoryCriteria.add(Criterion.eq(BlotterFilter.CATEGORY_ID, Long.toString(id)));
 				}
 			}
 		}
-		Criteria categoryCriteria = null;
-		if (!categoryCriterion.isEmpty()) {
-			categoryCriteria = Criteria.or(categoryCriterion.toArray(new Criteria[0]));
+		Criterion categoryCriterion = null;
+		if (!categoryCriteria.isEmpty()) {
+			categoryCriterion = Criterion.or(categoryCriteria.toArray(new Criterion[0]));
 		}
 
 		ids = MyEntity.splitIds(b.projects);
-		LinkedList<Criteria> projectCriterion = new LinkedList<>();
+		LinkedList<Criterion> projectCriteria = new LinkedList<>();
 		if (ids != null) {
 			for (long id : ids) {
-				projectCriterion.add(Criteria.eq(BlotterFilter.PROJECT_ID, Long.toString(id)));
+				projectCriteria.add(Criterion.eq(BlotterFilter.PROJECT_ID, Long.toString(id)));
 			}
 		}
-		Criteria projectCriteria = null;
-		if (!projectCriterion.isEmpty()) {
-			projectCriteria = Criteria.or(projectCriterion.toArray(new Criteria[0]));
+		Criterion projectCriterion = null;
+		if (!projectCriteria.isEmpty()) {
+			projectCriterion = Criterion.or(projectCriteria.toArray(new Criterion[0]));
 		}
 
-		if (categoryCriteria != null && projectCriteria != null) {
+		if (categoryCriterion != null && projectCriterion != null) {
 			if (b.expanded) {
-				filter.put(Criteria.or(categoryCriteria, projectCriteria));
+				filter.put(Criterion.or(categoryCriterion, projectCriterion));
 			}
 			else {
-				filter.put(Criteria.and(categoryCriteria, projectCriteria));
+				filter.put(Criterion.and(categoryCriterion, projectCriterion));
 			}
 		}
-		else if (categoryCriteria != null) {
-			filter.put(categoryCriteria);
+		else if (categoryCriterion != null) {
+			filter.put(categoryCriterion);
 		}
-		else if (projectCriteria != null) {
-			filter.put(projectCriteria);
+		else if (projectCriterion != null) {
+			filter.put(projectCriterion);
 		}
 
 		// start date, end date
 		if (b.startDate > 0 && b.endDate > 0) {
-			filter.put(Criteria.and(
-					Criteria.gte(BlotterFilter.DATETIME, Long.toString(b.startDate)),
-					Criteria.lte(BlotterFilter.DATETIME, Long.toString(b.endDate))
+			filter.put(Criterion.and(
+					Criterion.gte(BlotterFilter.DATETIME, Long.toString(b.startDate)),
+					Criterion.lte(BlotterFilter.DATETIME, Long.toString(b.endDate))
 			));
 		} else if (b.startDate > 0) {
 			filter.gte(BlotterFilter.DATETIME, Long.toString(b.startDate));

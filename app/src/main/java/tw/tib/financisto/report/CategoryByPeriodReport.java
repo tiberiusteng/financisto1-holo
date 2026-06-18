@@ -13,7 +13,7 @@ import tw.tib.financisto.db.DatabaseAdapter;
 import tw.tib.financisto.db.DatabaseHelper;
 import tw.tib.financisto.db.DatabaseHelper.CategoryColumns;
 import tw.tib.financisto.db.DatabaseHelper.TransactionColumns;
-import tw.tib.financisto.filter.Criteria;
+import tw.tib.financisto.filter.Criterion;
 import tw.tib.financisto.graph.Report2DChart;
 import tw.tib.financisto.graph.Report2DPoint;
 import tw.tib.financisto.model.Category;
@@ -124,14 +124,14 @@ public class CategoryByPeriodReport extends Report2DChart {
 	}
 
 	@Override
-	public Criteria getCriteria() {
+	public Criterion getCriteria() {
 		boolean addSubs = MyPreferences.addSubCategoriesToSum();
 		if (addSubs) {
 			long categoryId = filterIds.get(currentFilterOrder);
 			Category parent = em.getCategory(categoryId);
-			return Criteria.btw(BlotterFilter.CATEGORY_LEFT, String.valueOf(parent.left), String.valueOf(parent.right));
+			return Criterion.btw(BlotterFilter.CATEGORY_LEFT, String.valueOf(parent.left), String.valueOf(parent.right));
 		} else {
-			return Criteria.eq(columnFilter, filterIds.get(currentFilterOrder).toString());
+			return Criterion.eq(columnFilter, filterIds.get(currentFilterOrder).toString());
 		}
 	}
 

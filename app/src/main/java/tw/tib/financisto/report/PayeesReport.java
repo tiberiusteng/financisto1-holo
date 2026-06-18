@@ -14,7 +14,7 @@ import android.content.Context;
 
 import tw.tib.financisto.blotter.BlotterFilter;
 import tw.tib.financisto.filter.WhereFilter;
-import tw.tib.financisto.filter.Criteria;
+import tw.tib.financisto.filter.Criterion;
 import tw.tib.financisto.db.DatabaseAdapter;
 import tw.tib.financisto.model.Currency;
 
@@ -33,8 +33,8 @@ public class PayeesReport extends Report {
 	}
 
 	@Override
-	public Criteria getCriteriaForId(DatabaseAdapter db, long id) {
-		return Criteria.eq(BlotterFilter.PAYEE_ID, String.valueOf(id));
+	public Criterion getCriteriaForId(DatabaseAdapter db, long id) {
+		return Criterion.eq(BlotterFilter.PAYEE_ID, String.valueOf(id));
 	}		
 	
 }

@@ -7,7 +7,7 @@ import java.util.List;
 
 import tw.tib.financisto.R;
 import tw.tib.financisto.db.DatabaseAdapter;
-import tw.tib.financisto.filter.Criteria;
+import tw.tib.financisto.filter.Criterion;
 import tw.tib.financisto.model.Currency;
 import tw.tib.financisto.model.PeriodValue;
 import tw.tib.financisto.model.ReportDataByPeriod;
@@ -319,8 +319,8 @@ public abstract class Report2DChart {
 	/**
 	 * @return the criteria to get transactions matching current selected filter
 	 */
-	public Criteria getCriteria() {
-		return Criteria.eq(columnFilter, filterIds.get(currentFilterOrder).toString());
+	public Criterion getCriteria() {
+		return Criterion.eq(columnFilter, filterIds.get(currentFilterOrder).toString());
 	}
 	
 	/**

@@ -29,7 +29,7 @@ import tw.tib.financisto.db.DatabaseHelper;
 import tw.tib.financisto.db.DatabaseHelper.ReportColumns;
 import tw.tib.financisto.db.TransactionsTotalCalculator;
 import tw.tib.financisto.db.UnableToCalculateRateException;
-import tw.tib.financisto.filter.Criteria;
+import tw.tib.financisto.filter.Criterion;
 import tw.tib.financisto.filter.WhereFilter;
 import tw.tib.financisto.graph.Amount;
 import tw.tib.financisto.graph.GraphStyle;
@@ -153,7 +153,7 @@ public abstract class Report {
 
     public Intent createActivityIntent(Context context, DatabaseAdapter db, WhereFilter parentFilter, long id) {
         WhereFilter filter = WhereFilter.empty();
-        Criteria c = parentFilter.get(BlotterFilter.DATETIME);
+        Criterion c = parentFilter.get(BlotterFilter.DATETIME);
         if (c != null) {
             filter.put(c);
         }
@@ -183,7 +183,7 @@ public abstract class Report {
         return intent;
     }
 
-    protected abstract Criteria getCriteriaForId(DatabaseAdapter db, long id);
+    protected abstract Criterion getCriteriaForId(DatabaseAdapter db, long id);
 
     protected Class<? extends AppCompatActivity> getBlotterActivityClass() {
         return BlotterActivity.class;

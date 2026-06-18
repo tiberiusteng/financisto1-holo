@@ -12,7 +12,6 @@ package tw.tib.financisto.activity;
 
 import android.content.Context;
 import android.content.Intent;
-import android.database.Cursor;
 import android.os.Bundle;
 import android.text.TextUtils;
 import android.util.Log;
@@ -32,7 +31,7 @@ import androidx.core.view.WindowInsetsCompat;
 import tw.tib.financisto.R;
 import tw.tib.financisto.adapter.EntityListAdapter;
 import tw.tib.financisto.adapter.EntityListMultiChoiceAdapter;
-import tw.tib.financisto.filter.Criteria;
+import tw.tib.financisto.filter.Criterion;
 import tw.tib.financisto.model.MyEntity;
 import tw.tib.financisto.utils.MyPreferences;
 import tw.tib.financisto.widget.SearchFilterTextWatcherListener;
@@ -183,7 +182,7 @@ public abstract class MyEntityListActivity<T extends MyEntity> extends AbstractL
 	protected void viewItem(View v, int position, long id) {
 		T e = db.load(clazz, id);
 		Intent intent = new Intent(this, BlotterActivity.class);
-		Criteria blotterFilter = createBlotterCriteria(e);
+		Criterion blotterFilter = createBlotterCriteria(e);
 		blotterFilter.toIntent(e.title, intent);
 		startActivity(intent);
 	}
@@ -203,6 +202,6 @@ public abstract class MyEntityListActivity<T extends MyEntity> extends AbstractL
 
 	}
 
-	protected abstract Criteria createBlotterCriteria(T e);
+	protected abstract Criterion createBlotterCriteria(T e);
 
 }

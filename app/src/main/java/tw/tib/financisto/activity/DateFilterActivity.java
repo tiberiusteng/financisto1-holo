@@ -25,7 +25,7 @@ import tw.tib.financisto.datetime.DateUtils;
 import tw.tib.financisto.datetime.Period;
 import tw.tib.financisto.datetime.PeriodType;
 import tw.tib.financisto.blotter.BlotterFilter;
-import tw.tib.financisto.filter.DateTimeCriteria;
+import tw.tib.financisto.filter.DateTimeCriterion;
 import tw.tib.financisto.filter.WhereFilter;
 import tw.tib.financisto.utils.MyPreferences;
 
@@ -120,7 +120,7 @@ public class DateFilterActivity extends Activity {
 			reset();
 		} else {
 			WhereFilter filter = WhereFilter.fromIntent(intent);
-			DateTimeCriteria c = (DateTimeCriteria)filter.get(BlotterFilter.DATETIME);
+			DateTimeCriterion c = (DateTimeCriterion)filter.get(BlotterFilter.DATETIME);
 			if (c != null) {
 				if (c.getPeriod() == null || c.getPeriod().type == PeriodType.CUSTOM) {
 					selectPeriod(c.getLongValue1(), c.getLongValue2());					

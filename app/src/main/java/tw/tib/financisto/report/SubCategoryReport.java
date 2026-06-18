@@ -20,10 +20,9 @@ import tw.tib.financisto.db.DatabaseHelper;
 import tw.tib.financisto.db.TransactionsTotalCalculator;
 import tw.tib.financisto.db.UnableToCalculateRateException;
 import tw.tib.financisto.filter.WhereFilter;
-import tw.tib.financisto.filter.Criteria;
+import tw.tib.financisto.filter.Criterion;
 import tw.tib.financisto.graph.GraphStyle;
 import tw.tib.financisto.graph.GraphUnit;
-import tw.tib.financisto.model.*;
 import tw.tib.financisto.model.Category;
 import tw.tib.financisto.model.CategoryEntity;
 import tw.tib.financisto.model.CategoryTree;
@@ -141,9 +140,9 @@ public class SubCategoryReport extends Report {
     }
 
     @Override
-    public Criteria getCriteriaForId(DatabaseAdapter db, long id) {
+    public Criterion getCriteriaForId(DatabaseAdapter db, long id) {
         Category c = db.getCategoryWithParent(id);
-        return Criteria.btw(BlotterFilter.CATEGORY_LEFT, String.valueOf(c.left), String.valueOf(c.right));
+        return Criterion.btw(BlotterFilter.CATEGORY_LEFT, String.valueOf(c.left), String.valueOf(c.right));
     }
 
     @Override

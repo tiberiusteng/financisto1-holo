@@ -3,6 +3,7 @@ package tw.tib.financisto.activity;
 import static android.app.Activity.RESULT_OK;
 
 import android.annotation.SuppressLint;
+import android.content.Context;
 import android.content.Intent;
 //import android.content.res.Resources;
 import android.database.Cursor;
@@ -29,6 +30,7 @@ import androidx.recyclerview.widget.RecyclerView;
 import java.util.LinkedList;
 import java.util.List;
 
+import tw.tib.financisto.Application;
 import tw.tib.financisto.R;
 import tw.tib.financisto.db.DatabaseAdapter;
 import tw.tib.financisto.utils.MenuItemInfo;
@@ -78,7 +80,7 @@ abstract public class AbstractRecyclerViewFragment<VH extends RecyclerView.ViewH
 
     protected abstract Cursor createCursor();
 
-    protected abstract RecyclerView.Adapter<VH> createAdapter(Cursor cursor);
+    protected abstract RecyclerView.Adapter<VH> createAdapter(Context context, Cursor cursor);
 
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
@@ -203,7 +205,7 @@ abstract public class AbstractRecyclerViewFragment<VH extends RecyclerView.ViewH
     @SuppressLint("StaticFieldLeak")
     @Override
     public Loader<Cursor> onCreateLoader(int id, @Nullable Bundle args) {
-        return new CursorLoader(getContext()) {
+        return new CursorLoader(Application.getInstance()) {
             @Override
             public Cursor loadInBackground() {
                 return createCursor();
@@ -213,7 +215,9 @@ abstract public class AbstractRecyclerViewFragment<VH extends RecyclerView.ViewH
 
     @Override
     public void onLoadFinished(@NonNull Loader<Cursor> loader, Cursor data) {
-        adapter = createAdapter(data);
+        Context context = getContext();
+        if (context == null) return;
+        adapter = createAdapter(context, data);
         long t1 = System.nanoTime();
         var scrollState = recyclerView.getLayoutManager().onSaveInstanceState();
         recyclerView.setAdapter(adapter);

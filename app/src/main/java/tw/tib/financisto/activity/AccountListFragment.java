@@ -43,7 +43,7 @@ import tw.tib.financisto.blotter.TotalCalculationTask;
 import tw.tib.financisto.bus.SwitchToMenuTabEvent;
 import tw.tib.financisto.db.DatabaseAdapter;
 import tw.tib.financisto.dialog.AccountInfoDialog;
-import tw.tib.financisto.filter.Criteria;
+import tw.tib.financisto.filter.Criterion;
 import tw.tib.financisto.bus.GreenRobotBus_;
 import tw.tib.financisto.model.Account;
 import tw.tib.financisto.model.Total;
@@ -432,7 +432,7 @@ public class AccountListFragment extends AbstractListFragment<Cursor> {
         Account account = db.getAccount(id);
         if (account != null) {
             Intent intent = new Intent(getContext(), BlotterActivity.class);
-            Criteria.eq(BlotterFilter.FROM_ACCOUNT_ID, String.valueOf(id))
+            Criterion.eq(BlotterFilter.FROM_ACCOUNT_ID, String.valueOf(id))
                     .toIntent(account.title, intent);
             intent.putExtra(BlotterFilterActivity.IS_ACCOUNT_FILTER, true);
             startActivityForResult(intent, VIEW_ACCOUNT_REQUEST);

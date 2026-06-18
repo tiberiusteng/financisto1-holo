@@ -23,7 +23,7 @@ import org.androidannotations.annotations.EBean;
 import tw.tib.financisto.R;
 import tw.tib.financisto.blotter.BlotterFilter;
 import tw.tib.financisto.datetime.DateUtils;
-import tw.tib.financisto.filter.Criteria;
+import tw.tib.financisto.filter.Criterion;
 import tw.tib.financisto.filter.WhereFilter;
 import tw.tib.financisto.model.Currency;
 import tw.tib.financisto.utils.ArrUtils;
@@ -145,7 +145,7 @@ public class DatabaseAdapter extends MyEntityManager {
 
     public static WhereFilter enhanceFilterForAccountBlotter(WhereFilter filter) {
         WhereFilter accountFilter = WhereFilter.copyOf(filter);
-        accountFilter.put(Criteria.raw(DatabaseHelper.BlotterColumns.parent_id + "=0 OR " + DatabaseHelper.BlotterColumns.is_transfer + "=-1"));
+        accountFilter.put(Criterion.raw(DatabaseHelper.BlotterColumns.parent_id + "=0 OR " + DatabaseHelper.BlotterColumns.is_transfer + "=-1"));
         return accountFilter;
     }
 
@@ -1568,7 +1568,7 @@ public class DatabaseAdapter extends MyEntityManager {
             String accountId = String.valueOf(account.getId());
             db.execSQL("delete from running_balance where account_id=?", new Object[]{accountId});
             WhereFilter filter = new WhereFilter("");
-            filter.put(Criteria.eq(BlotterFilter.FROM_ACCOUNT_ID, accountId));
+            filter.put(Criterion.eq(BlotterFilter.FROM_ACCOUNT_ID, accountId));
             filter.asc("datetime");
             filter.asc("_id");
             Object[] values = new Object[4];

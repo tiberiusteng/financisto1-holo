@@ -28,6 +28,7 @@ import android.app.DatePickerDialog;
 import android.app.TimePickerDialog;
 
 import greendroid.widget.QuickActionWidget;
+import tw.tib.financisto.Application;
 import tw.tib.financisto.R;
 import tw.tib.financisto.datetime.DateUtils;
 import tw.tib.financisto.db.DatabaseHelper.AccountColumns;
@@ -56,7 +57,6 @@ import java.text.DateFormat;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
-import java.util.concurrent.Executors;
 
 import static tw.tib.financisto.activity.RequestPermission.isRequestingPermission;
 import static tw.tib.financisto.model.Category.NO_CATEGORY_ID;
@@ -371,12 +371,10 @@ public abstract class AbstractTransactionActivity extends AbstractActivity imple
 						// photo picker.
 						if (uri != null) {
 							Log.d("PhotoPicker", "Selected URI: " + uri);
-							var executor = Executors.newSingleThreadExecutor();
-							var handler = new Handler(Looper.getMainLooper());
-							executor.execute(() -> {
+							Application.getExecutor().execute(() -> {
 								String fileName = PicturesUtil.saveSelectedPicture(this, uri);
 								if (fileName != null) {
-									handler.post(() -> selectPicture(fileName));
+									new Handler(Looper.getMainLooper()).post(() -> selectPicture(fileName));
 								}
 							});
 						} else {

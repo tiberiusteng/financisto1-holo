@@ -35,8 +35,8 @@ import java.util.List;
 import tw.tib.financisto.R;
 import tw.tib.financisto.db.DatabaseAdapter;
 import tw.tib.financisto.db.DatabaseHelper;
-import tw.tib.financisto.filter.Criteria;
-import tw.tib.financisto.filter.DateTimeCriteria;
+import tw.tib.financisto.filter.Criterion;
+import tw.tib.financisto.filter.DateTimeCriterion;
 import tw.tib.financisto.filter.WhereFilter;
 import tw.tib.financisto.graph.Report2DChart;
 import tw.tib.financisto.graph.Report2DPoint;
@@ -269,9 +269,9 @@ public class Report2DChartActivity extends Activity implements OnChartValueSelec
                 }
             }
             end.add(Calendar.DAY_OF_MONTH, -1);
-            filter.put(new DateTimeCriteria(timeframe.getTimeInMillis(),
+            filter.put(new DateTimeCriterion(timeframe.getTimeInMillis(),
                     tw.tib.financisto.datetime.DateUtils.endOfDay(end).getTimeInMillis()));
-            filter.put(Criteria.eq(DatabaseHelper.ReportColumns.IS_TRANSFER, "0"));
+            filter.put(Criterion.eq(DatabaseHelper.ReportColumns.IS_TRANSFER, "0"));
             Intent intent = new Intent(this, BlotterActivity.class);
             filter.toIntent(intent);
             startActivity(intent);

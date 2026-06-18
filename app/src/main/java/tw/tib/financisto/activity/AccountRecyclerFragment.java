@@ -28,7 +28,6 @@ import androidx.annotation.Nullable;
 import androidx.core.graphics.Insets;
 import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
-import androidx.recyclerview.widget.ItemTouchHelper;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -38,14 +37,13 @@ import greendroid.widget.QuickActionGrid;
 import greendroid.widget.QuickActionWidget;
 import tw.tib.financisto.R;
 import tw.tib.financisto.adapter.AccountRecyclerAdapter;
-import tw.tib.financisto.adapter.dragndrop.SimpleItemTouchHelperCallback;
 import tw.tib.financisto.blotter.BlotterFilter;
 import tw.tib.financisto.blotter.TotalCalculationTask;
 import tw.tib.financisto.bus.GreenRobotBus_;
 import tw.tib.financisto.bus.SwitchToMenuTabEvent;
 import tw.tib.financisto.db.DatabaseAdapter;
 import tw.tib.financisto.dialog.AccountInfoDialog;
-import tw.tib.financisto.filter.Criteria;
+import tw.tib.financisto.filter.Criterion;
 import tw.tib.financisto.model.Account;
 import tw.tib.financisto.model.Total;
 import tw.tib.financisto.utils.IntegrityCheckAutobackup;
@@ -470,7 +468,7 @@ public class AccountRecyclerFragment extends AbstractRecyclerViewFragment
         Account account = db.getAccount(id);
         if (account != null) {
             Intent intent = new Intent(getContext(), BlotterActivity.class);
-            Criteria.eq(BlotterFilter.FROM_ACCOUNT_ID, String.valueOf(id))
+            Criterion.eq(BlotterFilter.FROM_ACCOUNT_ID, String.valueOf(id))
                     .toIntent(account.title, intent);
             intent.putExtra(BlotterFilterActivity.IS_ACCOUNT_FILTER, true);
             startActivityForResult(intent, VIEW_ACCOUNT_REQUEST);

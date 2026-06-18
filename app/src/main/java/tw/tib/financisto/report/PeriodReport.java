@@ -15,9 +15,9 @@ import android.database.Cursor;
 
 import tw.tib.financisto.datetime.Period;
 import tw.tib.financisto.datetime.PeriodType;
+import tw.tib.financisto.filter.Criterion;
 import tw.tib.financisto.filter.WhereFilter;
-import tw.tib.financisto.filter.Criteria;
-import tw.tib.financisto.filter.DateTimeCriteria;
+import tw.tib.financisto.filter.DateTimeCriterion;
 import tw.tib.financisto.db.DatabaseAdapter;
 import tw.tib.financisto.db.DatabaseHelper.ReportColumns;
 import tw.tib.financisto.graph.GraphUnit;
@@ -64,7 +64,7 @@ public class PeriodReport extends Report {
 		ArrayList<GraphUnit> units = new ArrayList<GraphUnit>();
         for (Period p : periods) {
             currentPeriod = p;
-            newFilter.put(Criteria.btw(ReportColumns.DATETIME, String.valueOf(p.start), String.valueOf(p.end)));
+            newFilter.put(Criterion.btw(ReportColumns.DATETIME, String.valueOf(p.start), String.valueOf(p.end)));
             Cursor c = db.db().query(V_REPORT_PERIOD, ReportColumns.NORMAL_PROJECTION,
                     newFilter.getSelection(), newFilter.getSelectionArgs(), null, null, null);
             ArrayList<GraphUnit> u = getUnitsFromCursor(db, c);
@@ -87,10 +87,10 @@ public class PeriodReport extends Report {
     }
 
     @Override
-	public Criteria getCriteriaForId(DatabaseAdapter db, long id) {
+	public Criterion getCriteriaForId(DatabaseAdapter db, long id) {
         for (Period period : periods) {
             if (period.type.ordinal() == id) {
-                return new DateTimeCriteria(period);
+                return new DateTimeCriterion(period);
             }
         }
 		return null;

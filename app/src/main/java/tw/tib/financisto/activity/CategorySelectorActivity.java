@@ -16,6 +16,7 @@ import androidx.core.graphics.Insets;
 import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
 
+import tw.tib.financisto.Application;
 import tw.tib.financisto.R;
 import tw.tib.financisto.adapter.BlotterListAdapter;
 import tw.tib.financisto.model.Account;
@@ -27,11 +28,8 @@ import tw.tib.financisto.utils.MyPreferences;
 
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.concurrent.Executors;
-import java.util.concurrent.TimeUnit;
 
 public class CategorySelectorActivity extends AbstractListActivity<Cursor> {
 
@@ -110,8 +108,7 @@ public class CategorySelectorActivity extends AbstractListActivity<Cursor> {
         Intent intent = getIntent();
 
         if (isShowRecentlyUsedCategory) {
-            var executor = Executors.newSingleThreadExecutor();
-            executor.execute(() -> {
+            Application.getExecutor().execute(() -> {
                 var suggestedCategories = loadSuggestedCategories(intent);
                 runOnUiThread(() -> fillSuggestedCategories(suggestedCategories));
             });

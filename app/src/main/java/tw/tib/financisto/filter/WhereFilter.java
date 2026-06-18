@@ -32,7 +32,16 @@ import tw.tib.orb.Expressions;
 
 import static tw.tib.orb.EntityManager.DEF_SORT_COL;
 
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
+import com.google.gson.JsonParser;
+
 public class WhereFilter {
+	private static Gson gson = new GsonBuilder()
+			.registerTypeAdapter(Criterion.class, new CriterionAdapter())
+			.registerTypeAdapter(DateTimeCriterion.class, new DateTimeCriterionAdapter())
+			.create();
+
 	private static final String TAG = "WhereFilter";
 
 	public static final String TITLE_EXTRA = "title";
@@ -47,55 +56,55 @@ public class WhereFilter {
 	public static final String TAG_AS_IS = "__tag_as_is"; // signal Total Details activity to not filter excluded transactions
 
 	private final String title;
-	private final LinkedList<Criteria> criterias = new LinkedList<>();
+	private final LinkedList<Criterion> criteria = new LinkedList<>();
 	private final LinkedList<String> sorts = new LinkedList<>();
 
 	public WhereFilter(String title) {
 		this.title = title;
 	}
 
-	public synchronized WhereFilter eq(Criteria c) {
-		criterias.add(c);
+	public synchronized WhereFilter eq(Criterion c) {
+		criteria.add(c);
 		return this;
 	}
 
 	public synchronized WhereFilter eq(String column, String value) {
-		criterias.add(Criteria.eq(column, value));
+		criteria.add(Criterion.eq(column, value));
 		return this;
 	}
 
 	public synchronized WhereFilter neq(String column, String value) {
-		criterias.add(Criteria.neq(column, value));
+		criteria.add(Criterion.neq(column, value));
 		return this;
 	}
 
 	public synchronized WhereFilter btw(String column, String value1, String value2) {
-		criterias.add(Criteria.btw(column, value1, value2));
+		criteria.add(Criterion.btw(column, value1, value2));
 		return this;
 	}
 
 	public synchronized WhereFilter gt(String column, String value) {
-		criterias.add(Criteria.gt(column, value));
+		criteria.add(Criterion.gt(column, value));
 		return this;
 	}
 
 	public synchronized WhereFilter gte(String column, String value) {
-		criterias.add(Criteria.gte(column, value));
+		criteria.add(Criterion.gte(column, value));
 		return this;
 	}
 
 	public synchronized WhereFilter lt(String column, String value) {
-		criterias.add(Criteria.lt(column, value));
+		criteria.add(Criterion.lt(column, value));
 		return this;
 	}
 
 	public synchronized WhereFilter lte(String column, String value) {
-		criterias.add(Criteria.lte(column, value));
+		criteria.add(Criterion.lte(column, value));
 		return this;
 	}
 
 	public synchronized WhereFilter isNull(String column) {
-		criterias.add(Criteria.isNull(column));
+		criteria.add(Criterion.isNull(column));
 		return this;
 	}
 
@@ -110,14 +119,14 @@ public class WhereFilter {
 	}
 
 	public synchronized WhereFilter contains(String column, String text){
-		criterias.add(Criteria.like(column, String.format("%%%s%%", text)));
+		criteria.add(Criterion.like(column, String.format("%%%s%%", text)));
 		return this;
 	}
 
-	private String getSelection(List<Criteria> criterias) {
+	private String getSelection(List<Criterion> criteria) {
 		StringBuilder sb = new StringBuilder();
 		Log.d(TAG, "getSelection:");
-		for (Criteria c : criterias) {
+		for (Criterion c : criteria) {
 			Log.d(TAG, " " + c.toStringExtra());
 			Log.d(TAG, "     " + String.join(", ", c.getSelection()));
 			if (sb.length() > 0) {
@@ -128,10 +137,10 @@ public class WhereFilter {
 		return sb.toString().trim();
 	}
 
-	private String[] getSelectionArgs(List<Criteria> criterias) {
+	private String[] getSelectionArgs(List<Criterion> criteria) {
 		String[] args = new String[0];
 		Log.d(TAG, "getSelectionArgs:");
-		for (Criteria c : criterias) {
+		for (Criterion c : criteria) {
 			Log.d(TAG, " " + c.toStringExtra());
 			Log.d(TAG, "     " + String.join(", ", c.getSelectionArgs()));
 			args = ArrUtils.joinArrays(args, c.getSelectionArgs());
@@ -139,8 +148,8 @@ public class WhereFilter {
 		return args;
 	}
 
-	public synchronized Criteria get(String name) {
-		for (Criteria c : criterias) {
+	public synchronized Criterion get(String name) {
+		for (Criterion c : criteria) {
 			String column = c.columnName;
 			if (name.equals(column)) {
 				return c;
@@ -149,25 +158,25 @@ public class WhereFilter {
 		return null;
 	}
 
-	public DateTimeCriteria getDateTime() {
-		return (DateTimeCriteria)get(BlotterFilter.DATETIME);
+	public DateTimeCriterion getDateTime() {
+		return (DateTimeCriterion)get(BlotterFilter.DATETIME);
 	}
 
-	public synchronized Criteria put(Criteria criteria) {
-		for (int i=0; i<criterias.size(); i++) {
-			Criteria c = criterias.get(i);
-			if (criteria.columnName.equals(c.columnName)) {
-				criterias.set(i, criteria);
+	public synchronized Criterion put(Criterion criterion) {
+		for (int i = 0; i< this.criteria.size(); i++) {
+			Criterion c = this.criteria.get(i);
+			if (criterion.columnName.equals(c.columnName)) {
+				this.criteria.set(i, criterion);
 				return c;
 			}
 		}
-		criterias.add(criteria);
+		this.criteria.add(criterion);
 		return null;
 	}
 
-	public synchronized Criteria remove(String name) {
-		for (Iterator<Criteria> i = criterias.iterator(); i.hasNext();) {
-			Criteria c = i.next();
+	public synchronized Criterion remove(String name) {
+		for (Iterator<Criterion> i = criteria.iterator(); i.hasNext();) {
+			Criterion c = i.next();
 			if (name.equals(c.columnName)) {
 				i.remove();
 				return c;
@@ -177,14 +186,14 @@ public class WhereFilter {
 	}
 
 	public synchronized void clear() {
-		criterias.clear();
+		criteria.clear();
 		sorts.clear();
 	}
 
 	public static WhereFilter copyOf(WhereFilter filter) {
 		synchronized (filter) {
 			WhereFilter f = new WhereFilter(filter.title);
-			f.criterias.addAll(filter.criterias);
+			f.criteria.addAll(filter.criteria);
 			f.sorts.addAll(filter.sorts);
 			return f;
 		}
@@ -195,18 +204,18 @@ public class WhereFilter {
 	}
 
 	public synchronized Expression toWhereExpression() {
-		int count = criterias.size();
+		int count = criteria.size();
 		Expression[] ee = new Expression[count];
 		for (int i=0; i<count; i++) {
-			ee[i] = criterias.get(i).toWhereExpression();
+			ee[i] = criteria.get(i).toWhereExpression();
 		}
 		return Expressions.and(ee);
 	}
 
 	public synchronized void toBundle(Bundle bundle) {
-		String[] extras = new String[criterias.size()];
+		String[] extras = new String[criteria.size()];
 		for (int i=0; i<extras.length; i++) {
-			extras[i] = criterias.get(i).toStringExtra();
+			extras[i] = criteria.get(i).toStringExtra();
 			Log.d(TAG, "extras " + i + ": " + extras[i]);
 		}
 		bundle.putString(TITLE_EXTRA, title);
@@ -222,7 +231,7 @@ public class WhereFilter {
 				String[] a = bundle.getStringArray(FILTER_EXTRA);
 				if (a != null) {
 					for (String s : a) {
-						filter.put(Criteria.fromStringExtra(s));
+						filter.put(Criterion.fromStringExtra(s));
 					}
 				}
 				String sortOrder = bundle.getString(SORT_ORDER_EXTRA);
@@ -270,11 +279,11 @@ public class WhereFilter {
 
 	public synchronized void toSharedPreferences(SharedPreferences preferences) {
 		Editor e = preferences.edit();
-		int count = criterias.size();
+		int count = criteria.size();
 		e.putString(FILTER_TITLE_PREF, title);
 		e.putInt(FILTER_LENGTH_PREF, count);
 		for (int i=0; i<count; i++) {
-			e.putString(FILTER_CRITERIA_PREF+i, criterias.get(i).toStringExtra());
+			e.putString(FILTER_CRITERIA_PREF+i, criteria.get(i).toStringExtra());
 		}
 		e.putString(FILTER_SORT_ORDER_PREF, getSortOrder());
 		e.commit();
@@ -290,7 +299,7 @@ public class WhereFilter {
 					for (int i = 0; i < count; i++) {
 						String criteria = preferences.getString(FILTER_CRITERIA_PREF + i, "");
 						if (criteria.length() > 0) {
-							filter.put(Criteria.fromStringExtra(criteria));
+							filter.put(Criterion.fromStringExtra(criteria));
 						}
 					}
 				}
@@ -307,40 +316,48 @@ public class WhereFilter {
 		return filter;
 	}
 
+	public synchronized String toJsonString() {
+		return gson.toJsonTree(this).toString();
+	}
+
+	public static WhereFilter fromJsonString(String json) {
+		return gson.fromJson(JsonParser.parseString(json), WhereFilter.class);
+	}
+
 	public synchronized String getSelection() {
-		String ret = getSelection(criterias);
+		String ret = getSelection(criteria);
 		Log.d("WhereFilter", "getSelection=" + ret);
 		return ret;
 	}
 
 	public synchronized String[] getSelectionArgs() {
-		String[] ret = getSelectionArgs(criterias);
+		String[] ret = getSelectionArgs(criteria);
 		Log.d("WhereFilter", "getSelectionArgs=" + String.join(",", ret));
 		return ret;
 	}
 
 	public long getAccountId() {
-		Criteria c = get(BlotterFilter.FROM_ACCOUNT_ID);
+		Criterion c = get(BlotterFilter.FROM_ACCOUNT_ID);
 		return c != null ? c.getLongValue1() : -1;
 	}
 
 	public long getBudgetId() {
-		Criteria c = get(BlotterFilter.BUDGET_ID);
+		Criterion c = get(BlotterFilter.BUDGET_ID);
 		return c != null ? c.getLongValue1() : -1;
 	}
 
 	public int getIsTemplate() {
-		Criteria c = get(BlotterFilter.IS_TEMPLATE);
+		Criterion c = get(BlotterFilter.IS_TEMPLATE);
 		return c != null ? c.getIntValue() : 0;
 	}
 
 	public boolean isTemplate() {
-		Criteria c = get(BlotterFilter.IS_TEMPLATE);
+		Criterion c = get(BlotterFilter.IS_TEMPLATE);
 		return c != null && c.getLongValue1() == 1;
 	}
 
 	public boolean isSchedule() {
-		Criteria c = get(BlotterFilter.IS_TEMPLATE);
+		Criterion c = get(BlotterFilter.IS_TEMPLATE);
 		return c != null && c.getLongValue1() == 2;
 	}
 
@@ -349,7 +366,7 @@ public class WhereFilter {
 	}
 
 	public synchronized boolean isEmpty() {
-		return criterias.isEmpty();
+		return criteria.isEmpty();
 	}
 
 	public enum Operation {
@@ -394,24 +411,24 @@ public class WhereFilter {
 	}
 
 	public void recalculatePeriod(Context context) {
-		DateTimeCriteria c = getDateTime();
+		DateTimeCriterion c = getDateTime();
 		if (c != null) {
 			PeriodType t = c.getPeriod().type;
 			if (t != PeriodType.CUSTOM) {
-				put(new DateTimeCriteria(context, t));
+				put(new DateTimeCriterion(context, t));
 			}
 		}
 	}
 
-	public static DateTimeCriteria dateTimeFromIntent(Context context, Intent data) {
+	public static DateTimeCriterion dateTimeFromIntent(Context context, Intent data) {
 		String periodType = data.getStringExtra(DateFilterActivity.EXTRA_FILTER_PERIOD_TYPE);
 		PeriodType p = PeriodType.valueOf(periodType);
 		if (PeriodType.CUSTOM == p) {
 			long periodFrom = data.getLongExtra(DateFilterActivity.EXTRA_FILTER_PERIOD_FROM, 0);
 			long periodTo = data.getLongExtra(DateFilterActivity.EXTRA_FILTER_PERIOD_TO, 0);
-			return new DateTimeCriteria(periodFrom, periodTo);
+			return new DateTimeCriterion(periodFrom, periodTo);
 		} else {
-			return new DateTimeCriteria(context, p);
+			return new DateTimeCriterion(context, p);
 		}
 
 	}

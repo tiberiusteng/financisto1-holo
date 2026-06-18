@@ -10,8 +10,6 @@ package tw.tib.financisto.activity;
 
 import android.content.Intent;
 import android.content.SharedPreferences;
-import android.database.Cursor;
-import android.os.AsyncTask;
 import android.os.Bundle;
 import android.text.format.DateUtils;
 import android.view.View;
@@ -29,9 +27,9 @@ import tw.tib.financisto.datetime.Period;
 import tw.tib.financisto.datetime.PeriodType;
 import tw.tib.financisto.adapter.ScheduledListAdapter;
 import tw.tib.financisto.db.DatabaseHelper;
-import tw.tib.financisto.filter.Criteria;
+import tw.tib.financisto.filter.Criterion;
+import tw.tib.financisto.filter.DateTimeCriterion;
 import tw.tib.financisto.filter.WhereFilter;
-import tw.tib.financisto.filter.DateTimeCriteria;
 import tw.tib.financisto.model.Total;
 import tw.tib.financisto.utils.FuturePlanner;
 import tw.tib.financisto.utils.TransactionList;
@@ -96,17 +94,17 @@ public class PlannerActivity extends AbstractListActivity<TransactionList> {
         }
     }
 
-    private void applyDateTimeCriteria(DateTimeCriteria criteria) {
+    private void applyDateTimeCriteria(DateTimeCriterion criteria) {
         if (criteria == null) {
             Calendar date = Calendar.getInstance();
             date.add(Calendar.MONTH, 1);
-            criteria = new DateTimeCriteria(this, PeriodType.THIS_MONTH);
+            criteria = new DateTimeCriterion(this, PeriodType.THIS_MONTH);
         }
         long now = System.currentTimeMillis();
         if (now > criteria.getLongValue1()) {
             Period period = criteria.getPeriod();
             period.start = now;
-            criteria = new DateTimeCriteria(period);
+            criteria = new DateTimeCriterion(period);
         }
         filter.put(criteria);
     }
@@ -155,7 +153,7 @@ public class PlannerActivity extends AbstractListActivity<TransactionList> {
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         if (resultCode == RESULT_OK) {
             filter = WhereFilter.fromIntent(data);
-            DateTimeCriteria c = filter.getDateTime();
+            DateTimeCriterion c = filter.getDateTime();
             applyDateTimeCriteria(c);
             saveFilter();
             recreateCursor();
@@ -163,7 +161,7 @@ public class PlannerActivity extends AbstractListActivity<TransactionList> {
     }
 
     private void updateFilterText(WhereFilter filter) {
-        Criteria c = filter.get(DatabaseHelper.ReportColumns.DATETIME);
+        Criterion c = filter.get(DatabaseHelper.ReportColumns.DATETIME);
         if (c != null) {
             filterText.setText(DateUtils.formatDateRange(this, c.getLongValue1(), c.getLongValue2(),
                     DateUtils.FORMAT_SHOW_DATE | DateUtils.FORMAT_SHOW_TIME | DateUtils.FORMAT_ABBREV_MONTH));

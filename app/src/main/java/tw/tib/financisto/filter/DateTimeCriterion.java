@@ -15,28 +15,26 @@ import tw.tib.financisto.datetime.DateUtils;
 import tw.tib.financisto.datetime.Period;
 import tw.tib.financisto.datetime.PeriodType;
 
-import java.util.Calendar;
-
 /**
 * Created by IntelliJ IDEA.
 * User: denis.solonenko
 * Date: 12/17/12 9:06 PM
 */
-public class DateTimeCriteria extends Criteria {
-    public static final String TAG = "DateTimeCriteria";
+public class DateTimeCriterion extends Criterion {
+    public static final String TAG = "DateTimeCriterion";
 
     private final Period period;
 
-    public DateTimeCriteria(Period period) {
+    public DateTimeCriterion(Period period) {
         super(BlotterFilter.DATETIME, WhereFilter.Operation.BTW, String.valueOf(period.start), String.valueOf(period.end));
         this.period = period;
     }
 
-    public DateTimeCriteria(Context context, PeriodType period) {
+    public DateTimeCriterion(Context context, PeriodType period) {
         this(DateUtils.getPeriod(context, period));
     }
 
-    public DateTimeCriteria(long start, long end) {
+    public DateTimeCriterion(long start, long end) {
         this(new Period(PeriodType.CUSTOM, start, end));
     }
 

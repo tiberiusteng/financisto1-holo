@@ -20,14 +20,13 @@ import tw.tib.financisto.R;
 import tw.tib.financisto.datetime.DateUtils;
 import tw.tib.financisto.datetime.Period;
 import tw.tib.financisto.blotter.BlotterFilter;
-import tw.tib.financisto.filter.Criteria;
-import tw.tib.financisto.filter.DateTimeCriteria;
+import tw.tib.financisto.filter.Criterion;
+import tw.tib.financisto.filter.DateTimeCriterion;
 import tw.tib.financisto.filter.WhereFilter;
 import tw.tib.financisto.model.Account;
 import tw.tib.financisto.model.Currency;
 import tw.tib.financisto.model.MultiChoiceItem;
 import tw.tib.financisto.model.TransactionStatus;
-import tw.tib.financisto.utils.EnumUtils;
 import tw.tib.financisto.utils.TransactionUtils;
 
 import java.text.DateFormat;
@@ -110,7 +109,7 @@ public class BlotterFilterActivity extends FilterAbstractActivity {
 		bNoFilter.setOnClickListener(v -> {
 			if (isAccountFilter()) {
 				Intent data = new Intent();
-				Criteria.eq(FROM_ACCOUNT_ID, String.valueOf(accountId)).toIntent(filter.getTitle(), data);
+				Criterion.eq(FROM_ACCOUNT_ID, String.valueOf(accountId)).toIntent(filter.getTitle(), data);
 				setResult(RESULT_OK, data);
 				finish();
 			} else {
@@ -162,7 +161,7 @@ public class BlotterFilterActivity extends FilterAbstractActivity {
 	}
 
 	private void updatePeriodFromFilter() {
-		DateTimeCriteria c = (DateTimeCriteria)filter.get(BlotterFilter.DATETIME);
+		DateTimeCriterion c = (DateTimeCriterion)filter.get(BlotterFilter.DATETIME);
 		if (c != null) {
 			Period p = c.getPeriod();
 			if (p.isCustom()) {
@@ -191,7 +190,7 @@ public class BlotterFilterActivity extends FilterAbstractActivity {
 	}
 
 	private void updateNoteFromFilter() {
-		Criteria c = filter.get(BlotterFilter.NOTE);
+		Criterion c = filter.get(BlotterFilter.NOTE);
 		if (c != null) {
 			String v = c.getStringValue();
 			note.setText(String.format(getString(R.string.note_text_containing_value),
@@ -204,7 +203,7 @@ public class BlotterFilterActivity extends FilterAbstractActivity {
 	}
 
 	private void updateStatusFromFilter() {
-		Criteria c = filter.get(BlotterFilter.STATUS);
+		Criterion c = filter.get(BlotterFilter.STATUS);
 		if (c != null) {
 			var statusTitle = new ArrayList<String>();
 			for (String state : c.getValues()) {
@@ -239,7 +238,7 @@ public class BlotterFilterActivity extends FilterAbstractActivity {
 			Cursor cursor = db.getAllAccounts();
 			startManagingCursor(cursor);
 			ListAdapter adapter = TransactionUtils.createAccountAdapter(this, cursor);
-			Criteria c = filter.get(FROM_ACCOUNT_ID);
+			Criterion c = filter.get(FROM_ACCOUNT_ID);
 			long selectedId = c != null ? c.getLongValue1() : -1;
 			x.select(this, R.id.account, R.string.account, cursor, adapter, "_id", selectedId);
 		} else if (id == R.id.account_clear) {
@@ -251,7 +250,7 @@ public class BlotterFilterActivity extends FilterAbstractActivity {
 			Cursor cursor = db.getAllCurrencies("name");
 			startManagingCursor(cursor);
 			ListAdapter adapter = TransactionUtils.createCurrencyAdapter(this, cursor);
-			Criteria c = filter.get(BlotterFilter.FROM_ACCOUNT_CURRENCY_ID);
+			Criterion c = filter.get(BlotterFilter.FROM_ACCOUNT_CURRENCY_ID);
 			long selectedId = c != null ? c.getLongValue1() : -1;
 			x.select(this, R.id.currency, R.string.currency, cursor, adapter, "_id", selectedId);
 		} else if (id == R.id.currency_clear) {
@@ -273,7 +272,7 @@ public class BlotterFilterActivity extends FilterAbstractActivity {
 		} else if (id == R.id.status) {
 			var items = new ArrayList<TransactionStatusMultiChoiceItem>();
 			var selected = new HashSet<String>();
-			Criteria c = filter.get(BlotterFilter.STATUS);
+			Criterion c = filter.get(BlotterFilter.STATUS);
 			if (c != null) {
 				selected.addAll(Arrays.asList(c.getValues()));
 			}
@@ -294,12 +293,12 @@ public class BlotterFilterActivity extends FilterAbstractActivity {
 	public void onSelectedId(final int id, final long selectedId) {
 		super.onSelectedId(id, selectedId);
 		if (id == R.id.account) {
-			filter.put(Criteria.eq(FROM_ACCOUNT_ID, String.valueOf(selectedId)));
+			filter.put(Criterion.eq(FROM_ACCOUNT_ID, String.valueOf(selectedId)));
 			updateAccountFromFilter();
 		} else if (id == R.id.currency) {
-			filter.put(Criteria.or(
-					Criteria.eq(BlotterFilter.FROM_ACCOUNT_CURRENCY_ID, String.valueOf(selectedId)),
-					Criteria.eq(BlotterFilter.ORIGINAL_CURRENCY_ID, String.valueOf(selectedId))
+			filter.put(Criterion.or(
+					Criterion.eq(BlotterFilter.FROM_ACCOUNT_CURRENCY_ID, String.valueOf(selectedId)),
+					Criterion.eq(BlotterFilter.ORIGINAL_CURRENCY_ID, String.valueOf(selectedId))
 			));
 			updateCurrencyFromFilter();
 		}
@@ -330,7 +329,7 @@ public class BlotterFilterActivity extends FilterAbstractActivity {
 				}
 			}
 			if (!statuses.isEmpty()) {
-				filter.put(Criteria.in(BlotterFilter.STATUS, statuses.toArray(new String[0])));
+				filter.put(Criterion.in(BlotterFilter.STATUS, statuses.toArray(new String[0])));
 			}
 			else {
 				clear(BlotterFilter.STATUS, status);
@@ -347,7 +346,7 @@ public class BlotterFilterActivity extends FilterAbstractActivity {
 				if (resultCode == RESULT_FIRST_USER) {
 					onClick(period, R.id.period_clear);
 				} else if (resultCode == RESULT_OK) {
-					DateTimeCriteria c = WhereFilter.dateTimeFromIntent(this, data);
+					DateTimeCriterion c = WhereFilter.dateTimeFromIntent(this, data);
 					filter.put(c);
 					updatePeriodFromFilter();
 				}
@@ -357,7 +356,7 @@ public class BlotterFilterActivity extends FilterAbstractActivity {
 				if (resultCode == RESULT_FIRST_USER) {
 					onClick(note, R.id.note_clear);
 				} else if (resultCode == RESULT_OK) {
-					filter.put(new Criteria(BlotterFilter.NOTE, WhereFilter.Operation.LIKE,
+					filter.put(new Criterion(BlotterFilter.NOTE, WhereFilter.Operation.LIKE,
 							data.getStringExtra(NoteFilterActivity.NOTE_CONTAINING)));
 					updateNoteFromFilter();
 				}

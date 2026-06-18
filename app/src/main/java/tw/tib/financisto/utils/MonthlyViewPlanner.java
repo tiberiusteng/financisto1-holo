@@ -11,8 +11,8 @@ package tw.tib.financisto.utils;
 import android.content.Context;
 import android.database.Cursor;
 
-import tw.tib.financisto.filter.Criteria;
-import tw.tib.financisto.filter.DateTimeCriteria;
+import tw.tib.financisto.filter.Criterion;
+import tw.tib.financisto.filter.DateTimeCriterion;
 import tw.tib.financisto.filter.WhereFilter;
 import tw.tib.financisto.db.DatabaseAdapter;
 import tw.tib.financisto.db.DatabaseHelper;
@@ -60,9 +60,9 @@ public class MonthlyViewPlanner extends AbstractPlanner {
 
     private static WhereFilter createMonthlyViewFilter(Date startDate, Date endDate, Account account) {
         WhereFilter filter = WhereFilter.empty();
-        filter.put(new DateTimeCriteria(startDate.getTime(), endDate.getTime()));
+        filter.put(new DateTimeCriterion(startDate.getTime(), endDate.getTime()));
         filter.eq(DatabaseHelper.BlotterColumns.from_account_id.name(), String.valueOf(account.id));
-        filter.eq(Criteria.raw("(" + DatabaseHelper.TransactionColumns.parent_id + "=0 OR " + DatabaseHelper.BlotterColumns.is_transfer + "=-1)"));
+        filter.eq(Criterion.raw("(" + DatabaseHelper.TransactionColumns.parent_id + "=0 OR " + DatabaseHelper.BlotterColumns.is_transfer + "=-1)"));
         filter.asc(DatabaseHelper.BlotterColumns.datetime.name());
         return filter;
     }

@@ -20,7 +20,7 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 import tw.tib.financisto.R;
 import tw.tib.financisto.blotter.BlotterFilter;
-import tw.tib.financisto.filter.Criteria;
+import tw.tib.financisto.filter.Criterion;
 import tw.tib.financisto.filter.WhereFilter;
 import tw.tib.financisto.model.Category;
 import tw.tib.financisto.model.MultiChoiceItem;
@@ -113,7 +113,7 @@ public abstract class FilterAbstractActivity extends AbstractActivity implements
 				break;
 
 			case R.id.project: {
-				Criteria c = filter.get(BlotterFilter.PROJECT_ID);
+				Criterion c = filter.get(BlotterFilter.PROJECT_ID);
 				if (c != null) projectSelector.updateCheckedEntities(c.getValues());
 				projectSelector.onClick(id);
 			} break;
@@ -127,7 +127,7 @@ public abstract class FilterAbstractActivity extends AbstractActivity implements
 				break;
 
 			case R.id.payee: {
-				Criteria c = filter.get(BlotterFilter.PAYEE_ID);
+				Criterion c = filter.get(BlotterFilter.PAYEE_ID);
 				if (c != null) projectSelector.updateCheckedEntities(c.getValues());
 				payeeSelector.onClick(id);
 			} break;
@@ -141,7 +141,7 @@ public abstract class FilterAbstractActivity extends AbstractActivity implements
 				break;
 
 			case R.id.location: {
-				Criteria c = filter.get(BlotterFilter.LOCATION_ID);
+				Criterion c = filter.get(BlotterFilter.LOCATION_ID);
 				if (c != null) locationSelector.updateCheckedEntities(c.getValues());
 				locationSelector.onClick(id);
 			} break;
@@ -161,26 +161,26 @@ public abstract class FilterAbstractActivity extends AbstractActivity implements
 		switch (id) {
 			case R.id.project:
 				projectSelector.onSelectedId(id, selectedId);
-				filter.put(Criteria.in(BlotterFilter.PROJECT_ID, projectSelector.getCheckedIds()));
+				filter.put(Criterion.in(BlotterFilter.PROJECT_ID, projectSelector.getCheckedIds()));
 				updateProjectFromFilter();
 				break;
 			case R.id.payee:
 				payeeSelector.onSelectedId(id, selectedId);
 				if (selectedId == 0) {
-					filter.put(Criteria.isNull(BlotterFilter.PAYEE_ID));
+					filter.put(Criterion.isNull(BlotterFilter.PAYEE_ID));
 				} else {
-					filter.put(Criteria.in(BlotterFilter.PAYEE_ID, payeeSelector.getCheckedIds()));
+					filter.put(Criterion.in(BlotterFilter.PAYEE_ID, payeeSelector.getCheckedIds()));
 				}
 				updatePayeeFromFilter();
 				break;
 			case R.id.location:
 				locationSelector.onSelectedId(id, selectedId);
-				filter.put(Criteria.in(BlotterFilter.LOCATION_ID, locationSelector.getCheckedIds()));
+				filter.put(Criterion.in(BlotterFilter.LOCATION_ID, locationSelector.getCheckedIds()));
 				updateLocationFromFilter();
 				break;
 			case R.id.category:
 				categorySelector.onSelectedId(id, selectedId, false);
-//                filter.put(Criteria.btw(CATEGORY_LEFT, categorySelector.getCheckedCategoryLeafs()));
+//                filter.put(Criterion.btw(CATEGORY_LEFT, categorySelector.getCheckedCategoryLeafs()));
 //                updateCategoryFromFilter();
 				break;
 		}
@@ -193,7 +193,7 @@ public abstract class FilterAbstractActivity extends AbstractActivity implements
 				if (ArrUtils.isEmpty(categorySelector.getCheckedCategoryLeafs())) {
 					clearCategory();
 				} else {
-					filter.put(Criteria.btw(BlotterFilter.CATEGORY_LEFT, categorySelector.getCheckedCategoryLeafs()));
+					filter.put(Criterion.btw(BlotterFilter.CATEGORY_LEFT, categorySelector.getCheckedCategoryLeafs()));
 					updateCategoryFromFilter();
 				}
 				break;
@@ -201,7 +201,7 @@ public abstract class FilterAbstractActivity extends AbstractActivity implements
 				if (ArrUtils.isEmpty(projectSelector.getCheckedIds())) {
 					clear(BlotterFilter.PROJECT_ID, project);
 				} else {
-					filter.put(Criteria.in(BlotterFilter.PROJECT_ID, projectSelector.getCheckedIds()));
+					filter.put(Criterion.in(BlotterFilter.PROJECT_ID, projectSelector.getCheckedIds()));
 					updateProjectFromFilter();
 				}
 				break;
@@ -209,7 +209,7 @@ public abstract class FilterAbstractActivity extends AbstractActivity implements
 				if (ArrUtils.isEmpty(payeeSelector.getCheckedIds())) {
 					clear(BlotterFilter.PAYEE_ID, payee);
 				} else {
-					filter.put(Criteria.in(BlotterFilter.PAYEE_ID, payeeSelector.getCheckedIds()));
+					filter.put(Criterion.in(BlotterFilter.PAYEE_ID, payeeSelector.getCheckedIds()));
 					updatePayeeFromFilter();
 				}
 				break;
@@ -217,7 +217,7 @@ public abstract class FilterAbstractActivity extends AbstractActivity implements
 				if (ArrUtils.isEmpty(locationSelector.getCheckedIds())) {
 					clear(BlotterFilter.LOCATION_ID, location);
 				} else {
-					filter.put(Criteria.in(BlotterFilter.LOCATION_ID, locationSelector.getCheckedIds()));
+					filter.put(Criterion.in(BlotterFilter.LOCATION_ID, locationSelector.getCheckedIds()));
 					updateLocationFromFilter();
 				}
 		}
@@ -228,24 +228,24 @@ public abstract class FilterAbstractActivity extends AbstractActivity implements
 		switch (id) {
 			case R.id.project:
 				projectSelector.onSelectedPos(id, selectedPos);
-				filter.put(Criteria.eq(BlotterFilter.PROJECT_ID, String.valueOf(projectSelector.getSelectedEntityId())));
+				filter.put(Criterion.eq(BlotterFilter.PROJECT_ID, String.valueOf(projectSelector.getSelectedEntityId())));
 				updateProjectFromFilter();
 				break;
 			case R.id.payee:
 				payeeSelector.onSelectedPos(id, selectedPos);
-				filter.put(Criteria.eq(BlotterFilter.PAYEE_ID, String.valueOf(payeeSelector.getSelectedEntityId())));
+				filter.put(Criterion.eq(BlotterFilter.PAYEE_ID, String.valueOf(payeeSelector.getSelectedEntityId())));
 				updatePayeeFromFilter();
 				break;
 			case R.id.location:
 				locationSelector.onSelectedPos(id, selectedPos);
-				filter.put(Criteria.in(BlotterFilter.LOCATION_ID, String.valueOf(locationSelector.getSelectedEntityId())));
+				filter.put(Criterion.in(BlotterFilter.LOCATION_ID, String.valueOf(locationSelector.getSelectedEntityId())));
 				updateLocationFromFilter();
 				break;
 		}
 	}
 
 	protected void updateCategoryFromFilter() {
-		Criteria c = filter.get(BlotterFilter.CATEGORY_LEFT);
+		Criterion c = filter.get(BlotterFilter.CATEGORY_LEFT);
 		if (c != null) {
 			if (c.operation != BTW) { // todo.mb: only for backward compatibility, just remove in next releases
 				Log.i(getClass().getSimpleName(), "Found category filter with deprecated op: " + c.operation);
@@ -261,17 +261,17 @@ public abstract class FilterAbstractActivity extends AbstractActivity implements
 		}
 	}
 
-	private List<String> getLeftCategoryNodesFromFilter(Criteria catCriteria) {
+	private List<String> getLeftCategoryNodesFromFilter(Criterion catCriterion) {
 		List<String> res = new LinkedList<>();
-		for (int i = 0; i < catCriteria.getValues().length; i += 2) {
-			res.add(catCriteria.getValues()[i]);
+		for (int i = 0; i < catCriterion.getValues().length; i += 2) {
+			res.add(catCriterion.getValues()[i]);
 		}
 		return res;
 	}
 
 	protected <T extends MyEntity> void updateEntityFromFilter(String filterCriteriaName, Class<T> entityClass, TextView filterView) {
 		if (filterView == null) return;
-		Criteria c = filter.get(filterCriteriaName);
+		Criterion c = filter.get(filterCriteriaName);
 		if (c != null && !c.isNull()) {
 			String filterText = noFilterValue;
 			if (c.operation == IN) {
@@ -309,14 +309,14 @@ public abstract class FilterAbstractActivity extends AbstractActivity implements
 		if (categorySelector.isMultiSelect()) {
 			String categories[] = categorySelector.getCheckedCategoryLeafs();
 			if (categories.length > 0) {
-				filter.put(Criteria.btw(BlotterFilter.CATEGORY_LEFT, categories));
+				filter.put(Criterion.btw(BlotterFilter.CATEGORY_LEFT, categories));
 			}
 			else {
 				clearCategory();
 			}
 		} else {
 			if (cat.id > 0) {
-				filter.put(Criteria.btw(BlotterFilter.CATEGORY_LEFT, String.valueOf(cat.left), String.valueOf(cat.right)));
+				filter.put(Criterion.btw(BlotterFilter.CATEGORY_LEFT, String.valueOf(cat.left), String.valueOf(cat.right)));
 			} else {
 				clearCategory();
 			}
@@ -336,7 +336,7 @@ public abstract class FilterAbstractActivity extends AbstractActivity implements
 		if (locationSelector.isShow()) updateEntityFromFilter(BlotterFilter.LOCATION_ID, MyLocation.class, location);
 	}
 
-	protected String getSelectedTitles(Criteria c, String filterCriteriaName) {
+	protected String getSelectedTitles(Criterion c, String filterCriteriaName) {
 		if (filterCriteriaName.equals(BlotterFilter.PROJECT_ID)) {
 			projectSelector.updateCheckedEntities(c.getValues());
 			return projectSelector.getCheckedTitles();
