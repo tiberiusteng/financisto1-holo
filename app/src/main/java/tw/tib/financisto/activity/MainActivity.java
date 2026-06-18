@@ -40,6 +40,8 @@ import tw.tib.financisto.utils.PinProtection;
 public class MainActivity extends AppCompatActivity {
     private static final String TAG = "MainActivity";
 
+    public static final String GO_TO_SCREEN = "GO_TO_SCREEN";
+
     private GreenRobotBus greenRobotBus;
     HashMap<String, TabLayout.Tab> tabs;
     private TabLayout tabLayout;
@@ -138,7 +140,14 @@ public class MainActivity extends AppCompatActivity {
                     }
                 }).attach();
 
-        viewPager.setCurrentItem(MyPreferences.getStartupScreen().ordinal(), false);
+        var intent = getIntent();
+        if (intent != null) {
+            int screen = intent.getIntExtra(GO_TO_SCREEN, MyPreferences.getStartupScreen().ordinal());
+            viewPager.setCurrentItem(screen, false);
+        }
+        else {
+            viewPager.setCurrentItem(MyPreferences.getStartupScreen().ordinal(), false);
+        }
     }
 
     @Override
