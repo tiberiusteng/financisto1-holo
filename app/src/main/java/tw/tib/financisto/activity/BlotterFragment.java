@@ -84,7 +84,7 @@ import tw.tib.orb.EntityManager;
 
 public class BlotterFragment extends AbstractListFragment<Cursor> implements BlotterOperations.BlotterOperationsCallback {
     private static final String TAG = "BlotterFragment";
-    public static final String EMBEDDED_BLOTTER = "embeddedBlotter";
+    public static final String MAIN_BLOTTER = "mainBlotter";
     public static final String EXTRA_FILTER_ACCOUNTS = "filterAccounts";
     public static final String GO_TO_TRANSACTION = "goToTransaction";
 
@@ -118,7 +118,7 @@ public class BlotterFragment extends AbstractListFragment<Cursor> implements Blo
 
     private TotalCalculationTask calculationTask;
 
-    protected boolean embeddedBlotter;
+    protected boolean mainBlotter;
     protected WhereFilter blotterFilter = WhereFilter.empty();
 
     protected static final long BEFORE_INITIAL_LOAD = -1;
@@ -147,9 +147,9 @@ public class BlotterFragment extends AbstractListFragment<Cursor> implements Blo
         super(R.layout.blotter);
     }
 
-    public BlotterFragment(boolean embeddedBlotter) {
+    public BlotterFragment(boolean mainBlotter) {
         super(R.layout.blotter);
-        this.embeddedBlotter = embeddedBlotter;
+        this.mainBlotter = mainBlotter;
     }
 
     protected void calculateTotals(WhereFilter filter) {
@@ -196,16 +196,18 @@ public class BlotterFragment extends AbstractListFragment<Cursor> implements Blo
             isAccountBlotter = args.getBoolean(BlotterFilterActivity.IS_ACCOUNT_FILTER, false);
         }
         if (savedInstanceState != null) {
-            embeddedBlotter = savedInstanceState.getBoolean(EMBEDDED_BLOTTER);
+            mainBlotter = savedInstanceState.getBoolean(MAIN_BLOTTER);
             blotterFilter = WhereFilter.fromBundle(savedInstanceState);
         }
-        if (embeddedBlotter && blotterFilter.isEmpty()) {
+        if (mainBlotter && blotterFilter.isEmpty()) {
             blotterFilter = WhereFilter.fromSharedPreferences(getContext().getSharedPreferences(this.getClass().getName(), 0));
         }
         // onViewCreated will create and start loader, which will use blotterFilter prepared above
         super.onViewCreated(view, savedInstanceState);
 
-        if (!this.embeddedBlotter) {
+        if (!mainBlotter) {
+            // non-main blotter is contained in BlotterActivity, with fragment container layout
+            // having a toolbar
             var toolbar = (Toolbar) view.findViewById(R.id.toolbar);
             if (toolbar != null) {
                 toolbar.setVisibility(View.VISIBLE);
@@ -634,7 +636,7 @@ public class BlotterFragment extends AbstractListFragment<Cursor> implements Blo
     public void onSaveInstanceState(Bundle outState) {
         super.onSaveInstanceState(outState);
         blotterFilter.toBundle(outState);
-        outState.putBoolean(EMBEDDED_BLOTTER, embeddedBlotter);
+        outState.putBoolean(MAIN_BLOTTER, mainBlotter);
     }
 
     protected void createFromTemplate() {
@@ -1013,9 +1015,7 @@ public class BlotterFragment extends AbstractListFragment<Cursor> implements Blo
             } else if (resultCode == RESULT_OK) {
                 blotterFilter = WhereFilter.fromIntent(data);
             }
-            if (embeddedBlotter) {
-                saveFilter();
-            }
+            saveFilter();
             applyFilter();
         } else if (resultCode == RESULT_OK && requestCode == NEW_TRANSACTION_FROM_TEMPLATE_REQUEST) {
             // do nothing - transaction is created in templacte list activity
@@ -1027,6 +1027,7 @@ public class BlotterFragment extends AbstractListFragment<Cursor> implements Blo
     }
 
     private void saveFilter() {
+        if (!mainBlotter) return;
         SharedPreferences preferences = getContext().getSharedPreferences(this.getClass().getName(), 0);
         blotterFilter.toSharedPreferences(preferences);
     }
