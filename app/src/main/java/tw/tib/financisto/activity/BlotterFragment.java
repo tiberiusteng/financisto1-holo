@@ -190,11 +190,20 @@ public class BlotterFragment extends AbstractListFragment<Cursor> implements Blo
 
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
-        super.onViewCreated(view, savedInstanceState);
-
-        if (savedInstanceState != null) {
-            this.embeddedBlotter = savedInstanceState.getBoolean(EMBEDDED_BLOTTER);
+        Bundle args = getArguments();
+        if (args != null) {
+            blotterFilter = WhereFilter.fromBundle(args);
+            isAccountBlotter = args.getBoolean(BlotterFilterActivity.IS_ACCOUNT_FILTER, false);
         }
+        if (savedInstanceState != null) {
+            embeddedBlotter = savedInstanceState.getBoolean(EMBEDDED_BLOTTER);
+            blotterFilter = WhereFilter.fromBundle(savedInstanceState);
+        }
+        if (embeddedBlotter && blotterFilter.isEmpty()) {
+            blotterFilter = WhereFilter.fromSharedPreferences(getContext().getSharedPreferences(this.getClass().getName(), 0));
+        }
+        // onViewCreated will create and start loader, which will use blotterFilter prepared above
+        super.onViewCreated(view, savedInstanceState);
 
         if (!this.embeddedBlotter) {
             var toolbar = (Toolbar) view.findViewById(R.id.toolbar);
@@ -301,18 +310,6 @@ public class BlotterFragment extends AbstractListFragment<Cursor> implements Blo
         emptyText = view.findViewById(android.R.id.empty);
         period = view.findViewById(R.id.period);
         progressBar = view.findViewById(android.R.id.progress);
-
-        Bundle args = getArguments();
-        if (args != null) {
-            blotterFilter = WhereFilter.fromBundle(args);
-            isAccountBlotter = args.getBoolean(BlotterFilterActivity.IS_ACCOUNT_FILTER, false);
-        }
-        if (savedInstanceState != null) {
-            blotterFilter = WhereFilter.fromBundle(savedInstanceState);
-        }
-        if (embeddedBlotter && blotterFilter.isEmpty()) {
-            blotterFilter = WhereFilter.fromSharedPreferences(getContext().getSharedPreferences(this.getClass().getName(), 0));
-        }
 
         bSearch = view.findViewById(R.id.bSearch);
         if (bSearch != null) {
