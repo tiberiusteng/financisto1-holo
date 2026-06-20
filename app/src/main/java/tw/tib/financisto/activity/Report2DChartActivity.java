@@ -491,33 +491,37 @@ public class Report2DChartActivity extends Activity implements OnChartValueSelec
      */
     private void fillStatistics() {
         boolean considerNull = MyPreferences.considerNullResultsInReport();
-        Double max;
-        Double min;
-        Double mean;
-        Double meanWithSign;
-        Double sum = reportData.getDataBuilder().getSum();
-        if (considerNull) {
-            max = reportData.getDataBuilder().getMaxValue();
-            min = reportData.getDataBuilder().getMinValue();
-            mean = meanWithSign = reportData.getDataBuilder().getMean();
-            if ((min * max >= 0)) {
-                // absolute calculation (all points over the x axis)
-                max = reportData.getDataBuilder().getAbsoluteMaxValue();
-                min = reportData.getDataBuilder().getAbsoluteMinValue();
-                mean = Math.abs(mean);
-                sum = Math.abs(sum);
-            }
-        } else {
-            // exclude impact of null values in statistics
-            max = reportData.getDataBuilder().getMaxExcludingNulls();
-            min = reportData.getDataBuilder().getMinExcludingNulls();
-            mean = meanWithSign = reportData.getDataBuilder().getMeanExcludingNulls();
-            if ((min * max >= 0)) {
-                // absolute calculation (all points over the x axis)
-                max = reportData.getDataBuilder().getAbsoluteMaxExcludingNulls();
-                min = reportData.getDataBuilder().getAbsoluteMinExcludingNulls();
-                mean = Math.abs(mean);
-                sum = Math.abs(sum);
+        ReportDataByPeriod data = reportData.getDataBuilder();
+        Double max = 0.0;
+        Double min = 0.0;
+        Double mean = 0.0;
+        Double meanWithSign = 0.0;
+        Double sum = 0.0;
+        if (data != null) {
+            sum = data.getSum();
+            if (considerNull) {
+                max = data.getMaxValue();
+                min = data.getMinValue();
+                mean = meanWithSign = data.getMean();
+                if ((min * max >= 0)) {
+                    // absolute calculation (all points over the x axis)
+                    max = data.getAbsoluteMaxValue();
+                    min = data.getAbsoluteMinValue();
+                    mean = Math.abs(mean);
+                    sum = Math.abs(sum);
+                }
+            } else {
+                // exclude impact of null values in statistics
+                max = data.getMaxExcludingNulls();
+                min = data.getMinExcludingNulls();
+                mean = meanWithSign = data.getMeanExcludingNulls();
+                if ((min * max >= 0)) {
+                    // absolute calculation (all points over the x axis)
+                    max = data.getAbsoluteMaxExcludingNulls();
+                    min = data.getAbsoluteMinExcludingNulls();
+                    mean = Math.abs(mean);
+                    sum = Math.abs(sum);
+                }
             }
         }
         // chart limits
