@@ -326,6 +326,7 @@ public abstract class Report2DChart {
 	 */
 	protected void build() {
 		if (filterIds == null || filterIds.isEmpty()) return;
+		data = createDataBuilder();
 
 		points = new ArrayList<Report2DPoint>();
 		List<PeriodValue> pvs = data.getPeriodValues();
