@@ -12,10 +12,12 @@ import java.util.concurrent.TimeUnit;
 
 import android.content.Context;
 import android.content.Intent;
+import android.util.Log;
 
 import tw.tib.financisto.activity.PinActivity;
 
 public class PinProtection {
+    private static final String TAG = "PinProtection";
 
     private static final int MIN_DELTA_TIME_MS = 3000;
 
@@ -31,7 +33,7 @@ public class PinProtection {
         }
         @Override
         public LockState unlock(Context c) {
-            if (MyPreferences.isPinProtected(c)) {
+            Log.d(TAG, "LOCKED unlock");
             if (MyPreferences.isPinProtected()) {
                 askForPin(c);
                 return this;
@@ -45,13 +47,14 @@ public class PinProtection {
 
         @Override
         public LockState lock(Context c) {
+            Log.d(TAG, "UNLOCKED lock");
             lockTime = System.currentTimeMillis();
             return this;
         }
 
         @Override
         public LockState unlock(Context c) {
-            int lockWaitTime = MyPreferences.getLockTimeSeconds(c);
+            Log.d(TAG, "UNLOCKED unlock");
             int lockWaitTime = MyPreferences.getLockTimeSeconds();
             if (lockWaitTime > 0) {
                 long curTime = System.currentTimeMillis();
@@ -69,6 +72,7 @@ public class PinProtection {
     private static LockState currentState = LOCKED;
 
     private static void askForPin(Context c) {
+        Log.d(TAG, "askForPin");
         Intent intent = new Intent(c, PinActivity.class);
         intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
         c.startActivity(intent);
