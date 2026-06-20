@@ -144,11 +144,9 @@ public abstract class Report2DChart {
 		// classes shall implement to determine query filters
 		createFilter();
 
-		if (filterIds!=null && filterIds.size()>0) {
-			// get data 
-			currentFilterOrder = 0;
-			build();
-		} // alert message in activity - no filter available 
+		// get data
+		currentFilterOrder = 0;
+		build();
 	}
 
 	/**
@@ -327,7 +325,8 @@ public abstract class Report2DChart {
 	 * Request data and fill data objects (list of points, max, min, etc.)
 	 */
 	protected void build() {
-		data = createDataBuilder();
+		if (filterIds == null || filterIds.isEmpty()) return;
+
 		points = new ArrayList<Report2DPoint>();
 		List<PeriodValue> pvs = data.getPeriodValues();
 
