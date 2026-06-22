@@ -15,16 +15,21 @@ import static android.app.Activity.RESULT_OK;
 
 import tw.tib.financisto.R;
 import tw.tib.financisto.adapter.TemplateListAdapter;
+import tw.tib.financisto.blotter.BlotterFilter;
+import tw.tib.financisto.filter.Criterion;
 import tw.tib.financisto.model.Transaction;
 
 import android.content.Context;
 import android.content.Intent;
 import android.database.Cursor;
 import android.os.Bundle;
+import android.text.Editable;
+import android.text.TextWatcher;
 import android.view.ContextMenu;
 import android.view.View;
 import android.view.ContextMenu.ContextMenuInfo;
 import android.widget.Button;
+import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.ListAdapter;
 import android.widget.TextView;
@@ -35,6 +40,7 @@ import androidx.annotation.Nullable;
 public class SelectTemplateFragment extends TemplatesListFragment {
 
     private TextView multiplierText;
+    private EditText searchFilter;
     private int multiplier = 1;
 
     public SelectTemplateFragment() {
@@ -69,6 +75,31 @@ public class SelectTemplateFragment extends TemplatesListFragment {
         ib.setOnClickListener(arg0 -> incrementMultiplier());
         ib = (ImageButton) view.findViewById(R.id.bMinus);
         ib.setOnClickListener(arg0 -> decrementMultiplier());
+
+        searchFilter = view.findViewById(R.id.searchFilter);
+        searchFilter.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {
+            }
+
+            @Override
+            public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {
+            }
+
+            @Override
+            public void afterTextChanged(Editable editable) {
+                String text = editable.toString();
+                blotterFilter.remove(BlotterFilter.TEMPLATE_NAME);
+                if (!text.isEmpty()) {
+                    String likePattern = String.format("%%%s%%", text);
+                    blotterFilter.eq(Criterion.or(
+                        Criterion.like(BlotterFilter.TEMPLATE_NAME, likePattern),
+                        Criterion.like(BlotterFilter.CATEGORY_NAME, likePattern)
+                    ));
+                }
+                recreateCursor();
+            }
+        });
     }
 
     protected void incrementMultiplier() {
