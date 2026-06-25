@@ -298,17 +298,18 @@ public abstract class AbstractTransactionActivity extends AbstractActivity imple
 		if (transaction.locationId != CURRENT_LOCATION_ID) {
 			locationSelector.setIncludeEntityIds(transaction.locationId);
 		}
-		locationSelector.fetchEntities();
 
 		projectSelector = new ProjectSelector<>(this, db, x);
 		if (transaction.projectId != NO_PROJECT_ID) {
 			projectSelector.setIncludeEntityIds(transaction.projectId);
 		}
-		projectSelector.fetchEntities();
 
 		createListNodes(layout);
 		categorySelector.createAttributesLayout(layout);
 		createCommonNodes(layout);
+
+		locationSelector.fetchEntities();
+		projectSelector.fetchEntities();
 
 		if (transaction.isScheduled()) {
 			recurText = x.addListNode(layout, R.id.recurrence_pattern, R.string.recur, R.string.recur_interval_no_recur);
@@ -392,8 +393,8 @@ public abstract class AbstractTransactionActivity extends AbstractActivity imple
 		if (transaction.payeeId != Payee.EMPTY.id) {
 			payeeSelector.setIncludeEntityIds(transaction.payeeId);
 		}
-		payeeSelector.fetchEntities();
 		payeeSelector.createNode(layout);
+		payeeSelector.fetchEntities();
 	}
 
 	protected abstract void fetchCategories();

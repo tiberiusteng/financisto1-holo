@@ -23,7 +23,6 @@ import android.widget.*;
 import tw.tib.financisto.Application;
 import tw.tib.financisto.R;
 import tw.tib.financisto.adapter.MyEntityAdapter;
-import tw.tib.financisto.db.DatabaseAdapter;
 import tw.tib.financisto.db.DatabaseHelper;
 import tw.tib.financisto.db.MyEntityManager;
 import tw.tib.financisto.model.MultiChoiceItem;
@@ -125,15 +124,27 @@ public abstract class MyEntitySelector<T extends MyEntity, A extends AbstractAct
     }
 
     public void fetchEntities() {
+        synchronized (this) {
+            loaded = false;
+        }
         Application.getExecutor().execute(() -> {
             entities = fetchEntities(em);
             if (!multiSelect) {
                 adapter = createAdapter(activity, entities);
             }
-            loaded = true;
-            if (pendingSelect) {
-                new Handler(Looper.getMainLooper()).post(this::pickEntity);
+            synchronized (this) {
+                loaded = true;
             }
+            new Handler(Looper.getMainLooper()).post(() -> {
+                if (isShow) {
+                    text.setText(defaultValueResId);
+                    node.setEnabled(true);
+                }
+                selectEntity(selectedEntityId);
+                if (pendingSelect) {
+                    pickEntity();
+                }
+            });
         });
     }
 
@@ -167,15 +178,16 @@ public abstract class MyEntitySelector<T extends MyEntity, A extends AbstractAct
             final Pair<TextView, AutoCompleteTextView> views;
             if (useSearchAsPrimary) {
                 views = x.addListNodeWithButtonsAndFilterSearchFirst(layout, nodeLayoutId, layoutId,
-                        actBtnId, clearBtnId, labelResId, defaultValueResId,
+                        actBtnId, clearBtnId, labelResId, R.string.loading,
                         filterToggleId, showListId, createEntityId, enableCreate);
             } else {
                 views = x.addListNodeWithButtonsAndFilter(layout, nodeLayoutId, layoutId, actBtnId,
-                        clearBtnId, labelResId, defaultValueResId, filterToggleId);
+                        clearBtnId, labelResId, R.string.loading, filterToggleId);
             }
             text = views.first;
             autoCompleteFilter = views.second;
             node = (View) text.getTag();
+            node.setEnabled(false);
         }
         return text;
     }
@@ -243,9 +255,11 @@ public abstract class MyEntitySelector<T extends MyEntity, A extends AbstractAct
     }
 
     private void pickEntity() {
-        if (!loaded) {
-            pendingSelect = true;
-            return;
+        synchronized (this) {
+            if (!loaded) {
+                pendingSelect = true;
+                return;
+            }
         }
         if (multiSelect) {
             x.selectMultiChoice(activity, layoutId, labelResId, entities);
@@ -339,6 +353,12 @@ public abstract class MyEntitySelector<T extends MyEntity, A extends AbstractAct
                 updateCheckedEntities("" + entityId);
                 fillCheckedEntitiesInUI();
             } else {
+                synchronized (this) {
+                    if (!loaded) {
+                        selectedEntityId = entityId;
+                        return;
+                    }
+                }
                 T e = MyEntity.find(entities, entityId);
                 selectEntity(e);
             }

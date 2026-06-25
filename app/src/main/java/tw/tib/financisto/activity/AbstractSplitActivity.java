@@ -65,7 +65,6 @@ public abstract class AbstractSplitActivity extends AbstractActivity {
         fetchData();
         // todo.mb: check selector here
         projectSelector = new ProjectSelector<>(this, db, x);
-        projectSelector.fetchEntities();
 
         utils  = new Utils(this);
         split = Transaction.fromIntentAsSplit(getIntent());
@@ -80,6 +79,7 @@ public abstract class AbstractSplitActivity extends AbstractActivity {
 
         createUI(layout);
         createCommonUI(layout);
+        projectSelector.fetchEntities();
         updateUI();
     }
 

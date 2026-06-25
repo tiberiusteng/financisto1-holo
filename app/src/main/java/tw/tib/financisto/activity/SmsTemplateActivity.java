@@ -186,15 +186,15 @@ public class SmsTemplateActivity extends AbstractActivity {
             if (smsTemplate.payeeId != Payee.EMPTY.id) {
                 payeeSelector.setIncludeEntityIds(smsTemplate.payeeId);
             }
-            payeeSelector.fetchEntities();
             payeeSelector.createNode(selectors);
+            payeeSelector.fetchEntities();
             payeeSelector.selectEntity(smsTemplate.payeeId);
 
             if (smsTemplate.projectId != Project.NO_PROJECT_ID) {
                 projectSelector.setIncludeEntityIds(smsTemplate.projectId);
             }
-            projectSelector.fetchEntities();
             projectSelector.createNode(selectors);
+            projectSelector.fetchEntities();
             projectSelector.selectEntity(smsTemplate.projectId);
         }
     }
