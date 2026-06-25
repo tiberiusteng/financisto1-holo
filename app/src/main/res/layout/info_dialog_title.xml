@@ -12,7 +12,7 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
                 android:layout_width="fill_parent"
                 android:layout_height="wrap_content"
-        android:background="@android:drawable/title_bar">
+                android:background="@color/material_grey_800">
     <ImageView android:id="@+id/icon"
                android:layout_width="40dp"
                android:layout_height="40dp"
