@@ -195,7 +195,6 @@ public abstract class AbstractTransactionActivity extends AbstractActivity imple
 
 		categorySelector = new CategorySelector<>(this, db, x);
 		categorySelector.setListener(this);
-		fetchCategories();
 
 		long accountId = -1;
 		long transactionId = -1;
@@ -308,6 +307,9 @@ public abstract class AbstractTransactionActivity extends AbstractActivity imple
 		categorySelector.createAttributesLayout(layout);
 		createCommonNodes(layout);
 
+		// ensure views are created before start loading
+		// such that loading would never finish before view available
+		fetchCategories();
 		locationSelector.fetchEntities();
 		projectSelector.fetchEntities();
 

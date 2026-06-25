@@ -169,9 +169,9 @@ public class SmsTemplateActivity extends AbstractActivity {
             categorySelector = new CategorySelector<>(this, db, x);
             categorySelector.setEmptyResId(R.string.no_category);
             categorySelector.doNotShowSplitCategory();
-            categorySelector.fetchCategories(false);
             categorySelector.createNode(selectors, CategorySelector.SelectorType.FILTER);
-            
+            categorySelector.fetchCategories(false);
+
             if (smsTemplate != null) {
                 categorySelector.selectCategory(smsTemplate.categoryId, false);
             }

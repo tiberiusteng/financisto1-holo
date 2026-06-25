@@ -35,6 +35,7 @@
 		a:layout_height="wrap_content"
 		a:layout_margin="0dp" 
 		a:padding="0dp"
+		a:duplicateParentState="true"
 		a:id="@+id/list_node_row">
 		
 		<RelativeLayout a:layout_width="0dp" 
@@ -83,7 +84,7 @@
 			a:layout_height="wrap_content"
 			a:focusable="true"
 			a:clickable="true"
-			a:layout_gravity="center_vertical"/>
+			a:layout_gravity="center_vertical" />
 
 		<ImageView style="@style/PlusButton" 
 				   a:layout_width="wrap_content"

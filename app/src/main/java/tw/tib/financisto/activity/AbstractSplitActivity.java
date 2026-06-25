@@ -62,7 +62,6 @@ public abstract class AbstractSplitActivity extends AbstractActivity {
             return WindowInsetsCompat.CONSUMED;
         });
 
-        fetchData();
         // todo.mb: check selector here
         projectSelector = new ProjectSelector<>(this, db, x);
 
@@ -79,6 +78,9 @@ public abstract class AbstractSplitActivity extends AbstractActivity {
 
         createUI(layout);
         createCommonUI(layout);
+        // ensure views are created before start loading
+        // such that loading would never finish before view available
+        fetchData();
         projectSelector.fetchEntities();
         updateUI();
     }

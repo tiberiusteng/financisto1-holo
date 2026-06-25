@@ -12,9 +12,15 @@ import android.app.Activity;
 import android.content.Intent;
 import android.database.Cursor;
 import androidx.core.util.Pair;
+
+import android.os.Handler;
+import android.os.Looper;
 import android.text.InputType;
+import android.util.Log;
 import android.view.View;
 import android.widget.*;
+
+import tw.tib.financisto.Application;
 import tw.tib.financisto.R;
 import tw.tib.financisto.db.DatabaseAdapter;
 import tw.tib.financisto.db.DatabaseHelper;
@@ -35,13 +41,22 @@ import java.util.*;
 
 import static java.util.Objects.requireNonNull;
 import static tw.tib.financisto.model.Category.NO_CATEGORY_ID;
+import static tw.tib.financisto.model.Category.SPLIT_CATEGORY_ID;
 
 public class CategorySelector<A extends AbstractActivity> {
+    private final String TAG = "CategorySelector";
+
     private final A activity;
     private final DatabaseAdapter db;
     private final ActivityLayout x;
 
+    private View node = null;
+    private boolean loaded = false;
+    private long toSelectCategoryId = NO_CATEGORY_ID;
+    private boolean toSelectLast = true;
+
     private TextView categoryText;
+    private boolean categoryTextIsEmpty = true;
     private AutoCompleteTextView filterAutoCompleteTxt;
     private SimpleCursorAdapter autoCompleteAdapter;
     private Cursor categoryCursor;
@@ -57,6 +72,10 @@ public class CategorySelector<A extends AbstractActivity> {
     private final long excludingSubTreeId;
     private List<Category> categories = Collections.emptyList();
     private int emptyResId;
+
+    private String toCheckCommaIds = null;
+    private String[] toCheckStringIds = null;
+    private List<Long> toCheckIds = null;
 
     public CategorySelector(A activity, DatabaseAdapter db, ActivityLayout x) {
         this(activity, db, x, -1);
@@ -80,13 +99,38 @@ public class CategorySelector<A extends AbstractActivity> {
     
     public void initMultiSelect() {
         this.multiSelect = true;
-        this.categories = db.getCategoriesList(true);
-        this.doNotShowSplitCategory();
-    }
-
-    public void initMultiSelectWithNoCategory() {
-        this.multiSelect = true;
-        this.categories = db.getCategoriesList(true);
+        synchronized (this) {
+            loaded = false;
+        }
+        Application.getExecutor().execute(() -> {
+            this.categories = db.getCategoriesList(true);
+            synchronized (this) {
+                loaded = true;
+            }
+            new Handler(Looper.getMainLooper()).post(() -> {
+                if (node != null){
+                    if (categoryTextIsEmpty) {
+                        categoryText.setText(emptyResId);
+                    }
+                    node.setEnabled(true);
+                }
+                if (toCheckStringIds != null) {
+                    updateCheckedEntities(toCheckStringIds);
+                    fillCategoryInUI();
+                    toCheckStringIds = null;
+                }
+                if (toCheckCommaIds != null) {
+                    updateCheckedEntities(toCheckCommaIds);
+                    fillCategoryInUI();
+                    toCheckCommaIds = null;
+                }
+                if (toCheckIds != null) {
+                    updateCheckedEntities(toCheckIds);
+                    fillCategoryInUI();
+                    toCheckIds = null;
+                }
+            });
+        });
         this.doNotShowSplitCategory();
     }
 
@@ -135,7 +179,13 @@ public class CategorySelector<A extends AbstractActivity> {
     }
 
     public void fetchCategories(boolean fetchAll) {
-        if (!multiSelect) {
+        if (multiSelect) {
+            return;
+        }
+        synchronized (this) {
+            loaded = false;
+        }
+        Application.getExecutor().execute(() -> {
             if (fetchAll) {
                 categoryCursor = db.getAllCategories();
             } else {
@@ -145,9 +195,22 @@ public class CategorySelector<A extends AbstractActivity> {
                     categoryCursor = db.getCategories(true);
                 }
             }
-            activity.startManagingCursor(categoryCursor);
-            categoryAdapter = TransactionUtils.createCategoryAdapter(db, activity, categoryCursor);
-        }
+            new Handler(Looper.getMainLooper()).post(() -> {
+                categoryAdapter = TransactionUtils.createCategoryAdapter(db, activity, categoryCursor);
+                synchronized (this) {
+                    Log.d(TAG, "fetchCategories loaded");
+                    loaded = true;
+                }
+                activity.startManagingCursor(categoryCursor);
+                if (node != null){
+                    if (categoryTextIsEmpty) {
+                        categoryText.setText(emptyResId);
+                    }
+                    node.setEnabled(true);
+                    selectCategory(toSelectCategoryId, toSelectLast);
+                }
+            });
+        });
     }
 
     public void setNode(TextView textNode) {
@@ -164,21 +227,24 @@ public class CategorySelector<A extends AbstractActivity> {
             case SPLIT:
             case TRANSFER:
                 if (emptyResId <=0) setEmptyResId(R.string.select_category);
-                nodes = x.addListNodeWithButtonsAndFilter(layout, R.id.category, R.id.category_add, R.id.category_clear, R.string.category, emptyResId, R.id.category_filter_toggle);
+                nodes = x.addListNodeWithButtonsAndFilter(layout, R.id.category, R.id.category_add, R.id.category_clear, R.string.category, R.string.loading, R.id.category_filter_toggle);
                 break;
             case FILTER:
                 if (emptyResId <=0) setEmptyResId(R.string.no_filter);
-                nodes = x.addListNodeWithClearButtonAndFilter(layout, R.id.category, R.id.category_clear, R.string.category, emptyResId, R.id.category_filter_toggle);
+                nodes = x.addListNodeWithClearButtonAndFilter(layout, R.id.category, R.id.category_clear, R.string.category, R.string.loading, R.id.category_filter_toggle);
                 break;
             case PARENT:
                 if (emptyResId <=0) setEmptyResId(R.string.select_category);
-                nodes = Pair.create(x.addListNode(layout, R.id.category, R.string.parent, R.string.select_category), null);
+                nodes = Pair.create(x.addListNode(layout, R.id.category, R.string.parent, R.string.loading), null);
                 break;
             default:
                 throw new IllegalArgumentException("unknown type: " + type);
         }
         categoryText = nodes.first;
+        categoryTextIsEmpty = true;
         filterAutoCompleteTxt = nodes.second;
+        node = (View) categoryText.getTag();
+        node.setEnabled(false);
         return categoryText;
     }
 
@@ -260,12 +326,18 @@ public class CategorySelector<A extends AbstractActivity> {
     }
 
     public void fillCategoryInUI() {
+        if (!loaded) {
+            return;
+        }
         String selected = getCheckedTitles();
         if (Utils.isEmpty(selected)) {
             clearCategory();
         } else {
-            categoryText.setText(selected);
-            showHideMinusBtn(true);
+            synchronized (this) {
+                categoryText.setText(selected);
+                categoryTextIsEmpty = false;
+                showHideMinusBtn(true);
+            }
         }
     }
     
@@ -278,6 +350,13 @@ public class CategorySelector<A extends AbstractActivity> {
     }
 
     public void selectCategory(long categoryId, boolean selectLast) {
+        synchronized (this) {
+            if (!loaded) {
+                toSelectCategoryId = categoryId;
+                this.toSelectLast = selectLast;
+                return;
+            }
+        }
         if (multiSelect) {
             updateCheckedEntities("" + categoryId);
             selectedCategoryId = categoryId;
@@ -285,27 +364,59 @@ public class CategorySelector<A extends AbstractActivity> {
             if (listener != null) listener.onCategorySelected(null, false);
         } else {
             if (selectedCategoryId != categoryId) {
-                Category category = db.getCategoryWithParent(categoryId);
-                if (category != null) {
-                    List<String> tree = db.getFullCategoryPath(category);
-                    categoryText.setText(String.join(" / ", tree));
-                    showHideMinusBtn(true);
-                }
-                selectedCategoryId = categoryId;
-                if (listener != null) listener.onCategorySelected(category, selectLast);
+                Application.getExecutor().execute(() -> {
+                    Category category = db.getCategoryWithParent(categoryId);
+                    List<String> tree = (category == null ? null : db.getFullCategoryPath(category));
+                    selectedCategoryId = categoryId;
+                    new Handler(Looper.getMainLooper()).post(() -> {
+                        showHideMinusBtn(true);
+                        Log.d(TAG, "selectCategory categoryId=" + categoryId);
+                        categoryTextIsEmpty = false;
+                        if (categoryId == NO_CATEGORY_ID) {
+                            clearCategory();
+                            return;
+                        }
+                        else if (categoryId == SPLIT_CATEGORY_ID) {
+                            categoryText.setText(R.string.split);
+                        }
+                        else if (tree != null) {
+                            categoryText.setText(String.join(" / ", tree));
+                        }
+                        if (listener != null) listener.onCategorySelected(category, selectLast);
+                    });
+                });
             }
         }
     }
 
     public void updateCheckedEntities(String checkedCommaIds) {
+        synchronized (this) {
+            if (!loaded) {
+                toCheckCommaIds = checkedCommaIds;
+                return;
+            }
+        }
         MyEntitySelector.updateCheckedEntities(this.categories, checkedCommaIds);
     }
 
     public void updateCheckedEntities(String[] checkedIds) {
+        synchronized (this) {
+            if (!loaded) {
+                toCheckStringIds = checkedIds;
+                return;
+            }
+        }
         MyEntitySelector.updateCheckedEntities(this.categories, checkedIds);
     }
 
     public void updateCheckedEntities(List<Long> checkedIds) {
+        synchronized (this) {
+            if (!loaded) {
+                toCheckIds = checkedIds;
+                return;
+            }
+        }
+        Log.d(TAG, "updateCheckedEntities loaded");
         for (Long id : checkedIds) {
             for (MyEntity e : categories) {
                 if (e.id == id) {

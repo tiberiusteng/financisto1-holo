@@ -285,6 +285,7 @@ public class ActivityLayout {
 		filterTxt.setTag(toggleBtn);
 		TextView entityNameTxt = v.findViewById(R.id.data);
 		entityNameTxt.setTag(R.id.bMinus, v.findViewById(R.id.category_clear));
+		entityNameTxt.setTag(v);
 		return Pair.create(entityNameTxt, filterTxt);
 	}
 

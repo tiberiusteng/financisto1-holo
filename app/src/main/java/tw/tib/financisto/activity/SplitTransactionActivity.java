@@ -28,6 +28,7 @@ public class SplitTransactionActivity extends AbstractSplitActivity implements C
 
     @Override
     protected void createUI(LinearLayout layout) {
+        categorySelector = new CategorySelector<>(this, db, x);
         categorySelector.createNode(layout, CategorySelector.SelectorType.SPLIT);
 
         amountInput = AmountInput_.build(this);
@@ -40,7 +41,6 @@ public class SplitTransactionActivity extends AbstractSplitActivity implements C
 
     @Override
     protected void fetchData() {
-        categorySelector = new CategorySelector<>(this, db, x);
         categorySelector.setListener(this);
         categorySelector.doNotShowSplitCategory();
         categorySelector.fetchCategories(false);
