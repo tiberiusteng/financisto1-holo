@@ -14,12 +14,14 @@ import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
+import android.view.View;
 import android.view.ViewGroup;
-import android.view.Window;
+import android.widget.AdapterView;
 import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.EditText;
 import android.widget.Spinner;
+import android.widget.TextView;
 
 import java.text.DecimalFormatSymbols;
 
@@ -31,6 +33,7 @@ import tw.tib.financisto.utils.CurrencyCache;
 import tw.tib.financisto.utils.MyPreferences;
 import tw.tib.financisto.utils.PinProtection;
 
+import static tw.tib.financisto.utils.Utils.amountToString;
 import static tw.tib.financisto.utils.Utils.checkEditText;
 import static tw.tib.financisto.utils.Utils.text;
 
@@ -56,6 +59,9 @@ public class CurrencyActivity extends Activity {
 	private CheckBox updateExchangeRate;
 	private Spinner decimals;
 	private Spinner decimalSeparators;
+	private TextView decimalsWarning;
+	private TextView maxValue;
+	private TextView minValue;
 	private Spinner groupSeparators;
 	private Spinner symbolFormat;
 	private EditText numberFormat;
@@ -95,6 +101,9 @@ public class CurrencyActivity extends Activity {
 		updateExchangeRate = findViewById(R.id.update_exchange_rate);
 		decimals = findViewById(R.id.spinnerDecimals);
 		decimalSeparators = findViewById(R.id.spinnerDecimalSeparators);
+		decimalsWarning = findViewById(R.id.decimals_warning);
+		maxValue = findViewById(R.id.max_value);
+		minValue = findViewById(R.id.min_value);
 		groupSeparators = findViewById(R.id.spinnerGroupSeparators);
 		groupSeparators.setSelection(1);
 		symbolFormat = findViewById(R.id.spinnerSymbolFormat);
@@ -135,6 +144,34 @@ public class CurrencyActivity extends Activity {
 		bCancel.setOnClickListener(view -> {
 			setResult(RESULT_CANCELED, null);
 			finish();
+		});
+
+		decimals.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+			@Override
+			public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+				if ((maxDecimals - position) > 2) {
+					decimalsWarning.setVisibility(View.VISIBLE);
+				}
+				else {
+					decimalsWarning.setVisibility(View.INVISIBLE);
+				}
+
+				Currency temp = new Currency();
+				temp.symbol = text(symbol);
+				temp.symbolFormat = symbolFormats[symbolFormat.getSelectedItemPosition()];
+				temp.decimals = maxDecimals - decimals.getSelectedItemPosition();
+				temp.decimalSeparator = decimalSeparators.getSelectedItem().toString();
+				temp.groupSeparator = groupSeparators.getSelectedItem().toString();
+				temp.numberFormat = text(numberFormat);
+
+				maxValue.setText(getString(R.string.currency_max_value, amountToString(temp, Long.MAX_VALUE)));
+				minValue.setText(getString(R.string.currency_min_value, amountToString(temp, Long.MIN_VALUE)));
+			}
+
+			@Override
+			public void onNothingSelected(AdapterView<?> parent) {
+
+			}
 		});
 
 		Intent intent = getIntent();

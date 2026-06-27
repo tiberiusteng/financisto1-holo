@@ -15,12 +15,14 @@ import android.content.Context;
 import android.graphics.PorterDuff;
 import android.graphics.drawable.Drawable;
 import android.text.Editable;
+import android.text.InputFilter;
 import android.text.InputType;
 import android.text.Spanned;
 import android.text.TextWatcher;
 import android.text.method.DigitsKeyListener;
 import android.text.method.NumberKeyListener;
 import android.util.AttributeSet;
+import android.util.Log;
 import android.view.KeyEvent;
 import android.view.View;
 import android.widget.EditText;
@@ -53,6 +55,7 @@ import tw.tib.financisto.widget.QuickAmountInput_;
 
 @EViewGroup(R.layout.amount_input)
 public class AmountInput extends LinearLayout implements AmountListener {
+    private static final String TAG = "AmountInput";
 
     public interface OnAmountChangedListener {
         void onAmountChanged(long oldAmount, long newAmount);
@@ -230,9 +233,7 @@ public class AmountInput extends LinearLayout implements AmountListener {
             delimiter.setVisibility(GONE);
         }
         else {
-            var l = (ConstraintLayout.LayoutParams) secondary.getLayoutParams();
-            l.width = (int) (secondary.getPaint().measureText("00") + secondary.getPaddingStart() + secondary.getPaddingEnd());
-            secondary.setLayoutParams(l);
+            resizeScale(2);
         }
     }
 
@@ -342,6 +343,7 @@ public class AmountInput extends LinearLayout implements AmountListener {
 
     public void setCurrency(Currency currency) {
         this.currency = currency;
+        resizeScale(currency.getScale());
     }
 
     public void setOwner(Activity owner) {
@@ -358,12 +360,14 @@ public class AmountInput extends LinearLayout implements AmountListener {
 
         absAmount = Utils.roundAmount(currency, absAmount);
 
-        long x = absAmount / 100;
+        long divisor = currency == null ? 100 : currency.getDivisor();
+        int scale = currency == null ? 2 : currency.getScale();
+        long x = absAmount / divisor;
         primary.setText(String.valueOf(x));
 
         if (MyPreferences.isEnterCurrencyDecimalPlaces()) {
-            long y = absAmount - 100 * x;
-            secondary.setText(String.format("%02d", y));
+            long y = absAmount % divisor;
+            secondary.setText(String.format("%0" + scale + "d", y));
         }
 
         if (isIncomeExpenseEnabled() && amount != 0) {
@@ -375,12 +379,35 @@ public class AmountInput extends LinearLayout implements AmountListener {
         }
     }
 
+    public BigDecimal getBigDecimalAmount() {
+        String p = primary.getText().toString();
+        String s = secondary.getText().toString();
+        int scale = currency == null ? 2 : currency.getScale();
+        Log.d(TAG, "toLong(p)=" + toLong(p) + " BigDecimal.valueOf(toLong(p))=" + BigDecimal.valueOf(toLong(p)));
+        Log.d(TAG, "toLong(s)=" + toLong(s) + ", scale-s_length()=" + (scale - s.length()) + " BigDecimal.valueOf(toLong(s))=" + BigDecimal.valueOf(toLong(s)).movePointLeft(scale - s.length()));
+        var bd = BigDecimal.valueOf(toLong(p))
+                .add(BigDecimal.valueOf(toLong(s)).movePointLeft(s.length()));
+        Log.d(TAG, "getBigDecimalAmount bd=" + bd);
+        return isExpense() ? bd.negate() : bd;
+    }
+
     public long getAmount() {
         String p = primary.getText().toString();
         String s = secondary.getText().toString();
-        long x = 100 * toLong(p);
-        long y = toLong(s);
-        long amount = x + (s.length() == 1 ? 10 * y : y);
+        int scale = currency == null ? 2 : currency.getScale();
+        var bd = BigDecimal.valueOf(toLong(p)).movePointRight(scale)
+                .add(BigDecimal.valueOf(toLong(s)).movePointRight(scale - s.length()));
+        Log.d(TAG, "getAmount " + (currency == null ? "null" : currency.name) + ", p=" + p + ", s=" + s + ", bd=" + bd);
+        long amount = 0;
+        try {
+            amount = bd.longValueExact();
+            primary.setTextColor(getResources().getColor(android.R.color.primary_text_dark));
+            secondary.setTextColor(getResources().getColor(android.R.color.primary_text_dark));
+        } catch (ArithmeticException e) {
+            primary.setTextColor(getResources().getColor(android.R.color.holo_red_light));
+            secondary.setTextColor(getResources().getColor(android.R.color.holo_red_light));
+        }
+        Log.d(TAG, "getAmount amount=" + amount);
         return isExpense() ? -amount : amount;
     }
 
@@ -391,8 +418,15 @@ public class AmountInput extends LinearLayout implements AmountListener {
                 + (Utils.isNotEmpty(s) ? s : "0");
     }
 
+    private void resizeScale(int scale) {
+        var l = (ConstraintLayout.LayoutParams) secondary.getLayoutParams();
+        l.width = (int) (secondary.getPaint().measureText("000000000000".substring(0, scale)) + secondary.getPaddingStart() + secondary.getPaddingEnd());
+        secondary.setLayoutParams(l);
+        secondary.setFilters(new InputFilter[]{new InputFilter.LengthFilter(scale)});
+    }
+
     private long toLong(String s) {
-        return s == null || s.length() == 0 ? 0 : Long.parseLong(s);
+        return s == null || s.isEmpty() ? 0 : Long.parseLong(s);
     }
 
     public void setColor(int color) {
@@ -416,7 +450,7 @@ public class AmountInput extends LinearLayout implements AmountListener {
     public void onAmountChanged(String amount) {
         try {
             long oldAmount = getAmount();
-            BigDecimal d = new BigDecimal(amount).setScale(2, BigDecimal.ROUND_HALF_UP);
+            BigDecimal d = new BigDecimal(amount).setScale(2, RoundingMode.HALF_UP);
             boolean wasExpense = isExpense();
             setAmount(d.unscaledValue().longValue());
             if (wasExpense) setExpense();

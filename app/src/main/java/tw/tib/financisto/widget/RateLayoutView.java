@@ -9,6 +9,8 @@ import android.view.WindowManager;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
+import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.sql.Date;
 
 import tw.tib.financisto.Application;
@@ -82,11 +84,15 @@ public class RateLayoutView implements RateNodeOwner {
             }
         });
         amountInputTo.setOnRequestAssignListener(() -> {
-            double r = rateNode.getRate();
-            long amountFrom = amountInputFrom.getAmount();
-            long amountTo = (long)Math.floor(r*amountFrom);
+            BigDecimal amountFrom = amountInputFrom.getBigDecimalAmount();
+            BigDecimal amountTo = amountFrom.multiply(BigDecimal.valueOf(rateNode.getRate()));
             amountInputTo.disableAmountChangedListener();
-            amountInputTo.setAmount(amountTo);
+            try {
+                amountInputTo.setAmount(amountTo.movePointRight(currencyTo.getScale())
+                        .setScale(0, RoundingMode.HALF_UP).longValueExact());
+            } catch (ArithmeticException e) {
+                Log.d(TAG, "ArithmeticException", e);
+            }
             amountInputTo.enableAmountChangedListener();
             updateRateInfo();
         });
@@ -105,10 +111,15 @@ public class RateLayoutView implements RateNodeOwner {
         });
         amountInputFrom.setOnRequestAssignListener(() -> {
             double r = rateNode.getRate();
-            long amountTo = amountInputTo.getAmount();
-            long amountFrom = (long)Math.floor((1.0/r)*amountTo);
+            BigDecimal amountTo = amountInputTo.getBigDecimalAmount();
+            BigDecimal amountFrom = BigDecimal.valueOf(1.0/r).multiply(amountTo);
             amountInputFrom.disableAmountChangedListener();
-            amountInputFrom.setAmount(amountFrom);
+            try {
+                amountInputFrom.setAmount(amountFrom.movePointRight(currencyFrom.getScale())
+                        .setScale(0, RoundingMode.HALF_UP).longValueExact());
+            } catch (ArithmeticException e) {
+                Log.d(TAG, "ArithmeticException", e);
+            }
             amountInputFrom.enableAmountChangedListener();
             updateRateInfo();
         });
@@ -203,10 +214,16 @@ public class RateLayoutView implements RateNodeOwner {
     }
 
     private void calculateRate() {
-        long amountFrom = amountInputFrom.getAmount();
-        long amountTo = amountInputTo.getAmount();
-        float r = 1.0f*amountTo/amountFrom;
-        if (!Float.isNaN(r)) {
+        BigDecimal amountFrom = amountInputFrom.getBigDecimalAmount();
+        BigDecimal amountTo = amountInputTo.getBigDecimalAmount();
+        double r = Double.NaN;
+        try {
+            r = amountTo.divide(amountFrom, 16, RoundingMode.HALF_UP).doubleValue();
+            Log.d(TAG, "calculateRate " + amountTo + "/" + amountFrom + " = " + r);
+        } catch (ArithmeticException e) {
+            // do nothing
+        }
+        if (!Double.isNaN(r)) {
             rateNode.setRate(r);
         }
     }
@@ -304,14 +321,22 @@ public class RateLayoutView implements RateNodeOwner {
     }
 
     protected void updateRateInfo() {
-        long amountFrom = amountInputFrom.getAmount();
-        long amountTo = amountInputTo.getAmount();
-        if (amountFrom != 0 && amountTo != 0) {
-            double rate = 1.0d * amountTo / amountFrom;
-            String rateInfo = rateNode.checkIfRateConsistent(rate);
-            amountInputFrom.setRateInfo(activity.getString(R.string.rate_info, currencyFrom.name, rateInfo, currencyTo.name));
-            String inverseRateInfo = rateNode.formatRate(1.0d / rate);
-            amountInputTo.setRateInfo(activity.getString(R.string.rate_info, currencyTo.name, inverseRateInfo, currencyFrom.name));
+        BigDecimal amountFrom = amountInputFrom.getBigDecimalAmount();
+        BigDecimal amountTo = amountInputTo.getBigDecimalAmount();
+        if (!amountFrom.equals(BigDecimal.ZERO) && !amountTo.equals(BigDecimal.ZERO)) {
+            Log.d(TAG, "updateRateInfo " + currencyFrom + " " + currencyTo);
+            try {
+                double rate = amountTo.divide(amountFrom, 16, RoundingMode.HALF_UP).doubleValue();
+                Log.d(TAG, "updateRateInfo " + amountTo + "/" + amountFrom + " = " + rate);
+                String rateInfo = rateNode.checkIfRateConsistent(rate);
+                Log.d(TAG, "rateInfo=" + rateInfo);
+                amountInputFrom.setRateInfo(activity.getString(R.string.rate_info, currencyFrom.name, rateInfo, currencyTo.name));
+                String inverseRateInfo = rateNode.formatRate(1.0d / rate);
+                Log.d(TAG, "1.0d/rate=" + (1.0d/rate) + ", inverseRateInfo=" + inverseRateInfo);
+                amountInputTo.setRateInfo(activity.getString(R.string.rate_info, currencyTo.name, inverseRateInfo, currencyFrom.name));
+            } catch (Exception e) {
+                Log.d(TAG, "updateRateInfo Exception", e);
+            }
         }
         else {
             amountInputFrom.setRateInfo("");

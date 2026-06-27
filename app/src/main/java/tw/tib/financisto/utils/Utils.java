@@ -107,7 +107,7 @@ public class Utils {
         if (c == null) {
             c = Currency.EMPTY;
         }
-        String s = c.getFormat().format(amount.divide(HUNDRED));
+        String s = c.getFormat().format(amount.movePointLeft(c.getScale()));
         if (s.endsWith(".")) {
             s = s.substring(0, s.length()-1);
         }
@@ -384,7 +384,7 @@ public class Utils {
     }
 
     public static long roundAmount(Currency currency, long amount) {
-        if (MyPreferences.isRoundUpAmount() && currency != null) {
+        if (MyPreferences.isRoundUpAmount() && currency != null && currency.decimals < 3) {
             long sign, absAmount;
             if (amount < 0) {
                 sign = -1;

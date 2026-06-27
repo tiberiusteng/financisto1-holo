@@ -11,6 +11,7 @@
  ******************************************************************************/
 package tw.tib.financisto.model;
 
+import java.math.BigDecimal;
 import java.text.Format;
 
 import javax.persistence.Column;
@@ -67,18 +68,37 @@ public class Currency extends MyEntity {
     @Transient
 	private volatile Format format;
 
-    @Override
-    public String toString() {
-        return name;
-    }
+	@Transient
+	private volatile long divisor = 0;
 
-    public Format getFormat() {
+	public Format getFormat() {
 		Format f = format;
 		if (f == null) {
 			f = CurrencyCache.createCurrencyFormat(this);
 			format = f;
 		}
 		return f;
+	}
+
+	/**
+	 * The number of digits to the right of the decimal point in actual stored value.
+	 *
+	 * To compatible with existing data, currencies with decimals less than 2 places
+	 * are still treated as having 2 decimal points in stored value.
+	 */
+	public int getScale() {
+		return decimals < 3 ? 2 : decimals;
+	}
+
+	/**
+	 * Divide the amount with divisor to get the actual value
+	 * @return the divisor
+	 */
+	public long getDivisor() {
+		if (divisor == 0) {
+			divisor = new BigDecimal(1).movePointRight(getScale()).longValue();
+		}
+		return divisor;
 	}
 	
 	public static Currency defaultCurrency() {
@@ -90,5 +110,13 @@ public class Currency extends MyEntity {
 		c.decimals = 2;
 		return c;
 	}
-		
+
+	@Override
+	public String toString() {
+		return "Currency{" +
+				"id=" + id +
+				", name='" + name + '\'' +
+				", symbol='" + symbol + '\'' +
+				'}';
+	}
 }

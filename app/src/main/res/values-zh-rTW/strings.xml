@@ -182,6 +182,9 @@
   <string name="is_included_into_totals">計算到總財產中</string>
   <string name="is_included_into_totals_summary">將此帳戶的交易算在總財產中</string>
   <string name="decimals">\n小數位數</string>
+  <string name="decimals_warning">0, 1, 2 以外的小數位數是實驗功能</string>
+  <string name="currency_max_value">數額最大值: %s</string>
+  <string name="currency_min_value">數額最小值: %s</string>
   <string name="decimal_separator">\n小數點</string>
   <string name="group_separator">\n分位點</string>
   <string name="field_separator">\n欄位分隔</string>

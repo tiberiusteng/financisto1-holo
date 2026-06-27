@@ -18,8 +18,10 @@ import tw.tib.orb.EntityManager;
 import android.content.Context;
 import android.database.Cursor;
 
+import java.math.BigDecimal;
+
 public class CurrencyListAdapter extends AbstractGenericListAdapter {
-	
+
 	public CurrencyListAdapter(DatabaseAdapter db, Context context, Cursor c) {
 		super(db, context, c);
 	}
@@ -29,7 +31,7 @@ public class CurrencyListAdapter extends AbstractGenericListAdapter {
 		Currency c = EntityManager.loadFromCursor(cursor, Currency.class);
 		v.lineView.setText(c.title);
 		v.numberView.setText(c.name);
-		v.amountView.setText(Utils.amountToString(c, 100000));
+		v.amountView.setText(Utils.amountToString(c, new BigDecimal(1000).movePointRight(c.decimals < 3 ? 2 : c.decimals)));
 		if (c.isDefault) {
 			v.iconView.setImageResource(R.drawable.ic_home_currency);
 		} else {

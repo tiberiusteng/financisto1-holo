@@ -311,6 +311,7 @@ public class TransactionActivity extends AbstractTransactionActivity {
             rateView.setFromAmount(transaction.originalFromAmount);
             rateView.setToAmount(transaction.fromAmount);
         } else {
+            selectAccountCurrency();
             if (transaction.fromAmount != 0) {
                 rateView.setFromAmount(transaction.fromAmount);
             }
@@ -375,6 +376,9 @@ public class TransactionActivity extends AbstractTransactionActivity {
         }
         if (selectedOriginCurrencyId > 0) {
             selectOriginalCurrency(selectedOriginCurrencyId);
+        }
+        else {
+            selectAccountCurrency();
         }
         return a;
     }

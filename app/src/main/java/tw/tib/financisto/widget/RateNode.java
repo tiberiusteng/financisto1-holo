@@ -49,6 +49,11 @@ public class RateNode {
     View rateInfoNode;
 
     private TextView rateInfo;
+    /**
+     * Human-readable/editable exchange rate (5 decimal places)
+     * If there is an exact rate (such as from amount calculation or online update),
+     * it's set as tag of Double.
+     */
     private EditText rate;
     private long rateTimestamp;
 
@@ -107,8 +112,14 @@ public class RateNode {
         bDownload.setEnabled(true);
     }
 
-    public float getRate() {
+    public double getRate() {
         try {
+            // if there is tagged exact value, use that
+            var r = (Double) rate.getTag();
+            if (r != null) {
+                return r;
+            }
+            // using human-readable part
             String rateText = Utils.text(rate);
             if (rateText != null) {
                 rateText = rateText.replace(',', '.');
@@ -124,7 +135,10 @@ public class RateNode {
         Log.d(TAG, "setRate");
         markRateConsistent();
         rate.removeTextChangedListener(rateWatcher);
+        // human-readable text
         rate.setText(formatRate(Math.abs(r)));
+        // tagging exact value of exchange rate
+        rate.setTag(r);
         rate.addTextChangedListener(rateWatcher);
         rateTimestamp = 0;
         if (updateRateInfo) {
@@ -178,7 +192,7 @@ public class RateNode {
     }
 
     public void markRateInconsistent() {
-        rate.setTextColor(context.getResources().getColor(R.color.holo_red_light));
+        rate.setTextColor(context.getResources().getColor(R.color.holo_orange_dark));
     }
 
     public void markRateConsistent() {
@@ -242,6 +256,8 @@ public class RateNode {
         @Override
         public void afterTextChanged(Editable s) {
             rateTimestamp = 0;
+            // discard tagged exact value since after editing the human-readable part is ground truth
+            rate.setTag(null);
             owner.onRateChanged();
         }
 

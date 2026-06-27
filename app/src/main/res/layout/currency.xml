@@ -12,96 +12,214 @@
               android:layout_width="fill_parent" android:layout_height="fill_parent"
               android:orientation="vertical"
               android:id="@+id/currency">
-    <ScrollView android:layout_width="fill_parent" android:layout_height="wrap_content"
-                android:layout_weight="1">
-        <LinearLayout android:layout_width="fill_parent" android:layout_height="wrap_content"
-                android:orientation="vertical" android:padding="3dp">
-            <TextView android:layout_height="wrap_content"
-                      android:layout_width="fill_parent" android:layout_marginLeft="3dp"
-                      android:text="@string/currency_name"/>
-            <EditText android:layout_height="wrap_content"
-                      android:layout_width="fill_parent" android:id="@+id/title"
-                      android:maxLength="100"/>
-            <TableLayout android:layout_height="wrap_content"
-                         android:layout_width="fill_parent">
-                <TableRow android:layout_width="wrap_content"
-                          android:layout_height="wrap_content">
-                    <TextView android:layout_height="wrap_content"
-                              android:layout_width="fill_parent" android:layout_weight="1"
-                              android:layout_marginLeft="3dp" android:text="@string/currency_code"/>
-                    <TextView android:layout_height="wrap_content"
-                              android:layout_width="fill_parent" android:layout_weight="1"
-                              android:layout_marginLeft="3dp"
-                              android:text="@string/currency_symbol"/>
+
+    <ScrollView
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:layout_weight="1">
+
+        <LinearLayout
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:padding="3dp">
+
+            <TextView
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="3dp"
+                android:text="@string/currency_name" />
+
+            <EditText
+                android:id="@+id/title"
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:maxLength="100" />
+
+            <TableLayout
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content">
+
+                <TableRow
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content">
+
+                    <TextView
+                        android:layout_width="fill_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginLeft="3dp"
+                        android:layout_weight="1"
+                        android:text="@string/currency_code" />
+
+                    <TextView
+                        android:layout_width="fill_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginLeft="3dp"
+                        android:layout_weight="1"
+                        android:text="@string/currency_symbol" />
                 </TableRow>
-                <TableRow android:layout_width="wrap_content"
-                          android:layout_height="wrap_content">
-                    <EditText android:layout_height="wrap_content"
-                              android:layout_width="fill_parent" android:id="@+id/name"
-                              android:ellipsize="none" android:singleLine="true"
-                              android:layout_weight="1"
-                              android:hint="@string/currency_code_hint"/>
-                    <EditText android:layout_height="wrap_content"
-                              android:layout_width="fill_parent" android:id="@+id/symbol"
-                              android:singleLine="true" android:maxLength="3" android:layout_weight="1"
-                              android:hint="@string/currency_symbol_hint"/>
-                </TableRow>
-            </TableLayout>
-            <TableLayout android:layout_height="wrap_content" android:layout_width="fill_parent">
-                <TableRow android:layout_width="wrap_content" android:layout_height="wrap_content">
-                    <TextView android:layout_height="wrap_content" android:layout_width="fill_parent"
-                              android:layout_marginLeft="3dp" android:text="@string/decimals"
-                              android:layout_weight="1"/>
-                    <TextView android:layout_height="wrap_content" android:layout_width="fill_parent"
-                              android:layout_marginLeft="3dp" android:layout_weight="1"
-                              android:text="@string/decimal_separator"/>
-                    <TextView android:layout_height="wrap_content" android:layout_width="fill_parent"
-                              android:layout_marginLeft="3dp" android:layout_weight="1"
-                              android:text="@string/group_separator"/>
-                </TableRow>
-                <TableRow android:layout_width="wrap_content" android:layout_height="wrap_content">
-                    <Spinner android:layout_height="wrap_content" android:id="@+id/spinnerDecimals"
-                             android:entries="@array/decimals" android:layout_width="wrap_content"
-                             android:layout_weight="1"/>
-                    <Spinner android:layout_height="wrap_content" android:layout_width="wrap_content"
-                             android:layout_weight="1"
-                             android:id="@+id/spinnerDecimalSeparators" android:entries="@array/decimal_separators"/>
-                    <Spinner android:layout_height="wrap_content" android:layout_width="wrap_content"
-                             android:layout_weight="1"
-                             android:id="@+id/spinnerGroupSeparators" android:entries="@array/group_separators"/>
-                </TableRow>
-            </TableLayout>
-            <TableLayout android:layout_height="wrap_content"
-                         android:layout_width="fill_parent">
-                <TableRow android:layout_width="wrap_content"
-                          android:layout_height="wrap_content">
-                    <TextView android:layout_height="wrap_content" android:layout_width="wrap_content"
-                              android:layout_marginLeft="3dp" android:text="@string/currency_symbol_format"
-                        android:layout_weight="1" />
-                    <TextView android:layout_height="wrap_content" android:layout_width="wrap_content"
-                        android:layout_marginLeft="3dp" android:text="@string/currency_number_format"
-                        android:layout_weight="1" />
-                </TableRow>
-                <TableRow android:layout_width="wrap_content"
-                          android:layout_height="wrap_content">
-                    <Spinner android:layout_height="wrap_content" android:layout_width="wrap_content"
-                             android:id="@+id/spinnerSymbolFormat" android:entries="@array/symbol_formats"
-                             android:layout_weight="1" />
-                    <EditText android:layout_height="wrap_content"
-                        android:layout_width="fill_parent" android:id="@+id/number_format"
-                        android:singleLine="true" android:layout_weight="1"
-                        android:hint="#,##0.00"/>
+
+                <TableRow
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content">
+
+                    <EditText
+                        android:id="@+id/name"
+                        android:layout_width="fill_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:ellipsize="none"
+                        android:hint="@string/currency_code_hint"
+                        android:singleLine="true" />
+
+                    <EditText
+                        android:id="@+id/symbol"
+                        android:layout_width="fill_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:hint="@string/currency_symbol_hint"
+                        android:maxLength="3"
+                        android:singleLine="true" />
                 </TableRow>
             </TableLayout>
-            <CheckBox android:id="@+id/is_default"
+
+            <TableLayout
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content">
+
+                <TableRow
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content">
+
+                    <TextView
+                        android:layout_width="fill_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginLeft="3dp"
+                        android:layout_weight="1"
+                        android:text="@string/decimals" />
+
+                    <TextView
+                        android:layout_width="fill_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginLeft="3dp"
+                        android:layout_weight="1"
+                        android:text="@string/decimal_separator" />
+
+                    <TextView
+                        android:layout_width="fill_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginLeft="3dp"
+                        android:layout_weight="1"
+                        android:text="@string/group_separator" />
+                </TableRow>
+
+                <TableRow
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content">
+
+                    <Spinner
+                        android:id="@+id/spinnerDecimals"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:entries="@array/decimals" />
+
+                    <Spinner
+                        android:id="@+id/spinnerDecimalSeparators"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:entries="@array/decimal_separators" />
+
+                    <Spinner
+                        android:id="@+id/spinnerGroupSeparators"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:entries="@array/group_separators" />
+                </TableRow>
+            </TableLayout>
+
+            <TableLayout
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content">
+
+                <TableRow
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content">
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginLeft="3dp"
+                        android:layout_weight="1"
+                        android:text="@string/currency_symbol_format" />
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginLeft="3dp"
+                        android:layout_weight="1"
+                        android:text="@string/currency_number_format" />
+                </TableRow>
+
+                <TableRow
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content">
+
+                    <Spinner
+                        android:id="@+id/spinnerSymbolFormat"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:entries="@array/symbol_formats" />
+
+                    <EditText
+                        android:id="@+id/number_format"
+                        android:layout_width="fill_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:hint="#,##0.00"
+                        android:singleLine="true" />
+                </TableRow>
+            </TableLayout>
+
+            <CheckBox
+                android:id="@+id/is_default"
                 android:layout_width="fill_parent"
                 android:layout_height="?android:attr/listPreferredItemHeightSmall"
-                android:text="@string/is_default"/>
-            <CheckBox android:id="@+id/update_exchange_rate"
+                android:text="@string/is_default" />
+
+            <CheckBox
+                android:id="@+id/update_exchange_rate"
                 android:layout_width="fill_parent"
                 android:layout_height="?android:attr/listPreferredItemHeightSmall"
-                android:text="@string/update_exchange_rate"/>
+                android:text="@string/update_exchange_rate" />
+
+            <TextView
+                android:id="@+id/decimals_warning"
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:text="@string/decimals_warning"
+                android:textAppearance="?android:attr/textAppearanceMedium"
+                android:textColor="@color/holo_gray_bright"
+                android:background="@color/holo_red_dark" />
+
+            <TextView
+                android:id="@+id/max_value"
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:text="@string/currency_max_value"
+                android:textAppearance="?android:attr/textAppearanceMedium" />
+
+            <TextView
+                android:id="@+id/min_value"
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:text="@string/currency_min_value"
+                android:textAppearance="?android:attr/textAppearanceMedium" />
         </LinearLayout>
     </ScrollView>
+
     <include layout="@layout/ok_cancel_buttons"/>
 </LinearLayout>
