@@ -1,0 +1,1 @@
+ALTER TABLE currency ADD trading_currency_id LONG NOT NULL DEFAULT 0

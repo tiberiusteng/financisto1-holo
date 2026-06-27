@@ -9,12 +9,15 @@
 package tw.tib.financisto.rates;
 
 import android.content.Context;
+import android.util.Log;
 
 import gnu.trove.map.TLongObjectMap;
 import gnu.trove.map.hash.TLongObjectHashMap;
 import tw.tib.financisto.db.DatabaseAdapter;
 import tw.tib.financisto.model.Currency;
+import tw.tib.financisto.utils.CurrencyCache;
 
+import java.util.Arrays;
 import java.util.List;
 
 /**
@@ -23,12 +26,15 @@ import java.util.List;
  * Date: 1/25/12 11:49 PM
  */
 public class LatestExchangeRates implements ExchangeRateProvider, ExchangeRatesCollection {
+    private static final String TAG = "LatestRates";
 
     protected Context context;
     protected Currency homeCurrency;
+    protected DatabaseAdapter db;
 
     public LatestExchangeRates(Context context) {
         this.context = context;
+        this.db = new DatabaseAdapter(context);
     }
 
     private final TLongObjectMap<TLongObjectMap<ExchangeRate>> rates = new TLongObjectHashMap<TLongObjectMap<ExchangeRate>>();
@@ -41,6 +47,7 @@ public class LatestExchangeRates implements ExchangeRateProvider, ExchangeRatesC
         TLongObjectMap<ExchangeRate> rateMap = getMapFor(fromCurrency.id);
         ExchangeRate rate = rateMap.get(toCurrency.id);
         if (rate != null) {
+            Log.d(TAG, "getRate direct " + rate);
             return rate;
         }
         // estimate from inverse exchange
@@ -53,28 +60,51 @@ public class LatestExchangeRates implements ExchangeRateProvider, ExchangeRatesC
         }
         // estimate from exchange via home currency
         if (homeCurrency == null) {
-            homeCurrency = new DatabaseAdapter(context).getHomeCurrency();
+            homeCurrency = db.getHomeCurrency();
         }
         if (!homeCurrency.equals(Currency.EMPTY) &&
             !fromCurrency.equals(homeCurrency) &&
             !toCurrency.equals(homeCurrency))
         {
+            Log.d(TAG, "getRate trying to estimate with home currency " + homeCurrency);
             ExchangeRate e1 = getRate(fromCurrency, homeCurrency);
             if (e1 != ExchangeRate.NA) {
                 ExchangeRate e2 = getRate(homeCurrency, toCurrency);
                 if (e2 != ExchangeRate.NA) {
-                    rate = new ExchangeRate();
-                    rate.fromCurrencyId = fromCurrency.id;
-                    rate.toCurrencyId = toCurrency.id;
-                    rate.rate = e1.rate * e2.rate;
-                    rateMap.put(toCurrency.id, rate);
-                    return rate;
+                    return combineRate(rateMap, fromCurrency, toCurrency, e1, e2);
+                }
+            }
+        }
+        // through trading currency
+        if (fromCurrency.tradingCurrencyId != 0) {
+            Currency tradingCurrency = CurrencyCache.getCurrency(db, fromCurrency.tradingCurrencyId);
+            Log.d(TAG, "getRate via trading currency " + tradingCurrency);
+            ExchangeRate t1 = getRate(fromCurrency, tradingCurrency);
+            if (t1 != ExchangeRate.NA) {
+                ExchangeRate t2 = getRate(tradingCurrency, toCurrency);
+                if (t2 != ExchangeRate.NA) {
+                    return combineRate(rateMap, fromCurrency, toCurrency, t1, t2);
                 }
             }
         }
         // negative cache
         rate = ExchangeRate.NA;
         rateMap.put(toCurrency.id, rate);
+        return rate;
+    }
+
+    private ExchangeRate combineRate(
+            TLongObjectMap<ExchangeRate> rateMap, Currency fromCurrency, Currency toCurrency,
+            ExchangeRate e1, ExchangeRate e2
+    ) {
+        Log.d(TAG, "combineRate e1=" + e1 + ", e2=" + e2);
+        var rate = new ExchangeRate();
+        rate.fromCurrencyId = fromCurrency.id;
+        rate.toCurrencyId = toCurrency.id;
+        rate.rate = e1.rate * e2.rate;
+        rate.derivedFrom = Arrays.asList(e1, e2);
+        rateMap.put(toCurrency.id, rate);
+        Log.d(TAG, "    result " + rate);
         return rate;
     }
 

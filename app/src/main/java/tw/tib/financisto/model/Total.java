@@ -69,4 +69,18 @@ public class Total {
         }
         return context.getString(R.string.not_available);
     }
+
+    @Override
+    public String toString() {
+        return "Total{" +
+                "currency=" + currency +
+                ", showAmount=" + showAmount +
+                ", error=" + error +
+                ", amount=" + amount +
+                ", balance=" + balance +
+                ", showIncomeExpense=" + showIncomeExpense +
+                ", income=" + income +
+                ", expenses=" + expenses +
+                '}';
+    }
 }

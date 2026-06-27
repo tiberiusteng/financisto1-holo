@@ -10,6 +10,9 @@ package tw.tib.financisto.rates;
 
 import android.content.ContentValues;
 import android.database.Cursor;
+
+import java.util.List;
+
 import tw.tib.financisto.db.DatabaseHelper;
 
 /**
@@ -54,6 +57,7 @@ public class ExchangeRate implements Comparable<ExchangeRate> {
     public double rate;
     public int is_flip;
     public String error;
+    public List<ExchangeRate> derivedFrom;
 
     public ExchangeRate flip() {
         ExchangeRate r = new ExchangeRate();

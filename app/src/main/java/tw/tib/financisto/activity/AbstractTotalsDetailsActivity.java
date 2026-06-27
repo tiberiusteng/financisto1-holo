@@ -8,16 +8,12 @@
 
 package tw.tib.financisto.activity;
 
-import static java.lang.String.format;
-
 import android.graphics.drawable.Drawable;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.text.format.DateUtils;
-import android.util.Log;
 import android.view.Gravity;
 import android.view.View;
-import android.view.Window;
 import android.widget.Button;
 import android.widget.LinearLayout;
 import android.widget.TextView;
@@ -26,8 +22,10 @@ import tw.tib.financisto.model.Currency;
 import tw.tib.financisto.model.Total;
 import tw.tib.financisto.rates.ExchangeRate;
 import tw.tib.financisto.rates.ExchangeRateProvider;
+import tw.tib.financisto.utils.CurrencyCache;
 import tw.tib.financisto.utils.Utils;
 
+import java.math.BigDecimal;
 import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -138,11 +136,26 @@ public abstract class AbstractTotalsDetailsActivity extends AbstractActivity {
                 addAmountAndErrorNode(totalInfo.total);
             }
             else {
-                addSingleForeignAmountNode(totalInfo);
+                if (totalInfo.rate.derivedFrom != null) {
+                    Total t = totalInfo.total;
+                    for (ExchangeRate r : totalInfo.rate.derivedFrom) {
+                        // do a step of exchange
+                        Currency toCurrency = CurrencyCache.getCurrency(db, r.toCurrencyId);
+                        addSingleForeignAmountNode(new TotalInfo(t, r), toCurrency);
+                        var next = new Total(toCurrency);
+                        next.balance = BigDecimal.valueOf(t.balance).movePointLeft(t.currency.getScale())
+                                .multiply(BigDecimal.valueOf(r.rate))
+                                .movePointRight(toCurrency.getScale()).longValue();
+                        t = next;
+                    }
+                }
+                else {
+                    addSingleForeignAmountNode(totalInfo, homeCurrency);
+                }
             }
         }
 
-        private void addSingleForeignAmountNode(TotalInfo totalInfo) {
+        private void addSingleForeignAmountNode(TotalInfo totalInfo, Currency toCurrency) {
             var v = x.addInfoNodeForeignTotal(layout, -1, "");
             u.setAmountText(v.left, totalInfo.total);
             if (totalInfo.rate == ExchangeRate.NA) {
@@ -155,14 +168,19 @@ public abstract class AbstractTotalsDetailsActivity extends AbstractActivity {
                 v.right.setVisibility(View.VISIBLE);
 
                 var sb = new StringBuilder();
-                sb.append(getString(R.string.rate_as_of,
-                        DateUtils.formatDateTime(AbstractTotalsDetailsActivity.this, totalInfo.rate.date,
-                                DateUtils.FORMAT_SHOW_DATE|DateUtils.FORMAT_SHOW_YEAR|DateUtils.FORMAT_NUMERIC_DATE)));
-                sb.append(" ");
-                sb.append(getString(R.string.rate_info, totalInfo.total.currency.name, nf.format(Math.abs(totalInfo.rate.rate)), homeCurrency.name));
+                if (totalInfo.rate.date != 0) {
+                    sb.append(getString(R.string.rate_as_of,
+                            DateUtils.formatDateTime(AbstractTotalsDetailsActivity.this, totalInfo.rate.date,
+                                    DateUtils.FORMAT_SHOW_DATE | DateUtils.FORMAT_SHOW_YEAR | DateUtils.FORMAT_NUMERIC_DATE)));
+                    sb.append(" ");
+                }
+                sb.append(getString(R.string.rate_info, totalInfo.total.currency.name, nf.format(Math.abs(totalInfo.rate.rate)), toCurrency.name));
                 v.rate.setText(sb);
 
-                u.setAmountText(v.right, homeCurrency, (long) Math.floor(totalInfo.rate.rate * totalInfo.total.balance), false);
+                u.setAmountText(v.right, toCurrency,
+                        BigDecimal.valueOf(totalInfo.total.balance).movePointLeft(totalInfo.total.currency.getScale())
+                                .multiply(BigDecimal.valueOf(totalInfo.rate.rate))
+                                .movePointRight(toCurrency.getScale()).longValue(), false);
             }
         }
 

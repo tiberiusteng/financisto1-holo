@@ -14,24 +14,33 @@ import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
+import android.util.Log;
+import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.EditText;
+import android.widget.LinearLayout;
+import android.widget.ListAdapter;
 import android.widget.Spinner;
 import android.widget.TextView;
 
 import java.text.DecimalFormatSymbols;
+import java.util.List;
 
 import tw.tib.financisto.R;
 import tw.tib.financisto.db.DatabaseAdapter;
 import tw.tib.financisto.model.Currency;
+import tw.tib.financisto.model.MultiChoiceItem;
+import tw.tib.financisto.model.MyEntity;
 import tw.tib.financisto.model.SymbolFormat;
 import tw.tib.financisto.utils.CurrencyCache;
 import tw.tib.financisto.utils.MyPreferences;
 import tw.tib.financisto.utils.PinProtection;
+import tw.tib.financisto.utils.TransactionUtils;
+import tw.tib.financisto.view.NodeInflater;
 
 import static tw.tib.financisto.utils.Utils.amountToString;
 import static tw.tib.financisto.utils.Utils.checkEditText;
@@ -41,10 +50,13 @@ import androidx.core.graphics.Insets;
 import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
 
-public class CurrencyActivity extends Activity {
+public class CurrencyActivity extends Activity implements ActivityLayoutListener {
+	private static final String TAG = "CurrencyActivity";
 
 	public static final String CURRENCY_ID_EXTRA = "currencyId";
 	private static final DecimalFormatSymbols s = new DecimalFormatSymbols();
+
+	private ActivityLayout x;
 
 	private DatabaseAdapter db;
 
@@ -65,6 +77,10 @@ public class CurrencyActivity extends Activity {
 	private Spinner groupSeparators;
 	private Spinner symbolFormat;
 	private EditText numberFormat;
+	private TextView tradingCurrency;
+	private long selectedTradingCurrency = 0;
+
+	private final Currency currencyNone = new Currency();
 
 	private int maxDecimals;
 
@@ -110,6 +126,14 @@ public class CurrencyActivity extends Activity {
 		symbolFormat.setSelection(0);
 		numberFormat = findViewById(R.id.number_format);
 
+		LayoutInflater layoutInflater = (LayoutInflater)getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+		NodeInflater nodeInflater = new NodeInflater(layoutInflater);
+		x = new ActivityLayout(nodeInflater, this);
+		LinearLayout layout = findViewById(R.id.list);
+		tradingCurrency = x.addListNode(layout, R.id.trading_currency, R.string.trading_currency, R.string.trading_currency_none);
+		currencyNone.id = 0;
+		currencyNone.name = getString(R.string.trading_currency_none);
+
 		maxDecimals = decimals.getCount() - 1;
 
 		decimalSeparatorsItems = getResources().getStringArray(R.array.decimal_separators);
@@ -131,6 +155,7 @@ public class CurrencyActivity extends Activity {
 				currency.groupSeparator = groupSeparators.getSelectedItem().toString();
 				currency.symbolFormat = symbolFormats[symbolFormat.getSelectedItemPosition()];
 				currency.numberFormat = text(numberFormat);
+				currency.tradingCurrencyId = selectedTradingCurrency;
 				long id = db.saveOrUpdate(currency);
 				CurrencyCache.initialize(db);
 				Intent data = new Intent();
@@ -203,6 +228,19 @@ public class CurrencyActivity extends Activity {
 		groupSeparators.setSelection(indexOf(groupSeparatorsItems, currency.groupSeparator, s.getGroupingSeparator()));
 		symbolFormat.setSelection(currency.symbolFormat.ordinal());
 		numberFormat.setText(currency.numberFormat);
+		selectTradingCurrency(currency.tradingCurrencyId);
+	}
+
+	private void selectTradingCurrency(long id) {
+		Log.d(TAG, "selectTradingCurrency id=" + id);
+		selectedTradingCurrency = id;
+		if (id == 0) {
+			tradingCurrency.setText(getString(R.string.trading_currency_none));
+		}
+		else {
+			Currency currency = CurrencyCache.getCurrency(db, id);
+			tradingCurrency.setText(currency.name);
+		}
 	}
 
 	private int indexOf(String[] a, String v, char c) {
@@ -236,5 +274,39 @@ public class CurrencyActivity extends Activity {
 	protected void onResume() {
 		super.onResume();
 		PinProtection.unlock(this);
+	}
+
+	@Override
+	public void onSelectedPos(int id, int selectedPos) {
+	}
+
+	@Override
+	public void onSelectedId(int id, long selectedId) {
+		if (id == R.id.trading_currency) {
+			selectTradingCurrency(selectedId);
+		}
+	}
+
+	@Override
+	public void onSelected(int id, List<? extends MultiChoiceItem> items) {
+	}
+
+	@Override
+	public void onClick(View v) {
+		int id = v.getId();
+		if (id == R.id.trading_currency) {
+			List<Currency> currencies = db.getAllCurrenciesList();
+			// trading currency can't be self
+			for (int i=0; i<currencies.size(); i++) {
+				if (currencies.get(i).id == currency.id) {
+					currencies.remove(i);
+					break;
+				}
+			}
+			currencies.add(0, currencyNone);
+			ListAdapter adapter = TransactionUtils.createCurrencyAdapter(this, currencies);
+			int selectedPos = MyEntity.indexOf(currencies, selectedTradingCurrency);
+			x.selectItemId(this, R.id.trading_currency, R.string.trading_currency, adapter, selectedPos);
+		}
 	}
 }

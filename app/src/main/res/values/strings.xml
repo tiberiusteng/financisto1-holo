@@ -29,6 +29,8 @@
     <string name="title">Title</string>
     <string name="payee">Payee</string>
     <string name="currency">Currency</string>
+    <string name="trading_currency">Trading currency</string>
+    <string name="trading_currency_none">(None)</string>
     <string name="add_currency">Add Currency</string>
     <string name="opening_amount">Opening amount</string>
     <string name="limit_amount">Limit amount</string>

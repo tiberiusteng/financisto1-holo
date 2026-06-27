@@ -196,6 +196,11 @@
                 android:layout_height="?android:attr/listPreferredItemHeightSmall"
                 android:text="@string/update_exchange_rate" />
 
+            <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+                android:layout_width="fill_parent" android:layout_height="wrap_content"
+                android:orientation="vertical" android:id="@+id/list">
+            </LinearLayout>
+
             <TextView
                 android:id="@+id/decimals_warning"
                 android:layout_width="fill_parent"

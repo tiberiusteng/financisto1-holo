@@ -39,6 +39,8 @@ import android.widget.ListAdapter;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import java.util.List;
+
 import tw.tib.financisto.R;
 import tw.tib.financisto.adapter.EntityEnumAdapter;
 import tw.tib.financisto.model.Account;
@@ -46,6 +48,7 @@ import tw.tib.financisto.model.AccountType;
 import tw.tib.financisto.model.CardIssuer;
 import tw.tib.financisto.model.Currency;
 import tw.tib.financisto.model.ElectronicPaymentType;
+import tw.tib.financisto.model.MyEntity;
 import tw.tib.financisto.model.Transaction;
 import tw.tib.financisto.utils.EntityEnum;
 import tw.tib.financisto.utils.TransactionUtils;
@@ -69,7 +72,7 @@ public class AccountActivity extends AbstractActivity {
 	private EditText iconText;
 	private EditText accentColor;
 
-	private Cursor currencyCursor;
+	private List<Currency> currencies;
 	private TextView currencyText;
 	private View accountTypeNode;
 	private View cardIssuerNode;
@@ -167,9 +170,8 @@ public class AccountActivity extends AbstractActivity {
 		paymentDayNode = x.addEditNode(layout, R.string.payment_day, paymentDayText);
 		setVisibility(paymentDayNode, View.GONE);
 
-		currencyCursor = db.getAllCurrencies("name");
-		startManagingCursor(currencyCursor);
-		currencyAdapter = TransactionUtils.createCurrencyAdapter(this, currencyCursor);
+		currencies = db.getAllCurrenciesList();
+		currencyAdapter = TransactionUtils.createCurrencyAdapter(this, currencies);
 
 		x.addEditNode(layout, R.string.title, accountTitle);
 		currencyText = x.addListNodePlus(layout, R.id.currency, R.id.currency_add, R.string.currency, R.string.select_currency);
@@ -343,8 +345,8 @@ public class AccountActivity extends AbstractActivity {
 						EnumUtils.selectEnum(ElectronicPaymentType.class, account.cardIssuer, ElectronicPaymentType.PAYPAL).ordinal());
 				break;
 			case R.id.currency:
-				x.select(this, R.id.currency, R.string.currency, currencyCursor, currencyAdapter,
-						"_id", account.currency != null ? account.currency.id : -1);
+				int selectedPos = MyEntity.indexOf(currencies, account.currency != null ? account.currency.id : -1);
+				x.selectItemId(this, R.id.currency, R.string.currency, currencyAdapter, selectedPos);
 				break;
 			case R.id.currency_add:
 				addNewCurrency();
@@ -358,7 +360,7 @@ public class AccountActivity extends AbstractActivity {
 				Intent intent = new Intent(AccountActivity.this, CurrencyActivity.class);
 				startActivityForResult(intent, NEW_CURRENCY_REQUEST);
 			} else {
-				currencyCursor.requery();
+				currencies = db.getAllCurrenciesList();
 				selectCurrency(currencyId);
 			}
 		}).show();
@@ -478,7 +480,7 @@ public class AccountActivity extends AbstractActivity {
 		if (resultCode == RESULT_OK) {
 			switch (requestCode) {
 				case NEW_CURRENCY_REQUEST:
-					currencyCursor.requery();
+					currencies = db.getAllCurrenciesList();
 					long currencyId = data.getLongExtra(CurrencyActivity.CURRENCY_ID_EXTRA, -1);
 					if (currencyId != -1) {
 						selectCurrency(currencyId);

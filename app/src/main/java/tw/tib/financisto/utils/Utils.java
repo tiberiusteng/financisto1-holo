@@ -22,6 +22,7 @@ import android.location.Location;
 import android.text.Spannable;
 import android.text.SpannableStringBuilder;
 import android.text.style.TextAppearanceSpan;
+import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.inputmethod.InputMethodManager;
@@ -40,6 +41,7 @@ import java.math.BigDecimal;
 import java.math.RoundingMode;
 
 public class Utils {
+    public static final String TAG = "Utils";
 
     public static final BigDecimal HUNDRED = new BigDecimal(100);
     public static final String TRANSFER_DELIMITER = " \u00BB ";

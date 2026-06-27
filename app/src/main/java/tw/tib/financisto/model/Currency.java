@@ -65,6 +65,9 @@ public class Currency extends MyEntity {
 	@Column(name = "group_separator")
 	public String groupSeparator;
 
+	@Column(name = "trading_currency_id")
+	public long tradingCurrencyId;
+
     @Transient
 	private volatile Format format;
 
@@ -113,6 +116,10 @@ public class Currency extends MyEntity {
 
 	@Override
 	public String toString() {
+		return name;
+	}
+
+	public String dump() {
 		return "Currency{" +
 				"id=" + id +
 				", name='" + name + '\'' +

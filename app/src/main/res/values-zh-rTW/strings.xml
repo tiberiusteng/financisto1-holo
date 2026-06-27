@@ -18,6 +18,8 @@
   <string name="title">名稱</string>
   <string name="payee">受款人</string>
   <string name="currency">貨幣</string>
+  <string name="trading_currency">交易幣值</string>
+  <string name="trading_currency_none">(無)</string>
   <string name="add_currency">新增貨幣</string>
   <string name="opening_amount">起始金額</string>
   <string name="limit_amount">額度</string>
