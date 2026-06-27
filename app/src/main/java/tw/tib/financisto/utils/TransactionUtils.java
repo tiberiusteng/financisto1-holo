@@ -20,7 +20,7 @@ import java.util.List;
 import tw.tib.financisto.R;
 import tw.tib.financisto.adapter.AccountSelectorBalanceAdapter;
 import tw.tib.financisto.adapter.CategoryListAdapter;
-import tw.tib.financisto.adapter.MyEntityAdapter;
+import tw.tib.financisto.adapter.CurrencyEntityAdapter;
 import tw.tib.financisto.db.DatabaseAdapter;
 import tw.tib.financisto.db.DatabaseHelper.AccountColumns;
 import tw.tib.financisto.db.MyEntityManager;
@@ -60,7 +60,7 @@ public class TransactionUtils {
     }
 
     public static ListAdapter createCurrencyAdapter(Context context, List<Currency> currencies) {
-        return new MyEntityAdapter<>(context, android.R.layout.simple_list_item_activated_1, android.R.id.text1, currencies);
+        return new CurrencyEntityAdapter(context, android.R.layout.simple_list_item_activated_1, android.R.id.text1, currencies);
     }
 
     public static ListAdapter createLocationAdapter(Context context, Cursor cursor) {

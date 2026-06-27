@@ -30,4 +30,7 @@
     <color name="transaction_location">@android:color/holo_green_light</color>
     <color name="transaction_date">#999</color>
     <color name="transaction_date_weekend">#c66</color>
+
+    <color name="currency_symbol">@android:color/holo_orange_light</color>
+    <color name="currency_title">@android:color/secondary_text_dark</color>
 </resources>
