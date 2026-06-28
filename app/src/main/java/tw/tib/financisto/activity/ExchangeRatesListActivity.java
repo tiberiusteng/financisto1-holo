@@ -89,8 +89,9 @@ public class ExchangeRatesListActivity extends AbstractListActivity<List<Exchang
         if (currencies.size() > 0) {
             toCurrencySpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
                 @Override
-                public void onItemSelected(AdapterView<?> adapterView, View view, int i, long l) {
+                public void onItemSelected(AdapterView<?> adapterView, View view, int i, long id) {
                     recreateCursor();
+                    lastSelectedCurrencyId = id;
                 }
 
                 @Override
@@ -108,7 +109,6 @@ public class ExchangeRatesListActivity extends AbstractListActivity<List<Exchang
                         toCurrencySpinner.setAdapter(createCurrencyAdapter(currencies));
                         toCurrencySpinner.setSelection(position);
                     }
-                    lastSelectedCurrencyId = id;
                 }
 
                 @Override
