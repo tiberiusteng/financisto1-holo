@@ -30,6 +30,32 @@
 
 <h2>Changelog</h2>
 
+<p><b>2026-06-28</b></p>
+<dl>
+    <dt><span>[+]</span> Trading currency for stocks, securities and mutual funds meta currencies</dt>
+    <dd>
+        <p>Configure trading currency for your foreign currency investment meta currencies, then it will
+        use the trading currency as intermediate step to calculate and show the balance in home currency.</p>
+        <p>For example, If I defined a currency for my VTI investments, set its trading currency as USD,
+        and my home currency is TWD. With defined exchange rate for VTI-&gt;USD and USD-&gt;TWD,
+        I can view my VTI's current balance value in TWD (tapping the balance at bottom right of
+        account transaction list).</p>
+    </dd>
+    <dt><span>[+]</span> Support currencies with decimal places &gt; 2</dt>
+    <dd>
+        <p>Storage is still 64-bit signed integer with precision of 18~19 significant decimal digits,
+        so currently limiting to max 12 decimal places. It's anticipated to be used with custom
+        currencies to manage stocks/securities, not for managing cryptocurrencies with extreme precision
+        (e.g. Ethereum need 256-bit or ~77 decimal digits).</p>
+        <p>Changing decimal places of a currency WILL NOT MODIFY EXISTING TRANSACTIONS. You need to
+        manually update them. Remember backing up your data.</p>
+    </dd>
+    <dt><span>[+]</span> Category selector background loading</dt>
+    <dt><span>[+]</span> CSV/QIF export using currency-specific decimal places</dt>
+    <dt><span>[-]</span> Fix exchange rate list currency selecting (selecting first currency
+        no longer change second currency).</dt>
+</dl>
+
 <p><b>2026-06-25</b></p>
 <dl>
     <dt><span>[-]</span> Fix payee/project selector background loading</dt>
