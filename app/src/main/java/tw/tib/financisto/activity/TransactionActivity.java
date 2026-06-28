@@ -25,7 +25,6 @@ import tw.tib.financisto.model.Account;
 import tw.tib.financisto.model.Category;
 import tw.tib.financisto.model.Currency;
 import tw.tib.financisto.model.MyEntity;
-import tw.tib.financisto.model.Payee;
 import tw.tib.financisto.model.Transaction;
 import tw.tib.financisto.utils.CurrencyCache;
 import tw.tib.financisto.utils.MyPreferences;
@@ -454,7 +453,7 @@ public class TransactionActivity extends AbstractTransactionActivity {
         } else {
             long fromAmount = rateView.getFromAmount();
             long toAmount = rateView.getToAmount();
-            Currency currency = CurrencyCache.getCurrency(db, selectedId);
+            Currency currency = CurrencyCache.getCurrency(selectedId);
             rateView.selectCurrencyFrom(currency);
             if (selectedAccount != null) {
                 if (selectedId == selectedAccount.currency.id) {
@@ -631,7 +630,7 @@ public class TransactionActivity extends AbstractTransactionActivity {
 
     private Currency getCurrency() {
         if (selectedOriginCurrencyId > 0) {
-            return CurrencyCache.getCurrency(db, selectedOriginCurrencyId);
+            return CurrencyCache.getCurrency(selectedOriginCurrencyId);
         }
         if (selectedAccount != null) {
             return selectedAccount.currency;

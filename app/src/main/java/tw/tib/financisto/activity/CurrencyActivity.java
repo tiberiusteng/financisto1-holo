@@ -238,7 +238,7 @@ public class CurrencyActivity extends Activity implements ActivityLayoutListener
 			tradingCurrency.setText(getString(R.string.trading_currency_none));
 		}
 		else {
-			Currency currency = CurrencyCache.getCurrency(db, id);
+			Currency currency = CurrencyCache.getCurrency(id);
 			tradingCurrency.setText(currency.name);
 		}
 	}

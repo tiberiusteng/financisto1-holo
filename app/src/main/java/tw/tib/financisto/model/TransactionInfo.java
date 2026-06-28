@@ -118,13 +118,13 @@ public class TransactionInfo extends TransactionBase {
         t.fromAmount = c.getLong(DatabaseHelper.BlotterColumns.from_amount.ordinal());
         t.toAmount = c.getLong(DatabaseHelper.BlotterColumns.to_amount.ordinal());
 
-        t.originalCurrency = CurrencyCache.getCurrencyOrEmpty(c.getLong(DatabaseHelper.BlotterColumns.original_currency_id.ordinal()));
+        t.originalCurrency = CurrencyCache.getCurrency(c.getLong(DatabaseHelper.BlotterColumns.original_currency_id.ordinal()));
         t.originalFromAmount = c.getLong(DatabaseHelper.BlotterColumns.original_from_amount.ordinal());
 
         Account fromAccount = new Account();
         fromAccount.id = c.getLong(DatabaseHelper.BlotterColumns.from_account_id.ordinal());
         fromAccount.title = c.getString(DatabaseHelper.BlotterColumns.from_account_title.ordinal());
-        fromAccount.currency = CurrencyCache.getCurrencyOrEmpty(c.getLong(DatabaseHelper.BlotterColumns.from_account_currency_id.ordinal()));
+        fromAccount.currency = CurrencyCache.getCurrency(c.getLong(DatabaseHelper.BlotterColumns.from_account_currency_id.ordinal()));
         t.fromAccount = fromAccount;
 
         long toAccountId = c.getLong(DatabaseHelper.BlotterColumns.to_account_id.ordinal());
@@ -132,7 +132,7 @@ public class TransactionInfo extends TransactionBase {
             Account toAccount = new Account();
             toAccount.id = toAccountId;
             toAccount.title = c.getString(DatabaseHelper.BlotterColumns.to_account_title.ordinal());
-            toAccount.currency = CurrencyCache.getCurrencyOrEmpty(c.getLong(DatabaseHelper.BlotterColumns.to_account_currency_id.ordinal()));
+            toAccount.currency = CurrencyCache.getCurrency(c.getLong(DatabaseHelper.BlotterColumns.to_account_currency_id.ordinal()));
             t.toAccount = toAccount;
         }
 

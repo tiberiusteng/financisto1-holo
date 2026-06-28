@@ -36,7 +36,7 @@ public class QifImportOptions {
         Uri uri = Uri.parse(data.getStringExtra(QifImportActivity.QIF_IMPORT_URI));
         int f = data.getIntExtra(QifImportActivity.QIF_IMPORT_DATE_FORMAT, 0);
         long currencyId = data.getLongExtra(QifImportActivity.QIF_IMPORT_CURRENCY, 1);
-        Currency currency = CurrencyCache.getCurrencyOrEmpty(currencyId);
+        Currency currency = CurrencyCache.getCurrency(currencyId);
         return new QifImportOptions(uri, QifDateFormat.values()[f], currency);
     }
 

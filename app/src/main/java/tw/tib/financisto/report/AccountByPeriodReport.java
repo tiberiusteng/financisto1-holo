@@ -11,6 +11,7 @@ import tw.tib.financisto.graph.Report2DChart;
 import tw.tib.financisto.model.Account;
 import tw.tib.financisto.model.Currency;
 import tw.tib.financisto.model.ReportDataByPeriod;
+import tw.tib.financisto.utils.CurrencyCache;
 import tw.tib.financisto.utils.MyPreferences;
 
 import android.content.Context;
@@ -75,7 +76,7 @@ public class AccountByPeriodReport extends Report2DChart {
 			return em.getAccount(filterIds.get(currentFilterOrder)).currency;
 		}
 		else {
-			return em.getHomeCurrency();
+			return CurrencyCache.getHomeCurrency();
 		}
 	}
 

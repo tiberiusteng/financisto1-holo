@@ -12,7 +12,6 @@ import android.app.AlertDialog;
 import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.Intent;
-import android.database.Cursor;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Handler;
@@ -246,7 +245,7 @@ public class ExchangeRatesListActivity extends AbstractListActivity<List<Exchang
 
         @Override
         protected List<ExchangeRate> doInBackground(Void... args) {
-            Currency homeCurrency = db.getHomeCurrency();
+            Currency homeCurrency = CurrencyCache.getHomeCurrency();
             if (homeCurrency == Currency.EMPTY) {
                 new Handler(Looper.getMainLooper()).post(() -> new AlertDialog.Builder(context)
                         .setMessage(context.getString(R.string.exchange_rate_set_default_currency))
@@ -298,8 +297,8 @@ public class ExchangeRatesListActivity extends AbstractListActivity<List<Exchang
         private void showResult(List<ExchangeRate> result) {
             StringBuilder sb = new StringBuilder();
             for (ExchangeRate rate : result) {
-                Currency fromCurrency = CurrencyCache.getCurrency(db, rate.fromCurrencyId);
-                Currency toCurrency = CurrencyCache.getCurrency(db, rate.toCurrencyId);
+                Currency fromCurrency = CurrencyCache.getCurrency(rate.fromCurrencyId);
+                Currency toCurrency = CurrencyCache.getCurrency(rate.toCurrencyId);
                 sb.append(fromCurrency.name).append(" -> ").append(toCurrency.name);
                 if (rate.isOk()) {
                     sb.append(" = ").append(nf.format(rate.rate));

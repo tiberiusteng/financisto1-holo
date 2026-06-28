@@ -145,9 +145,9 @@ public class BlotterListAdapter extends ResourceCursorAdapter {
             noteView.setTextColor(Color.WHITE);
 
             long fromCurrencyId = cursor.getLong(BlotterColumns.from_account_currency_id.ordinal());
-            Currency fromCurrency = CurrencyCache.getCurrency(db, fromCurrencyId);
+            Currency fromCurrency = CurrencyCache.getCurrency(fromCurrencyId);
             long toCurrencyId = cursor.getLong(BlotterColumns.to_account_currency_id.ordinal());
-            Currency toCurrency = CurrencyCache.getCurrency(db, toCurrencyId);
+            Currency toCurrency = CurrencyCache.getCurrency(toCurrencyId);
 
             long fromAmount = cursor.getLong(BlotterColumns.from_amount.ordinal());
             long toAmount = cursor.getLong(BlotterColumns.to_amount.ordinal());
@@ -165,11 +165,11 @@ public class BlotterListAdapter extends ResourceCursorAdapter {
             setTransactionTitleText(cursor, noteView);
             sb.setLength(0);
             long fromCurrencyId = cursor.getLong(BlotterColumns.from_account_currency_id.ordinal());
-            Currency fromCurrency = CurrencyCache.getCurrency(db, fromCurrencyId);
+            Currency fromCurrency = CurrencyCache.getCurrency(fromCurrencyId);
             long amount = cursor.getLong(BlotterColumns.from_amount.ordinal());
             long originalCurrencyId = cursor.getLong(BlotterColumns.original_currency_id.ordinal());
             if (originalCurrencyId > 0) {
-                Currency originalCurrency = CurrencyCache.getCurrency(db, originalCurrencyId);
+                Currency originalCurrency = CurrencyCache.getCurrency(originalCurrencyId);
                 long originalAmount = cursor.getLong(BlotterColumns.original_from_amount.ordinal());
                 u.setAmountText(sb, v.rightCenterView, originalCurrency, originalAmount, fromCurrency, amount, true);
             } else {

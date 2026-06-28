@@ -60,7 +60,7 @@ public class LatestExchangeRates implements ExchangeRateProvider, ExchangeRatesC
         }
         // estimate from exchange via home currency
         if (homeCurrency == null) {
-            homeCurrency = db.getHomeCurrency();
+            homeCurrency = CurrencyCache.getHomeCurrency();
         }
         if (!homeCurrency.equals(Currency.EMPTY) &&
             !fromCurrency.equals(homeCurrency) &&
@@ -77,7 +77,7 @@ public class LatestExchangeRates implements ExchangeRateProvider, ExchangeRatesC
         }
         // through trading currency
         if (fromCurrency.tradingCurrencyId != 0) {
-            Currency tradingCurrency = CurrencyCache.getCurrency(db, fromCurrency.tradingCurrencyId);
+            Currency tradingCurrency = CurrencyCache.getCurrency(fromCurrency.tradingCurrencyId);
             Log.d(TAG, "getRate via trading currency " + tradingCurrency);
             ExchangeRate t1 = getRate(fromCurrency, tradingCurrency);
             if (t1 != ExchangeRate.NA) {

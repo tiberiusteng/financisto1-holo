@@ -68,7 +68,7 @@ public class QifExportOptions {
             return f;
         }
 
-        Currency c = CurrencyCache.getCurrency(new DatabaseAdapter(Application.getInstance()), currencyId);
+        Currency c = CurrencyCache.getCurrency(currencyId);
         currency.decimals = c.decimals;
 
         f = CurrencyCache.createCurrencyFormat(currency);

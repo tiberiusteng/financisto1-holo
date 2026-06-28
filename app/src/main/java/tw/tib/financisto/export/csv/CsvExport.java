@@ -24,7 +24,6 @@ import tw.tib.financisto.model.MyLocation;
 import tw.tib.financisto.model.Payee;
 import tw.tib.financisto.model.Project;
 import tw.tib.financisto.utils.CurrencyCache;
-import tw.tib.financisto.utils.Utils;
 import tw.tib.financisto.model.Account;
 import tw.tib.financisto.model.Currency;
 import tw.tib.financisto.model.Transaction;
@@ -199,7 +198,7 @@ public class CsvExport extends Export {
         }
         // from account
         w.value(account);
-        Currency c = CurrencyCache.getCurrency(db, currencyId);
+        Currency c = CurrencyCache.getCurrency(currencyId);
         String amountFormatted;
         if (options.useCurrencySpecificDecimals) {
             amountFormatted = options.getCurrencyAmountFormat(currencyId).format(new BigDecimal(amount).movePointLeft(c.getScale()));
@@ -230,7 +229,7 @@ public class CsvExport extends Export {
                 w.value(null); // to currency
             }
             else {
-                c = CurrencyCache.getCurrency(db, toCurrencyId);
+                c = CurrencyCache.getCurrency(toCurrencyId);
                 if (options.useCurrencySpecificDecimals) {
                     amountFormatted = options.getCurrencyAmountFormat(toCurrencyId).format(
                             new BigDecimal(toAmount).movePointLeft(c.getScale()));
@@ -256,7 +255,7 @@ public class CsvExport extends Export {
             }
         }
         if (originalCurrencyId > 0) {
-            Currency originalCurrency = CurrencyCache.getCurrency(db, originalCurrencyId);
+            Currency originalCurrency = CurrencyCache.getCurrency(originalCurrencyId);
             if (options.useCurrencySpecificDecimals) {
                 w.value(options.getCurrencyAmountFormat(originalCurrencyId).format(
                         new BigDecimal(originalAmount).movePointLeft(originalCurrency.getScale())));

@@ -12,9 +12,10 @@ package tw.tib.financisto.utils;
 
 import android.database.Cursor;
 import android.os.Build;
-import android.util.Log;
 
 import gnu.trove.map.hash.TLongObjectHashMap;
+import tw.tib.financisto.Application;
+import tw.tib.financisto.db.DatabaseAdapter;
 import tw.tib.financisto.model.Currency;
 import tw.tib.orb.EntityManager;
 import tw.tib.orb.Query;
@@ -29,21 +30,16 @@ public class CurrencyCache {
 
     //@ProtectedBy("this")
 	private static final TLongObjectHashMap<Currency> CURRENCIES = new TLongObjectHashMap<Currency>();
-	
-	public static synchronized Currency getCurrency(EntityManager em, long currencyId) {
-		Currency cachedCurrency = CURRENCIES.get(currencyId);
-        if (cachedCurrency == null) {
-			Log.d("CurrencyCache", "cachedCurrency IS NULL");
-            cachedCurrency = em.get(Currency.class, currencyId);
-            if (cachedCurrency == null) {
-                cachedCurrency = Currency.EMPTY;
-            }
-            CURRENCIES.put(currencyId, cachedCurrency);
-        }
-        return cachedCurrency;
+	private static Currency homeCurrency = Currency.EMPTY;
+	private static boolean loaded = false;
+
+	public static synchronized Currency getHomeCurrency() {
+		if (!loaded) initialize(new DatabaseAdapter(Application.getInstance()));
+		return homeCurrency;
 	}
-	
-	public static synchronized Currency getCurrencyOrEmpty(long currencyId) {
+
+	public static synchronized Currency getCurrency(long currencyId) {
+		if (!loaded) initialize(new DatabaseAdapter(Application.getInstance()));
 		Currency c = CURRENCIES.get(currencyId);
 		return c != null ? c : Currency.EMPTY;
 	}
@@ -52,15 +48,18 @@ public class CurrencyCache {
         TLongObjectHashMap<Currency> currencies = new TLongObjectHashMap<Currency>();
 		Query<Currency> q = em.createQuery(Currency.class);
 		Cursor c = q.execute();
+		homeCurrency = Currency.EMPTY;
 		try {
 			while (c.moveToNext()) {
 				Currency currency = EntityManager.loadFromCursor(c, Currency.class);
 				currencies.put(currency.id, currency);
+				if (currency.isDefault) homeCurrency = currency;
 			}
 		} finally {
 			c.close();
 		}
 		CURRENCIES.putAll(currencies);
+		loaded = true;
 	}
 	
 	public static Format createCurrencyFormat(Currency c) {
@@ -119,6 +118,7 @@ public class CurrencyCache {
 	}
 
 	public static synchronized Collection<Currency> getAllCurrencies() {
+		if (!loaded) initialize(new DatabaseAdapter(Application.getInstance()));
 		return CURRENCIES.valueCollection();
 	}
 

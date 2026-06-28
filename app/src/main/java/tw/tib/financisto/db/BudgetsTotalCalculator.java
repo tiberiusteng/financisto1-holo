@@ -20,6 +20,7 @@ import tw.tib.financisto.model.MyEntity;
 import tw.tib.financisto.model.Project;
 import tw.tib.financisto.model.Total;
 import tw.tib.financisto.model.TotalError;
+import tw.tib.financisto.utils.CurrencyCache;
 
 import java.math.BigDecimal;
 import java.util.Collection;
@@ -93,7 +94,7 @@ public class BudgetsTotalCalculator {
             BigDecimal amount = BigDecimal.ZERO;
             BigDecimal balance = BigDecimal.ZERO;
             ExchangeRateProvider rates = db.getLatestRates();
-            Currency homeCurrency = db.getHomeCurrency();
+            Currency homeCurrency = CurrencyCache.getHomeCurrency();
             for (Budget b : budgets) {
                 Currency currency = b.getBudgetCurrency();
                 ExchangeRate r = rates.getRate(currency, homeCurrency);

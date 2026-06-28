@@ -16,6 +16,7 @@ import tw.tib.financisto.R;
 import tw.tib.financisto.db.DatabaseAdapter;
 import tw.tib.financisto.model.Currency;
 import tw.tib.financisto.model.Total;
+import tw.tib.financisto.utils.CurrencyCache;
 import tw.tib.financisto.utils.MyPreferences;
 import tw.tib.financisto.utils.Utils;
 
@@ -48,7 +49,7 @@ public abstract class TotalCalculationTask extends AsyncTask<Object, Total, Tota
 
     public Total getTotalInHomeCurrency() {
 		Total[] totals = getTotals();
-		return u.calculateTotalInCurrency(totals, db.getLatestRates(), db.getHomeCurrency());
+		return u.calculateTotalInCurrency(totals, db.getLatestRates(), CurrencyCache.getHomeCurrency());
 	}
 
     public abstract Total[] getTotals();
@@ -57,7 +58,7 @@ public abstract class TotalCalculationTask extends AsyncTask<Object, Total, Tota
 	protected void onPostExecute(Total result) {
 		if (isRunning && context != null) {
             if (result.currency == Currency.EMPTY) {
-				if (db.getHomeCurrency() == Currency.EMPTY) {
+				if (CurrencyCache.getHomeCurrency() == Currency.EMPTY) {
 					Toast.makeText(context, R.string.currency_make_default_warning, Toast.LENGTH_LONG).show();
 				}
             }

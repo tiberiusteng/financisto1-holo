@@ -45,7 +45,7 @@ public class QifTransaction {
         QifTransaction t = new QifTransaction();
         t.id = c.getLong(BlotterColumns._id.ordinal());
         t.date = new Date(c.getLong(BlotterColumns.datetime.ordinal()));
-        t.currency = CurrencyCache.getCurrency(db, c.getLong(BlotterColumns.from_account_currency_id.ordinal()));
+        t.currency = CurrencyCache.getCurrency(c.getLong(BlotterColumns.from_account_currency_id.ordinal()));
         t.amount = c.getLong(BlotterColumns.from_amount.ordinal());
         t.payee = c.getString(BlotterColumns.payee.ordinal());
         t.memo = c.getString(BlotterColumns.note.ordinal());

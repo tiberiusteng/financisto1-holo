@@ -5,7 +5,6 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.Window;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.LinearLayout;
@@ -71,7 +70,7 @@ public abstract class AbstractSplitActivity extends AbstractActivity {
             fromAccount = db.getAccount(split.fromAccountId);
         }
         if (split.originalCurrencyId > 0) {
-            originalCurrency = CurrencyCache.getCurrency(db, split.originalCurrencyId);
+            originalCurrency = CurrencyCache.getCurrency(split.originalCurrencyId);
         }
 
         LinearLayout layout = findViewById(R.id.list);

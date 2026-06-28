@@ -12,8 +12,8 @@ import android.content.Context;
 
 import gnu.trove.map.TLongObjectMap;
 import gnu.trove.map.hash.TLongObjectHashMap;
-import tw.tib.financisto.db.DatabaseAdapter;
 import tw.tib.financisto.model.Currency;
+import tw.tib.financisto.utils.CurrencyCache;
 
 import java.util.*;
 
@@ -25,6 +25,8 @@ import java.util.*;
  * Date: 1/30/12 7:54 PM
  */
 public class HistoryExchangeRates implements ExchangeRateProvider, ExchangeRatesCollection {
+    private static final String TAG = "HistoryRates";
+
     protected Context context;
     protected Currency homeCurrency;
 
@@ -73,7 +75,7 @@ public class HistoryExchangeRates implements ExchangeRateProvider, ExchangeRates
         }
         // estimate from exchange via home currency
         if (homeCurrency == null) {
-            homeCurrency = new DatabaseAdapter(context).getHomeCurrency();
+            homeCurrency = CurrencyCache.getHomeCurrency();
         }
         if (!homeCurrency.equals(Currency.EMPTY) &&
             !fromCurrency.equals(homeCurrency) &&

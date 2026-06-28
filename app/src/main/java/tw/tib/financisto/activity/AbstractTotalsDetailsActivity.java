@@ -92,7 +92,7 @@ public abstract class AbstractTotalsDetailsActivity extends AbstractActivity {
         @Override
         protected TotalsInfo doInBackground(Void... voids) {
             prepareInBackground();
-            homeCurrency = db.getHomeCurrency();
+            homeCurrency = CurrencyCache.getHomeCurrency();
             Total[] totals = getTotals();
             Total totalInHomeCurrency = u.calculateTotalInCurrency(totals, db.getLatestRates(), homeCurrency);
             ExchangeRateProvider rates = db.getLatestRates();
@@ -140,7 +140,7 @@ public abstract class AbstractTotalsDetailsActivity extends AbstractActivity {
                     Total t = totalInfo.total;
                     for (ExchangeRate r : totalInfo.rate.derivedFrom) {
                         // do a step of exchange
-                        Currency toCurrency = CurrencyCache.getCurrency(db, r.toCurrencyId);
+                        Currency toCurrency = CurrencyCache.getCurrency(r.toCurrencyId);
                         addSingleForeignAmountNode(new TotalInfo(t, r), toCurrency);
                         var next = new Total(toCurrency);
                         next.balance = BigDecimal.valueOf(t.balance).movePointLeft(t.currency.getScale())

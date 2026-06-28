@@ -79,7 +79,7 @@ public class TransactionsTotalCalculator {
             while (c.moveToNext()) {
                 long currencyId = c.getLong(0);
                 long balance = c.getLong(1);
-                Currency currency = CurrencyCache.getCurrency(db, currencyId);
+                Currency currency = CurrencyCache.getCurrency(currencyId);
                 Total total = new Total(currency);
                 total.balance = balance;
                 totals.add(total);
@@ -94,7 +94,7 @@ public class TransactionsTotalCalculator {
     }
 
     public Total getBlotterBalanceInHomeCurrency() {
-        Currency homeCurrency = db.getHomeCurrency();
+        Currency homeCurrency = CurrencyCache.getHomeCurrency();
         return getBlotterBalance(homeCurrency);
     }
 
@@ -145,7 +145,7 @@ public class TransactionsTotalCalculator {
 
     public static Total calculateTotalFromListInHomeCurrency(DatabaseAdapter db, List<TransactionInfo> list) {
         try {
-            Currency toCurrency = db.getHomeCurrency();
+            Currency toCurrency = CurrencyCache.getHomeCurrency();
             long[] balance = calculateTotalFromList(db, list, toCurrency);
             return Total.asIncomeExpense(toCurrency, balance[0], balance[1]);
         } catch (UnableToCalculateRateException e) {
@@ -202,7 +202,7 @@ public class TransactionsTotalCalculator {
         } else if (originalCurrencyId > 0 && originalCurrencyId == toCurrency.id) {
             return BigDecimal.valueOf(originalAmount);
         } else {
-            Currency fromCurrency = CurrencyCache.getCurrency(em, fromCurrencyId);
+            Currency fromCurrency = CurrencyCache.getCurrency(fromCurrencyId);
             ExchangeRate exchangeRate = rates.getRate(fromCurrency, toCurrency, datetime);
             if (exchangeRate == ExchangeRate.NA && rates instanceof ExchangeRatesCollection) {
                 // Try to update exchange rate online
