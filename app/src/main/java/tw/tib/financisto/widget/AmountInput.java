@@ -435,7 +435,10 @@ public class AmountInput extends LinearLayout implements AmountListener {
     }
 
     public void openCalculator() {
-        CalculatorInput input = CalculatorInput_.builder().amount(getAbsAmountString()).build();
+        CalculatorInput input = CalculatorInput_.builder()
+                .amount(getAbsAmountString())
+                .scale(currency == null ? 2 : currency.getScale())
+                .build();
         input.setListener(this);
         input.show(owner.getFragmentManager(), "calculator");
     }
@@ -450,7 +453,7 @@ public class AmountInput extends LinearLayout implements AmountListener {
     public void onAmountChanged(String amount) {
         try {
             long oldAmount = getAmount();
-            BigDecimal d = new BigDecimal(amount).setScale(2, RoundingMode.HALF_UP);
+            BigDecimal d = new BigDecimal(amount).setScale(currency == null ? 2 : currency.getScale(), RoundingMode.HALF_UP);
             boolean wasExpense = isExpense();
             setAmount(d.unscaledValue().longValue());
             if (wasExpense) setExpense();

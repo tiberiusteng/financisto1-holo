@@ -87,7 +87,7 @@ public class RateNode {
             CalculatorInput input = CalculatorInput_.builder().amount(String.valueOf(getRate())).build();
             input.setListener(amount -> {
                 try {
-                    setRate(Float.parseFloat(amount));
+                    setRate(Double.parseDouble(amount));
                     owner.onRateChanged();
                 } catch (NumberFormatException ignored) {
                 }

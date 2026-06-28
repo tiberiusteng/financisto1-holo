@@ -63,6 +63,9 @@ public class CalculatorInput extends DialogFragment {
     @FragmentArg
     protected String amount;
 
+    @FragmentArg
+    protected int scale;
+
     private final Stack<String> stack = new Stack<>();
     private String result = "0";
     private boolean isRestart = true;
@@ -274,7 +277,7 @@ public class CalculatorInput extends DialogFragment {
             case '/':
                 BigDecimal d2 = new BigDecimal(valTwo);
                 try {
-                    stack.push(new BigDecimal(valOne).divide(d2, 2, RoundingMode.HALF_UP).stripTrailingZeros().toPlainString());
+                    stack.push(new BigDecimal(valOne).divide(d2, scale, RoundingMode.HALF_UP).stripTrailingZeros().toPlainString());
                 } catch (ArithmeticException e) {
                     stack.push("0.0");
                 }
