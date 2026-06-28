@@ -10,11 +10,16 @@ package tw.tib.financisto.export.qif;
 
 import android.content.Intent;
 
+import gnu.trove.map.hash.TLongObjectHashMap;
+import tw.tib.financisto.Application;
 import tw.tib.financisto.activity.QifExportActivity;
+import tw.tib.financisto.db.DatabaseAdapter;
 import tw.tib.financisto.filter.WhereFilter;
 import tw.tib.financisto.model.Currency;
+import tw.tib.financisto.utils.CurrencyCache;
 import tw.tib.financisto.utils.CurrencyExportPreferences;
 
+import java.text.Format;
 import java.text.SimpleDateFormat;
 
 /**
@@ -26,15 +31,20 @@ public class QifExportOptions {
 
     public static final String DEFAULT_DATE_FORMAT = "dd/MM/yyyy";
 
+    public final boolean useCurrencySpecificDecimals;
     public final Currency currency;
+    public final Format amountFormat;
     public final SimpleDateFormat dateFormat;
     public final WhereFilter filter;
     public final long[] selectedAccounts;
     public final boolean uploadToDropbox;
     public final boolean uploadToGDrive;
+    public final TLongObjectHashMap<Format> currencyAmountFormat = new TLongObjectHashMap<>();
 
     public QifExportOptions(Currency currency, String dateFormat, long[] selectedAccounts, WhereFilter filter, boolean uploadToDropbox, boolean uploadToGDrive) {
         this.currency = currency;
+        this.amountFormat = CurrencyCache.createCurrencyFormat(currency);
+        this.useCurrencySpecificDecimals = (currency.decimals == -1);
         this.dateFormat = new SimpleDateFormat(dateFormat);
         this.selectedAccounts = selectedAccounts;
         this.filter = filter;
@@ -52,4 +62,17 @@ public class QifExportOptions {
         return new QifExportOptions(currency, dateFormat, selectedAccounts, filter, uploadToDropbox, uploadToGDrive);
     }
 
+    public Format getCurrencyAmountFormat(long currencyId) {
+        Format f = currencyAmountFormat.get(currencyId);
+        if (f != null) {
+            return f;
+        }
+
+        Currency c = CurrencyCache.getCurrency(new DatabaseAdapter(Application.getInstance()), currencyId);
+        currency.decimals = c.decimals;
+
+        f = CurrencyCache.createCurrencyFormat(currency);
+        currencyAmountFormat.put(currencyId, f);
+        return f;
+    }
 }

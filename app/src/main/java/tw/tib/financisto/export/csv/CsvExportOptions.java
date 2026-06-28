@@ -9,8 +9,12 @@
 package tw.tib.financisto.export.csv;
 
 import android.content.Intent;
+import android.util.Log;
 
+import gnu.trove.map.hash.TLongObjectHashMap;
+import tw.tib.financisto.Application;
 import tw.tib.financisto.activity.CsvExportActivity;
+import tw.tib.financisto.db.DatabaseAdapter;
 import tw.tib.financisto.filter.WhereFilter;
 import tw.tib.financisto.model.Currency;
 import tw.tib.financisto.utils.CurrencyCache;
@@ -24,8 +28,11 @@ import java.text.Format;
  * Date: 7/10/11 7:29 PM
  */
 public class CsvExportOptions {
+    private static final String TAG = "CsvExportOptions";
 
+    public final Currency currency;
     public final Format amountFormat;
+    public final boolean useCurrencySpecificDecimals;
     public final char fieldSeparator;
     public final boolean includeHeader;
     public final boolean includeTxStatus;
@@ -39,6 +46,7 @@ public class CsvExportOptions {
     public final boolean uploadToGDrive;
     public final WhereFilter filter;
     public final boolean writeUtfBom;
+    public final TLongObjectHashMap<Format> currencyAmountFormat = new TLongObjectHashMap<>();
 
     public CsvExportOptions(Currency currency, char fieldSeparator, boolean includeHeader,
                             boolean includeTxStatus, boolean exportSplits, boolean exportSplitParents,
@@ -47,6 +55,8 @@ public class CsvExportOptions {
                             boolean uploadToDropbox, boolean uploadToGDrive,
                             WhereFilter filter, boolean writeUtfBom) {
         this.filter = filter;
+        this.useCurrencySpecificDecimals = (currency.decimals == -1);
+        this.currency = currency;
         this.amountFormat = CurrencyCache.createCurrencyFormat(currency);
         this.fieldSeparator = fieldSeparator;
         this.includeHeader = includeHeader;
@@ -65,6 +75,7 @@ public class CsvExportOptions {
     public static CsvExportOptions fromIntent(Intent data) {
         WhereFilter filter = WhereFilter.fromIntent(data);
         Currency currency = CurrencyExportPreferences.fromIntent(data, "csv");
+        Log.d(TAG, "currency decimals=" + currency.decimals);
         char fieldSeparator = data.getCharExtra(CsvExportActivity.CSV_EXPORT_FIELD_SEPARATOR, ',');
         boolean includeHeader = data.getBooleanExtra(CsvExportActivity.CSV_EXPORT_INCLUDE_HEADER, true);
         boolean includeTxStatus = data.getBooleanExtra(CsvExportActivity.CSV_EXPORT_INCLUDE_TX_STATUS, false);
@@ -82,4 +93,17 @@ public class CsvExportOptions {
                 uploadToDropbox, uploadToGDrive, filter, true);
     }
 
+    public Format getCurrencyAmountFormat(long currencyId) {
+        Format f = currencyAmountFormat.get(currencyId);
+        if (f != null) {
+            return f;
+        }
+
+        Currency c = CurrencyCache.getCurrency(new DatabaseAdapter(Application.getInstance()), currencyId);
+        currency.decimals = c.decimals;
+
+        f = CurrencyCache.createCurrencyFormat(currency);
+        currencyAmountFormat.put(currencyId, f);
+        return f;
+    }
 }

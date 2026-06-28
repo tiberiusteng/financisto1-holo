@@ -1,13 +1,18 @@
 package tw.tib.financisto.export.qif;
 
 import android.database.Cursor;
+
+import tw.tib.financisto.db.DatabaseAdapter;
 import tw.tib.financisto.model.Account;
 import tw.tib.financisto.model.Category;
+import tw.tib.financisto.model.Currency;
 import tw.tib.financisto.model.Transaction;
 import tw.tib.financisto.model.TransactionStatus;
+import tw.tib.financisto.utils.CurrencyCache;
 import tw.tib.financisto.utils.Utils;
 
 import java.io.IOException;
+import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -24,6 +29,7 @@ public class QifTransaction {
 
     public long id;
     public Date date;
+    public Currency currency;
     public long amount;
     public String payee;
     public String memo;
@@ -35,10 +41,11 @@ public class QifTransaction {
     public boolean isSplit = false;
     public List<QifTransaction> splits;
 
-    public static QifTransaction fromBlotterCursor(Cursor c, Map<Long, Category> categoriesMap) {
+    public static QifTransaction fromBlotterCursor(DatabaseAdapter db, Cursor c, Map<Long, Category> categoriesMap) {
         QifTransaction t = new QifTransaction();
         t.id = c.getLong(BlotterColumns._id.ordinal());
         t.date = new Date(c.getLong(BlotterColumns.datetime.ordinal()));
+        t.currency = CurrencyCache.getCurrency(db, c.getLong(BlotterColumns.from_account_currency_id.ordinal()));
         t.amount = c.getLong(BlotterColumns.from_amount.ordinal());
         t.payee = c.getString(BlotterColumns.payee.ordinal());
         t.memo = c.getString(BlotterColumns.note.ordinal());
@@ -69,7 +76,16 @@ public class QifTransaction {
     public void writeTo(QifBufferedWriter qifWriter, QifExportOptions options)
             throws IOException {
         qifWriter.write("D").write(options.dateFormat.format(date)).newLine();
-        qifWriter.write("T").write(Utils.amountToString(options.currency, amount)).newLine();
+        if (options.useCurrencySpecificDecimals) {
+            options.currency.decimals = currency.decimals;
+            qifWriter.write("T").write(options.getCurrencyAmountFormat(currency.id).format(
+                    new BigDecimal(amount).movePointLeft(currency.getScale()))).newLine();
+            options.currency.decimals = -1;
+        }
+        else {
+            qifWriter.write("T").write(options.amountFormat.format(
+                    new BigDecimal(amount).movePointLeft(currency.getScale()))).newLine();
+        }
         if (toAccount != null) {
             qifWriter.write("L[").write(toAccount).write("]").newLine();
         } else if (category != null && project != null) {
@@ -103,7 +119,14 @@ public class QifTransaction {
                 qifWriter.write("S<NO_CATEGORY>").newLine();
             }
         }
-        qifWriter.write("$").write(Utils.amountToString(options.currency, split.amount)).newLine();
+        if (options.currency.decimals == -1) {
+            qifWriter.write("$").write(options.getCurrencyAmountFormat(currency.id).format(
+                    new BigDecimal(split.amount).movePointLeft(currency.getScale()))).newLine();
+        }
+        else {
+            qifWriter.write("$").write(options.amountFormat.format(
+                    new BigDecimal(split.amount).movePointLeft(currency.getScale()))).newLine();
+        }
         if (Utils.isNotEmpty(split.memo)) {
             qifWriter.write("E").write(split.memo).newLine();
         }
@@ -186,6 +209,7 @@ public class QifTransaction {
 
     public static QifTransaction fromTransaction(Transaction transaction, Map<Long, Category> categoriesMap, Map<Long, Account> accountsMap) {
         QifTransaction qifTransaction = new QifTransaction();
+        qifTransaction.currency = accountsMap.get(transaction.fromAccountId).currency;
         qifTransaction.amount = transaction.fromAmount;
         qifTransaction.memo = transaction.note;
         if (transaction.toAccountId > 0) {

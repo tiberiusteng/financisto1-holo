@@ -11,6 +11,8 @@ package tw.tib.financisto.utils;
 import android.app.Activity;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.util.Log;
+import android.widget.CheckBox;
 import android.widget.Spinner;
 import tw.tib.financisto.R;
 import tw.tib.financisto.model.Currency;
@@ -21,10 +23,12 @@ import tw.tib.financisto.model.Currency;
  * Date: 7/10/11 2:01 PM
  */
 public class CurrencyExportPreferences {
+    public static final String TAG = "CurrencyExportPrefs";
 
     public static final String EXPORT_DECIMALS = "EXPORT_DECIMALS";
     public static final String EXPORT_DECIMAL_SEPARATOR = "EXPORT_DECIMAL_SEPARATOR";
     public static final String EXPORT_GROUP_SEPARATOR = "EXPORT_GROUP_SEPARATOR";
+    public static final String EXPORT_USE_CURRENCY_SPECIFIC_DECIMALS = "EXPORT_USE_CURRENCY_SPECIFIC_DECIMALS";
 
     private final String prefix;
 
@@ -41,9 +45,11 @@ public class CurrencyExportPreferences {
         Spinner decimals = (Spinner)activity.findViewById(R.id.spinnerDecimals);
         Spinner decimalSeparators = (Spinner)activity.findViewById(R.id.spinnerDecimalSeparators);
         Spinner groupSeparators = (Spinner)activity.findViewById(R.id.spinnerGroupSeparators);
+        CheckBox useCurrencySpecificDecimals = activity.findViewById(R.id.checkboxUseCurrencyDecimals);
         data.putExtra(prefix(EXPORT_DECIMALS), 2-decimals.getSelectedItemPosition());
         data.putExtra(prefix(EXPORT_DECIMAL_SEPARATOR), decimalSeparators.getSelectedItem().toString());
         data.putExtra(prefix(EXPORT_GROUP_SEPARATOR), groupSeparators.getSelectedItem().toString());
+        data.putExtra(prefix(EXPORT_USE_CURRENCY_SPECIFIC_DECIMALS), useCurrencySpecificDecimals != null && useCurrencySpecificDecimals.isChecked());
     }
 
     private Currency getCurrencyFromIntent(Intent data) {
@@ -52,6 +58,10 @@ public class CurrencyExportPreferences {
         currency.decimals = data.getIntExtra(prefix(EXPORT_DECIMALS), 2);
         currency.decimalSeparator = data.getStringExtra(prefix(EXPORT_DECIMAL_SEPARATOR));
         currency.groupSeparator = data.getStringExtra(prefix(EXPORT_GROUP_SEPARATOR));
+        if (data.getBooleanExtra(prefix(EXPORT_USE_CURRENCY_SPECIFIC_DECIMALS), false)) {
+            Log.d(TAG, "EXPORT_USE_CURRENCY_SPECIFIC_DECIMALS true");
+            currency.decimals = -1;
+        }
         return currency;
     }
 
@@ -63,18 +73,24 @@ public class CurrencyExportPreferences {
         Spinner decimals = (Spinner)activity.findViewById(R.id.spinnerDecimals);
         Spinner decimalSeparators = (Spinner)activity.findViewById(R.id.spinnerDecimalSeparators);
         Spinner groupSeparators = (Spinner)activity.findViewById(R.id.spinnerGroupSeparators);
+        CheckBox useCurrencySpecificDecimals = activity.findViewById(R.id.checkboxUseCurrencyDecimals);
 		editor.putInt(prefix(EXPORT_DECIMALS), decimals.getSelectedItemPosition());
 		editor.putInt(prefix(EXPORT_DECIMAL_SEPARATOR), decimalSeparators.getSelectedItemPosition());
 		editor.putInt(prefix(EXPORT_GROUP_SEPARATOR), groupSeparators.getSelectedItemPosition());
+        editor.putBoolean(prefix(EXPORT_USE_CURRENCY_SPECIFIC_DECIMALS), useCurrencySpecificDecimals != null && useCurrencySpecificDecimals.isChecked());
     }
 
     public void restorePreferences(Activity activity, SharedPreferences preferences) {
         Spinner decimals = (Spinner)activity.findViewById(R.id.spinnerDecimals);
         Spinner decimalSeparators = (Spinner)activity.findViewById(R.id.spinnerDecimalSeparators);
         Spinner groupSeparators = (Spinner)activity.findViewById(R.id.spinnerGroupSeparators);
+        CheckBox useCurrencySpecificDecimals = activity.findViewById(R.id.checkboxUseCurrencyDecimals);
 		decimals.setSelection(preferences.getInt(prefix(EXPORT_DECIMALS), 0));
 		decimalSeparators.setSelection(preferences.getInt(prefix(EXPORT_DECIMAL_SEPARATOR), 0));
 		groupSeparators.setSelection(preferences.getInt(prefix(EXPORT_GROUP_SEPARATOR), 3));
+        if (useCurrencySpecificDecimals != null) {
+            useCurrencySpecificDecimals.setChecked(preferences.getBoolean(prefix(EXPORT_USE_CURRENCY_SPECIFIC_DECIMALS), false));
+        }
     }
 
 }

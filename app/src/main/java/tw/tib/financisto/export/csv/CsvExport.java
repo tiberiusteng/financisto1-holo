@@ -12,6 +12,7 @@ package tw.tib.financisto.export.csv;
 
 import android.content.Context;
 import android.database.Cursor;
+import android.util.Log;
 
 import tw.tib.financisto.datetime.DateUtils;
 import tw.tib.financisto.db.DatabaseHelper;
@@ -37,6 +38,7 @@ import java.util.Map;
 import java.util.Set;
 
 public class CsvExport extends Export {
+    private static final String TAG = "CsvExport";
 
     static final String[] HEADER = "txid,date,time,status,account,amount,balance,currency,to account,to amount,to balance,to currency,original amount,original currency,category,parent,payee,location,project,note".split(",");
     static final String TXID_HEADER = "txid";
@@ -70,6 +72,8 @@ public class CsvExport extends Export {
         super(context, false);
         this.db = db;
         this.options = options;
+
+        Log.d(TAG, "useCurrencySpecificDecimals=" + options.useCurrencySpecificDecimals);
     }
 
     @Override
@@ -195,13 +199,25 @@ public class CsvExport extends Export {
         }
         // from account
         w.value(account);
-        String amountFormatted = options.amountFormat.format(new BigDecimal(amount).divide(Utils.HUNDRED));
+        Currency c = CurrencyCache.getCurrency(db, currencyId);
+        String amountFormatted;
+        if (options.useCurrencySpecificDecimals) {
+            amountFormatted = options.getCurrencyAmountFormat(currencyId).format(new BigDecimal(amount).movePointLeft(c.getScale()));
+        }
+        else {
+            amountFormatted = options.amountFormat.format(new BigDecimal(amount).movePointLeft(c.getScale()));
+        }
         w.value(amountFormatted);
         if (options.exportRunningBalance) {
-            String balanceFormatted = options.amountFormat.format(new BigDecimal(balance).divide(Utils.HUNDRED));
+            String balanceFormatted;
+            if (options.useCurrencySpecificDecimals) {
+                balanceFormatted = options.getCurrencyAmountFormat(currencyId).format(new BigDecimal(balance).movePointLeft(c.getScale()));
+            }
+            else {
+                balanceFormatted = options.amountFormat.format(new BigDecimal(balance).movePointLeft(c.getScale()));
+            }
             w.value(balanceFormatted);
         }
-        Currency c = CurrencyCache.getCurrency(db, currencyId);
         w.value(c.name);
         // to account
         if (options.exportTransferInSingleLine) {
@@ -214,19 +230,41 @@ public class CsvExport extends Export {
                 w.value(null); // to currency
             }
             else {
-                amountFormatted = options.amountFormat.format(new BigDecimal(toAmount).divide(Utils.HUNDRED));
+                c = CurrencyCache.getCurrency(db, toCurrencyId);
+                if (options.useCurrencySpecificDecimals) {
+                    amountFormatted = options.getCurrencyAmountFormat(toCurrencyId).format(
+                            new BigDecimal(toAmount).movePointLeft(c.getScale()));
+                }
+                else {
+                    amountFormatted = options.amountFormat.format(
+                            new BigDecimal(toAmount).movePointLeft(c.getScale()));
+                }
                 w.value(amountFormatted);
                 if (options.exportRunningBalance) {
-                    String balanceFormatted = options.amountFormat.format(new BigDecimal(toBalance).divide(Utils.HUNDRED));
+                    String balanceFormatted;
+                    if (options.useCurrencySpecificDecimals) {
+                        balanceFormatted = options.getCurrencyAmountFormat(toCurrencyId).format(
+                                new BigDecimal(toBalance).movePointLeft(c.getScale()));
+                    }
+                    else {
+                        balanceFormatted = options.amountFormat.format(
+                                new BigDecimal(toBalance).movePointLeft(c.getScale()));
+                    }
                     w.value(balanceFormatted);
                 }
-                c = CurrencyCache.getCurrency(db, toCurrencyId);
                 w.value(c.name);
             }
         }
         if (originalCurrencyId > 0) {
-            w.value(options.amountFormat.format(new BigDecimal(originalAmount).divide(Utils.HUNDRED)));
             Currency originalCurrency = CurrencyCache.getCurrency(db, originalCurrencyId);
+            if (options.useCurrencySpecificDecimals) {
+                w.value(options.getCurrencyAmountFormat(originalCurrencyId).format(
+                        new BigDecimal(originalAmount).movePointLeft(originalCurrency.getScale())));
+            }
+            else {
+                w.value(options.amountFormat.format(
+                        new BigDecimal(originalAmount).movePointLeft(originalCurrency.getScale())));
+            }
             w.value(originalCurrency.name);
         } else {
             w.value("");

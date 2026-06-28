@@ -1179,6 +1179,7 @@
     <string name="export_attributes">Export attributes</string>
     <string name="export_running_balance">Export running balance</string>
     <string name="export_transfer_as_single_line">Export transfer in single line</string>
+    <string name="export_use_currency_specific_decimals">Use decimal places specified by currencies</string>
 
     <string name="transfer_current_balance">Transfer current balance</string>
     <string name="show_transfer_current_balance">Show \'Transfer current balance\'</string>

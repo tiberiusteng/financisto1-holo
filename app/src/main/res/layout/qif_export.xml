@@ -59,10 +59,26 @@
                       android:text="@string/date_format"/>
             <Spinner android:layout_height="wrap_content" android:layout_width="fill_parent"
                      android:id="@+id/spinnerDateFormats" android:entries="@array/date_format_values"/>
-            <CheckBox android:layout_height="wrap_content" android:layout_width="fill_parent"
-                     android:id="@+id/checkboxUploadToDropbox" android:text="@string/upload_to_dropbox"/>
-            <CheckBox android:layout_height="wrap_content" android:layout_width="fill_parent"
-                android:id="@+id/checkboxUploadToGDrive" android:text="@string/upload_to_gdrive"/>
+            <TableLayout android:layout_height="wrap_content"
+                android:layout_width="fill_parent"
+                android:stretchColumns="*">
+                <TableRow>
+                    <CheckBox android:layout_height="wrap_content" android:layout_width="fill_parent"
+                        android:id="@+id/checkboxUploadToDropbox" android:text="@string/upload_to_dropbox"/>
+                    <CheckBox android:layout_height="wrap_content" android:layout_width="fill_parent"
+                        android:id="@+id/checkboxUploadToGDrive" android:text="@string/upload_to_gdrive"/>
+                </TableRow>
+            </TableLayout>
+
+            <CheckBox
+                android:id="@+id/checkboxUseCurrencyDecimals"
+                android:layout_columnWeight="1"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_gravity="fill"
+                android:checked="false"
+                android:text="@string/export_use_currency_specific_decimals" />
+
         </LinearLayout>
     </ScrollView>
     <include layout="@layout/ok_cancel_buttons"/>

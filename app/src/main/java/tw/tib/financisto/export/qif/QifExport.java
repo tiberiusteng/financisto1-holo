@@ -116,7 +116,7 @@ public class QifExport extends Export {
                     qifWriter.write("!Type:").write(qifAccount.type).newLine();
                     addHeader = false;
                 }
-                QifTransaction qifTransaction = QifTransaction.fromBlotterCursor(c, categoriesMap);
+                QifTransaction qifTransaction = QifTransaction.fromBlotterCursor(db, c, categoriesMap);
                 if (qifTransaction.isSplit()) {
                     List<QifTransaction> qifSplits = fromTransactions(
                             db.getSplitsForTransaction(qifTransaction.id), categoriesMap, accountsMap);
