@@ -383,11 +383,8 @@ public class AmountInput extends LinearLayout implements AmountListener {
         String p = primary.getText().toString();
         String s = secondary.getText().toString();
         int scale = currency == null ? 2 : currency.getScale();
-        Log.d(TAG, "toLong(p)=" + toLong(p) + " BigDecimal.valueOf(toLong(p))=" + BigDecimal.valueOf(toLong(p)));
-        Log.d(TAG, "toLong(s)=" + toLong(s) + ", scale-s_length()=" + (scale - s.length()) + " BigDecimal.valueOf(toLong(s))=" + BigDecimal.valueOf(toLong(s)).movePointLeft(scale - s.length()));
         var bd = BigDecimal.valueOf(toLong(p))
                 .add(BigDecimal.valueOf(toLong(s)).movePointLeft(s.length()));
-        Log.d(TAG, "getBigDecimalAmount bd=" + bd);
         return isExpense() ? bd.negate() : bd;
     }
 
@@ -397,7 +394,6 @@ public class AmountInput extends LinearLayout implements AmountListener {
         int scale = currency == null ? 2 : currency.getScale();
         var bd = BigDecimal.valueOf(toLong(p)).movePointRight(scale)
                 .add(BigDecimal.valueOf(toLong(s)).movePointRight(scale - s.length()));
-        Log.d(TAG, "getAmount " + (currency == null ? "null" : currency.name) + ", p=" + p + ", s=" + s + ", bd=" + bd);
         long amount = 0;
         try {
             amount = bd.longValueExact();
@@ -407,7 +403,6 @@ public class AmountInput extends LinearLayout implements AmountListener {
             primary.setTextColor(getResources().getColor(android.R.color.holo_red_light));
             secondary.setTextColor(getResources().getColor(android.R.color.holo_red_light));
         }
-        Log.d(TAG, "getAmount amount=" + amount);
         return isExpense() ? -amount : amount;
     }
 
