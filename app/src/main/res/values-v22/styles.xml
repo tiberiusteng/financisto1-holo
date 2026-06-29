@@ -1,7 +1,12 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
+    <style name="AppTheme.Dialog.Alert" parent="android:Theme.DeviceDefault.Dialog.Alert">
+        <item name="backgroundTint">@color/material_grey_900</item>
+        <item name="backgroundTintMode">src_in</item>
+    </style>
+
     <style name="AppTheme" parent="android:Theme.Holo">
-        <item name="android:alertDialogTheme">@android:style/Theme.DeviceDefault.Dialog.Alert</item>
+        <item name="android:alertDialogTheme">@style/AppTheme.Dialog.Alert</item>
         <item name="android:buttonStyle">@style/Button</item>
         <item name="android:imageButtonStyle">@android:style/Widget.Holo.Light.ImageButton</item>
         <item name="android:spinnerItemStyle">@style/TextViewSpinnerItem</item>
@@ -19,7 +24,7 @@
     </style>
 
     <style name="AppDialog" parent="@android:style/Theme.Holo.Dialog">
-        <item name="android:alertDialogTheme">@android:style/Theme.DeviceDefault.Dialog.Alert</item>
+        <item name="android:alertDialogTheme">@style/AppTheme.Dialog.Alert</item>
         <item name="android:spinnerDropDownItemStyle">@style/TextViewSpinnerDropDownItem</item>
     </style>
 
