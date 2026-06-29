@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <style name="AppTheme.Dialog.Alert" parent="android:Theme.DeviceDefault.Dialog.Alert">
-        <item name="backgroundTint">@color/material_grey_900</item>
-        <item name="backgroundTintMode">src_in</item>
+    <style name="AppTheme.Dialog.Alert" parent="@style/Theme.MaterialComponents.Dialog.Alert">
+        <item name="android:backgroundTint">@color/material_grey_850</item>
+        <item name="android:backgroundTintMode">src_atop</item>
     </style>
 
     <style name="AppTheme" parent="android:Theme.Holo">
@@ -29,7 +29,7 @@
     </style>
 
     <style name="AppCompatDialog" parent="@style/Theme.AppCompat.Dialog">
-        <item name="android:alertDialogTheme">@android:style/Theme.DeviceDefault.Dialog.Alert</item>
+        <item name="android:alertDialogTheme">@style/AppTheme.Dialog.Alert</item>
         <item name="android:windowBackground">@android:color/black</item>
     </style>
 
