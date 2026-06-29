@@ -12,7 +12,7 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
 	xmlns:tools="http://schemas.android.com/tools"
 	package="tw.tib.financisto"
-	android:versionName="2026-06-28" android:versionCode="219"
+	android:versionName="2026-06-29" android:versionCode="220"
     android:installLocation="internalOnly">
 
     <supports-screens
@@ -60,6 +60,8 @@
 		android:description="@string/app_description"
 		android:enableOnBackInvokedCallback="true"
 		tools:targetApi="tiramisu">
+
+		<profileable android:shell="true"/>
 		
 		<uses-library android:name="com.google.android.maps" android:required="false" />
 		<meta-data android:name="com.google.android.gms.version" android:value="@integer/google_play_services_version" />

@@ -17,6 +17,11 @@
         android:title="@string/quick_menu_transaction_duplicate_keep_time" />
     <SwitchPreferenceCompat
         android:defaultValue="false"
+        android:key="quick_menu_transaction_duplicate_keep_time_in_yesterday"
+        android:summary="@string/quick_menu_transaction_duplicate_keep_time_in_yesterday_summary"
+        android:title="@string/quick_menu_transaction_duplicate_keep_time_in_yesterday" />
+    <SwitchPreferenceCompat
+        android:defaultValue="false"
         android:key="quick_menu_transaction_duplicate_keep_date_time"
         android:summary="@string/quick_menu_transaction_duplicate_keep_date_time_summary"
         android:title="@string/quick_menu_transaction_duplicate_keep_date_time" />

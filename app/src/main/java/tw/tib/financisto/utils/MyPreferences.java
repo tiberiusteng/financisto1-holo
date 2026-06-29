@@ -611,6 +611,10 @@ public class MyPreferences {
 		return getBoolean("quick_menu_transaction_duplicate_keep_time", false);
 	}
 
+	public static boolean isDuplicateKeepTimeInYesterday() {
+		return getBoolean("quick_menu_transaction_duplicate_keep_time_in_yesterday", false);
+	}
+
 	public static boolean isQuickMenuShowDuplicateKeepDateTime() {
 		return getBoolean("quick_menu_transaction_duplicate_keep_date_time", false);
 	}

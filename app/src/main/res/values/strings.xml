@@ -821,6 +821,9 @@
     <string name="quick_menu_transaction_additional_status">Additional status</string>
     <string name="quick_menu_transaction_additional_status_summary">Show additional transaction status in quick menu</string>
     <string name="quick_menu_transaction_duplicate_keep_time">Show duplicate keeping time of day</string>
+    <string name="quick_menu_transaction_duplicate_keep_time_in_yesterday">Duplicate keeping TOD in yesterday</string>
+    <string name="quick_menu_transaction_duplicate_keep_time_in_yesterday_summary">When duplicating keeping time of day,
+        make the duplicated transaction happens between current time +1 and -23 hours</string>
     <string name="quick_menu_transaction_duplicate_keep_time_summary">Show "duplicate keeping time of the day" button in quick menu</string>
     <string name="quick_menu_transaction_duplicate_keep_date_time">Show duplicate keeping date and time</string>
     <string name="quick_menu_transaction_duplicate_keep_date_time_summary">Show "duplicate keeping date and time" button in quick menu</string>

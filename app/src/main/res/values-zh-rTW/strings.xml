@@ -715,6 +715,8 @@
   <string name="quick_menu_transaction_additional_status">顯示「額外交易狀態」功能</string>
   <string name="quick_menu_transaction_additional_status_summary">明細畫面快速選單顯示額外交易狀態</string>
   <string name="quick_menu_transaction_duplicate_keep_time">顯示「複製保留時間」功能</string>
+  <string name="quick_menu_transaction_duplicate_keep_time_in_yesterday">複製保留時間使用前一日的日期</string>
+  <string name="quick_menu_transaction_duplicate_keep_time_in_yesterday_summary">複製保留時間時，讓複製的交易發生在目前時間 +1 與 -23 小時之間</string>
   <string name="quick_menu_transaction_duplicate_keep_time_summary">明細畫面快速選單顯示「複製保留時間」按鈕</string>
   <string name="quick_menu_transaction_duplicate_keep_date_time">顯示「複製保留日期時間」功能</string>
   <string name="quick_menu_transaction_duplicate_keep_date_time_summary">明細畫面快速選單顯示「複製保留日期時間」按鈕</string>
