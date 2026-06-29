@@ -297,8 +297,8 @@ public class DatabaseAdapter extends MyEntityManager {
                 calendar.set(Calendar.SECOND, source.get(Calendar.SECOND));
                 calendar.set(Calendar.MILLISECOND, source.get(Calendar.MILLISECOND));
                 long newTime = calendar.getTimeInMillis();
-                if (MyPreferences.isDuplicateKeepTimeInYesterday() && (newTime > (System.currentTimeMillis() + 3600))) {
-                    newTime -= 86400;
+                if (MyPreferences.isDuplicateKeepTimeInYesterday() && (newTime > (System.currentTimeMillis() + 3600_000))) {
+                    newTime -= 86400_000;
                 }
                 transaction.dateTime = newTime;
             }
