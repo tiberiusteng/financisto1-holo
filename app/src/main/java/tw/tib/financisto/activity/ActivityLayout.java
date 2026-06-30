@@ -175,7 +175,9 @@ public class ActivityLayout {
 	public CheckBox addCheckboxNode(LinearLayout layout, int id, int labelId, int dataId, boolean checked) {
 		CheckBoxBuilder b = inflater.new CheckBoxBuilder(layout);
 		View v = b.withCheckbox(checked).withLabel(labelId).withId(id, listener).withData(dataId).create();
-		return (CheckBox)v.findViewById(R.id.checkbox);
+		CheckBox checkbox = v.findViewById(R.id.checkbox);
+		checkbox.setTag(v);
+		return checkbox;
 	}
 
 	public void addInfoNodePlus(LinearLayout layout, int id, int plusId, int labelId) {

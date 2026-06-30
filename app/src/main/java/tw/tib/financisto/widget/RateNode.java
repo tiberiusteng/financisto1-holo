@@ -100,16 +100,11 @@ public class RateNode {
         bAssign.setOnClickListener(v -> owner.onRequestAssign());
     }
 
-    public void disableAll() {
-        rate.setEnabled(false);
-        bCalc.setEnabled(false);
-        bDownload.setEnabled(false);
-    }
-
-    public void enableAll() {
-        rate.setEnabled(true);
-        bCalc.setEnabled(true);
-        bDownload.setEnabled(true);
+    public void setEnabled(boolean enabled) {
+        rate.setEnabled(enabled);
+        bAssign.setEnabled(enabled);
+        bCalc.setEnabled(enabled);
+        bDownload.setEnabled(enabled);
     }
 
     public double getRate() {

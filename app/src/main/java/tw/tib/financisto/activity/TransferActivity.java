@@ -116,6 +116,13 @@ public class TransferActivity extends AbstractTransactionActivity {
 	}
 
 	@Override
+	protected void updateUIforPreventEditing() {
+		boolean enabled = !isPreventEditing();
+		if (accountFromText.getTag() instanceof View v) v.setEnabled(enabled);
+		if (accountToText.getTag() instanceof View v) v.setEnabled(enabled);
+	}
+
+	@Override
 	protected void editTransaction(Transaction transaction) {
 		if (transaction.fromAccountId > 0) {
 			Account fromAccount = db.getAccount(transaction.fromAccountId);

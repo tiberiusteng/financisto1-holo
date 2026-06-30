@@ -1,5 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
 <androidx.preference.PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
+    <SwitchPreferenceCompat
+        android:defaultValue="false"
+        android:key="prevent_edit_cleared_reconciled"
+        android:summary="@string/prevent_edit_cleared_reconciled_summary"
+        android:title="@string/prevent_edit_cleared_reconciled" />
     <PreferenceCategory android:title="@string/category_selector">
         <!-- todo.mb: remove it as not used really >> -->
         <SwitchPreferenceCompat

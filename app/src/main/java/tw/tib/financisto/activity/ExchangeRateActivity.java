@@ -167,12 +167,12 @@ public class ExchangeRateActivity extends AbstractActivity implements RateNodeOw
 
     @Override
     public void onBeforeRateDownload() {
-        rateNode.disableAll();
+        rateNode.setEnabled(false);
     }
 
     @Override
     public void onAfterRateDownload() {
-        rateNode.enableAll();
+        rateNode.setEnabled(true);
     }
 
     @Override

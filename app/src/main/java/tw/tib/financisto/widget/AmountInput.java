@@ -78,8 +78,12 @@ public class AmountInput extends LinearLayout implements AmountListener {
     protected TextView delimiter;
     @ViewById(R.id.secondary)
     protected EditText secondary;
+    @ViewById(R.id.amount_input)
+    protected ImageButton amountInput;
     @ViewById(R.id.assign)
     protected ImageButton assign;
+    @ViewById(R.id.calculator)
+    protected ImageButton calculator;
 
     @ViewById(R.id.rate_info)
     protected TextView rate_info;
@@ -138,7 +142,14 @@ public class AmountInput extends LinearLayout implements AmountListener {
     @Override
     public void setEnabled(boolean enabled) {
         super.setEnabled(enabled);
-        Utils.setEnabled(this, enabled);
+
+        signSwitcher.setEnabled(enabled);
+        primary.setEnabled(enabled);
+        secondary.setEnabled(enabled);
+        amountInput.setEnabled(enabled);
+        assign.setEnabled(enabled);
+        calculator.setEnabled(enabled);
+
         if (!incomeExpenseEnabled) {
             disableIncomeExpenseButton();
         }
@@ -397,8 +408,8 @@ public class AmountInput extends LinearLayout implements AmountListener {
         long amount = 0;
         try {
             amount = bd.longValueExact();
-            primary.setTextColor(getResources().getColor(android.R.color.primary_text_dark));
-            secondary.setTextColor(getResources().getColor(android.R.color.primary_text_dark));
+            primary.setTextColor(getResources().getColorStateList(android.R.color.primary_text_dark));
+            secondary.setTextColor(getResources().getColorStateList(android.R.color.primary_text_dark));
         } catch (ArithmeticException e) {
             primary.setTextColor(getResources().getColor(android.R.color.holo_red_light));
             secondary.setTextColor(getResources().getColor(android.R.color.holo_red_light));

@@ -102,6 +102,7 @@ public abstract class AbstractTransactionActivity extends AbstractActivity imple
 	protected TextView recurText;
 	protected TextView notificationText;
 
+	private View pictureTopView;
 	private ImageView pictureView;
 	private TextView pictureDescView;
 
@@ -456,6 +457,7 @@ public abstract class AbstractTransactionActivity extends AbstractActivity imple
 					//note
 					noteText = new EditText(this);
 					noteText.setInputType(InputType.TYPE_CLASS_TEXT | InputType.TYPE_TEXT_FLAG_CAP_SENTENCES | InputType.TYPE_TEXT_FLAG_MULTI_LINE);
+					noteText.setTextColor(getResources().getColorStateList(android.R.color.primary_text_dark));
 					x.addEditNode(layout, R.string.note, noteText);
 				}
 			}
@@ -464,9 +466,9 @@ public abstract class AbstractTransactionActivity extends AbstractActivity imple
 			}
 		}
 		if (isShowTakePicture && transaction.isNotTemplateLike()) {
-			View v = x.addPictureNodeMinus(this, layout, R.id.attach_picture, R.id.delete_picture, R.string.attach_picture, R.string.new_picture);
-			pictureView = v.findViewById(R.id.picture);
-			pictureDescView = v.findViewById(R.id.data);
+			pictureTopView = x.addPictureNodeMinus(this, layout, R.id.attach_picture, R.id.delete_picture, R.string.attach_picture, R.string.new_picture);
+			pictureView = pictureTopView.findViewById(R.id.picture);
+			pictureDescView = pictureTopView.findViewById(R.id.data);
 		}
 		if (isShowIsCCardPayment) {
 			// checkbox to register if the transaction is a credit card payment.
@@ -555,6 +557,7 @@ public abstract class AbstractTransactionActivity extends AbstractActivity imple
 	private void selectStatus(TransactionStatus transactionStatus) {
 		transaction.status = transactionStatus;
 		status.setImageResource(transactionStatus.iconId);
+		updateCommonUIforPreventEditing();
 	}
 
 	protected Account selectAccount(long accountId) {
@@ -681,6 +684,30 @@ public abstract class AbstractTransactionActivity extends AbstractActivity imple
 	}
 
 	protected abstract void editTransaction(Transaction transaction);
+	protected void updateUIforPreventEditing() {}
+
+	protected boolean isPreventEditing() {
+		return MyPreferences.isPreventEditClearedReconciledTransactions() &&
+				(transaction.status == TransactionStatus.CL ||
+				 transaction.status == TransactionStatus.RC);
+	}
+
+	protected void updateCommonUIforPreventEditing() {
+		boolean enabled = !isPreventEditing();
+
+		dateText.setEnabled(enabled);
+		timeText.setEnabled(enabled);
+		categorySelector.setEnabled(enabled);
+		if (projectSelector != null) projectSelector.setEnabled(enabled);
+		if (locationSelector != null) locationSelector.setEnabled(enabled);
+		if (payeeSelector != null) payeeSelector.setEnabled(enabled);
+		if (noteText != null) noteText.setEnabled(enabled);
+		if (pictureTopView != null) pictureTopView.setEnabled(enabled);
+		if (ccardPayment != null) ((View) ccardPayment.getTag()).setEnabled(enabled);
+		rateView.setEnabled(enabled);
+
+		updateUIforPreventEditing();
+	}
 
 	protected void commonEditTransaction(Transaction transaction) {
 		selectStatus(transaction.status);
@@ -705,9 +732,11 @@ public abstract class AbstractTransactionActivity extends AbstractActivity imple
 			setIsCCardPayment(transaction.isCCardPayment);
 		}
 
-		if (transaction.isCreatedFromTemlate() && isOpenCalculatorForTemplates) {
+		if (transaction.isCreatedFromTemlate() && isOpenCalculatorForTemplates && !isPreventEditing()) {
 			rateView.openFromAmountCalculator();
 		}
+
+		updateCommonUIforPreventEditing();
 	}
 
 	private void setIsCCardPayment(int isCCardPaymentValue) {

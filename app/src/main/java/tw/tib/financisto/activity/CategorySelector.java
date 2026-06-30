@@ -77,6 +77,8 @@ public class CategorySelector<A extends AbstractActivity> {
     private String[] toCheckStringIds = null;
     private List<Long> toCheckIds = null;
 
+    private boolean enabled = true;
+
     public CategorySelector(A activity, DatabaseAdapter db, ActivityLayout x) {
         this(activity, db, x, -1);
     }
@@ -206,7 +208,7 @@ public class CategorySelector<A extends AbstractActivity> {
                     if (categoryTextIsEmpty) {
                         categoryText.setText(emptyResId);
                     }
-                    node.setEnabled(true);
+                    if (enabled) node.setEnabled(true);
                     selectCategory(toSelectCategoryId, toSelectLast);
                 }
             });
@@ -262,7 +264,7 @@ public class CategorySelector<A extends AbstractActivity> {
             }
         });
         filterTxt.setOnItemClickListener((parent, view, position, id) -> {
-            activity.onSelectedId(R.id.category, id);
+            if (enabled) activity.onSelectedId(R.id.category, id);
             ToggleButton toggleBtn = (ToggleButton) filterTxt.getTag();
             toggleBtn.performClick();
         });
@@ -273,6 +275,8 @@ public class CategorySelector<A extends AbstractActivity> {
     }
 
     public void onClick(int id) {
+        if (!enabled) return;
+
         switch (id) {
             case R.id.category: {
                 if (useMultiChoicePlainSelector) {
@@ -498,6 +502,11 @@ public class CategorySelector<A extends AbstractActivity> {
 
     public void setSelectedAccount(Account account) {
         selectedAccount = account;
+    }
+
+    public void setEnabled(boolean enabled) {
+        this.enabled = enabled;
+        if (node != null) node.setEnabled(enabled);
     }
 
     @Deprecated // todo.mb: it seems not much sense in it, better do it in single place - activity.onSelectedId

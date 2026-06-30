@@ -28,7 +28,8 @@
 				  a:layout_height="wrap_content"
 				  a:layout_gravity="center_vertical"
 				  style="@style/ListButton"
-				  a:background="@drawable/btn_toggle_filter"/>
+				  a:background="@drawable/btn_toggle_filter"
+				  a:duplicateParentState="true" />
 
 	<LinearLayout a:orientation="horizontal"
 		a:layout_width="match_parent"
@@ -61,6 +62,7 @@
 					  a:layout_below="@+id/label"
 					  a:layout_alignStart="@+id/label" 
 					  a:textAppearance="?android:attr/textAppearanceMedium"
+					  a:textColor="@android:color/primary_text_dark"
 					  a:maxLines="2" 
 					  a:duplicateParentState="true" />
 		</RelativeLayout>
@@ -69,13 +71,15 @@
 				   style="@style/MoreButton" 
 				   a:layout_width="wrap_content"
 				   a:layout_height="wrap_content"
-				   a:layout_gravity="bottom" />
+				   a:layout_gravity="bottom"
+			a:duplicateParentState="true"/>
 		
 		<ImageView a:id="@+id/split"
 				   style="@style/SplitButton"
 				   a:layout_width="wrap_content"
 				   a:layout_height="wrap_content"
-				   a:layout_gravity="center_vertical" />
+				   a:layout_gravity="center_vertical"
+			a:duplicateParentState="true"/>
 
 		<ImageView style="@style/MinusButton"
 			a:visibility="gone"
@@ -84,7 +88,8 @@
 			a:layout_height="wrap_content"
 			a:focusable="true"
 			a:clickable="true"
-			a:layout_gravity="center_vertical" />
+			a:layout_gravity="center_vertical"
+			a:duplicateParentState="true"/>
 
 		<ImageView style="@style/PlusButton" 
 				   a:layout_width="wrap_content"
@@ -92,7 +97,8 @@
 				   a:layout_height="wrap_content"
 				   a:focusable="true" 
 				   a:clickable="true"
-				   a:layout_gravity="center_vertical" />
+				   a:layout_gravity="center_vertical"
+				   a:duplicateParentState="true"/>
 	</LinearLayout>
 
 	<AutoCompleteTextView

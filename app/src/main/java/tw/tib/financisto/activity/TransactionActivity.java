@@ -296,6 +296,13 @@ public class TransactionActivity extends AbstractTransactionActivity {
     }
 
     @Override
+    protected void updateUIforPreventEditing() {
+        boolean enabled = !isPreventEditing();
+        if (accountText.getTag() instanceof View v) v.setEnabled(enabled);
+        if (currencyText.getTag() instanceof View v) v.setEnabled(enabled);
+    }
+
+    @Override
     protected void editTransaction(Transaction transaction) {
         selectAccount(transaction.fromAccountId, false);
         commonEditTransaction(transaction);

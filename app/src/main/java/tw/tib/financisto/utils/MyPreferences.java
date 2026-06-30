@@ -479,6 +479,10 @@ public class MyPreferences {
 		return getBoolean("blotter_show_time_of_day", true);
 	}
 
+	public static boolean isPreventEditClearedReconciledTransactions() {
+		return getBoolean("prevent_edit_cleared_reconciled", false);
+	}
+
 	private static final String DEFAULT = "default";
 
 	public static Context switchLocale(Context context) {

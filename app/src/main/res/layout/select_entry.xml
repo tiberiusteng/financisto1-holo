@@ -49,12 +49,14 @@
             android:duplicateParentState="true"
             android:maxLines="2"
             android:text="bbb"
-            android:textAppearance="?android:attr/textAppearanceMedium" />
+            android:textAppearance="?android:attr/textAppearanceMedium"
+            android:textColor="@android:color/primary_text_dark" />
     </RelativeLayout>
 
     <ImageView
         style="@style/MoreButton"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_gravity="bottom"/>
+        android:layout_gravity="bottom"
+        android:duplicateParentState="true" />
 </LinearLayout>

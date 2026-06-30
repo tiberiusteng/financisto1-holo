@@ -50,6 +50,8 @@ public class RateLayoutView implements RateNodeOwner {
     private Currency currencyFrom;
     private Currency currencyTo;
 
+    private boolean enabled = true;
+
     public RateLayoutView(AbstractActivity activity, ActivityLayout x, LinearLayout layout) {
         this.activity = activity;
         this.x = x;
@@ -282,7 +284,7 @@ public class RateLayoutView implements RateNodeOwner {
     public void onBeforeRateDownload() {
         amountInputFrom.setEnabled(false);
         amountInputTo.setEnabled(false);
-        rateNode.disableAll();
+        rateNode.setEnabled(false);
     }
 
     @Override
@@ -305,9 +307,11 @@ public class RateLayoutView implements RateNodeOwner {
 
     @Override
     public void onAfterRateDownload() {
+        if (!enabled) return;
+
         amountInputFrom.setEnabled(true);
         amountInputTo.setEnabled(true);
-        rateNode.enableAll();
+        rateNode.setEnabled(true);
     }
 
     @Override
@@ -342,6 +346,16 @@ public class RateLayoutView implements RateNodeOwner {
             amountInputFrom.setRateInfo("");
             amountInputTo.setRateInfo("");
         }
+    }
+
+    public void setEnabled(boolean enabled) {
+        Log.d(TAG, "setEnabled " + enabled);
+
+        this.enabled = enabled;
+
+        amountInputFrom.setEnabled(enabled);
+        amountInputTo.setEnabled(enabled);
+        rateNode.setEnabled(enabled);
     }
 
     @Override

@@ -57,6 +57,7 @@ public abstract class MyEntitySelector<T extends MyEntity, A extends AbstractAct
     private SimpleCursorAdapter filterAdapter;
     private List<T> entities = Collections.emptyList();
     private ListAdapter adapter = null;
+    private boolean enabled = true;
     private boolean loaded = false;
     private boolean pendingSelect = false;
     private boolean includeZero;
@@ -138,7 +139,9 @@ public abstract class MyEntitySelector<T extends MyEntity, A extends AbstractAct
             new Handler(Looper.getMainLooper()).post(() -> {
                 if (isShow) {
                     text.setText(defaultValueResId);
-                    node.setEnabled(true);
+                    if (this.enabled) {
+                        node.setEnabled(true);
+                    }
                 }
                 selectEntity(selectedEntityId);
                 if (pendingSelect) {
@@ -213,6 +216,8 @@ public abstract class MyEntitySelector<T extends MyEntity, A extends AbstractAct
     }
 
     public void onClick(int id) {
+        if (!enabled) return;
+
         if (id == layoutId) {
             Log.d(TAG, "onClick Layout");
             if (useSearchAsPrimary) {
@@ -484,6 +489,11 @@ public abstract class MyEntitySelector<T extends MyEntity, A extends AbstractAct
                 }
             }
         }
+    }
+
+    public void setEnabled(boolean enabled) {
+        this.enabled = enabled;
+        if (node != null) node.setEnabled(enabled);
     }
 
     public void onDestroy() {
