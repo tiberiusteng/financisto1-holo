@@ -306,9 +306,9 @@
   <string name="show_project_order">專案順序</string>
   <string name="show_project_order_summary">專案下拉選單的相對位置</string>
   <string name="remember_selection">記憶選取內容</string>
-  <string name="remember_last_account">前次帳戶</string>
+  <string name="remember_last_account">上次帳戶</string>
   <string name="remember_last_account_summary">記住上次選擇的帳戶</string>
-  <string name="remember_last_location">前次地點</string>
+  <string name="remember_last_location">上次地點</string>
   <string name="remember_last_location_summary">記住上次選擇的地點</string>
   <string name="remember_last_project">前次專案</string>
   <string name="remember_last_project_summary">記住上次選擇的專案</string>
@@ -568,7 +568,6 @@
   <string name="ui_theme_summary">設定使用者界面的主題 (需要重新啟動!)</string>
   <string name="enter_pin">輸入 PIN</string>
   <string name="mass_operations">大量編輯</string>
-  <string name="card_issuer_unionpay">UnionPay</string>
   <string name="account_type_paypal">PayPal</string>
   <string name="mass_operations_use_filter">以過濾條件搜尋交易</string>
   <string name="mass_operations_mark_restored_all">全部標記復原</string>
@@ -699,6 +698,12 @@
   <string name="auto_backup_enabled_summary">每日在指定時間備份資料庫</string>
   <string name="auto_backup_time">自動備份時間</string>
   <string name="auto_backup_time_summary" formatted="false">每日在 %02d:%02d 備份資料庫</string>
+  <string name="auto_backup_reminder_enabled">提醒自動備份</string>
+  <string name="auto_backup_reminder_enabled_summary">如果持續幾天未開啟自動備份則顯示提醒</string>
+  <string name="auto_backup_warning_enabled">提醒備份失敗</string>
+  <string name="auto_backup_warning_summary">自動備份失敗之後顯示提醒訊息</string>
+  <string name="backup_newlines">保留備註內的換行</string>
+  <string name="backup_newlines_summary">換行字元會跳脫成 `\\n`，反斜線會跳脫成 `\\\\`。未開啟則換行會被換成空白 (延續舊版作法)</string>
   <string name="select_folder">選擇目前目錄</string>
   <string name="create">建立</string>
   <string name="create_new_folder">新增</string>

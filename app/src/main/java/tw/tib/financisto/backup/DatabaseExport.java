@@ -25,6 +25,7 @@ import java.nio.MappedByteBuffer;
 import java.nio.channels.FileChannel;
 
 import tw.tib.financisto.export.Export;
+import tw.tib.financisto.utils.MyPreferences;
 import tw.tib.financisto.utils.Utils;
 import android.content.Context;
 import android.content.pm.PackageInfo;
@@ -36,11 +37,13 @@ public class DatabaseExport extends Export {
 	
 	private final Context context;
 	private final SQLiteDatabase db;
+	private final boolean backupNewlines;
 
     public DatabaseExport(Context context, SQLiteDatabase db, boolean useGZip) {
         super(context, useGZip);
 		this.context = context;
 		this.db = db;
+		this.backupNewlines = MyPreferences.isBackupNewlines();
 	}
 
 	@Override
@@ -93,6 +96,7 @@ public class DatabaseExport extends Export {
 		String sql = "select * from " + tableName
 				+ (tableHasSystemIds(tableName) ? " WHERE _id > 0 " : " ")
 				+ (orderedTable ? " order by " + DEF_SORT_COL + " asc" : "");
+		var sb = new StringBuilder();
 		try (Cursor c = db.rawQuery(sql, null)) {
 			String[] columnNames = c.getColumnNames();
 			int cols = columnNames.length;
@@ -105,7 +109,7 @@ public class DatabaseExport extends Export {
 						if (value != null) {
 							bw.write(colName);
 							bw.write(":");
-							bw.write(removeNewLine(value));
+							bw.write(backupNewlines ? escape(sb, value) : removeNewLine(value));
 							bw.write("\n");
 						}
 					}
@@ -115,8 +119,21 @@ public class DatabaseExport extends Export {
 		}
 	}
 
-    private static String removeNewLine(String value) {
-        return value.replace('\n', ' ');
+	private static String removeNewLine(String value) {
+		return value.replace('\n', ' ');
+	}
+
+	private static String escape(StringBuilder sb, String value) {
+		sb.setLength(0);
+		for (int i=0; i<value.length(); i++) {
+			char c = value.charAt(i);
+			switch (c) {
+				case '\n' -> sb.append("\\n");
+				case '\\' -> sb.append("\\\\");
+				default -> sb.append(c);
+			}
+		}
+		return sb.toString();
     }
 
 }

@@ -1123,6 +1123,8 @@
     <string name="auto_backup_reminder_enabled_summary">Remind if autobackup has not been enabled for a few days.</string>
     <string name="auto_backup_warning_enabled">Notify about failures</string>
     <string name="auto_backup_warning_summary">Notify if autobackup failed during the last execution.</string>
+    <string name="backup_newlines">Keep newlines in notes</string>
+    <string name="backup_newlines_summary">Newlines will be escaped as `\\n`, backslashes will be escaped as `\\\\`. If not enabled, newlines will be replaced as space (as in old versions).</string>
     <string name="auto_backup_is_not_enabled">You should consider enabling autobackup to Google Drive or Dropbox to keep your data safe. Go to Menu -> Preferences -> Backup.</string>
     <string name="integrity_error_message">%s%n(Tap to dismiss this message)</string>
     <string name="autobackup_failed_message">Autobackup failed at %s with error [%s].</string>

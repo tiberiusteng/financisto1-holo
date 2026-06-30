@@ -151,6 +151,11 @@
             android:key="auto_backup_warning_enabled"
             android:summary="@string/auto_backup_warning_summary"
             android:title="@string/auto_backup_warning_enabled" />
+        <SwitchPreferenceCompat
+            android:defaultValue="false"
+            android:key="backup_newlines"
+            android:summary="@string/backup_newlines_summary"
+            android:title="@string/backup_newlines" />
     </PreferenceCategory>
 
     <PreferenceCategory android:title="@string/dropbox">

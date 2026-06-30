@@ -536,6 +536,10 @@ public class MyPreferences {
 		return getBoolean("auto_backup_enabled", false);
 	}
 
+	public static boolean isBackupNewlines() {
+		return getBoolean("backup_newlines", false);
+	}
+
 	public static int getAutoBackupTime() {
 		return getInt("auto_backup_time", 600);
 	}

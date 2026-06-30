@@ -23,6 +23,7 @@ import tw.tib.financisto.db.Database;
 import tw.tib.financisto.db.DatabaseAdapter;
 import tw.tib.financisto.db.DatabaseSchemaEvolution;
 import tw.tib.financisto.export.dropbox.Dropbox;
+import tw.tib.financisto.utils.MyPreferences;
 
 import java.io.*;
 import java.util.Arrays;
@@ -40,6 +41,7 @@ public class DatabaseImport extends FullDatabaseImport {
 
     private final DatabaseSchemaEvolution schemaEvolution;
     private final InputStream backupStream;
+    private final boolean backupNewlines;
 
     public static DatabaseImport createFromFileBackup(Context context, DatabaseAdapter dbAdapter, Uri backupFileUri) throws FileNotFoundException {
         InputStream inputStream = context.getContentResolver().openInputStream(backupFileUri);
@@ -64,6 +66,7 @@ public class DatabaseImport extends FullDatabaseImport {
         super(context, dbAdapter);
         this.schemaEvolution = new DatabaseSchemaEvolution(context, Database.DATABASE_NAME, null, Database.DATABASE_VERSION);
         this.backupStream = backupStream;
+        this.backupNewlines = MyPreferences.isBackupNewlines();
     }
 
     @Override
@@ -97,6 +100,7 @@ public class DatabaseImport extends FullDatabaseImport {
         String line;
         String tableName = null;
         long rowNum = 0;
+        var sb = new StringBuilder();
         while ((line = br.readLine()) != null) {
             if (line.startsWith("$")) {
                 if ("$$".equals(line)) {
@@ -128,12 +132,39 @@ public class DatabaseImport extends FullDatabaseImport {
                     int i = line.indexOf(":");
                     if (i > 0) {
                         String columnName = line.substring(0, i);
-                        String value = line.substring(i + 1);
+                        String value = backupNewlines ? unescape(sb, line.substring(i + 1)) : line.substring(i + 1);
                         values.put(columnName, value);
                     }
                 }
             }
         }
+    }
+
+    private static String unescape(StringBuilder sb, String value) {
+        sb.setLength(0);
+        int l = value.length();
+        int m = l - 1;
+        for (int i=0; i<l; ++i) {
+            char c = value.charAt(i);
+            switch (c) {
+                case '\\' -> {
+                    if (i<m) {
+                        i++;
+                        char d = value.charAt(i);
+                        switch (d) {
+                            case 'n' -> sb.append("\n");
+                            case '\\' -> sb.append("\\");
+                            default -> sb.append(d);
+                        }
+                    }
+                    else {
+                        sb.append(c);
+                    }
+                }
+                default -> sb.append(c);
+            }
+        }
+        return sb.toString();
     }
 
     private void runRestoreAlterscripts() throws IOException {
