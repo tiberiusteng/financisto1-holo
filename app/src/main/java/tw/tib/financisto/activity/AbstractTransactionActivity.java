@@ -484,6 +484,7 @@ public abstract class AbstractTransactionActivity extends AbstractActivity imple
 
 	@Override
 	protected void onClick(View v, int id) {
+		if (isPreventEditing()) return;
 		if (isShowPayee) payeeSelector.onClick(id);
 		projectSelector.onClick(id);
 		categorySelector.onClick(id);

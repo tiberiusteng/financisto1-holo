@@ -233,6 +233,7 @@ public class TransactionActivity extends AbstractTransactionActivity {
         if (categorySelector.isSplitCategorySelected()) {
             View v = x.addNodeUnsplit(splitsLayout);
             unsplitAmountText = v.findViewById(R.id.data);
+            unsplitAmountText.setTag(v);
             updateUnsplitAmount();
         } else {
             splitsLayout.removeAllViews();
@@ -300,6 +301,10 @@ public class TransactionActivity extends AbstractTransactionActivity {
         boolean enabled = !isPreventEditing();
         if (accountText.getTag() instanceof View v) v.setEnabled(enabled);
         if (currencyText.getTag() instanceof View v) v.setEnabled(enabled);
+        if (unsplitAmountText != null && unsplitAmountText.getTag() instanceof View v) v.setEnabled(enabled);
+        for (View v : viewToSplitMap.keySet()) {
+            v.setEnabled(enabled);
+        }
     }
 
     @Override
@@ -391,6 +396,7 @@ public class TransactionActivity extends AbstractTransactionActivity {
 
     @Override
     protected void onClick(View v, int id) {
+        if (isPreventEditing()) return;
         super.onClick(v, id);
         switch (id) {
             case R.id.unsplit_action:
