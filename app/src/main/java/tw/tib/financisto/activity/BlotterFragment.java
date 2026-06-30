@@ -25,6 +25,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.inputmethod.InputMethodManager;
+import android.widget.CursorAdapter;
 import android.widget.EditText;
 import android.widget.FrameLayout;
 import android.widget.ImageButton;
@@ -83,7 +84,8 @@ import tw.tib.financisto.view.NodeInflater;
 import tw.tib.orb.EntityManager;
 
 public class BlotterFragment extends AbstractListFragment<Cursor> implements BlotterOperations.BlotterOperationsCallback {
-    private static final String TAG = "BlotterFragment";
+    private String TAG = getClass().getSimpleName();
+
     public static final String MAIN_BLOTTER = "mainBlotter";
     public static final String EXTRA_FILTER_ACCOUNTS = "filterAccounts";
     public static final String GO_TO_TRANSACTION = "goToTransaction";
@@ -897,6 +899,9 @@ public class BlotterFragment extends AbstractListFragment<Cursor> implements Blo
 
     @Override
     protected Cursor loadInBackground() {
+        Log.d(TAG, "loadInBackground start");
+        long t1 = System.nanoTime();
+
         Cursor c;
         blotterFilter.recalculatePeriod();
         WhereFilter blotterFilterCopy = WhereFilter.copyOf(blotterFilter);
@@ -907,7 +912,6 @@ public class BlotterFragment extends AbstractListFragment<Cursor> implements Blo
             calculateTotals(blotterFilterCopy);
         });
 
-        long t1 = System.nanoTime();
         if (db == null) {
             db = new DatabaseAdapter(getActivity());
             db.open();
@@ -923,14 +927,16 @@ public class BlotterFragment extends AbstractListFragment<Cursor> implements Blo
             c = db.getBlotter(blotterFilterCopy);
         }
         c.getCount();
-        Log.d(TAG, "createCursor: " + format("%,d", (System.nanoTime() - t1)) + " ns");
+
+        Log.d(TAG, "loadInBackground: " + format("%,d", (System.nanoTime() - t1)) + " ns");
         return c;
     }
 
     @Override
     protected ListAdapter createAdapter(Context context, Cursor cursor) {
         ListAdapter a;
-        long t1 = System.currentTimeMillis();
+        long t1 = System.nanoTime();
+
         long accountId = blotterFilter.getAccountId();
         if (accountId != -1) {
             a = new TransactionsListAdapter(context, db, cursor);
@@ -941,7 +947,7 @@ public class BlotterFragment extends AbstractListFragment<Cursor> implements Blo
             emptyText.setVisibility(View.VISIBLE);
         }
         progressBar.setVisibility(View.GONE);
-        Log.d(TAG, "createAdapter: " + (System.currentTimeMillis() - t1) + " ms");
+        Log.d(TAG, "createAdapter: " + format("%,d", System.nanoTime() - t1) + " ns");
 
         updatePeriodDisplay();
 
@@ -979,6 +985,17 @@ public class BlotterFragment extends AbstractListFragment<Cursor> implements Blo
                 pos += 1;
             }
             setSelection(pos);
+        }
+    }
+
+    @Override
+    public void onLoaderReset(@NonNull Loader<Cursor> loader) {
+        if (adapter instanceof CursorAdapter cursorAdapter) {
+            Cursor oldCursor = cursorAdapter.swapCursor(null);
+            if (oldCursor != null && !oldCursor.isClosed()) {
+                Log.d(TAG, "onLoaderReset: closing " + oldCursor);
+                oldCursor.close();
+            }
         }
     }
 

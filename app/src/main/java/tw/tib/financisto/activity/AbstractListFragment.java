@@ -5,6 +5,7 @@ import static android.app.Activity.RESULT_OK;
 import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.Intent;
+import android.database.Cursor;
 import android.os.Bundle;
 import android.os.Parcelable;
 import android.util.Log;
@@ -36,6 +37,8 @@ import tw.tib.financisto.utils.PinProtection;
 abstract public class AbstractListFragment<D> extends ListFragment
         implements RefreshSupportedActivity, LoaderManager.LoaderCallbacks<D>
 {
+    private final String TAG = getClass().getSimpleName();
+
     protected static final int MENU_VIEW = Menu.FIRST + 1;
     protected static final int MENU_EDIT = Menu.FIRST + 2;
     protected static final int MENU_DELETE = Menu.FIRST + 3;
@@ -83,6 +86,7 @@ abstract public class AbstractListFragment<D> extends ListFragment
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
 
+        LoaderManager.enableDebugLogging(true);
         LoaderManager loaderManager = LoaderManager.getInstance(this);
         loaderManager.initLoader(0, null, this);
 
@@ -192,7 +196,10 @@ abstract public class AbstractListFragment<D> extends ListFragment
     @SuppressLint("StaticFieldLeak")
     @Override
     public Loader<D> onCreateLoader(int id, @Nullable Bundle args) {
+        // Why don't just use CursorLoader? Because BudgetListFragment uses ArrayList<Budget>.
         return new AsyncTaskLoader<D>(Application.getInstance()) {
+            private D data;
+
             @Override
             protected void onStartLoading() {
                 forceLoad();
@@ -200,14 +207,45 @@ abstract public class AbstractListFragment<D> extends ListFragment
 
             @Override
             public void deliverResult(D data) {
+                if (isReset() && data instanceof Cursor c) {
+                    Log.d(TAG, "deliverResult: isReset(): closing " + c);
+                    c.close();
+                    return;
+                }
                 if (isStarted()) {
                     super.deliverResult(data);
+                }
+
+                Log.d(TAG, "deliverResult: retain new " + data);
+                D oldData = this.data;
+                this.data = data;
+
+                if (oldData != data && oldData instanceof Cursor c && !c.isClosed()) {
+                    Log.d(TAG, "deliverResult: closing old " + c);
+                    c.close();
                 }
             }
 
             @Override
             public D loadInBackground() {
                 return AbstractListFragment.this.loadInBackground();
+            }
+
+            @Override
+            public void onCanceled(@Nullable D data) {
+                if (data instanceof Cursor c && !c.isClosed()) {
+                    Log.d(TAG, "onCanceled: closing " + c);
+                    c.close();
+                }
+            }
+
+            @Override
+            protected void onReset() {
+                if (data instanceof Cursor c && !c.isClosed()) {
+                    Log.d(TAG, "onReset: closing " + c);
+                    c.close();
+                }
+                data = null;
             }
         };
     }
@@ -221,10 +259,10 @@ abstract public class AbstractListFragment<D> extends ListFragment
         Parcelable listViewState = getListView().onSaveInstanceState();
         setListAdapter(adapter);
         long t2 = System.nanoTime();
-        Log.d(this.getClass().getSimpleName(), "setListAdapter: " + (t2 - t1) / 1000 + " us");
+        Log.d(TAG, "onLoadFinished: setListAdapter: " + (t2 - t1) + " ns");
         getListView().onRestoreInstanceState(listViewState);
         long t3 = System.nanoTime();
-        Log.d(this.getClass().getSimpleName(), "getListView().onRestoreInstanceState: " + (t3 - t2) / 1000 + " us");
+        Log.d(TAG, "onLoadFinished: getListView().onRestoreInstanceState: " + (t3 - t2) + " ns");
     }
 
     @Override
