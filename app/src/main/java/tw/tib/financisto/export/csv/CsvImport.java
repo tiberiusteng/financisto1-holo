@@ -12,6 +12,7 @@ import org.apache.commons.io.input.BOMInputStream;
 
 import java.io.FileNotFoundException;
 import java.io.InputStreamReader;
+import java.math.BigDecimal;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Arrays;
@@ -37,6 +38,7 @@ import tw.tib.financisto.model.Project;
 import tw.tib.financisto.model.Transaction;
 import tw.tib.financisto.model.TransactionAttribute;
 import tw.tib.financisto.model.TransactionStatus;
+import tw.tib.financisto.utils.CurrencyCache;
 import tw.tib.financisto.utils.Utils;
 
 public class CsvImport {
@@ -152,6 +154,7 @@ public class CsvImport {
                 map.put(currency, c);
             }
         }
+        CurrencyCache.initialize(db);
         return map;
     }
 
@@ -251,14 +254,11 @@ public class CsvImport {
                                 } else if (transactionField.equals("status")) {
                                     transaction.status = fieldValue;
                                 } else if (transactionField.equals("amount")) {
-                                    Double fromAmountDouble = parseAmount(fieldValue);
-                                    transaction.fromAmount = fromAmountDouble.longValue();
+                                    transaction.fromAmount = parseAmount(fieldValue);
                                 } else if (transactionField.equals("to amount")) {
-                                    Double toAmountDouble = parseAmount(fieldValue);
-                                    transaction.toAmount = toAmountDouble.longValue();
+                                    transaction.toAmount = parseAmount(fieldValue);
                                 } else if (transactionField.equals("original amount")) {
-                                    Double originalAmountDouble = parseAmount(fieldValue);
-                                    transaction.originalAmount = originalAmountDouble.longValue();
+                                    transaction.originalAmount = parseAmount(fieldValue);
                                 } else if (transactionField.equals("original currency")) {
                                     transaction.originalCurrency = fieldValue;
                                 } else if (transactionField.equals("payee")) {
@@ -295,15 +295,14 @@ public class CsvImport {
         }
     }
 
-    private Double parseAmount(String fieldValue) {
+    private BigDecimal parseAmount(String fieldValue) {
         fieldValue = fieldValue.trim();
         if (fieldValue.length() > 0) {
             fieldValue = fieldValue.replace(groupSeparator + "", "");
             fieldValue = fieldValue.replace(decimalSeparator, '.');
-            double fromAmount = Double.parseDouble(fieldValue);
-            return fromAmount * 100.0;
+            return new BigDecimal(fieldValue);
         } else {
-            return 0.0;
+            return BigDecimal.ZERO;
         }
     }
 

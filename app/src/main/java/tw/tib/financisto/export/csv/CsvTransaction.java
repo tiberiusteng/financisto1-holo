@@ -19,7 +19,9 @@ import tw.tib.financisto.model.MyEntity;
 import tw.tib.financisto.model.Payee;
 import tw.tib.financisto.model.Project;
 import tw.tib.financisto.model.Transaction;
+import tw.tib.financisto.utils.CurrencyCache;
 
+import java.math.BigDecimal;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.Map;
@@ -32,10 +34,10 @@ public class CsvTransaction {
     public String status;
     public String account;
     public Account defaultAccount;
-    public Long fromAmount;
+    public BigDecimal fromAmount;
     public String toAccount;
-    public Long toAmount;
-    public Long originalAmount;
+    public BigDecimal toAmount;
+    public BigDecimal originalAmount;
     public String originalCurrency;
     public String payee;
     public String category;
@@ -69,32 +71,35 @@ public class CsvTransaction {
             }
             t.fromAccountId = entity.id;
         }
+        Account fromAccount = accountsById.get(t.fromAccountId);
         if (currency != null) {
-            Account entity = accountsById.get(t.fromAccountId);
-            if (!currency.equals(entity.currency.name)) {
+            if (!currency.equals(fromAccount.currency.name)) {
                 throw new ImportExportException(R.string.import_wrong_currency_2, null, currency,
-                        entity.currency.name);
+                        fromAccount.currency.name);
             }
         }
         if (fromAmount != null) {
-            t.fromAmount = fromAmount;
+            t.fromAmount = fromAmount.movePointRight(fromAccount.currency.getScale()).longValue();
         }
+        Account toAccountEntity = null;
         if (toAccount != null) {
-            Account entity = accountsByName.get(toAccount);
-            if (entity == null) {
+            toAccountEntity = accountsByName.get(toAccount);
+            if (toAccountEntity == null) {
                 throw new ImportExportException(R.string.csv_account_not_found, null, toAccount);
             }
-            t.toAccountId = entity.id;
+            t.toAccountId = toAccountEntity.id;
         }
-        if (toCurrency != null && toAccount != null) {
-            Account entity = accountsById.get(t.toAccountId);
-            if (!toCurrency.equals(entity.currency.name)) {
+        if (toAccountEntity == null && t.toAccountId != 0) {
+            toAccountEntity = accountsById.get(t.toAccountId);
+        }
+        if (toCurrency != null && toAccountEntity != null) {
+            if (!toCurrency.equals(toAccountEntity.currency.name)) {
                 throw new ImportExportException(R.string.import_wrong_currency_2, null, currency,
-                        entity.currency.name);
+                        toAccountEntity.currency.name);
             }
         }
-        if (toAmount != null) {
-            t.toAmount = toAmount;
+        if (toAmount != null && toAccountEntity != null) {
+            t.toAmount = toAmount.movePointRight(toAccountEntity.currency.getScale()).longValue();
         }
         if (category != null) {
             t.categoryId = getEntityIdOrZero(categories, category);
@@ -112,8 +117,12 @@ public class CsvTransaction {
             }
             t.originalCurrencyId = currency.id;
         }
-        if (originalAmount != null) {
-            t.originalFromAmount = originalAmount;
+        Currency originalCurrency = null;
+        if (t.originalCurrencyId != 0) {
+            originalCurrency = CurrencyCache.getCurrency(t.originalCurrencyId);
+        }
+        if (originalAmount != null && originalCurrency != null) {
+            t.originalFromAmount = originalAmount.movePointRight(originalCurrency.getScale()).longValue();
         }
         if (note != null) {
             t.note = note;
@@ -133,49 +142,52 @@ public class CsvTransaction {
         if (status != null) {
             t.status = TransactionStatus.valueOf(status);
         }
+        Account fromAccount = null;
         if (account != null) {
-            Account entity = accounts.get(account);
-            if (entity == null) {
+            fromAccount = accounts.get(account);
+            if (fromAccount == null) {
                 throw new ImportExportException(R.string.csv_account_not_found, null, account);
             }
-            t.fromAccountId = entity.id;
+            t.fromAccountId = fromAccount.id;
 
-            if (currency != null && !currency.equals(entity.currency.name)) {
+            if (currency != null && !currency.equals(fromAccount.currency.name)) {
                 throw new ImportExportException(R.string.import_wrong_currency_2, null, currency,
-                        entity.currency.name);
+                        fromAccount.currency.name);
             }
         }
         else {
             t.fromAccountId = defaultAccount.id;
+            fromAccount = defaultAccount;
         }
         if (fromAmount == null) {
             throw new ImportExportException(R.string.csv_amount_required);
         }
-        t.fromAmount = fromAmount;
+        t.fromAmount = fromAmount.movePointRight(fromAccount.currency.getScale()).longValue();
+        Account toAccountEntity = null;
         if (toAccount != null) {
-            Account entity = accounts.get(toAccount);
-            if (entity == null) {
+            toAccountEntity = accounts.get(toAccount);
+            if (toAccountEntity == null) {
                 throw new ImportExportException(R.string.csv_account_not_found, null, toAccount);
             }
-            t.toAccountId = entity.id;
-            if (toCurrency != null && !toCurrency.equals(entity.currency.name)) {
+            t.toAccountId = toAccountEntity.id;
+            if (toCurrency != null && !toCurrency.equals(toAccountEntity.currency.name)) {
                 throw new ImportExportException(R.string.import_wrong_currency_2, null, currency,
-                        entity.currency.name);
+                        toAccountEntity.currency.name);
             }
             if (toAmount == null) {
                 throw new ImportExportException(R.string.csv_to_amount_required);
             }
-            t.toAmount = toAmount;
+            t.toAmount = toAmount.movePointRight(toAccountEntity.currency.getScale()).longValue();
         }
         t.categoryId = getEntityIdOrZero(categories, category);
         t.payeeId = getEntityIdOrZero(payees, payee);
         t.projectId = getEntityIdOrZero(projects, project);
-        if (originalAmount != null && originalAmount != 0) {
+        if (originalAmount != null && !originalAmount.equals(BigDecimal.ZERO)) {
             Currency currency = currencies.get(originalCurrency);
             if (currency == null) {
                 throw new ImportExportException(R.string.csv_currency_not_found, null, originalCurrency);
             }
-            t.originalFromAmount = originalAmount;
+            t.originalFromAmount = originalAmount.movePointRight(currency.getScale()).longValue();
             t.originalCurrencyId = currency.id;
         }
         t.note = note;
