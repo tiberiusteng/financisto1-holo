@@ -129,6 +129,7 @@ public abstract class MyEntitySelector<T extends MyEntity, A extends AbstractAct
             loaded = false;
         }
         Application.getExecutor().execute(() -> {
+            long t0 = System.nanoTime();
             entities = fetchEntities(em);
             if (!multiSelect) {
                 adapter = createAdapter(activity, entities);
@@ -136,6 +137,8 @@ public abstract class MyEntitySelector<T extends MyEntity, A extends AbstractAct
             synchronized (this) {
                 loaded = true;
             }
+            Log.d(TAG, "fetchEntities " + Thread.currentThread().getName() + " " +
+                    entityClass.getSimpleName() + " " + String.format("%,d", System.nanoTime() - t0) + " ns");
             new Handler(Looper.getMainLooper()).post(() -> {
                 if (isShow) {
                     text.setText(defaultValueResId);
@@ -292,7 +295,7 @@ public abstract class MyEntitySelector<T extends MyEntity, A extends AbstractAct
         String selectedProjects = getCheckedTitles();
         if (Utils.isEmpty(selectedProjects)) {
             clearSelection();
-        } else {
+        } else if (text != null) {
             text.setText(selectedProjects);
             showHideMinusBtn(true);
         }
