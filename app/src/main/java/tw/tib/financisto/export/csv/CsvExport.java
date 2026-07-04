@@ -14,6 +14,9 @@ import android.content.Context;
 import android.database.Cursor;
 import android.util.Log;
 
+import org.apache.commons.csv.CSVFormat;
+import org.apache.commons.csv.CSVPrinter;
+
 import tw.tib.financisto.datetime.DateUtils;
 import tw.tib.financisto.db.DatabaseHelper;
 import tw.tib.financisto.export.Export;
@@ -59,6 +62,8 @@ public class CsvExport extends Export {
     private final DatabaseAdapter db;
     private final CsvExportOptions options;
 
+    private CSVFormat csvFormat;
+
     private Map<Long, Category> categoriesMap;
     private Map<Long, Account> accountsMap;
     private Map<Long, Payee> payeeMap;
@@ -73,6 +78,8 @@ public class CsvExport extends Export {
         this.options = options;
 
         Log.d(TAG, "useCurrencySpecificDecimals=" + options.useCurrencySpecificDecimals);
+
+        csvFormat = CSVFormat.EXCEL.builder().setDelimiter(options.fieldSeparator).get();
     }
 
     @Override
@@ -90,7 +97,7 @@ public class CsvExport extends Export {
             bw.write(new String(bom, "UTF-8"));
         }
         if (options.includeHeader) {
-            Csv.Writer w = new Csv.Writer(bw).delimiter(options.fieldSeparator);
+            CSVPrinter p = csvFormat.print(bw);
             for (String h : HEADER) {
                 if (h.equals(TXID_HEADER) && !options.exportTxIDs) continue;
                 if (h.equals(STATUS_HEADER) && !options.includeTxStatus) continue;
@@ -99,7 +106,7 @@ public class CsvExport extends Export {
                 if (h.equals(TO_AMOUNT_HEADER) && !options.exportTransferInSingleLine) continue;
                 if (h.equals(TO_BALANCE_HEADER) && !(options.exportTransferInSingleLine && options.exportRunningBalance)) continue;
                 if (h.equals(TO_CURRENCY_HEADER) && !options.exportTransferInSingleLine) continue;
-                w.value(h);
+                p.print(h);
             }
             if (options.exportAttributes) {
                 attributeMap = db.getAllAttributesByIdMap();
@@ -113,17 +120,16 @@ public class CsvExport extends Export {
                     }
                 }
                 for (long i : usedAttributes) {
-                    w.value("attr:" + attributeMap.get(i).title);
+                    p.print("attr:" + attributeMap.get(i).title);
                 }
             }
-            w.newLine();
+            p.println();
         }
     }
 
     @Override
     protected void writeBody(BufferedWriter bw) throws IOException {
-        Csv.Writer w = new Csv.Writer(bw).delimiter(options.fieldSeparator);
-        try {
+        try (CSVPrinter p = csvFormat.print(bw)) {
             accountsMap = db.getAllAccountsMap();
             categoriesMap = db.getAllCategoriesMap();
             payeeMap = db.getAllPayeeByIdMap();
@@ -132,15 +138,13 @@ public class CsvExport extends Export {
             try (Cursor c = db.getBlotterWithSplits(options.filter)) {
                 while (c.moveToNext()) {
                     Transaction t = Transaction.fromBlotterCursor(c);
-                    writeLine(w, t);
+                    writeLine(p, t);
                 }
             }
-        } finally {
-            w.close();
         }
     }
 
-    private void writeLine(Csv.Writer w, Transaction t) {
+    private void writeLine(CSVPrinter p, Transaction t) throws IOException {
         Date dt = t.dateTime > 0 ? new Date(t.dateTime) : null;
         Category category = getCategoryById(t.categoryId);
         Project project = getProjectById(t.projectId);
@@ -148,17 +152,17 @@ public class CsvExport extends Export {
         if (t.isTransfer()) {
             Account toAccount = getAccount(t.toAccountId);
             if (options.exportTransferInSingleLine) {
-                writeLine(w, t.id, dt, t.status, fromAccount.title, t.fromAmount, t.fromAccountBalance, fromAccount.currency.id,
+                writeLine(p, t.id, dt, t.status, fromAccount.title, t.fromAmount, t.fromAccountBalance, fromAccount.currency.id,
                         toAccount.title, t.toAmount, t.toAccountBalance, toAccount.currency.id,
                         0, 0,
                         category, null, null, project, t.note);
             }
             else {
-                writeLine(w, t.id, dt, t.status, fromAccount.title, t.fromAmount, t.fromAccountBalance, fromAccount.currency.id,
+                writeLine(p, t.id, dt, t.status, fromAccount.title, t.fromAmount, t.fromAccountBalance, fromAccount.currency.id,
                         null, 0, 0, 0,
                         0, 0,
                         category, null, TRANSFER_OUT, project, t.note);
-                writeLine(w, t.id, dt, t.status, toAccount.title, t.toAmount, t.toAccountBalance, toAccount.currency.id,
+                writeLine(p, t.id, dt, t.status, toAccount.title, t.toAmount, t.toAccountBalance, toAccount.currency.id,
                         null, 0, 0, 0,
                         0, 0,
                         category, null, TRANSFER_IN, project, t.note);
@@ -170,7 +174,7 @@ public class CsvExport extends Export {
             if ((t.parentId == 0 && (!isSplit || options.exportSplitParents)) ||
                 (t.parentId != 0 && options.exportSplits))
             {
-                writeLine(w, t.id, dt, t.status, fromAccount.title, t.fromAmount, t.fromAccountBalance, fromAccount.currency.id,
+                writeLine(p, t.id, dt, t.status, fromAccount.title, t.fromAmount, t.fromAccountBalance, fromAccount.currency.id,
                         null, 0, 0, 0,
                         t.originalFromAmount, t.originalCurrencyId,
                         category, payee, location, project, t.note);
@@ -178,26 +182,26 @@ public class CsvExport extends Export {
         }
     }
 
-    private void writeLine(Csv.Writer w, long transactionId, Date dt, TransactionStatus status,
+    private void writeLine(CSVPrinter p, long transactionId, Date dt, TransactionStatus status,
                            String account, long amount, long balance, long currencyId,
                            String toAccount, long toAmount, long toBalance, long toCurrencyId,
                            long originalAmount, long originalCurrencyId,
-                           Category category, Payee payee, MyLocation location, Project project, String note) {
+                           Category category, Payee payee, MyLocation location, Project project, String note) throws IOException {
         if (options.exportTxIDs) {
-            w.value(String.valueOf(transactionId));
+            p.print(String.valueOf(transactionId));
         }
         if (dt != null) {
-            w.value(DateUtils.FORMAT_DATE_ISO_8601.format(dt));
-            w.value(DateUtils.FORMAT_TIME_ISO_8601.format(dt));
+            p.print(DateUtils.FORMAT_DATE_ISO_8601.format(dt));
+            p.print(DateUtils.FORMAT_TIME_ISO_8601.format(dt));
         } else {
-            w.value("~");
-            w.value("");
+            p.print("~");
+            p.print("");
         }
         if (options.includeTxStatus) {
-            w.value(status.toString());
+            p.print(status.toString());
         }
         // from account
-        w.value(account);
+        p.print(account);
         Currency c = CurrencyCache.getCurrency(currencyId);
         String amountFormatted;
         if (options.useCurrencySpecificDecimals) {
@@ -206,7 +210,7 @@ public class CsvExport extends Export {
         else {
             amountFormatted = options.amountFormat.format(new BigDecimal(amount).movePointLeft(c.getScale()));
         }
-        w.value(amountFormatted);
+        p.print(amountFormatted);
         if (options.exportRunningBalance) {
             String balanceFormatted;
             if (options.useCurrencySpecificDecimals) {
@@ -215,18 +219,18 @@ public class CsvExport extends Export {
             else {
                 balanceFormatted = options.amountFormat.format(new BigDecimal(balance).movePointLeft(c.getScale()));
             }
-            w.value(balanceFormatted);
+            p.print(balanceFormatted);
         }
-        w.value(c.name);
+        p.print(c.name);
         // to account
         if (options.exportTransferInSingleLine) {
-            w.value(toAccount);
+            p.print(toAccount);
             if (toAccount == null) {
-                w.value(null); // to amount
+                p.print(null); // to amount
                 if (options.exportRunningBalance) {
-                    w.value(null); // to balance
+                    p.print(null); // to balance
                 }
-                w.value(null); // to currency
+                p.print(null); // to currency
             }
             else {
                 c = CurrencyCache.getCurrency(toCurrencyId);
@@ -238,7 +242,7 @@ public class CsvExport extends Export {
                     amountFormatted = options.amountFormat.format(
                             new BigDecimal(toAmount).movePointLeft(c.getScale()));
                 }
-                w.value(amountFormatted);
+                p.print(amountFormatted);
                 if (options.exportRunningBalance) {
                     String balanceFormatted;
                     if (options.useCurrencySpecificDecimals) {
@@ -249,46 +253,46 @@ public class CsvExport extends Export {
                         balanceFormatted = options.amountFormat.format(
                                 new BigDecimal(toBalance).movePointLeft(c.getScale()));
                     }
-                    w.value(balanceFormatted);
+                    p.print(balanceFormatted);
                 }
-                w.value(c.name);
+                p.print(c.name);
             }
         }
         if (originalCurrencyId > 0) {
             Currency originalCurrency = CurrencyCache.getCurrency(originalCurrencyId);
             if (options.useCurrencySpecificDecimals) {
-                w.value(options.getCurrencyAmountFormat(originalCurrencyId).format(
+                p.print(options.getCurrencyAmountFormat(originalCurrencyId).format(
                         new BigDecimal(originalAmount).movePointLeft(originalCurrency.getScale())));
             }
             else {
-                w.value(options.amountFormat.format(
+                p.print(options.amountFormat.format(
                         new BigDecimal(originalAmount).movePointLeft(originalCurrency.getScale())));
             }
-            w.value(originalCurrency.name);
+            p.print(originalCurrency.name);
         } else {
-            w.value("");
-            w.value("");
+            p.print("");
+            p.print("");
         }
-        w.value(category != null ? category.title : "");
+        p.print(category != null ? category.title : "");
         String sParent = buildPath(category);
-        w.value(sParent);
-        w.value(payee != null ? payee.title : "");
-        w.value(location != null ? location.title : "");
-        w.value(project != null ? project.title : "");
-        w.value(note);
+        p.print(sParent);
+        p.print(payee != null ? payee.title : "");
+        p.print(location != null ? location.title : "");
+        p.print(project != null ? project.title : "");
+        p.print(note);
         if (options.exportAttributes) {
             Map<Long, String> attrs = db.getAllAttributesForTransaction(transactionId);
             for (long i : usedAttributes) {
                 String value = attrs.get(i);
                 if (value != null) {
-                    w.value(value);
+                    p.print(value);
                 }
                 else {
-                    w.value("");
+                    p.print("");
                 }
             }
         }
-        w.newLine();
+        p.println();
     }
 
     private String buildPath(Category category) {

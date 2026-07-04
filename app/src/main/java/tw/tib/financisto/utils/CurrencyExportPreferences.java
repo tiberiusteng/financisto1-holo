@@ -85,7 +85,7 @@ public class CurrencyExportPreferences {
         Spinner decimalSeparators = (Spinner)activity.findViewById(R.id.spinnerDecimalSeparators);
         Spinner groupSeparators = (Spinner)activity.findViewById(R.id.spinnerGroupSeparators);
         CheckBox useCurrencySpecificDecimals = activity.findViewById(R.id.checkboxUseCurrencyDecimals);
-		decimals.setSelection(preferences.getInt(prefix(EXPORT_DECIMALS), 0));
+		decimals.setSelection(preferences.getInt(prefix(EXPORT_DECIMALS), 10)); // default to 2 places
 		decimalSeparators.setSelection(preferences.getInt(prefix(EXPORT_DECIMAL_SEPARATOR), 0));
 		groupSeparators.setSelection(preferences.getInt(prefix(EXPORT_GROUP_SEPARATOR), 3));
         if (useCurrencySpecificDecimals != null) {

@@ -13,9 +13,13 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.util.Log;
 import android.widget.Toast;
+
+import org.apache.commons.csv.CSVFormat;
+import org.apache.commons.csv.CSVParser;
+import org.apache.commons.csv.CSVRecord;
+
 import tw.tib.financisto.R;
 import tw.tib.financisto.db.MyEntityManager;
-import tw.tib.financisto.export.csv.Csv;
 import tw.tib.financisto.model.Currency;
 import tw.tib.financisto.utils.CurrencyCache;
 
@@ -38,7 +42,7 @@ public class CurrencySelector {
 
     private final Context context;
     private final MyEntityManager em;
-    private final List<List<String>> currencies;
+    private final List<CSVRecord> currencies;
     private final OnCurrencyCreatedListener listener;
 
     private int selectedCurrency = 0;
@@ -73,23 +77,23 @@ public class CurrencySelector {
 
     public void addSelectedCurrency(int selectedCurrency) {
         if (selectedCurrency > 0 && selectedCurrency <= currencies.size()) {
-            List<String> c = currencies.get(selectedCurrency-1);
+            CSVRecord c = currencies.get(selectedCurrency-1);
             addSelectedCurrency(c);
         } else {
             listener.onCreated(0);
         }
     }
 
-    private void addSelectedCurrency(List<String> list) {
+    private void addSelectedCurrency(CSVRecord record) {
         Currency c = new Currency();
-        c.name = list.get(0);
-        c.title = list.get(1);
-        c.symbol = list.get(2);
-        c.decimals = Math.max(0, Math.min(2, Integer.parseInt(list.get(3))));
-        c.decimalSeparator = decodeSeparator(list.get(4));
-        c.groupSeparator = decodeSeparator(list.get(5));
-        if (list.size() > 6) {
-            c.numberFormat = list.get(6);
+        c.name = record.get(0);
+        c.title = record.get(1);
+        c.symbol = record.get(2);
+        c.decimals = Math.max(0, Math.min(2, Integer.parseInt(record.get(3))));
+        c.decimalSeparator = decodeSeparator(record.get(4));
+        c.groupSeparator = decodeSeparator(record.get(5));
+        if (record.size() > 6) {
+            c.numberFormat = record.get(6);
         }
         c.isDefault = isTheFirstCurrencyAdded();
         c.updateExchangeRate = true;
@@ -114,19 +118,18 @@ public class CurrencySelector {
         }
     }
 
-    private List<List<String>> readCurrenciesFromAsset() {
+    private List<CSVRecord> readCurrenciesFromAsset() {
         try {
             InputStreamReader r = new InputStreamReader(context.getAssets().open("currencies.csv"), "UTF-8");
             try {
-                Csv.Reader csv = new Csv.Reader(r).delimiter(',').ignoreComments(true).ignoreEmptyLines(true);
-                List<List<String>> allLines = new ArrayList<List<String>>();
-                List<String> line;
-                while ((line = csv.readLine()) != null) {
-                    if (line.size() == 6 || line.size() == 7) {
-                        allLines.add(line);
+                CSVParser parser = CSVFormat.DEFAULT.parse(r);
+                List<CSVRecord> allRecords = new ArrayList<>();
+                for (CSVRecord record : parser) {
+                    if (record.size() == 6 || record.size() == 7) {
+                        allRecords.add(record);
                     }
                 }
-                return allLines;
+                return allRecords;
             } finally {
                 r.close();
             }
@@ -137,12 +140,12 @@ public class CurrencySelector {
         return Collections.emptyList();
     }
 
-    private String[] createItemsList(List<List<String>> currencies) {
+    private String[] createItemsList(List<CSVRecord> currencies) {
         int size = currencies.size();
         String[] items = new String[size+1];
         items[0] = context.getString(R.string.new_currency);
         for (int i=0; i<size; i++) {
-            List<String> c = currencies.get(i);
+            CSVRecord c = currencies.get(i);
             items[i+1] = c.get(0)+" ("+c.get(1)+")";
         }
         return items;

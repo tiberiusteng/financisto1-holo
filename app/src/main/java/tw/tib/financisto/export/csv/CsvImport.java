@@ -5,6 +5,11 @@ import android.database.sqlite.SQLiteDatabase;
 import android.net.Uri;
 import android.util.Log;
 
+import org.apache.commons.csv.CSVFormat;
+import org.apache.commons.csv.CSVParser;
+import org.apache.commons.csv.CSVRecord;
+import org.apache.commons.io.input.BOMInputStream;
+
 import java.io.FileNotFoundException;
 import java.io.InputStreamReader;
 import java.text.ParseException;
@@ -35,6 +40,7 @@ import tw.tib.financisto.model.TransactionStatus;
 import tw.tib.financisto.utils.Utils;
 
 public class CsvImport {
+    private static final String TAG = "CsvImport";
 
     private final DatabaseAdapter db;
     private final CsvImportOptions options;
@@ -194,94 +200,94 @@ public class CsvImport {
     private List<CsvTransaction> parseTransactions() throws Exception {
         Uri uri = options.uri;
 
-        boolean parseLine = false;
-        List<String> header = null;
-        if (!options.useHeaderFromFile) {
-            parseLine = true;
-            header = Arrays.asList(CsvExport.HEADER);
-        }
         try {
             long deltaTime = 0;
             SimpleDateFormat format = new SimpleDateFormat("HH:mm:ss");
-            Csv.Reader reader = new Csv.Reader(new InputStreamReader(context.getContentResolver().openInputStream(uri)))
-                    .delimiter(options.fieldSeparator).ignoreComments(true);
+
+            CSVFormat.Builder builder = CSVFormat.EXCEL.builder().setDelimiter(options.fieldSeparator);
+            if (!options.useHeaderFromFile) {
+                builder.setHeader(CsvExport.HEADER);
+            }
+            else {
+                builder.setHeader().setSkipHeaderRecord(true);
+            }
+            CSVParser parser = builder.get().parse(new InputStreamReader(BOMInputStream.builder()
+                    .setInputStream(context.getContentResolver().openInputStream(uri)).get()));
+            List<String> header = parser.getHeaderNames();
+            Log.d(TAG, "header=" + header);
+
             List<CsvTransaction> transactions = new LinkedList<CsvTransaction>();
-            List<String> line;
-            while ((line = reader.readLine()) != null) {
-                Log.d(getClass().getSimpleName(), "line=" + line);
-                if (parseLine) {
-                    CsvTransaction transaction = new CsvTransaction();
-                    transaction.defaultAccount = this.account;
-                    int countOfColumns = line.size();
-                    for (int i = 0; i < countOfColumns; i++) {
-                        String transactionField = myTrim(header.get(i));
-                        if (!transactionField.equals("")) {
-                            try {
-                                String fieldValue = line.get(i);
-                                if (!fieldValue.equals("")) {
-                                    if (transactionField.equals("txid")) {
-                                        transaction.id = Long.parseLong(fieldValue);
-                                    } else if (transactionField.equals("account")) {
-                                        transaction.account = fieldValue;
-                                    } else if (transactionField.equals("to account")) {
-                                        transaction.toAccount = fieldValue;
-                                    } else if (transactionField.equals("date")) {
-                                        try {
-                                            transaction.date = options.dateFormat.parse(fieldValue);
-                                        } catch (Exception e) {
-                                            throw new ImportExportException(R.string.csv_date_format_error, null, fieldValue);
-                                        }
-                                    } else if (transactionField.equals("time")) {
-                                        try {
-                                            transaction.time = format.parse(fieldValue);
-                                        } catch (Exception e) {
-                                            throw new ImportExportException(R.string.csv_time_format_error, null, fieldValue);
-                                        }
-                                    } else if (transactionField.equals("status")) {
-                                        transaction.status = fieldValue;
-                                    } else if (transactionField.equals("amount")) {
-                                        Double fromAmountDouble = parseAmount(fieldValue);
-                                        transaction.fromAmount = fromAmountDouble.longValue();
-                                    } else if (transactionField.equals("to amount")) {
-                                        Double toAmountDouble = parseAmount(fieldValue);
-                                        transaction.toAmount = toAmountDouble.longValue();
-                                    } else if (transactionField.equals("original amount")) {
-                                        Double originalAmountDouble = parseAmount(fieldValue);
-                                        transaction.originalAmount = originalAmountDouble.longValue();
-                                    } else if (transactionField.equals("original currency")) {
-                                        transaction.originalCurrency = fieldValue;
-                                    } else if (transactionField.equals("payee")) {
-                                        transaction.payee = fieldValue;
-                                    } else if (transactionField.equals("category")) {
-                                        transaction.category = fieldValue;
-                                    } else if (transactionField.equals("parent")) {
-                                        transaction.categoryParent = fieldValue;
-                                    } else if (transactionField.equals("note")) {
-                                        transaction.note = fieldValue;
-                                    } else if (transactionField.equals("project")) {
-                                        transaction.project = fieldValue;
-                                    } else if (transactionField.equals("currency")) {
-                                        if (transaction.account == null && !account.currency.name.equals(fieldValue)) {
-                                            throw new ImportExportException(R.string.import_wrong_currency_2,
-                                                    null, fieldValue, account.currency.name);
-                                        }
-                                        transaction.currency = fieldValue;
-                                    } else if (transactionField.equals("to currency")) {
-                                        transaction.toCurrency = fieldValue;
+
+            for (CSVRecord record : parser) {
+                Log.d(TAG, "record=" + record);
+
+                CsvTransaction transaction = new CsvTransaction();
+                transaction.defaultAccount = this.account;
+                int countOfColumns = record.size();
+                for (int i = 0; i < countOfColumns; i++) {
+                    String transactionField = header.get(i);
+                    if (!transactionField.equals("")) {
+                        try {
+                            String fieldValue = record.get(i);
+                            if (!fieldValue.equals("")) {
+                                if (transactionField.equals("txid")) {
+                                    transaction.id = Long.parseLong(fieldValue);
+                                } else if (transactionField.equals("account")) {
+                                    transaction.account = fieldValue;
+                                } else if (transactionField.equals("to account")) {
+                                    transaction.toAccount = fieldValue;
+                                } else if (transactionField.equals("date")) {
+                                    try {
+                                        transaction.date = options.dateFormat.parse(fieldValue);
+                                    } catch (Exception e) {
+                                        throw new ImportExportException(R.string.csv_date_format_error, null, fieldValue);
                                     }
+                                } else if (transactionField.equals("time")) {
+                                    try {
+                                        transaction.time = format.parse(fieldValue);
+                                    } catch (Exception e) {
+                                        throw new ImportExportException(R.string.csv_time_format_error, null, fieldValue);
+                                    }
+                                } else if (transactionField.equals("status")) {
+                                    transaction.status = fieldValue;
+                                } else if (transactionField.equals("amount")) {
+                                    Double fromAmountDouble = parseAmount(fieldValue);
+                                    transaction.fromAmount = fromAmountDouble.longValue();
+                                } else if (transactionField.equals("to amount")) {
+                                    Double toAmountDouble = parseAmount(fieldValue);
+                                    transaction.toAmount = toAmountDouble.longValue();
+                                } else if (transactionField.equals("original amount")) {
+                                    Double originalAmountDouble = parseAmount(fieldValue);
+                                    transaction.originalAmount = originalAmountDouble.longValue();
+                                } else if (transactionField.equals("original currency")) {
+                                    transaction.originalCurrency = fieldValue;
+                                } else if (transactionField.equals("payee")) {
+                                    transaction.payee = fieldValue;
+                                } else if (transactionField.equals("category")) {
+                                    transaction.category = fieldValue;
+                                } else if (transactionField.equals("parent")) {
+                                    transaction.categoryParent = fieldValue;
+                                } else if (transactionField.equals("note")) {
+                                    transaction.note = fieldValue;
+                                } else if (transactionField.equals("project")) {
+                                    transaction.project = fieldValue;
+                                } else if (transactionField.equals("currency")) {
+                                    if (transaction.account == null && !account.currency.name.equals(fieldValue)) {
+                                        throw new ImportExportException(R.string.import_wrong_currency_2,
+                                                null, fieldValue, account.currency.name);
+                                    }
+                                    transaction.currency = fieldValue;
+                                } else if (transactionField.equals("to currency")) {
+                                    transaction.toCurrency = fieldValue;
                                 }
-                            } catch (IllegalArgumentException e) {
-                                throw e;
                             }
+                        } catch (IllegalArgumentException e) {
+                            throw e;
                         }
                     }
-                    transaction.delta = deltaTime++;
-                    transactions.add(transaction);
-                } else {
-                    // first line of csv-file is table headline
-                    parseLine = true;
-                    header = line;
                 }
+                transaction.delta = deltaTime++;
+                transactions.add(transaction);
             }
             return transactions;
         } catch (FileNotFoundException e) {
@@ -315,16 +321,6 @@ public class CsvImport {
             }
         }
         return categories;
-    }
-
-    //Workaround function which is needed for reimport of CsvExport files
-    private String myTrim(String s) {
-        if (Character.isLetter(s.charAt(0))) {
-            return s;
-        } else {
-            return s.substring(1);
-        }
-
     }
 
     void setProgressListener(ProgressListener progressListener) {
