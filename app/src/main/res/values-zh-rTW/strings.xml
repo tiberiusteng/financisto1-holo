@@ -1045,4 +1045,6 @@
   <string name="merge_payee_message">這會保留受款人 %1$s, 將下列受款人的交易歸為此受款人, 並刪除下列受款人:</string>
   <string name="merge_payee_message_continue">確認進行?</string>
   <string name="merge_payee_success">受款人合併成功</string>
+
+  <string name="edit_disabled_for_cleared_reconciled">已清算/已對帳的交易不能編輯</string>
 </resources>

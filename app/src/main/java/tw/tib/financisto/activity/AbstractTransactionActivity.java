@@ -106,6 +106,8 @@ public abstract class AbstractTransactionActivity extends AbstractActivity imple
 	private ImageView pictureView;
 	private TextView pictureDescView;
 
+	private TextView editDisabled;
+
 	private CheckBox ccardPayment;
 
 	protected Account selectedAccount;
@@ -287,6 +289,7 @@ public abstract class AbstractTransactionActivity extends AbstractActivity imple
 
 		LinearLayout layout = findViewById(R.id.list);
 
+		editDisabled = findViewById(R.id.edit_disabled);
 		this.templateName = new EditText(this);
 		if (transaction.isTemplate()) {
 			x.addEditNode(layout, R.string.template_name, templateName);
@@ -706,6 +709,13 @@ public abstract class AbstractTransactionActivity extends AbstractActivity imple
 		if (pictureTopView != null) pictureTopView.setEnabled(enabled);
 		if (ccardPayment != null) ((View) ccardPayment.getTag()).setEnabled(enabled);
 		rateView.setEnabled(enabled);
+
+		if (enabled) {
+			editDisabled.setVisibility(View.GONE);
+		}
+		else {
+			editDisabled.setVisibility(View.VISIBLE);
+		}
 
 		updateUIforPreventEditing();
 	}
