@@ -50,11 +50,27 @@
         android:key="reset_copied_transaction_status"
         android:summary="@string/reset_copied_transaction_status_summary"
         android:title="@string/reset_copied_transaction_status" />
+    <ListPreference
+        android:dependency="reset_copied_transaction_status"
+        android:defaultValue="UR"
+        android:entries="@array/pref_transaction_statuses"
+        android:entryValues="@array/pref_transaction_status_values"
+        android:key="reset_copied_transaction_status_to"
+        android:summary="@string/reset_copied_transaction_status_to_summary"
+        android:title="@string/reset_copied_transaction_status_to" />
     <SwitchPreferenceCompat
         android:defaultValue="false"
         android:key="reset_copied_foreign_transaction_status"
         android:summary="@string/reset_copied_foreign_transaction_status_summary"
         android:title="@string/reset_copied_foreign_transaction_status" />
+    <ListPreference
+        android:dependency="reset_copied_foreign_transaction_status"
+        android:defaultValue="PN"
+        android:entries="@array/pref_transaction_statuses"
+        android:entryValues="@array/pref_transaction_status_values"
+        android:key="reset_copied_foreign_transaction_status_to"
+        android:summary="@string/reset_copied_foreign_transaction_status_to_summary"
+        android:title="@string/reset_copied_foreign_transaction_status_to" />
     <SwitchPreferenceCompat
         android:defaultValue="false"
         android:key="update_copied_transaction_project"

@@ -611,9 +611,13 @@
   <string name="show_project_in_blotter">顯示專案名稱</string>
   <string name="show_project_in_blotter_summary">若交易有專案則在明細畫面顯示專案名稱</string>
   <string name="reset_copied_transaction_status">複製交易時重設狀態</string>
-  <string name="reset_copied_transaction_status_summary">將複製的交易設為「未對帳」</string>
+  <string name="reset_copied_transaction_status_summary">若啟用則設定複製交易的狀態</string>
+  <string name="reset_copied_transaction_status_to">複製的交易狀態設為 …</string>
+  <string name="reset_copied_transaction_status_to_summary">複製的交易將設為: %s</string>
   <string name="reset_copied_foreign_transaction_status">複製外幣交易時重設狀態</string>
-  <string name="reset_copied_foreign_transaction_status_summary">將複製的外幣交易設為「擱置」</string>
+  <string name="reset_copied_foreign_transaction_status_summary">若啟用則設定複製外幣交易的狀態</string>
+  <string name="reset_copied_foreign_transaction_status_to">複製的外幣交易狀態設為 …</string>
+  <string name="reset_copied_foreign_transaction_status_to_summary">複製的外幣交易將設為: %s</string>
   <string name="update_copied_transaction_project">複製交易時更新專案</string>
   <string name="update_copied_transaction_project_summary">複製有專案的交易時改用最新使用過的專案</string>
   <string name="colorize_weekend_date">彩色標記週末日期</string>

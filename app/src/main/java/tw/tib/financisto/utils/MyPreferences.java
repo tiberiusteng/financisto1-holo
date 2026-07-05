@@ -463,8 +463,16 @@ public class MyPreferences {
 		return getBoolean("reset_copied_transaction_status", true);
 	}
 
+	public static TransactionStatus getCopiedTransactionStatus() {
+		return TransactionStatus.valueOf(getString("reset_copied_transaction_status_to", "UR"));
+	}
+
 	public static boolean isResetCopiedForeignTransactionStatus() {
 		return getBoolean("reset_copied_foreign_transaction_status", false);
+	}
+
+	public static TransactionStatus getCopiedForeignTransactionStatus() {
+		return TransactionStatus.valueOf(getString("reset_copied_foreign_transaction_status_to", "PN"));
 	}
 
 	public static boolean isUpdateCopiedTransactionProject() {

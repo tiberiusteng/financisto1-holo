@@ -52,8 +52,8 @@
     <PreferenceCategory android:title="@string/pref_tpl">
         <ListPreference
             android:defaultValue="PN"
-            android:entries="@array/pref_sms_transaction_statuses"
-            android:entryValues="@array/pref_sms_transaction_status_values"
+            android:entries="@array/pref_transaction_statuses"
+            android:entryValues="@array/pref_transaction_status_values"
             android:key="sms_transaction_status"
             android:summary="@string/pref_tpl_transaction_status"
             android:title="@string/pref_tpl_transaction_status_title" />

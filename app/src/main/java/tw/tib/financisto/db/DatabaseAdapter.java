@@ -314,13 +314,13 @@ public class DatabaseAdapter extends MyEntityManager {
             else {
                 // if configured, set copied transaction's status to unreconciled
                 if (MyPreferences.isResetCopiedTransactionStatus()) {
-                    transaction.status = TransactionStatus.UR;
+                    transaction.status = MyPreferences.getCopiedTransactionStatus();
                 }
                 // if configured and transaction is in foreign currency,
                 // set copied transaction's status to pending
                 if (MyPreferences.isResetCopiedForeignTransactionStatus() &&
                         transaction.originalCurrencyId != 0) {
-                    transaction.status = TransactionStatus.PN;
+                    transaction.status = MyPreferences.getCopiedForeignTransactionStatus();
                 }
             }
             if (isTemplate == 0) {

@@ -690,10 +690,16 @@
     <string name="show_project_in_blotter_summary">Show project name when transaction has assigned a project</string>
 
     <string name="reset_copied_transaction_status">Reset copied transaction status</string>
-    <string name="reset_copied_transaction_status_summary">Make copied transaction unreconciled</string>
+    <string name="reset_copied_transaction_status_summary">Change copied transaction status if enabled</string>
+
+    <string name="reset_copied_transaction_status_to">Set copied transaction status to …</string>
+    <string name="reset_copied_transaction_status_to_summary">Set copied transaction as: %s</string>
 
     <string name="reset_copied_foreign_transaction_status">Reset copied foreign currency transaction status</string>
-    <string name="reset_copied_foreign_transaction_status_summary">Make copied foreign currency transaction pending</string>
+    <string name="reset_copied_foreign_transaction_status_summary">Change copied foreign currency transaction status if enabled</string>
+
+    <string name="reset_copied_foreign_transaction_status_to">Set copied foreign currency transaction status to …</string>
+    <string name="reset_copied_foreign_transaction_status_to_summary">Set copied foreign currency transaction as: %s</string>
 
     <string name="update_copied_transaction_project">Update Project of copied transaction</string>
     <string name="update_copied_transaction_project_summary">Make copied transaction use latest project if it has a project</string>
