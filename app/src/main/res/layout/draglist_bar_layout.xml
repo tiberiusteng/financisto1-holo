@@ -23,7 +23,7 @@
                 <androidx.recyclerview.widget.RecyclerView
                         a:id="@+id/drag_list_view"
                         a:layout_width="match_parent"
-                        a:layout_height="wrap_content"/>
+                        a:layout_height="match_parent"/>
 
                 <TextView
                         a:id="@id/android:empty"
