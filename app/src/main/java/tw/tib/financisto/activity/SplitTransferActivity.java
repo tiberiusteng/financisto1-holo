@@ -1,6 +1,8 @@
 package tw.tib.financisto.activity;
 
+import android.content.Intent;
 import android.database.Cursor;
+import android.util.Log;
 import android.view.View;
 import android.widget.LinearLayout;
 import android.widget.ListAdapter;
@@ -10,6 +12,8 @@ import android.widget.Toast;
 import tw.tib.financisto.R;
 import tw.tib.financisto.db.DatabaseHelper;
 import tw.tib.financisto.model.Account;
+import tw.tib.financisto.model.Category;
+import tw.tib.financisto.utils.MyPreferences;
 import tw.tib.financisto.utils.TransactionUtils;
 import tw.tib.financisto.widget.RateLayoutView;
 
@@ -18,13 +22,17 @@ import tw.tib.financisto.widget.RateLayoutView;
  * User: Denis Solonenko
  * Date: 4/21/11 7:17 PM
  */
-public class SplitTransferActivity extends AbstractSplitActivity {
+public class SplitTransferActivity extends AbstractSplitActivity implements CategorySelector.CategorySelectorListener {
+    private static final String TAG = "SplitTransferActivity";
 
     private RateLayoutView rateView;
 
     protected TextView accountText;
     protected Cursor accountCursor;
     protected ListAdapter accountAdapter;
+
+    private boolean isShowCategoryInTransfer;
+    private CategorySelector<SplitTransferActivity> categorySelector;
 
     public SplitTransferActivity() {
         super(R.layout.split_fixed);
@@ -33,9 +41,18 @@ public class SplitTransferActivity extends AbstractSplitActivity {
     @Override
     protected void createUI(LinearLayout layout) {
         accountText = x.addListNode(layout, R.id.account, R.string.account, R.string.select_to_account);
+        isShowCategoryInTransfer = MyPreferences.isShowCategoryInTransferScreen();
+        categorySelector = new CategorySelector<>(this, db, x);
+        if (isShowCategoryInTransfer) {
+            categorySelector.createNode(layout, CategorySelector.SelectorType.SPLIT);
+        }
+        else {
+            categorySelector.createDummyNode();
+        }
         rateView = new RateLayoutView(this, x, layout);
-        rateView.createTransferUI();
+        rateView.createSwitchableTransferUI();
         rateView.setAmountFromChangeListener((oldAmount, newAmount) -> setUnsplitAmount(split.unsplitAmount - newAmount));
+        categorySelector.createAttributesLayout(layout);
     }
 
     @Override
@@ -43,32 +60,64 @@ public class SplitTransferActivity extends AbstractSplitActivity {
         accountCursor = db.getAllActiveAccounts();
         startManagingCursor(accountCursor);
         accountAdapter = TransactionUtils.createAccountAdapter(this, accountCursor);
+
+        if (MyPreferences.isShowCategoryInTransferScreen()) {
+            categorySelector.setListener(this);
+            categorySelector.doNotShowSplitCategory();
+            categorySelector.fetchCategories(false);
+        }
     }
 
     @Override
     protected void updateUI() {
         super.updateUI();
-        selectFromAccount(split.fromAccountId);
-        selectToAccount(split.toAccountId);
-        setFromAmount(split.fromAmount);
-        setToAmount(split.toAmount);
+        Log.d(TAG, "updateUI splitParentAccountId=" + splitParentAccountId + ", split.fromAccountId=" + split.fromAccountId + ", "
+                + " split.toAccountId=" + split.toAccountId);
+        if (splitParentAccountId == split.fromAccountId) {
+            selectFromAccount(split.fromAccountId);
+            selectToAccount(split.toAccountId);
+            setFromAmount(split.fromAmount);
+            setToAmount(split.toAmount);
+        }
+        else {
+            selectFromAccount(split.toAccountId);
+            selectToAccount(split.fromAccountId);
+            setFromAmount(split.toAmount);
+            setToAmount(split.fromAmount);
+        }
+        categorySelector.selectCategory(split.categoryId);
     }
 
     @Override
     protected boolean updateFromUI() {
         super.updateFromUI();
-        split.fromAmount = rateView.getFromAmount();
-        split.toAmount = rateView.getToAmount();
+        Log.d(TAG, "updateFromUI before work split.fromAccountId=" + split.fromAccountId + ", "
+                + "split.toAccountId=" + split.toAccountId);
+        long fromAmount = rateView.getFromAmount();
+        long toAmount = rateView.getToAmount();
+        if (fromAmount < 0) {
+            split.fromAmount = fromAmount;
+            split.toAmount = toAmount;
+        }
+        else {
+            split.fromAmount = toAmount;
+            split.toAmount = fromAmount;
+            split.fromAccountId = split.toAccountId;
+            split.toAccountId = splitParentAccountId;
+        }
         if (split.fromAccountId == split.toAccountId) {
             Toast.makeText(this, R.string.select_to_account_differ_from_to_account, Toast.LENGTH_SHORT).show();
             return false;
         }
+        Log.d(TAG, "updateFromUI fromAccountId=" + split.fromAccountId + ", fromAmount=" + split.fromAmount + ", "
+                + "toAccountId=" + split.toAccountId + ", toAmount=" + split.toAmount);
         return true;
     }
 
     private void selectFromAccount(long accountId) {
         if (accountId > 0) {
             Account account = db.getAccount(accountId);
+            Log.d(TAG, "selectCurrencyFrom " + account.currency);
             rateView.selectCurrencyFrom(account.currency);
         }
     }
@@ -76,6 +125,7 @@ public class SplitTransferActivity extends AbstractSplitActivity {
     private void selectToAccount(long accountId) {
         if (accountId > 0) {
             Account account = db.getAccount(accountId);
+            Log.d(TAG, "selectCurrencyTo " + account.currency);
             rateView.selectCurrencyTo(account.currency);
             accountText.setText(account.title);
             split.toAccountId = accountId;
@@ -97,6 +147,7 @@ public class SplitTransferActivity extends AbstractSplitActivity {
             x.select(this, R.id.account, R.string.account_to, accountCursor, accountAdapter,
                     DatabaseHelper.AccountColumns.ID, split.toAccountId);
         }
+        categorySelector.onClick(id);
     }
 
     @Override
@@ -107,6 +158,18 @@ public class SplitTransferActivity extends AbstractSplitActivity {
                 selectToAccount(selectedId);
                 break;
         }
+        categorySelector.onSelectedId(id, selectedId);
     }
 
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        categorySelector.onActivityResult(requestCode, resultCode, data);
+    }
+
+    @Override
+    public void onCategorySelected(Category category, boolean selectLast) {
+        split.categoryId = category.id;
+        categorySelector.addAttributes(split);
+    }
 }

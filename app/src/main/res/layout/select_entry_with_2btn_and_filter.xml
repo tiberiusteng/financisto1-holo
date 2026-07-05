@@ -74,8 +74,7 @@
 			a:layout_height="wrap_content"
 			a:focusable="true"
 			a:clickable="true"
-			a:layout_gravity="center_vertical"
-			a:duplicateParentState="true" />
+			a:layout_gravity="center_vertical" />
 
 		<ImageView style="@style/PlusButton"
 			a:id="@+id/plus_minus"
@@ -84,8 +83,7 @@
 			a:layout_height="wrap_content"
 			a:layout_gravity="center_vertical"
 			a:clickable="true"
-			a:focusable="true"
-			a:duplicateParentState="true" />
+			a:focusable="true" />
 
 	</LinearLayout>
 

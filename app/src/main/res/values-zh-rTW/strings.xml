@@ -228,6 +228,13 @@
   <string name="blur_balances_summary">點按後才清晰顯示餘額 (長按帳戶列表與明細畫面的總額以顯示各幣值小計)</string>
   <string name="sort_locations">地點排序</string>
   <string name="sort_locations_summary">定義地點列表的排列順序</string>
+  <string name="sort_templates">樣版排序</string>
+  <string name="sort_templates_summary">定義交易樣板列表的排列順序</string>
+  <string-array name="sort_templates_entities">
+    <item>依建立時間</item>
+    <item>依名稱</item>
+    <item>依帳戶</item>
+  </string-array>
   <string name="more_products">更多商品…</string>
   <string name="secure_window">保護敏感資料</string>
   <string name="secure_window_summary">在程式切換畫面與解鎖畫面前隱藏內容，同時防止螢幕截圖 (需要重新啟動)</string>
@@ -236,6 +243,7 @@
   <string name="pin_protection_notify">請在設定選項設定密碼</string>
   <string name="change_pin">更改密碼</string>
   <string name="change_pin_summary">更改密碼</string>
+  <string name="pin_warning">請確定您記得密碼。如果您忘記、丟失密碼，將無法取回資料或關閉保護。</string>
   <string name="pin">密碼</string>
   <string name="set_pin">設定密碼</string>
   <string name="confirm_pin">確認密碼</string>
@@ -309,9 +317,9 @@
   <string name="remember_last_account">上次帳戶</string>
   <string name="remember_last_account_summary">記住上次選擇的帳戶</string>
   <string name="remember_last_location">上次地點</string>
-  <string name="remember_last_location_summary">記住上次選擇的地點</string>
-  <string name="remember_last_project">前次專案</string>
-  <string name="remember_last_project_summary">記住上次選擇的專案</string>
+  <string name="remember_last_location_summary">記住分類上次選擇的地點</string>
+  <string name="remember_last_project">上次專案</string>
+  <string name="remember_last_project_summary">記住分類上次選擇的專案</string>
   <string name="position_move_top">移至最上方</string>
   <string name="position_move_up">移至上方</string>
   <string name="position_move_down">移至下方</string>
@@ -381,7 +389,11 @@
   <string name="user_password_summary">Google 帳戶密碼</string>
   <string name="backup_folder">備份目錄</string>
   <string name="backup_folder_not_configured">無法在備份目錄新建檔案。請到設定選項重選備份目錄以提供授權。</string>
-  <string name="backup_folder_summary">為儲存備份檔，請在 My Drive 建立新目錄</string>
+  <string name="backup_folder_summary">為儲存備份檔，請在 Google Drive 建立新目錄</string>
+  <string name="google_drive_backup_account">備份帳戶</string>
+  <string name="google_drive_backup_account_summary">選擇備份使用的 Google 帳戶</string>
+  <string name="google_drive_sign_out">登出帳戶</string>
+  <string name="google_drive_sign_out_summary">登出以選擇其他帳戶</string>
   <string name="report_preferences">報告選項</string>
   <string name="all_reports_preferences">一般報告選項</string>
   <string name="category_by_period_preferences">根據分類與期間統計的選項</string>
@@ -986,6 +998,10 @@
   </string-array>
   <string name="pin_protection_use_fingerprint">指紋解鎖</string>
   <string name="pin_protection_use_fingerprint_summary">用指紋解鎖程式</string>
+  <string name="pin_protection_use_fingerprint_fallback_to_pin_summary">允許使用密碼</string>
+  <string name="pin_protection_use_fingerprint_fallback_to_pin">啟用指紋後仍然允許以密碼解鎖</string>
+  <string name="pin_protection_haptic_feedback">震動回饋</string>
+  <string name="pin_protection_haptic_feedback_summary">密碼與計算機按鈕啟用震動回饋</string>
   <string name="fingerprint_description">需解鎖才可繼續</string>
   <string name="fingerprint_hint">按壓感應器</string>
   <string name="fingerprint_auth_success">已識別指紋</string>

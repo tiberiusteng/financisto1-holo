@@ -51,6 +51,7 @@ public class RateLayoutView implements RateNodeOwner {
     private Currency currencyTo;
 
     private boolean enabled = true;
+    private boolean switchableTransfer = false;
 
     public RateLayoutView(AbstractActivity activity, ActivityLayout x, LinearLayout layout) {
         this.activity = activity;
@@ -102,9 +103,22 @@ public class RateLayoutView implements RateNodeOwner {
             updateRateInfo();
             if (amountInputFrom.isIncomeExpenseEnabled()) {
                 if (amountInputFrom.isExpense()) {
-                    amountInputTo.setExpense();
+                    if (switchableTransfer) {
+                        amountInputTo.setIncome();
+                        updateTitle(amountInputFromNode, R.string.amount_from, currencyFrom);
+                        updateTitle(amountInputToNode, R.string.amount_to, currencyTo);
+                    }
+                    else {
+                        amountInputTo.setExpense();
+                    }
                 } else {
-                    amountInputTo.setIncome();
+                    if (switchableTransfer) {
+                        amountInputTo.setExpense();
+                        updateTitle(amountInputFromNode, R.string.amount_to, currencyFrom);
+                        updateTitle(amountInputToNode, R.string.amount_from, currencyTo);
+                    } else {
+                        amountInputTo.setIncome();
+                    }
                 }
             }
             if (amountFromChangeListener != null) {
@@ -135,6 +149,11 @@ public class RateLayoutView implements RateNodeOwner {
             amountInputFrom.requestFocusFromTouch();
             activity.getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_VISIBLE);
         }
+    }
+
+    public void createSwitchableTransferUI() {
+        switchableTransfer = true;
+        createUI(R.string.amount_from, R.string.amount_to);
     }
 
     public void createTransferUI() {

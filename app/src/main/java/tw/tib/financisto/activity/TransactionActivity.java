@@ -37,10 +37,12 @@ import java.util.*;
 import static tw.tib.financisto.utils.Utils.isNotEmpty;
 
 public class TransactionActivity extends AbstractTransactionActivity {
+    private static final String TAG = "TransactionActivity";
 
     public static final String CURRENT_BALANCE_EXTRA = "accountCurrentBalance";
     public static final String AMOUNT_EXTRA = "accountAmount";
     public static final String ACTIVITY_STATE = "ACTIVITY_STATE";
+    public static final String SPLIT_PARENT_ACCOUNT = "splitParentAccount";
 
     private static final int SPLIT_REQUEST = 5001;
 
@@ -255,7 +257,12 @@ public class TransactionActivity extends AbstractTransactionActivity {
     private long calculateSplitAmount() {
         long amount = 0;
         for (Transaction split : viewToSplitMap.values()) {
-            amount += split.fromAmount;
+            if (split.fromAccountId == getSelectedAccountId()) {
+                amount += split.fromAmount;
+            }
+            else {
+                amount += split.toAmount;
+            }
         }
         return amount;
     }
@@ -377,6 +384,28 @@ public class TransactionActivity extends AbstractTransactionActivity {
         categorySelector.setSelectedAccount(a);
 
         if (a != null) {
+            // update account used in split transactions
+            for (var p : viewToSplitMap.entrySet()) {
+                var t = p.getValue();
+                var v = p.getKey();
+
+                if ((t.fromAccountId == selectedAccount.id && t.toAccountId == a.id) ||
+                    (t.fromAccountId == a.id && t.toAccountId == selectedAccount.id))
+                {
+                    // will become self transfer, just delete it
+                    deleteSplit(v);
+                }
+                else {
+                    if (t.fromAccountId == selectedAccount.id) {
+                        t.fromAccountId = a.id;
+                    }
+                    if (t.toAccountId == selectedAccount.id) {
+                        t.toAccountId = a.id;
+                    }
+                    setSplitData(v, t);
+                }
+            }
+
             u.setAccountTitleBalance(a, accountText, accountBalanceText, accountLimitText);
 
             selectedAccount = a;
@@ -426,7 +455,12 @@ public class TransactionActivity extends AbstractTransactionActivity {
         }
         Transaction split = viewToSplitMap.get(v);
         if (split != null) {
-            split.unsplitAmount = split.fromAmount + calculateUnsplitAmount();
+            if (split.fromAccountId == getSelectedAccountId()) {
+                split.unsplitAmount = split.fromAmount + calculateUnsplitAmount();
+            }
+            else {
+                split.unsplitAmount = split.toAmount + calculateUnsplitAmount();
+            }
             editSplit(split, split.toAccountId > 0 ? SplitTransferActivity.class : SplitTransactionActivity.class);
         }
     }
@@ -505,6 +539,7 @@ public class TransactionActivity extends AbstractTransactionActivity {
     private void editSplit(Transaction split, Class splitActivityClass) {
         Intent intent = new Intent(this, splitActivityClass);
         split.toIntentAsSplit(intent);
+        intent.putExtra(SPLIT_PARENT_ACCOUNT, getSelectedAccountId());
         startActivityForResult(intent, SPLIT_REQUEST);
     }
 

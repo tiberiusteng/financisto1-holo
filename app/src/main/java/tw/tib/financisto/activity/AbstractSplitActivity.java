@@ -37,6 +37,7 @@ public abstract class AbstractSplitActivity extends AbstractActivity {
     protected Currency originalCurrency;
     protected Utils utils;
     protected Transaction split;
+    protected long splitParentAccountId;
 
     protected ProjectSelector<AbstractSplitActivity> projectSelector;
 
@@ -65,7 +66,9 @@ public abstract class AbstractSplitActivity extends AbstractActivity {
         projectSelector = new ProjectSelector<>(this, db, x);
 
         utils  = new Utils(this);
-        split = Transaction.fromIntentAsSplit(getIntent());
+        Intent intent = getIntent();
+        split = Transaction.fromIntentAsSplit(intent);
+        splitParentAccountId = intent.getLongExtra(TransactionActivity.SPLIT_PARENT_ACCOUNT, 0);
         if (split.fromAccountId > 0) {
             fromAccount = db.getAccount(split.fromAccountId);
         }

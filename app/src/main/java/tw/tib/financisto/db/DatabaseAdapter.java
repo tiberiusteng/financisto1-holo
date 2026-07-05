@@ -226,10 +226,13 @@ public class DatabaseAdapter extends MyEntityManager {
         if (t.isTransfer()) {
             db.execSQL(ACCOUNT_LAST_ACCOUNT_UPDATE, new Object[]{t.toAccountId, t.fromAccountId});
         }
-        db.execSQL(ACCOUNT_LAST_CATEGORY_UPDATE, new Object[]{t.categoryId, t.fromAccountId});
-        db.execSQL(PAYEE_LAST_CATEGORY_UPDATE, new Object[]{t.categoryId, t.payeeId});
-        db.execSQL(CATEGORY_LAST_LOCATION_UPDATE, new Object[]{t.locationId, t.categoryId});
-        db.execSQL(CATEGORY_LAST_PROJECT_UPDATE, new Object[]{t.projectId, t.categoryId});
+        // prevent memorizing special categories e.g. split
+        if (t.categoryId >= 0) {
+            db.execSQL(ACCOUNT_LAST_CATEGORY_UPDATE, new Object[]{t.categoryId, t.fromAccountId});
+            db.execSQL(PAYEE_LAST_CATEGORY_UPDATE, new Object[]{t.categoryId, t.payeeId});
+            db.execSQL(CATEGORY_LAST_LOCATION_UPDATE, new Object[]{t.locationId, t.categoryId});
+            db.execSQL(CATEGORY_LAST_PROJECT_UPDATE, new Object[]{t.projectId, t.categoryId});
+        }
     }
 
     public long duplicateTransaction(long id) {
@@ -544,9 +547,11 @@ public class DatabaseAdapter extends MyEntityManager {
             db.update(DatabaseHelper.TRANSACTION_TABLE, v, DatabaseHelper.TransactionColumns._id + "=?",
                     new String[]{String.valueOf(id)});
 
-            for (Transaction s : t.splits) {
-                db.update(DatabaseHelper.TRANSACTION_TABLE, v, DatabaseHelper.TransactionColumns._id + "=?",
-                        new String[]{String.valueOf(s.id)});
+            if (t.splits != null) {
+                for (Transaction s : t.splits) {
+                    db.update(DatabaseHelper.TRANSACTION_TABLE, v, DatabaseHelper.TransactionColumns._id + "=?",
+                            new String[]{String.valueOf(s.id)});
+                }
             }
 
             db.setTransactionSuccessful();
