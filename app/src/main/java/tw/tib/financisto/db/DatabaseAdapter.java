@@ -533,9 +533,26 @@ public class DatabaseAdapter extends MyEntityManager {
     }
 
     public void updateTransactionStatus(long id, TransactionStatus status) {
-        Transaction t = getTransaction(id);
-        t.status = status;
-        updateTransaction(t);
+        var db = db();
+        db.beginTransaction();
+        try {
+            Transaction t = getTransaction(id);
+
+            var v = new ContentValues();
+            v.put(DatabaseHelper.TransactionColumns.status.name(), status.name());
+
+            db.update(DatabaseHelper.TRANSACTION_TABLE, v, DatabaseHelper.TransactionColumns._id + "=?",
+                    new String[]{String.valueOf(id)});
+
+            for (Transaction s : t.splits) {
+                db.update(DatabaseHelper.TRANSACTION_TABLE, v, DatabaseHelper.TransactionColumns._id + "=?",
+                        new String[]{String.valueOf(s.id)});
+            }
+
+            db.setTransactionSuccessful();
+        } finally {
+            db.endTransaction();
+        }
     }
 
     public void deleteTransaction(long id) {
@@ -1443,9 +1460,7 @@ public class DatabaseAdapter extends MyEntityManager {
         StringBuilder sb = new StringBuilder(updateSql)
                 .append(" WHERE ")
                 .append(DatabaseHelper.TransactionColumns.is_template)
-                .append("=0 AND ")
-                .append(DatabaseHelper.TransactionColumns.parent_id)
-                .append("=0 AND ")
+                .append("=0 AND (")
                 .append(DatabaseHelper.TransactionColumns._id)
                 .append(" IN (");
         for (int i = x; i < y; i++) {
@@ -1454,7 +1469,17 @@ public class DatabaseAdapter extends MyEntityManager {
             }
             sb.append(ids[i]);
         }
-        sb.append(")");
+        sb.append(") OR ")
+                .append(DatabaseHelper.TransactionColumns.parent_id)
+                .append(" IN (");
+        for (int i = x; i < y; i++) {
+            if (i > x) {
+                sb.append(",");
+            }
+            sb.append(ids[i]);
+        }
+        sb.append("))");
+
         return sb.toString();
     }
 
