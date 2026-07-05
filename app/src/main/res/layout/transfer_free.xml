@@ -28,7 +28,18 @@
 		</LinearLayout>
 		<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
 			android:layout_width="fill_parent" android:layout_height="fill_parent"
-			android:orientation="vertical" android:id="@+id/list" />
+			android:orientation="vertical" android:id="@+id/list">
+			<TextView
+				android:id="@+id/edit_disabled"
+				android:layout_width="fill_parent"
+				android:layout_height="wrap_content"
+				android:background="@color/reconciled_transaction_color"
+				android:gravity="center"
+				android:padding="3dp"
+				android:text="@string/edit_disabled_for_cleared_reconciled"
+				android:textColor="#FFFFFF"
+				android:visibility="gone" />
+		</LinearLayout>
 	<include layout="@layout/save_and_new_buttons" />
 	</LinearLayout>
 </ScrollView>
