@@ -27,11 +27,15 @@ import android.widget.TextView;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.HashSet;
+
 import tw.tib.financisto.R;
 import tw.tib.financisto.db.DatabaseAdapter;
 import tw.tib.financisto.db.DatabaseHelper.BlotterColumns;
 import static tw.tib.financisto.model.Category.isSplit;
 import static tw.tib.financisto.model.Project.NO_PROJECT_ID;
+
+import com.google.common.primitives.Longs;
 
 import tw.tib.financisto.model.CategoryEntity;
 import tw.tib.financisto.model.Currency;
@@ -365,8 +369,7 @@ public class BlotterListAdapter extends ResourceCursorAdapter {
 
     public long[] getAllCheckedIds() {
         int checkedCount = getCheckedCount();
-        long[] ids = new long[checkedCount];
-        int k = 0;
+        var ids = new HashSet<Long>();
         if (allChecked) {
             int count = getCount();
             boolean addAll = count == checkedCount;
@@ -374,15 +377,13 @@ public class BlotterListAdapter extends ResourceCursorAdapter {
                 long id = getItemId(i);
                 boolean checked = addAll || getCheckedState(id);
                 if (checked) {
-                    ids[k++] = id;
+                    ids.add(id);
                 }
             }
         } else {
-            for (Long id : checkedItems.keySet()) {
-                ids[k++] = id;
-            }
+            ids.addAll(checkedItems.keySet());
         }
-        return ids;
+        return Longs.toArray(ids);
     }
 
 }

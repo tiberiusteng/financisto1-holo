@@ -18,9 +18,8 @@
 
     <CheckBox
         android:id="@+id/cb"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_centerInParent="true"
+        android:layout_width="48dp"
+        android:layout_height="48dp"
         android:focusable="false"
         app:layout_constraintStart_toEndOf="@id/indicator"
         app:layout_constraintTop_toTopOf="parent"

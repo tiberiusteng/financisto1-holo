@@ -22,7 +22,6 @@
 				  a:textOff=""
 				  a:layout_height="wrap_content"
 				  a:layout_gravity="center_vertical"
-				  a:duplicateParentState="true"
 				  style="@style/ListButton"
 				  a:background="@drawable/btn_toggle_filter"/>
 
