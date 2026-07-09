@@ -300,8 +300,8 @@ public class ActivityLayout {
 	}
 
 	public View addSplitNodeMinus(LinearLayout layout, int id, int minusId, int labelId, String defaultValue) {
-		ListBuilder b = inflater.new ListBuilder(layout, R.layout.select_entry_minus);
-		return b.withButtonId(minusId, listener).withoutMoreButton().withId(id, listener).withLabel(labelId).withData(defaultValue).create();
+		ListBuilder b = inflater.new ListBuilder(layout, R.layout.split_entry);
+		return b.withButtonId(minusId, listener).withId(id, listener).withLabel(labelId).withData(defaultValue).create();
 	}
 
 	public TextView addFilterNodeMinus(LinearLayout layout, int id, int minusId, int labelId, int defaultValueResId) {

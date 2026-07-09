@@ -85,6 +85,10 @@ public class Criterion {
         return new Criterion("(" + text + ")", WhereFilter.Operation.RAW);
     }
 
+    public static Criterion tag(String column, String text) {
+        return new Criterion(column, WhereFilter.Operation.TAG, text);
+    }
+
     public static Criterion or(Criterion... children) {
         Log.d(TAG, "Criterion or() children.length=" + children.length);
         return new Criterion(children[0].columnName, WhereFilter.Operation.OR, combineValues(children), children);
@@ -190,6 +194,10 @@ public class Criterion {
     }
 
     public String getSelection() {
+        if (operation == WhereFilter.Operation.TAG) {
+            return "1";
+        }
+
         if (operation == WhereFilter.Operation.AND || operation == WhereFilter.Operation.OR)
         {
             String[] childSelection = new String[children.length];
@@ -213,6 +221,10 @@ public class Criterion {
     }
 
     public String[] getSelectionArgs() {
+        if (operation == WhereFilter.Operation.TAG) {
+            return new String[0];
+        }
+
         if (children.length > 0) {
             LinkedList<String> args = new LinkedList<>();
             for (Criterion c : children) {

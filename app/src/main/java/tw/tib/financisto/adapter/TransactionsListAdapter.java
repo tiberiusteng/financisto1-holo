@@ -128,6 +128,17 @@ public class TransactionsListAdapter extends BlotterListAdapter {
             }
         }
 
+        if (v.iconView2 != null) {
+            long parentId = cursor.getLong(BlotterColumns.parent_id.ordinal());
+            if (parentId == 0) {
+                v.iconView2.setVisibility(View.INVISIBLE);
+            } else {
+                v.iconView2.setVisibility(View.VISIBLE);
+                v.iconView2.setImageDrawable(icBlotterSplit);
+                v.iconView2.setColorFilter(u.splitColor);
+            }
+        }
+
         long balance = cursor.getLong(BlotterColumns.from_account_balance.ordinal());
         v.rightView.setText(Utils.amountToString(c, balance, false));
         removeRightViewIfNeeded(v);

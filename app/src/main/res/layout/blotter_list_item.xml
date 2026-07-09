@@ -42,15 +42,26 @@
         app:layout_constraintStart_toEndOf="@id/top"
         app:layout_constraintTop_toTopOf="parent" />
 
+    <ImageView android:id="@+id/right_top_2"
+        android:layout_width="12sp"
+        android:layout_height="12sp"
+        android:layout_marginTop="2sp"
+        android:visibility="invisible"
+        app:layout_constraintEnd_toStartOf="@id/right_top"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintBottom_toBottomOf="@id/top"
+        android:scaleType="fitEnd"
+        android:src="@drawable/ic_blotter_split" />
+
     <ImageView android:id="@+id/right_top"
-        android:layout_width="wrap_content"
+        android:layout_width="15sp"
         android:layout_height="0dp"
         android:layout_marginTop="2sp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintBottom_toBottomOf="@id/top"
         android:scaleType="fitEnd"
-        android:src="@drawable/ic_blotter_income" />
+        android:src="@drawable/ic_action_arrow_right_top" />
 
     <TextView android:id="@+id/center"
         android:layout_height="wrap_content"

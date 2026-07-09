@@ -926,7 +926,6 @@ public class BlotterFragment extends AbstractListFragment<Cursor> implements Blo
         } else {
             c = db.getBlotter(blotterFilterCopy);
         }
-        c.getCount();
 
         Log.d(TAG, "loadInBackground: " + format("%,d", (System.nanoTime() - t1)) + " ns");
         return c;

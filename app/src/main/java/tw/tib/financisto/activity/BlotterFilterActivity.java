@@ -13,6 +13,7 @@ package tw.tib.financisto.activity;
 import android.content.Intent;
 import android.database.Cursor;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.view.Window;
 import android.widget.*;
@@ -39,6 +40,7 @@ import java.util.List;
 import static tw.tib.financisto.blotter.BlotterFilter.FROM_ACCOUNT_ID;
 
 public class BlotterFilterActivity extends FilterAbstractActivity {
+	private static final String TAG = "BlotterFilterActivity";
 
 	public static final String IS_ACCOUNT_FILTER = "IS_ACCOUNT_FILTER";
 	public static final String IS_PLANNER_FILTER = "IS_PLANNER_FILTER";
@@ -51,11 +53,13 @@ public class BlotterFilterActivity extends FilterAbstractActivity {
 	private TextView account;
 	private TextView currency;
 	private TextView note;
-	private TextView sortOrder;
 	private TextView status;
+	private TextView split;
+	private TextView sortOrder;
 
 	private DateFormat df;
 	private String[] sortBlotterEntries;
+	private String[] filterSplitEntries;
 
 	private long accountId;
 	private boolean isAccountFilter;
@@ -75,6 +79,7 @@ public class BlotterFilterActivity extends FilterAbstractActivity {
 
 		df = DateUtils.getShortDateFormat(this);
 		sortBlotterEntries = getResources().getStringArray(R.array.sort_blotter_entries);
+		filterSplitEntries = getResources().getStringArray(R.array.filter_split_entries);
 		noFilterValue = getString(R.string.no_filter);
 
 		LinearLayout layout = findViewById(R.id.layout);
@@ -87,6 +92,7 @@ public class BlotterFilterActivity extends FilterAbstractActivity {
 		initLocationSelector(layout);
 		note = x.addFilterNodeMinus(layout, R.id.note, R.id.note_clear, R.string.note, R.string.no_filter);
 		status = x.addFilterNodeMinus(layout, R.id.status, R.id.status_clear, R.string.transaction_status, R.string.no_filter);
+		split = x.addFilterNodeMinus(layout, R.id.split, R.id.split_clear, R.string.filter_split, R.string.filter_split_default);
 		if (!isPlannerFilter) {
 			sortOrder = x.addFilterNodeMinus(layout, R.id.sort_order, R.id.sort_order_clear, R.string.sort_order, 0, sortBlotterEntries[0]);
 		}
@@ -131,6 +137,7 @@ public class BlotterFilterActivity extends FilterAbstractActivity {
 			updateLocationFromFilter();
 			updateSortOrderFromFilter();
 			updateStatusFromFilter();
+			updateSplitFromFilter();
 			disableAccountResetButtonIfNeeded();
 		}
 	}
@@ -217,6 +224,18 @@ public class BlotterFilterActivity extends FilterAbstractActivity {
 		}
 	}
 
+	private void updateSplitFromFilter() {
+		Criterion c = filter.get(BlotterFilter.SPLIT);
+		if (c != null) {
+			int selected = c.getIntValue();
+			split.setText(filterSplitEntries[selected]);
+			showMinusButton(split);
+		} else {
+			split.setText(R.string.filter_split_default);
+			hideMinusButton(split);
+		}
+	}
+
 	@Override
 	protected void onClick(View v, int id) {
 		super.onClick(v, id);
@@ -263,8 +282,8 @@ public class BlotterFilterActivity extends FilterAbstractActivity {
 			clear(BlotterFilter.NOTE, note);
 		} else if (id == R.id.sort_order) {
 			ArrayAdapter<String> adapter = new ArrayAdapter<>(this, android.R.layout.simple_spinner_dropdown_item, sortBlotterEntries);
-			int selectedId = BlotterFilter.SORT_OLDER_TO_NEWER.equals(filter.getSortOrder()) ? 1 : 0;
-			x.selectPosition(this, R.id.sort_order, R.string.sort_order, adapter, selectedId);
+			int selectedPos = BlotterFilter.SORT_OLDER_TO_NEWER.equals(filter.getSortOrder()) ? 1 : 0;
+			x.selectPosition(this, R.id.sort_order, R.string.sort_order, adapter, selectedPos);
 		} else if (id == R.id.sort_order_clear) {
 			filter.resetSort();
 			filter.desc(BlotterFilter.DATETIME);
@@ -286,6 +305,14 @@ public class BlotterFilterActivity extends FilterAbstractActivity {
 			x.selectMultiChoice(this, R.id.status, R.string.transaction_status, items);
 		} else if (id == R.id.status_clear) {
 			clear(BlotterFilter.STATUS, status);
+		} else if (id == R.id.split) {
+			ArrayAdapter<String> adapter = new ArrayAdapter<>(this, android.R.layout.simple_spinner_dropdown_item, filterSplitEntries);
+			Criterion c = filter.get(BlotterFilter.SPLIT);
+			int selectedPos = c != null ? c.getIntValue() : 0;
+			x.selectPosition(this, R.id.split, R.string.filter_split, adapter, selectedPos);
+		} else if (id == R.id.split_clear) {
+			filter.remove(BlotterFilter.SPLIT);
+			updateSplitFromFilter();
 		}
 	}
 
@@ -315,6 +342,14 @@ public class BlotterFilterActivity extends FilterAbstractActivity {
 				filter.desc(BlotterFilter.DATETIME);
 			}
 			updateSortOrderFromFilter();
+		}
+		if (id == R.id.split) {
+			if (selectedPos == 0) {
+				filter.remove(BlotterFilter.SPLIT);
+			} else {
+				filter.put(Criterion.tag(BlotterFilter.SPLIT, String.valueOf(selectedPos)));
+			}
+			updateSplitFromFilter();
 		}
 	}
 

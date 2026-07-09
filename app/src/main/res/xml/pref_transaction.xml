@@ -5,6 +5,11 @@
         android:key="prevent_edit_cleared_reconciled"
         android:summary="@string/prevent_edit_cleared_reconciled_summary"
         android:title="@string/prevent_edit_cleared_reconciled" />
+    <SwitchPreferenceCompat
+        android:defaultValue="true"
+        android:key="quick_menu_split_transactions"
+        android:summary="@string/quick_menu_split_transactions_summary"
+        android:title="@string/quick_menu_split_transactions" />
     <PreferenceCategory android:title="@string/category_selector">
         <!-- todo.mb: remove it as not used really >> -->
         <SwitchPreferenceCompat

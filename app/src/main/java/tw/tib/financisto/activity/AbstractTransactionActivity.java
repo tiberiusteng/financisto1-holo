@@ -60,6 +60,7 @@ import java.util.List;
 
 import static tw.tib.financisto.activity.RequestPermission.isRequestingPermission;
 import static tw.tib.financisto.model.Category.NO_CATEGORY_ID;
+import static tw.tib.financisto.model.Category.SPLIT_CATEGORY_ID;
 import static tw.tib.financisto.model.MyLocation.CURRENT_LOCATION_ID;
 import static tw.tib.financisto.model.Project.NO_PROJECT_ID;
 import static tw.tib.financisto.utils.Utils.text;
@@ -800,7 +801,9 @@ public abstract class AbstractTransactionActivity extends AbstractActivity imple
 	protected void selectLastCategoryForPayee(long id) {
 		Payee p = db.get(Payee.class, id);
 		if (p != null) {
-			categorySelector.selectCategory(p.lastCategoryId);
+			if (categorySelector.getSelectedCategoryId() != SPLIT_CATEGORY_ID) {
+				categorySelector.selectCategory(p.lastCategoryId);
+			}
 		}
 	}
 

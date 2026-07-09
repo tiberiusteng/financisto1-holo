@@ -130,8 +130,18 @@ public class DatabaseAdapter extends MyEntityManager {
     }
 
     public Cursor getBlotter(WhereFilter filter) {
-        String view = filter.isEmpty() ? DatabaseHelper.V_BLOTTER : DatabaseHelper.V_BLOTTER_FLAT_SPLITS;
-        return getBlotter(view, filter);
+        Criterion c = filter.get(BlotterFilter.SPLIT);
+        if (c == null || c.getIntValue() == WhereFilter.Splits.CHILDREN_ONLY) {
+            String view = filter.isEmpty() ? DatabaseHelper.V_BLOTTER : DatabaseHelper.V_BLOTTER_FLAT_SPLITS;
+            return getBlotter(view, filter);
+        }
+        else if (c.getIntValue() == WhereFilter.Splits.ALL) {
+            WhereFilter f = WhereFilter.copyOf(filter);
+            f.put(Criterion.raw(DatabaseHelper.BlotterColumns.is_template + " = 0"));
+            return getBlotter(DatabaseHelper.V_ALL_TRANSACTIONS, f);
+        }
+        // SUMMARY_ONLY
+        return getBlotter(DatabaseHelper.V_BLOTTER, filter);
     }
 
     public Cursor getBlotterWithSplits(WhereFilter filter) {
@@ -139,7 +149,20 @@ public class DatabaseAdapter extends MyEntityManager {
     }
 
     public Cursor getBlotterForAccount(WhereFilter filter) {
-        WhereFilter accountFilter = enhanceFilterForAccountBlotter(filter);
+        WhereFilter accountFilter = null;
+        Criterion c = filter.get(BlotterFilter.SPLIT);
+        if (c == null || c.getIntValue() == WhereFilter.Splits.SUMMARY_ONLY) {
+            // default for account view - show split summary AND transfer-in splits
+            accountFilter = enhanceFilterForAccountBlotter(filter);
+        }
+        else if (c.getIntValue() == WhereFilter.Splits.ALL) {
+            // do nothing - V_BLOTTER_FOR_ACCOUNT_WITH_SPLITS includes split parents and children
+            accountFilter = WhereFilter.copyOf(filter);
+        }
+        else if (c.getIntValue() == WhereFilter.Splits.CHILDREN_ONLY) {
+            accountFilter = WhereFilter.copyOf(filter);
+            accountFilter.put(Criterion.raw(DatabaseHelper.BlotterColumns.category_id + " != -1"));
+        }
         return getBlotter(DatabaseHelper.V_BLOTTER_FOR_ACCOUNT_WITH_SPLITS, accountFilter);
     }
 
@@ -546,13 +569,6 @@ public class DatabaseAdapter extends MyEntityManager {
 
             db.update(DatabaseHelper.TRANSACTION_TABLE, v, DatabaseHelper.TransactionColumns._id + "=?",
                     new String[]{String.valueOf(id)});
-
-            if (t.splits != null) {
-                for (Transaction s : t.splits) {
-                    db.update(DatabaseHelper.TRANSACTION_TABLE, v, DatabaseHelper.TransactionColumns._id + "=?",
-                            new String[]{String.valueOf(s.id)});
-                }
-            }
 
             db.setTransactionSuccessful();
         } finally {

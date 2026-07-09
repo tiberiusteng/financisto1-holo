@@ -40,6 +40,13 @@ public class SplitTransactionActivity extends AbstractSplitActivity implements C
     }
 
     @Override
+    protected void updateUIforPreventEditing() {
+        boolean enabled = !isPreventEditing();
+        categorySelector.setEnabled(enabled);
+        amountInput.setEnabled(enabled);
+    }
+
+    @Override
     protected void fetchData() {
         categorySelector.setListener(this);
         categorySelector.doNotShowSplitCategory();

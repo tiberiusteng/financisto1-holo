@@ -376,7 +376,7 @@ public class WhereFilter {
 				return super.getOp(operands).replace("?", StringUtil.generateSeparated("?", ",", operands));
 			}
 		},
-		ISNULL("is NULL"), LIKE("LIKE ?"), OR("OR"), AND("AND");
+		ISNULL("is NULL"), LIKE("LIKE ?"), OR("OR"), AND("AND"), TAG("");
 
 		private final String op;
 		private final String groupOp;
@@ -403,6 +403,13 @@ public class WhereFilter {
 		public int getValsPerGroup() {
 			return valsPerGroup;
 		}
+	}
+
+	public static class Splits {
+		public static final int DEFAULT = 0;
+		public static final int ALL = 1;
+		public static final int SUMMARY_ONLY = 2;
+		public static final int CHILDREN_ONLY = 3;
 	}
 
 	public void clearDateTime() {

@@ -713,6 +713,9 @@
     <string name="prevent_edit_cleared_reconciled">Prevent editing cleared/reconciled transactions</string>
     <string name="prevent_edit_cleared_reconciled_summary">You can still change their state to re-enable editing.</string>
 
+    <string name="quick_menu_split_transactions">Split transactions quick-menu</string>
+    <string name="quick_menu_split_transactions_summary">Shortcut for changing split transaction status</string>
+
     <string name="new_currency">New currency…</string>
     <string name="lock_time">Lock time</string>
     <string name="lock_time_summary">Time to keep main screen active before locking it off</string>
@@ -1216,4 +1219,13 @@
     <string name="merge_payee_success">Payees successfully merged.</string>
 
     <string name="edit_disabled_for_cleared_reconciled">Editing is disabled for cleared/reconciled transactions</string>
+
+    <string name="filter_split">Split</string>
+    <string name="filter_split_default">(Default)</string>
+    <string-array name="filter_split_entries">
+        <item>(Default)</item>
+        <item>Show split summary and children</item>
+        <item>Only show split summary</item>
+        <item>Only show split children</item>
+    </string-array>
 </resources>

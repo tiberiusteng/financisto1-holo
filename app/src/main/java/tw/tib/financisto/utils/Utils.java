@@ -34,6 +34,7 @@ import tw.tib.financisto.model.AccountType;
 import tw.tib.financisto.model.Currency;
 import tw.tib.financisto.model.Total;
 import tw.tib.financisto.model.TotalError;
+import tw.tib.financisto.model.TransactionStatus;
 import tw.tib.financisto.rates.ExchangeRate;
 import tw.tib.financisto.rates.ExchangeRateProvider;
 
@@ -406,5 +407,16 @@ public class Utils {
             return bd.longValue() * sign;
         }
         return amount;
+    }
+
+    public static int[] getTransactionStatusColors(Context context) {
+        Resources r = context.getResources();
+        TransactionStatus[] statuses = TransactionStatus.values();
+        int count = statuses.length;
+        int[] colors = new int[count];
+        for (int i = 0; i < count; i++) {
+            colors[i] = r.getColor(statuses[i].colorId);
+        }
+        return colors;
     }
 }

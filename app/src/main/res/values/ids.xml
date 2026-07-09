@@ -30,6 +30,8 @@
 	<item name="note" type="id" />
 	<item name="note_clear" type="id" />
 	<item name="note_add" type="id" />
+	<item name="split" type="id" />
+	<item name="split_clear" type="id" />
 	<item name="currency" type="id" />
 	<item name="currency_clear" type="id" />
 	<item name="currency_add" type="id" />
@@ -80,7 +82,7 @@
 	<item name="negative_opening_amount" type="id" />
 	<item name="is_ccard_payment" type="id" />
 	<item name="add_split" type="id" />
-	<item name="edit_aplit" type="id" />
+	<item name="edit_split" type="id" />
 	<item name="delete_split" type="id" />
 	<item name="add_split_transfer" type="id" />
 	<item name="unsplit_action" type="id" />

@@ -631,7 +631,7 @@ public abstract class MyEntityManager extends EntityManager {
 
 	public List<Transaction> getSplitsForTransaction(long transactionId) {
 		Query<Transaction> q = createQuery(Transaction.class);
-		q.where(Expressions.eq("parentId", transactionId));
+		q.where(Expressions.eq("parentId", transactionId)).asc("id");
 		return q.list();
 	}
 

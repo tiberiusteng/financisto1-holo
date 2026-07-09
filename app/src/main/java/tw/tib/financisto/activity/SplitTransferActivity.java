@@ -15,6 +15,7 @@ import tw.tib.financisto.model.Account;
 import tw.tib.financisto.model.Category;
 import tw.tib.financisto.utils.MyPreferences;
 import tw.tib.financisto.utils.TransactionUtils;
+import tw.tib.financisto.utils.Utils;
 import tw.tib.financisto.widget.RateLayoutView;
 
 /**
@@ -31,6 +32,11 @@ public class SplitTransferActivity extends AbstractSplitActivity implements Cate
     protected Cursor accountCursor;
     protected ListAdapter accountAdapter;
 
+    private TextView accountBalanceText;
+    private TextView accountLimitText;
+
+    protected Utils u;
+
     private boolean isShowCategoryInTransfer;
     private CategorySelector<SplitTransferActivity> categorySelector;
 
@@ -40,7 +46,19 @@ public class SplitTransferActivity extends AbstractSplitActivity implements Cate
 
     @Override
     protected void createUI(LinearLayout layout) {
-        accountText = x.addListNode(layout, R.id.account, R.string.account, R.string.select_to_account);
+
+        if (MyPreferences.isShowAccountBalanceOnSelector()) {
+            accountText = x.addListNodeAccount(layout, R.id.account, R.string.account, R.string.select_account);
+            View v = ((View) accountText.getTag());
+            accountBalanceText = v.findViewById(R.id.balance);
+            accountBalanceText.setVisibility(View.INVISIBLE);
+            accountLimitText = v.findViewById(R.id.limit);
+            accountLimitText.setVisibility(View.GONE);
+        }
+        else {
+            accountText = x.addListNode(layout, R.id.account, R.string.account, R.string.select_account);
+        }
+
         isShowCategoryInTransfer = MyPreferences.isShowCategoryInTransferScreen();
         categorySelector = new CategorySelector<>(this, db, x);
         if (isShowCategoryInTransfer) {
@@ -53,13 +71,29 @@ public class SplitTransferActivity extends AbstractSplitActivity implements Cate
         rateView.createSwitchableTransferUI();
         rateView.setAmountFromChangeListener((oldAmount, newAmount) -> setUnsplitAmount(split.unsplitAmount - newAmount));
         categorySelector.createAttributesLayout(layout);
+
+        u = new Utils(this);
+    }
+
+    @Override
+    protected void updateUIforPreventEditing() {
+        boolean enabled = !isPreventEditing();
+        categorySelector.setEnabled(enabled);
+        if (accountText.getTag() instanceof View v) v.setEnabled(enabled);
+        rateView.setEnabled(enabled);
     }
 
     @Override
     protected void fetchData() {
         accountCursor = db.getAllActiveAccounts();
         startManagingCursor(accountCursor);
-        accountAdapter = TransactionUtils.createAccountAdapter(this, accountCursor);
+
+        if (MyPreferences.isShowAccountBalanceOnSelector()) {
+            accountAdapter = TransactionUtils.createAccountBalanceAdapter(this, accountCursor);
+        }
+        else {
+            accountAdapter = TransactionUtils.createAccountAdapter(this, accountCursor);
+        }
 
         if (MyPreferences.isShowCategoryInTransferScreen()) {
             categorySelector.setListener(this);
@@ -129,6 +163,7 @@ public class SplitTransferActivity extends AbstractSplitActivity implements Cate
             rateView.selectCurrencyTo(account.currency);
             accountText.setText(account.title);
             split.toAccountId = accountId;
+            u.setAccountTitleBalance(account, accountText, accountBalanceText, accountLimitText);
         }
     }
 

@@ -5,15 +5,20 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ImageButton;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 import tw.tib.financisto.R;
+import tw.tib.financisto.datetime.DateUtils;
 import tw.tib.financisto.model.Account;
 import tw.tib.financisto.model.Currency;
 import tw.tib.financisto.model.Transaction;
+import tw.tib.financisto.model.TransactionStatus;
 import tw.tib.financisto.utils.CurrencyCache;
+import tw.tib.financisto.utils.EnumUtils;
 import tw.tib.financisto.utils.MyPreferences;
 import tw.tib.financisto.utils.Utils;
 
@@ -23,12 +28,25 @@ import androidx.core.graphics.Insets;
 import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
 
+import java.text.DateFormat;
+import java.util.Calendar;
+import java.util.Date;
+
 /**
  * Created by IntelliJ IDEA.
  * User: Denis Solonenko
  * Date: 4/21/11 7:17 PM
  */
 public abstract class AbstractSplitActivity extends AbstractActivity {
+
+    private static final TransactionStatus[] statuses = TransactionStatus.values();
+    protected Calendar dateTime;
+    protected ImageButton status;
+    protected Button dateText;
+    protected Button timeText;
+    protected DateFormat df;
+    protected DateFormat tf;
+    protected TextView editDisabled;
 
     protected EditText noteText;
     protected TextView unsplitAmountText;
@@ -76,7 +94,24 @@ public abstract class AbstractSplitActivity extends AbstractActivity {
             originalCurrency = CurrencyCache.getCurrency(split.originalCurrencyId);
         }
 
+        status = findViewById(R.id.status);
+        status.setOnClickListener(v -> {
+            ArrayAdapter<String> adapter = EnumUtils.createDropDownAdapter(AbstractSplitActivity.this, statuses);
+            x.selectPosition(AbstractSplitActivity.this, R.id.status, R.string.transaction_status, adapter, split.status.ordinal());
+        });
+
+        df = DateUtils.getLongDateFormat(this);
+        tf = DateUtils.getTimeFormat(this);
+        dateTime = Calendar.getInstance();
+        dateTime.setTime(new Date(split.dateTime));
+        dateText = findViewById(R.id.date);
+        dateText.setText(df.format(dateTime.getTime()));
+        timeText = findViewById(R.id.time);
+        timeText.setText(tf.format(dateTime.getTime()));
+
         LinearLayout layout = findViewById(R.id.list);
+
+        editDisabled = findViewById(R.id.edit_disabled);
 
         createUI(layout);
         createCommonUI(layout);
@@ -85,6 +120,7 @@ public abstract class AbstractSplitActivity extends AbstractActivity {
         fetchData();
         projectSelector.fetchEntities();
         updateUI();
+        selectStatus(split.status);
     }
 
     private void createCommonUI(LinearLayout layout) {
@@ -105,6 +141,23 @@ public abstract class AbstractSplitActivity extends AbstractActivity {
         });
     }
 
+    protected void updateCommonUIforPreventEditing() {
+        boolean enabled = !isPreventEditing();
+        if (noteText != null) noteText.setEnabled(enabled);
+        if (projectSelector != null) projectSelector.setEnabled(enabled);
+
+        if (enabled) {
+            editDisabled.setVisibility(View.GONE);
+        }
+        else {
+            editDisabled.setVisibility(View.VISIBLE);
+        }
+
+        updateUIforPreventEditing();
+    }
+
+    protected void updateUIforPreventEditing() {}
+
     protected abstract void fetchData();
 
     protected abstract void createUI(LinearLayout layout);
@@ -117,11 +170,20 @@ public abstract class AbstractSplitActivity extends AbstractActivity {
     @Override
     public void onSelectedPos(int id, int selectedPos) {
         projectSelector.onSelectedPos(id, selectedPos);
+        if (id ==  R.id.status) {
+            selectStatus(statuses[selectedPos]);
+        }
     }
 
     @Override
     public void onSelectedId(int id, long selectedId) {
         projectSelector.onSelectedId(id, selectedId);
+    }
+
+    private void selectStatus(TransactionStatus transactionStatus) {
+        split.status = transactionStatus;
+        status.setImageResource(transactionStatus.iconId);
+        updateCommonUIforPreventEditing();
     }
 
     @Override
@@ -161,6 +223,12 @@ public abstract class AbstractSplitActivity extends AbstractActivity {
 
     protected Currency getCurrency() {
         return originalCurrency != null ? originalCurrency : (fromAccount != null ? fromAccount.currency : Currency.defaultCurrency());
+    }
+
+    protected boolean isPreventEditing() {
+        return MyPreferences.isPreventEditClearedReconciledTransactions() &&
+                (split.status == TransactionStatus.CL ||
+                 split.status == TransactionStatus.RC);
     }
 
     @Override

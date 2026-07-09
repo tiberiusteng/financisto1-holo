@@ -48,6 +48,7 @@ import tw.tib.financisto.utils.TransactionTitleUtils;
 import tw.tib.financisto.utils.Utils;
 
 public class BlotterListAdapter extends ResourceCursorAdapter {
+    private static final String TAG = "BlotterListAdapter";
 
     private final Date dt = new Date();
 
@@ -86,7 +87,7 @@ public class BlotterListAdapter extends ResourceCursorAdapter {
         this.icBlotterTransfer = context.getResources().getDrawable(R.drawable.ic_action_arrow_top_down);
         this.icBlotterSplit = context.getResources().getDrawable(R.drawable.ic_action_share);
         this.u = new Utils(context);
-        this.colors = initializeColors(context);
+        this.colors = Utils.getTransactionStatusColors(context);
         this.projectColor = context.getResources().getColor(R.color.project_color);
         this.showRunningBalance = MyPreferences.isShowRunningBalance();
         this.showProject = MyPreferences.isShowProjectInBlotter();
@@ -94,17 +95,6 @@ public class BlotterListAdapter extends ResourceCursorAdapter {
         this.showTimeOfDay = MyPreferences.isBlotterShowTimeOfDay();
         this.transactionTitleUtils = new TransactionTitleUtils(context, MyPreferences.isColorizeBlotterItem());
         this.db = db;
-    }
-
-    private int[] initializeColors(Context context) {
-        Resources r = context.getResources();
-        TransactionStatus[] statuses = TransactionStatus.values();
-        int count = statuses.length;
-        int[] colors = new int[count];
-        for (int i = 0; i < count; i++) {
-            colors[i] = r.getColor(statuses[i].colorId);
-        }
-        return colors;
     }
 
     protected boolean isShowRunningBalance() {
@@ -133,6 +123,20 @@ public class BlotterListAdapter extends ResourceCursorAdapter {
         long toAccountId = cursor.getLong(BlotterColumns.to_account_id.ordinal());
         int isTemplate = cursor.getInt(BlotterColumns.is_template.ordinal());
         TextView noteView = isTemplate == 1 ? v.bottomView : v.centerView;
+//        long t1, t2 = 0, t3, t4;
+//        t1 = System.nanoTime();
+
+        if (v.iconView2 != null) {
+            long parentId = cursor.getLong(BlotterColumns.parent_id.ordinal());
+            if (parentId == 0) {
+                v.iconView2.setVisibility(View.INVISIBLE);
+            } else {
+                v.iconView2.setVisibility(View.VISIBLE);
+                v.iconView2.setImageDrawable(icBlotterSplit);
+                v.iconView2.setColorFilter(u.splitColor);
+            }
+        }
+
         if (toAccountId > 0) {
             v.topView.setText(R.string.transfer);
 
@@ -258,8 +262,9 @@ public class BlotterListAdapter extends ResourceCursorAdapter {
         }
         removeRightViewIfNeeded(v);
         if (v.checkBox != null) {
-            final long parent = cursor.getLong(BlotterColumns.parent_id.ordinal());
-            final long id = parent > 0 ? parent : cursor.getLong(BlotterColumns._id.ordinal());
+            //final long parent = cursor.getLong(BlotterColumns.parent_id.ordinal());
+            //final long id = parent > 0 ? parent : cursor.getLong(BlotterColumns._id.ordinal());
+            final long id = cursor.getLong(BlotterColumns._id.ordinal());
             v.checkBox.setOnClickListener(new OnClickListener() {
                 @Override
                 public void onClick(View arg0) {
@@ -350,6 +355,7 @@ public class BlotterListAdapter extends ResourceCursorAdapter {
         public final TextView rightCenterView;
         public final TextView rightView;
         public final ImageView iconView;
+        public final ImageView iconView2;
         public final CheckBox checkBox;
 
         public BlotterViewHolder(View view) {
@@ -362,6 +368,7 @@ public class BlotterListAdapter extends ResourceCursorAdapter {
             rightCenterView = view.findViewById(R.id.right_center);
             rightView = view.findViewById(R.id.right);
             iconView = view.findViewById(R.id.right_top);
+            iconView2 = view.findViewById(R.id.right_top_2);
             checkBox = view.findViewById(R.id.cb);
         }
 

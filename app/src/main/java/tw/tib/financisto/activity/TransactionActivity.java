@@ -26,15 +26,20 @@ import tw.tib.financisto.model.Category;
 import tw.tib.financisto.model.Currency;
 import tw.tib.financisto.model.MyEntity;
 import tw.tib.financisto.model.Transaction;
+import tw.tib.financisto.model.TransactionStatus;
 import tw.tib.financisto.utils.CurrencyCache;
 import tw.tib.financisto.utils.MyPreferences;
 import tw.tib.financisto.utils.SplitAdjuster;
+import tw.tib.financisto.utils.TransactionTitleUtils;
 import tw.tib.financisto.utils.TransactionUtils;
+import tw.tib.financisto.utils.Utils;
 
 import java.io.*;
 import java.util.*;
 
 import static tw.tib.financisto.utils.Utils.isNotEmpty;
+
+import com.google.api.client.util.Lists;
 
 public class TransactionActivity extends AbstractTransactionActivity {
     private static final String TAG = "TransactionActivity";
@@ -50,6 +55,8 @@ public class TransactionActivity extends AbstractTransactionActivity {
 
     private long idSequence = 0;
     private final IdentityHashMap<View, Transaction> viewToSplitMap = new IdentityHashMap<>();
+    /** store splits in added/transaction ID order to keep display order stable */
+    private final TreeMap<Long, Transaction> splits = new TreeMap<>();
 
     private TextView accountBalanceText;
     private TextView accountLimitText;
@@ -59,11 +66,18 @@ public class TransactionActivity extends AbstractTransactionActivity {
     private long currentBalance;
 
     private LinearLayout splitsLayout;
+    private LinearLayout unsplitContainer;
     private TextView unsplitAmountText;
     private TextView currencyText;
+    private TransactionTitleUtils transactionTitleUtils;
+    private int colors[];
 
     private QuickActionWidget unsplitActionGrid;
     private long selectedOriginCurrencyId = -1;
+
+    private boolean isQuickMenuEnabledForSplit;
+    private QuickActionWidget splitActionGrid;
+    private Transaction selectedSplit;
 
     public TransactionActivity() {
     }
@@ -91,7 +105,11 @@ public class TransactionActivity extends AbstractTransactionActivity {
             }
         }
         prepareUnsplitActionGrid();
+        prepareSplitActionGrid();
         currencyAsAccount.name = getString(R.string.original_currency_as_account);
+        transactionTitleUtils = new TransactionTitleUtils(this, MyPreferences.isColorizeBlotterItem());
+        colors = Utils.getTransactionStatusColors(this);
+        isQuickMenuEnabledForSplit = MyPreferences.isQuickMenuEnabledForSplit();
     }
 
     private void prepareUnsplitActionGrid() {
@@ -124,6 +142,29 @@ public class TransactionActivity extends AbstractTransactionActivity {
         }
     };
 
+    private void prepareSplitActionGrid() {
+        splitActionGrid = new QuickActionGrid(this);
+        splitActionGrid.addQuickAction(new MyQuickAction(this, R.drawable.ic_action_edit, R.string.edit));
+        splitActionGrid.addQuickAction(new MyQuickAction(this, R.drawable.ic_action_status_cleared, MyQuickAction.NO_FILTER, R.string.clear));
+        splitActionGrid.addQuickAction(new MyQuickAction(this, R.drawable.ic_action_status_reconciled, MyQuickAction.NO_FILTER, R.string.reconcile));
+        splitActionGrid.setOnQuickActionClickListener(splitActionListener);
+    }
+
+    private QuickActionWidget.OnQuickActionClickListener splitActionListener = (widget, position, action) -> {
+        int titleId = ((MyQuickAction) action).titleId;
+        if (titleId == R.string.edit) {
+            editExistingSplit(selectedSplit);
+        }
+        else if (titleId == R.string.clear) {
+            selectedSplit.status = TransactionStatus.CL;
+            addOrEditSplit(selectedSplit);
+        }
+        else if (titleId == R.string.reconcile) {
+            selectedSplit.status = TransactionStatus.RC;
+            addOrEditSplit(selectedSplit);
+        }
+    };
+
     private void unsplitAdjustAmount() {
         long splitAmount = calculateSplitAmount();
         rateView.setFromAmount(splitAmount);
@@ -143,7 +184,7 @@ public class TransactionActivity extends AbstractTransactionActivity {
         long unsplitAmount = calculateUnsplitAmount();
         if (unsplitAmount != 0) {
             Transaction latestTransaction = null;
-            for (Transaction t : viewToSplitMap.values()) {
+            for (Transaction t : splits.values()) {
                 if (latestTransaction == null || latestTransaction.id > t.id) {
                     latestTransaction = t;
                 }
@@ -224,6 +265,8 @@ public class TransactionActivity extends AbstractTransactionActivity {
     private void createSplitsLayout(LinearLayout layout) {
         splitsLayout = new LinearLayout(this);
         splitsLayout.setOrientation(LinearLayout.VERTICAL);
+        unsplitContainer = new LinearLayout(this);
+        splitsLayout.addView(unsplitContainer, new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT));
         layout.addView(splitsLayout, new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT));
     }
 
@@ -233,13 +276,19 @@ public class TransactionActivity extends AbstractTransactionActivity {
             return;
         }
         if (categorySelector.isSplitCategorySelected()) {
-            View v = x.addNodeUnsplit(splitsLayout);
+            View v = x.addNodeUnsplit(unsplitContainer);
             unsplitAmountText = v.findViewById(R.id.data);
             unsplitAmountText.setTag(v);
             updateUnsplitAmount();
         } else {
-            splitsLayout.removeAllViews();
+            resetSplitsLayout();
         }
+    }
+
+    protected void resetSplitsLayout() {
+        splitsLayout.removeAllViews();
+        unsplitContainer = new LinearLayout(this);
+        splitsLayout.addView(unsplitContainer, new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT));
     }
 
     private void updateUnsplitAmount() {
@@ -256,7 +305,7 @@ public class TransactionActivity extends AbstractTransactionActivity {
 
     private long calculateSplitAmount() {
         long amount = 0;
-        for (Transaction split : viewToSplitMap.values()) {
+        for (Transaction split : splits.values()) {
             if (split.fromAccountId == getSelectedAccountId()) {
                 amount += split.fromAmount;
             }
@@ -357,7 +406,7 @@ public class TransactionActivity extends AbstractTransactionActivity {
         transaction.fromAmount = amount;
         updateTransactionOriginalAmount();
         if (categorySelector.isSplitCategorySelected()) {
-            transaction.splits = new LinkedList<>(viewToSplitMap.values());
+            transaction.splits = Lists.newArrayList(splits.values());
         } else {
             transaction.splits = null;
         }
@@ -442,7 +491,8 @@ public class TransactionActivity extends AbstractTransactionActivity {
                 createSplit(true);
                 break;
             case R.id.delete_split:
-                View parentView = (View) v.getParent();
+                Log.d(TAG, "deleteSplit");
+                View parentView = (View) v.getParent().getParent();
                 deleteSplit(parentView);
                 break;
             case R.id.original_currency:
@@ -455,14 +505,24 @@ public class TransactionActivity extends AbstractTransactionActivity {
         }
         Transaction split = viewToSplitMap.get(v);
         if (split != null) {
-            if (split.fromAccountId == getSelectedAccountId()) {
-                split.unsplitAmount = split.fromAmount + calculateUnsplitAmount();
+            if (isQuickMenuEnabledForSplit) {
+                selectedSplit = split;
+                splitActionGrid.show(v);
             }
             else {
-                split.unsplitAmount = split.toAmount + calculateUnsplitAmount();
+                editExistingSplit(split);
             }
-            editSplit(split, split.toAccountId > 0 ? SplitTransferActivity.class : SplitTransactionActivity.class);
         }
+    }
+
+    private void editExistingSplit(Transaction split) {
+        if (split.fromAccountId == getSelectedAccountId()) {
+            split.unsplitAmount = split.fromAmount + calculateUnsplitAmount();
+        }
+        else {
+            split.unsplitAmount = split.toAmount + calculateUnsplitAmount();
+        }
+        editSplit(split, split.toAccountId > 0 ? SplitTransferActivity.class : SplitTransactionActivity.class);
     }
 
     @Override
@@ -538,6 +598,7 @@ public class TransactionActivity extends AbstractTransactionActivity {
 
     private void editSplit(Transaction split, Class splitActivityClass) {
         Intent intent = new Intent(this, splitActivityClass);
+        Log.d(TAG, "editSplit id=" + split.id);
         split.toIntentAsSplit(intent);
         intent.putExtra(SPLIT_PARENT_ACCOUNT, getSelectedAccountId());
         startActivityForResult(intent, SPLIT_REQUEST);
@@ -564,7 +625,7 @@ public class TransactionActivity extends AbstractTransactionActivity {
                 ActivityState state = new ActivityState();
                 state.categoryId = categorySelector.getSelectedCategoryId();
                 state.idSequence = idSequence;
-                state.splits = new ArrayList<>(viewToSplitMap.values());
+                state.splits = Lists.newArrayList(splits.values());
                 try (ByteArrayOutputStream s = new ByteArrayOutputStream()) {
                     ObjectOutputStream out = new ObjectOutputStream(s);
                     out.writeObject(state);
@@ -589,7 +650,8 @@ public class TransactionActivity extends AbstractTransactionActivity {
                     if (state.categoryId == Category.SPLIT_CATEGORY_ID) {
                         Log.d("Financisto", "Restoring splits...");
                         viewToSplitMap.clear();
-                        splitsLayout.removeAllViews();
+                        splits.clear();
+                        resetSplitsLayout();
                         idSequence = state.idSequence;
                         categorySelector.selectCategory(state.categoryId);
                         for (Transaction split : state.splits) {
@@ -606,10 +668,11 @@ public class TransactionActivity extends AbstractTransactionActivity {
     private void addOrEditSplit(Transaction split) {
         View v = findView(split);
         if (v == null) {
-            v = x.addSplitNodeMinus(splitsLayout, R.id.edit_aplit, R.id.delete_split, R.string.split, "");
+            v = x.addSplitNodeMinus(splitsLayout, R.id.edit_split, R.id.delete_split, R.string.split, "");
         }
         setSplitData(v, split);
         viewToSplitMap.put(v, split);
+        splits.put(Math.abs(split.id), split);
         updateUnsplitAmount();
     }
 
@@ -626,6 +689,10 @@ public class TransactionActivity extends AbstractTransactionActivity {
     private void setSplitData(View v, Transaction split) {
         TextView label = v.findViewById(R.id.label);
         TextView data = v.findViewById(R.id.data);
+        TextView indicator = v.findViewById(R.id.indicator);
+
+        indicator.setBackgroundColor(colors[split.status.ordinal()]);
+
         setSplitData(split, label, data);
     }
 
@@ -638,7 +705,10 @@ public class TransactionActivity extends AbstractTransactionActivity {
     }
 
     private void setSplitDataTransaction(Transaction split, TextView label, TextView data) {
-        label.setText(createSplitTransactionTitle(split));
+        Category category = db.getCategory(split.categoryId);
+        label.setText(transactionTitleUtils.generateTransactionTitle(
+                false, null, null, split.note, null,
+                split.categoryId, category.title));
         Currency currency = getCurrency();
         u.setAmountText(data, currency, split.fromAmount, false);
     }
@@ -656,13 +726,18 @@ public class TransactionActivity extends AbstractTransactionActivity {
     private void setSplitDataTransfer(Transaction split, TextView label, TextView data) {
         Account fromAccount = db.getAccount(split.fromAccountId);
         Account toAccount = db.getAccount(split.toAccountId);
-        u.setTransferTitleText(label, fromAccount, toAccount);
+        Category category = db.getCategory(split.categoryId);
+        label.setText(transactionTitleUtils.generateTransactionTitle(
+                true, null, u.getTransferTitleText(fromAccount, toAccount),
+                split.note, null, split.categoryId, split.categoryId == 0 ? "" : category.title));
+        //u.setTransferTitleText(label, fromAccount, toAccount);
         u.setTransferAmountText(data, fromAccount.currency, split.fromAmount, toAccount.currency, split.toAmount);
     }
 
     private void deleteSplit(View v) {
         Transaction split = viewToSplitMap.remove(v);
         if (split != null) {
+            splits.remove(Math.abs(split.id));
             removeSplitView(v);
             updateUnsplitAmount();
         }

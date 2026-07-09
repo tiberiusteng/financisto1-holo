@@ -16,7 +16,31 @@
         <LinearLayout
                 android:id="@+id/list"
                 android:layout_width="fill_parent" android:layout_height="wrap_content"
-                android:orientation="vertical"/>
+                android:orientation="vertical">
+            <LinearLayout android:layout_height="wrap_content"
+                android:layout_width="fill_parent" style="@style/BottomBar">
+                <ImageButton android:id="@+id/status" android:layout_width="wrap_content"
+                    android:layout_height="match_parent" android:src="@drawable/transaction_status_unreconciled_2"/>
+                <Button android:layout_width="wrap_content" android:gravity="center"
+                    android:text="04/03/09" android:id="@+id/date" android:enabled="false"
+                    android:layout_height="wrap_content" android:layout_weight="1"
+                    style="@style/TransactionDateTimeButton" />
+                <Button android:layout_width="wrap_content" android:gravity="center"
+                    android:text="12:56 PM" android:id="@+id/time" android:enabled="false"
+                    android:layout_height="wrap_content"
+                    style="@style/TransactionDateTimeButton" />
+            </LinearLayout>
+            <TextView
+                android:id="@+id/edit_disabled"
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:background="@color/reconciled_transaction_color"
+                android:gravity="center"
+                android:padding="3dp"
+                android:text="@string/edit_disabled_for_cleared_reconciled"
+                android:textColor="#FFFFFF"
+                android:visibility="gone" />
+        </LinearLayout>
     </ScrollView>
     <include layout="@layout/save_and_cancel_buttons"/>
 </LinearLayout>	

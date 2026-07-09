@@ -274,6 +274,9 @@ public class ReportDataByPeriod {
 		
 		// period
 		accountsWhere.append(" and ("+TransactionColumns.datetime +">=? and "+TransactionColumns.datetime +"<?)");
+
+		// exclude split parent
+		//accountsWhere.append(" and ("+TransactionColumns.category_id + " != -1)");
 		
 		// list of accounts for which the reference currency is the report reference currency
 		if(accounts.length>0)

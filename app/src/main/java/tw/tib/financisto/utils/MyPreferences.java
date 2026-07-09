@@ -491,6 +491,10 @@ public class MyPreferences {
 		return getBoolean("prevent_edit_cleared_reconciled", false);
 	}
 
+	public static boolean isQuickMenuEnabledForSplit() {
+		return getBoolean("quick_menu_split_transactions", true);
+	}
+
 	private static final String DEFAULT = "default";
 
 	public static Context switchLocale(Context context) {
