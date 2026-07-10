@@ -70,6 +70,7 @@ public class DatabaseHelper extends DatabaseSchemaEvolution {
     public static enum TransactionColumns {
         _id,
         parent_id,
+        parent_account_id,
         from_account_id,
         to_account_id,
         category_id,
@@ -103,6 +104,7 @@ public class DatabaseHelper extends DatabaseSchemaEvolution {
     public static enum BlotterColumns {
         _id,
         parent_id,
+        parent_account_id,
         from_account_id,
         from_account_title,
         from_account_currency_id,

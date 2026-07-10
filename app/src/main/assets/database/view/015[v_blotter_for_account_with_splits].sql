@@ -2,6 +2,7 @@ CREATE VIEW v_blotter_for_account_with_splits AS
 SELECT
 	t._id as _id,
 	t.parent_id as parent_id,
+	t.parent_account_id as parent_account_id,
 	a._id as from_account_id,
 	a.title as from_account_title,
 	a.is_include_into_totals as from_account_is_include_into_totals,
@@ -20,7 +21,9 @@ SELECT
 	loc.title as location,
 	pp._id as payee_id,
 	pp.title as payee,
-	t.note as note,
+	(CASE WHEN (t.category_id = -1 AND t.note IS NULL) THEN
+    	    (SELECT t1.note FROM transactions AS t1 WHERE t1.parent_id = t._id ORDER BY t1._id ASC LIMIT 1)
+    	 ELSE t.note END) as note,
 	t.from_amount as from_amount,
 	t.to_amount as to_amount,
 	t.datetime as datetime,
@@ -42,7 +45,7 @@ FROM
 	INNER JOIN account as a ON a._id=t.from_account_id
 	INNER JOIN currency as c ON c._id=a.currency_id
 	INNER JOIN category as cat ON cat._id=t.category_id
-	LEFT OUTER JOIN running_balance as rb ON rb.transaction_id=(CASE WHEN t.parent_id=0 THEN t._id ELSE t.parent_id END) AND rb.account_id=t.from_account_id
+	LEFT OUTER JOIN running_balance as rb ON rb.transaction_id=(CASE WHEN (t.parent_id != 0 AND t.parent_account_id = t.from_account_id) THEN t.parent_id ELSE t._id END) AND rb.account_id=t.from_account_id
 	LEFT OUTER JOIN account as a2 ON a2._id=t.to_account_id
 	LEFT OUTER JOIN locations as loc ON loc._id=t.location_id
 	LEFT OUTER JOIN project as p ON p._id=t.project_id
@@ -52,6 +55,7 @@ UNION ALL
 SELECT
 	t._id as _id,
 	t.parent_id as parent_id,
+	t.parent_account_id as parent_account_id,
 	a._id as from_account_id,
 	a.title as from_account_title,
 	a.is_include_into_totals as from_account_is_include_into_totals,
@@ -70,7 +74,9 @@ SELECT
 	loc.title as location,
 	pp._id as payee_id,
 	pp.title as payee,
-	t.note as note,
+	(CASE WHEN (t.category_id = -1 AND t.note IS NULL) THEN
+    	    (SELECT t1.note FROM transactions AS t1 WHERE t1.parent_id = t._id ORDER BY t1._id ASC LIMIT 1)
+    	 ELSE t.note END) as note,
 	t.to_amount as from_amount,
 	t.from_amount as to_amount,
 	t.datetime as datetime,
@@ -92,7 +98,7 @@ FROM
 	INNER JOIN account as a ON a._id=t.to_account_id
 	INNER JOIN currency as c ON c._id=a.currency_id
 	INNER JOIN category as cat ON cat._id=t.category_id
-	LEFT OUTER JOIN running_balance as rb ON rb.transaction_id=t._id AND rb.account_id=t.to_account_id
+	LEFT OUTER JOIN running_balance as rb ON rb.transaction_id=(CASE WHEN (t.parent_id != 0 AND t.parent_account_id = t.to_account_id) THEN t.parent_id ELSE t._id END) AND rb.account_id=t.to_account_id
 	LEFT OUTER JOIN account as a2 ON a2._id=t.from_account_id
 	LEFT OUTER JOIN locations as loc ON loc._id=t.location_id
 	LEFT OUTER JOIN project as p ON p._id=t.project_id

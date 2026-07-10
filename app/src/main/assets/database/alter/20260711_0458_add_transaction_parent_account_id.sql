@@ -1,0 +1,1 @@
+ALTER TABLE transactions ADD parent_account_id INTEGER NOT NULL DEFAULT 0

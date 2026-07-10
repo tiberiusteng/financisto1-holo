@@ -153,7 +153,7 @@ public class DatabaseAdapter extends MyEntityManager {
         Criterion c = filter.get(BlotterFilter.SPLIT);
         if (c == null || c.getIntValue() == WhereFilter.Splits.SUMMARY_ONLY) {
             // default for account view - show split summary AND transfer-in splits
-            accountFilter = enhanceFilterForAccountBlotter(filter);
+            accountFilter = filterOnlyShowSplitSummaryInSameAccount(filter);
         }
         else if (c.getIntValue() == WhereFilter.Splits.ALL) {
             // do nothing - V_BLOTTER_FOR_ACCOUNT_WITH_SPLITS includes split parents and children
@@ -166,9 +166,13 @@ public class DatabaseAdapter extends MyEntityManager {
         return getBlotter(DatabaseHelper.V_BLOTTER_FOR_ACCOUNT_WITH_SPLITS, accountFilter);
     }
 
-    public static WhereFilter enhanceFilterForAccountBlotter(WhereFilter filter) {
+    public static WhereFilter filterOnlyShowSplitSummaryInSameAccount(WhereFilter filter) {
         WhereFilter accountFilter = WhereFilter.copyOf(filter);
-        accountFilter.put(Criterion.raw(DatabaseHelper.BlotterColumns.parent_id + "=0 OR " + DatabaseHelper.BlotterColumns.is_transfer + "=-1"));
+        long accountId = filter.getAccountId();
+        // for splits in the same account: only show summary (parent)
+        // for splits in other accounts that has children in this account: show children
+        accountFilter.put(Criterion.raw(DatabaseHelper.BlotterColumns.parent_id + "=0 OR " +
+                DatabaseHelper.BlotterColumns.parent_account_id + "!=" + accountId));
         return accountFilter;
     }
 
@@ -471,8 +475,8 @@ public class DatabaseAdapter extends MyEntityManager {
             for (Transaction split : splits) {
                 split.id = -1;
                 split.parentId = parent.id;
+                split.parentAccountId = parent.fromAccountId;
                 split.dateTime = parent.dateTime;
-                split.fromAccountId = parent.fromAccountId;
                 split.payeeId = parent.payeeId;
                 split.isTemplate = parent.isTemplate;
                 split.status = parent.status;
@@ -510,8 +514,15 @@ public class DatabaseAdapter extends MyEntityManager {
             if (!t.isTemplateLike()) {
                 if (t.isSplitChild()) {
                     if (t.isTransfer()) {
-                        updateToAccountBalance(t, id);
-                        updateAccountLastTransactionDate(t.toAccountId);
+                        Log.d(TAG, "parent="+t.parentAccountId+", from="+t.fromAccountId+", to="+t.toAccountId);
+                        if (t.parentAccountId != t.fromAccountId) {
+                            updateFromAccountBalance(t, id);
+                            updateAccountLastTransactionDate(t.fromAccountId);
+                        }
+                        if (t.parentAccountId != t.toAccountId){
+                            updateToAccountBalance(t, id);
+                            updateAccountLastTransactionDate(t.toAccountId);
+                        }
                     }
                 } else {
                     updateFromAccountBalance(t, id);
@@ -608,7 +619,12 @@ public class DatabaseAdapter extends MyEntityManager {
         SQLiteDatabase db = db();
         for (Transaction split : splits) {
             if (split.isTransfer()) {
-                revertToAccountBalance(split);
+                if (split.fromAccountId != split.parentAccountId) {
+                    revertFromAccountBalance(split);
+                }
+                if (split.toAccountId != split.parentAccountId) {
+                    revertToAccountBalance(split);
+                }
             }
             db.delete(DatabaseHelper.TRANSACTION_ATTRIBUTE_TABLE, DatabaseHelper.TransactionAttributeColumns.TRANSACTION_ID + "=?",
                     new String[]{String.valueOf(split.id)});
@@ -1607,6 +1623,29 @@ public class DatabaseAdapter extends MyEntityManager {
     }
 
     /**
+     * Re-populate split parent account id to split children
+     */
+    public void updateSplitParentAccountId() {
+        var db = db();
+        db.beginTransaction();
+        try (Cursor c = db.rawQuery("SELECT t._id, t.parent_id, t1.from_account_id " +
+                "FROM transactions AS t " +
+                "LEFT OUTER JOIN transactions AS t1 ON t1._id=t.parent_id " +
+                "WHERE t.parent_id != 0 AND t.parent_account_id = 0", new String[0]))
+        {
+            while (c.moveToNext()) {
+                db.execSQL("UPDATE transactions SET parent_account_id = ? WHERE _id = ?", new String[]{
+                        String.valueOf(c.getLong(2)),
+                        String.valueOf(c.getLong(0))});
+            }
+            db.setTransactionSuccessful();
+        }
+        finally {
+            db.endTransaction();
+        }
+    }
+
+    /**
      * Re-populates running_balance for specific account
      *
      * @param account selected account
@@ -1685,7 +1724,7 @@ public class DatabaseAdapter extends MyEntityManager {
 
     private void recalculateAccountBalances(long accountId) {
         TransactionsTotalCalculator calculator = new TransactionsTotalCalculator(this,
-                enhanceFilterForAccountBlotter(WhereFilter.empty()
+                filterOnlyShowSplitSummaryInSameAccount(WhereFilter.empty()
                         .eq(BlotterFilter.FROM_ACCOUNT_ID, String.valueOf(accountId))));
         Total total = calculator.getAccountTotal();
         ContentValues values = new ContentValues();

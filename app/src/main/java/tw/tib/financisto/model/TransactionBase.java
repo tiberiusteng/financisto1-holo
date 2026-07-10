@@ -20,6 +20,9 @@ public abstract class TransactionBase implements Serializable, Cloneable {
     @Column(name = "parent_id")
     public long parentId;
 
+	@Column(name = "parent_account_id")
+	public long parentAccountId;
+
 	@Column(name = "datetime")
 	public long dateTime = System.currentTimeMillis();
 	

@@ -586,6 +586,10 @@ public class MyPreferences {
 		return getOneTimeFlag("should_update_accounts_last_transaction_date");
 	}
 
+	public static boolean shouldUpdateSplitParentAccountId() {
+		return getOneTimeFlag("should_update_split_parent_account_id");
+	}
+
 	private static boolean getOneTimeFlag(String name) {
 		boolean result = getBoolean(name, true);
 		if (result) {

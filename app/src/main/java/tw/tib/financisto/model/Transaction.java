@@ -76,6 +76,7 @@ public class Transaction extends TransactionBase {
 	public ContentValues toValues() {
 		ContentValues values = new ContentValues();
 		values.put(TransactionColumns.parent_id.name(), parentId);
+		values.put(TransactionColumns.parent_account_id.name(), parentAccountId);
 		values.put(TransactionColumns.category_id.name(), categoryId);
 		values.put(TransactionColumns.project_id.name(), projectId);
 		values.put(TransactionColumns.datetime.name(), dateTime);
@@ -117,6 +118,7 @@ public class Transaction extends TransactionBase {
 		Transaction t = new Transaction();
 		t.id = id;
 		t.parentId = c.getLong(BlotterColumns.parent_id.ordinal());
+		t.parentAccountId = c.getLong(BlotterColumns.parent_account_id.ordinal());
 		t.fromAccountId = c.getLong(BlotterColumns.from_account_id.ordinal());
 		t.toAccountId = c.getLong(BlotterColumns.to_account_id.ordinal());
 		t.categoryId = c.getLong(BlotterColumns.category_id.ordinal());

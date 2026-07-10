@@ -174,7 +174,7 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void initialLoad() {
-        long t3, t2, t1, t0 = System.currentTimeMillis();
+        long t4, t3, t2, t1, t0 = System.currentTimeMillis();
         DatabaseAdapter db = new DatabaseAdapter(this);
         db.open();
         try {
@@ -199,14 +199,18 @@ public class MainActivity extends AppCompatActivity {
             if (MyPreferences.shouldRebuildRunningBalance()) {
                 db.rebuildRunningBalances();
             }
+            t4 = System.currentTimeMillis();
+            if (MyPreferences.shouldUpdateSplitParentAccountId()) {
+                db.updateSplitParentAccountId();
+            }
             if (MyPreferences.shouldUpdateAccountsLastTransactionDate()) {
                 db.updateAccountsLastTransactionDate();
             }
         } finally {
             db.close();
         }
-        long t4 = System.currentTimeMillis();
-        Log.d(getLocalClassName(), "Load time = " + (t4 - t0) + "ms = " + (t2 - t1) + "ms+" + (t3 - t2) + "ms+" + (t4 - t3) + "ms");
+        long t5 = System.currentTimeMillis();
+        Log.d(getLocalClassName(), "Load time = " + (t5 - t0) + "ms = " + (t2 - t1) + "ms+" + (t3 - t2) + "ms+" + (t4 - t3) + "ms+" + (t5 - t4) + "ms");
     }
 
     public void refreshCurrentTab() {

@@ -109,7 +109,7 @@ public class TransactionsTotalCalculator {
     }
 
     private WhereFilter selectedAccountOnly(WhereFilter filter, long accountId) {
-        WhereFilter copy = DatabaseAdapter.enhanceFilterForAccountBlotter(filter);
+        WhereFilter copy = DatabaseAdapter.filterOnlyShowSplitSummaryInSameAccount(filter);
         copy.put(Criterion.eq("from_account_id", String.valueOf(accountId)));
         return copy;
     }

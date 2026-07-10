@@ -15,14 +15,14 @@ import tw.tib.financisto.db.TransactionsTotalCalculator;
 import tw.tib.financisto.filter.WhereFilter;
 import tw.tib.financisto.model.Total;
 
-import static tw.tib.financisto.db.DatabaseAdapter.enhanceFilterForAccountBlotter;
+import static tw.tib.financisto.db.DatabaseAdapter.filterOnlyShowSplitSummaryInSameAccount;
 
 public class AccountTotalCalculationTask extends TotalCalculationTask {
 	private final WhereFilter filter;
 
 	public AccountTotalCalculationTask(Context context, DatabaseAdapter db, WhereFilter filter, TextView totalText) {
         super(context, db, totalText);
-		this.filter = enhanceFilterForAccountBlotter(filter);
+		this.filter = filterOnlyShowSplitSummaryInSameAccount(filter);
 	}
 
     @Override
