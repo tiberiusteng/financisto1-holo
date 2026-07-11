@@ -21,9 +21,7 @@ SELECT
 	loc.title as location,
 	pp._id as payee_id,
 	pp.title as payee,
-	(CASE WHEN (t.category_id = -1 AND t.note IS NULL) THEN
-	    (SELECT t1.note FROM transactions AS t1 WHERE t1.parent_id = t._id ORDER BY t1._id ASC LIMIT 1)
-	 ELSE t.note END) as note,
+	(CASE WHEN t.category_id = -1 AND t.note IS NULL THEN split.note ELSE t.note END) as note,
 	t.from_amount as from_amount,
 	t.to_amount as to_amount,
 	t.datetime as datetime,
@@ -40,11 +38,12 @@ SELECT
 	frb.balance as from_account_balance,
 	trb.balance as to_account_balance,
 	t.to_account_id as is_transfer
-FROM 
-	transactions as t	
+FROM
+	transactions as t
 	INNER JOIN account as a1 ON a1._id=t.from_account_id
 	INNER JOIN currency as c1 ON c1._id=a1.currency_id
 	INNER JOIN category as cat ON cat._id=t.category_id
+	LEFT OUTER JOIN (SELECT MIN(_id), parent_id, payee_id, note FROM transactions WHERE parent_id != 0 GROUP BY parent_id) as split ON split.parent_id = t._id
 	LEFT OUTER JOIN running_balance as frb ON frb.transaction_id = (CASE WHEN (t.parent_id != 0 AND t.parent_account_id = t.from_account_id) THEN t.parent_id ELSE t._id END) AND frb.account_id=t.from_account_id
 	LEFT OUTER JOIN running_balance as trb ON trb.transaction_id = (CASE WHEN (t.parent_id != 0 AND t.parent_account_id = t.to_account_id) THEN t.parent_id ELSE t._id END) AND trb.account_id=t.to_account_id
 	LEFT OUTER JOIN account as a2 ON a2._id=t.to_account_id
