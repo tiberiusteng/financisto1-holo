@@ -1666,13 +1666,9 @@ public class DatabaseAdapter extends MyEntityManager {
                 long balance = 0;
                 while (c.moveToNext()) {
                     long parentId = c.getLong(DatabaseHelper.BlotterColumns.parent_id.ordinal());
-                    int isTransfer = c.getInt(DatabaseHelper.BlotterColumns.is_transfer.ordinal());
-                    if (parentId > 0) {
-                        if (isTransfer >= 0) {
-                            // we only interested in the second part of the transfer-split
-                            // which is marked with is_transfer=-1 (see v_blotter_for_account_with_splits)
-                            continue;
-                        }
+                    long parentAccountId = c.getLong(DatabaseHelper.BlotterColumns.parent_account_id.ordinal());
+                    if (parentId > 0 && parentAccountId == account.getId()) {
+                        continue;
                     }
                     long fromAccountId = c.getLong(DatabaseHelper.BlotterColumns.from_account_id.ordinal());
                     long toAccountId = c.getLong(DatabaseHelper.BlotterColumns.to_account_id.ordinal());
