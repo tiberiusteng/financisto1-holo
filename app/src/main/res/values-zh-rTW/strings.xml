@@ -1067,9 +1067,9 @@
   <string name="edit_disabled_for_cleared_reconciled">已清算/已對帳的交易不能編輯</string>
 
   <string name="filter_split">分割交易</string>
-  <string name="filter_split_default">(預設)</string>
+  <string name="filter_split_default">預設</string>
   <string-array name="filter_split_entries">
-    <item>(預設)</item>
+    <item>預設</item>
     <item>顯示分割彙總與子交易</item>
     <item>只顯示彙總交易</item>
     <item>只顯示子交易</item>

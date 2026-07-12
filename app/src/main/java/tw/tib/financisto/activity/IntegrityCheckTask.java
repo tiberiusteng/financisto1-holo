@@ -33,11 +33,7 @@ public class IntegrityCheckTask extends AsyncTask<IntegrityCheck, Void, Integrit
 
     @Override
     protected IntegrityCheck.Result doInBackground(IntegrityCheck... objects) {
-        View textView = getResultView();
-        if (textView != null) {
-            return objects[0].check();
-        }
-        return IntegrityCheck.Result.OK;
+        return objects[0].check();
     }
 
     @Override

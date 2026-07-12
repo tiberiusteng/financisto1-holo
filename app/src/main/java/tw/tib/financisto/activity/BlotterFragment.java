@@ -933,24 +933,52 @@ public class BlotterFragment extends AbstractListFragment<Cursor> implements Blo
 
     @Override
     protected ListAdapter createAdapter(Context context, Cursor cursor) {
-        ListAdapter a;
+        boolean isNewAdapter;
         long t1 = System.nanoTime();
 
-        long accountId = blotterFilter.getAccountId();
-        if (accountId != -1) {
-            a = new TransactionsListAdapter(context, db, cursor);
-        } else {
-            a = new BlotterListAdapter(context, db, cursor);
+        if (adapter == null) {
+            isNewAdapter = true;
+            long accountId = blotterFilter.getAccountId();
+            if (accountId != -1) {
+                adapter = new TransactionsListAdapter(context, db, cursor);
+            } else {
+                adapter = new BlotterListAdapter(context, db, cursor);
+            }
         }
-        if (a.getCount() == 0) {
-            emptyText.setVisibility(View.VISIBLE);
+        else {
+            isNewAdapter = false;
+            var a = (BlotterListAdapter) adapter;
+            Cursor old = a.swapCursor(cursor);
+            if (old != null && !old.isClosed()) {
+                Log.d(TAG, "createAdapter: closing old " + old);
+                old.close();
+            }
         }
-        progressBar.setVisibility(View.GONE);
-        Log.d(TAG, "createAdapter: " + format("%,d", System.nanoTime() - t1) + " ns");
 
-        updatePeriodDisplay();
+        Application.getExecutor().execute(() -> {
+            var activity = getActivity();
+            if (activity == null) return;
 
-        return a;
+            // at 2026-07-13, my database has ~33500 transactions and this takes ~200 ms
+            // first getCount() actually calculates record count, subsequent calls are cached
+            var count = adapter.getCount();
+
+            activity.runOnUiThread(() -> {
+                if (count == 0) {
+                    emptyText.setVisibility(View.VISIBLE);
+                }
+                progressBar.setVisibility(View.GONE);
+                Log.d(TAG, "createAdapter: " + format("%,d", System.nanoTime() - t1) + " ns");
+
+                updatePeriodDisplay();
+
+                if (isNewAdapter) {
+                    setListAdapterKeepScrollState(adapter);
+                }
+            });
+        });
+
+        return null;
     }
 
     protected void updatePeriodDisplay() {
@@ -1094,6 +1122,7 @@ public class BlotterFragment extends AbstractListFragment<Cursor> implements Blo
 
     @Override
     public void integrityCheck() {
+        Log.d(TAG, "integrityCheck");
         new IntegrityCheckTask(this).execute(new IntegrityCheckRunningBalance(getContext(), db));
     }
 

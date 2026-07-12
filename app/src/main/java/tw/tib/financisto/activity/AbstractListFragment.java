@@ -241,11 +241,13 @@ abstract public class AbstractListFragment<D> extends ListFragment
 
             @Override
             protected void onReset() {
-                if (data instanceof Cursor c && !c.isClosed()) {
-                    Log.d(TAG, "onReset: closing " + c);
-                    c.close();
-                }
-                data = null;
+                // if creating adapter in background thread,
+                // this will be called before new adapter is ready
+//                if (data instanceof Cursor c && !c.isClosed()) {
+//                    Log.d(TAG, "onReset: closing " + c);
+//                    c.close();
+//                }
+//                data = null;
             }
         };
     }
@@ -254,7 +256,13 @@ abstract public class AbstractListFragment<D> extends ListFragment
     public void onLoadFinished(@NonNull Loader<D> loader, D data) {
         Context context = getContext();
         if (context == null) return;
-        adapter = createAdapter(context, data);
+        var adapter = createAdapter(context, data);
+        if (adapter != null) {
+            setListAdapterKeepScrollState(adapter);
+        }
+    }
+
+    public void setListAdapterKeepScrollState(ListAdapter adapter) {
         long t1 = System.nanoTime();
         Parcelable listViewState = getListView().onSaveInstanceState();
         setListAdapter(adapter);

@@ -1221,9 +1221,9 @@
     <string name="edit_disabled_for_cleared_reconciled">Editing is disabled for cleared/reconciled transactions</string>
 
     <string name="filter_split">Split</string>
-    <string name="filter_split_default">(Default)</string>
+    <string name="filter_split_default">Default</string>
     <string-array name="filter_split_entries">
-        <item>(Default)</item>
+        <item>Default</item>
         <item>Show split summary and children</item>
         <item>Only show split summary</item>
         <item>Only show split children</item>
