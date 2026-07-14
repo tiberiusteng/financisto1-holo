@@ -27,7 +27,7 @@ import static tw.tib.financisto.db.DatabaseHelper.V_REPORT_CATEGORY;
 public class CategoryReport extends Report {
 	
 	public CategoryReport(Context context, Currency currency) {
-		super(ReportType.BY_CATEGORY, context, currency);
+		super(ReportType.BY_CATEGORY, context, currency, false);
 	}
 
 	@Override

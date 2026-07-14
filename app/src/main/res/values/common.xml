@@ -148,6 +148,7 @@
 		<item>ASC</item>
 	</string-array>
 	<string-array name="report_aggregate_unit_values">
+		<item>WEEK</item>
 		<item>MONTH</item>
 		<item>YEAR</item>
 		<item>FISCAL_YEAR</item>

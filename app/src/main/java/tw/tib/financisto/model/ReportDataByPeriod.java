@@ -27,8 +27,8 @@ import android.util.Log;
 public class ReportDataByPeriod {
 	private static final String TAG = "ReportDataByPeriod";
 
-	private static final int RESULT_AMOUNT_COLUMN = 1;
-	private static final int RESULT_DATETIME_COLUMN = 2;
+	protected static final int RESULT_AMOUNT_COLUMN = 1;
+	protected static final int RESULT_DATETIME_COLUMN = 2;
 
 	protected Context context;
 	
@@ -49,7 +49,7 @@ public class ReportDataByPeriod {
 	/**
 	 * First month of the report period
 	 */
-	private Calendar startDate;
+	protected Calendar startDate;
 	
 	/**
 	 * The minimum monthly result in the report
@@ -109,11 +109,13 @@ public class ReportDataByPeriod {
 	/**
 	 * The data points of the report (period x monthly result)
 	 */
-	private List<PeriodValue> values = new ArrayList<PeriodValue>();
+	protected List<PeriodValue> values = new ArrayList<PeriodValue>();
 
 	private MyPreferences.ReportAggregateUnit aggregateUnit;
 	private int fiscalYearStartMonth;
 	private int fiscalYearStartDay;
+
+	private int firstDayOfWeek;
 
 	public enum ValueAggregation {
 		SUM,
@@ -199,6 +201,7 @@ public class ReportDataByPeriod {
 		this.periodLength = periodLength;
 		startDate.set(startDate.get(Calendar.YEAR), startDate.get(Calendar.MONTH), 01, 00, 00, 00);
 		this.startDate = startDate;
+		this.firstDayOfWeek = MyPreferences.getFirstDayOfWeek();
 
 		this.aggregateUnit = aggregateUnit;
 		if (this.aggregateUnit == MyPreferences.ReportAggregateUnit.FISCAL_YEAR) {
@@ -263,14 +266,15 @@ public class ReportDataByPeriod {
 		}
 		
 		// report filtering (account, category, location or project)
-		accountsWhere.append(" and (");
-		for (int i=0;i<filterId.length;i++) 
-		{
-			if(i!=0)
-				accountsWhere.append(" or ");
-			accountsWhere.append(filterColumn+"=? ");
+		if (filterColumn != null) {
+			accountsWhere.append(" and (");
+			for (int i = 0; i < filterId.length; i++) {
+				if (i != 0)
+					accountsWhere.append(" or ");
+				accountsWhere.append(filterColumn + "=? ");
+			}
+			accountsWhere.append(")");
 		}
-		accountsWhere.append(")");
 		
 		// period
 		accountsWhere.append(" and ("+TransactionColumns.datetime +">=? and "+TransactionColumns.datetime +"<?)");
@@ -336,6 +340,15 @@ public class ReportDataByPeriod {
 		Calendar entry;
 
 		switch (aggregateUnit) {
+			case WEEK -> {
+				entry = new GregorianCalendar(startDate.get(Calendar.YEAR), startDate.get(Calendar.MONTH), startDate.get(Calendar.DATE), 0, 0, 0);
+				entry.set(Calendar.DAY_OF_WEEK, MyPreferences.getFirstDayOfWeek());
+				for (int index=0; index<periodLength*4; index++) {
+					PeriodValue periodValue = new PeriodValue((Calendar) entry.clone());
+					values.add(periodValue);
+					entry.add(Calendar.DATE, 7);
+				}
+			}
 			case MONTH -> {
 				for(int index=0; index<periodLength; index++) {
 					entry = new GregorianCalendar(startDate.get(Calendar.YEAR), startDate.get(Calendar.MONTH)+index, 1, 0, 0, 0);
@@ -374,55 +387,7 @@ public class ReportDataByPeriod {
 	 *   After getting data, generate statistics based on results.
 	 * */
 		// First loop: month by month
-		double result = 0;
-		while (c.moveToNext()) {
-			
-			// get month of reference  
-			Calendar timeframe = getTransactionTimeframe(c);
-
-			if (aggregation == ValueAggregation.SUM) {
-				result = 0;
-			}
-			boolean stepTimeframe = false;
-			// get result from transactions in the reference month
-			do {
-				Calendar transactionTimeframe = getTransactionTimeframe(c);
-				if(transactionTimeframe.compareTo(timeframe)!=0) {
-					stepTimeframe = true;
-					break;
-				}
-				switch (aggregation) {
-					case SUM:
-						result += c.getDouble(RESULT_AMOUNT_COLUMN);
-						break;
-					case LAST:
-						result = c.getDouble(RESULT_AMOUNT_COLUMN);
-						break;
-				}
-			} while(c.moveToNext());
-			
-			// If step month, get back to transaction of the new month in cursor.
-			if (stepTimeframe)
-				c.moveToPrevious();
-			
-			// store the result of the month
-			PeriodValue periodValue = new PeriodValue(timeframe, result);
-			int position = 0;
-			switch (aggregateUnit) {
-				case MONTH ->
-					position = (timeframe.get(Calendar.YEAR) - startDate.get(Calendar.YEAR)) * 12 +
-						timeframe.get(Calendar.MONTH) - startDate.get(Calendar.MONTH);
-				case YEAR, FISCAL_YEAR ->
-					position = timeframe.get(Calendar.YEAR) - startDate.get(Calendar.YEAR);
-			}
-			// FIXME date range edge case
-			if (position >= 0 && position < values.size()) {
-				values.set(position, periodValue);
-			}
-			else {
-				values.add(periodValue);
-			}
-		}
+		extractDataInnerLoop(c);
 
 		// fill chart with previous balance for data points that doesn't have any transaction
 		if (aggregation == ValueAggregation.LAST) {
@@ -480,16 +445,79 @@ public class ReportDataByPeriod {
 			meanNonNull = 0;
 		}
 	}
+
+	protected void extractDataInnerLoop(Cursor c) {
+		double result = 0;
+		while (c.moveToNext()) {
+
+			// get month of reference
+			Calendar timeframe = getTransactionTimeframe(c);
+
+			if (aggregation == ValueAggregation.SUM) {
+				result = 0;
+			}
+			boolean stepTimeframe = false;
+			// get result from transactions in the reference month
+			do {
+				Calendar transactionTimeframe = getTransactionTimeframe(c);
+				if(transactionTimeframe.compareTo(timeframe)!=0) {
+					stepTimeframe = true;
+					break;
+				}
+				switch (aggregation) {
+					case SUM:
+						result += c.getDouble(RESULT_AMOUNT_COLUMN);
+						break;
+					case LAST:
+						result = c.getDouble(RESULT_AMOUNT_COLUMN);
+						break;
+				}
+			} while(c.moveToNext());
+
+			// If step month, get back to transaction of the new month in cursor.
+			if (stepTimeframe)
+				c.moveToPrevious();
+
+			storePeriodResult(timeframe, result);
+		}
+	}
+
+	protected void storePeriodResult(Calendar timeframe, double result) {
+		// store the result of the month
+		PeriodValue periodValue = new PeriodValue(timeframe, result);
+		int position = 0;
+		switch (aggregateUnit) {
+			case WEEK ->
+					position = (int) ((timeframe.getTimeInMillis() - startDate.getTimeInMillis()) / 604800_000);
+			case MONTH ->
+					position = (timeframe.get(Calendar.YEAR) - startDate.get(Calendar.YEAR)) * 12 +
+							timeframe.get(Calendar.MONTH) - startDate.get(Calendar.MONTH);
+			case YEAR, FISCAL_YEAR ->
+					position = timeframe.get(Calendar.YEAR) - startDate.get(Calendar.YEAR);
+		}
+		// FIXME date range edge case
+		if (position >= 0 && position < values.size()) {
+			values.set(position, periodValue);
+		}
+		else {
+			values.add(periodValue);
+		}
+	}
 	
 	/**
 	 * Get the timeframe of a given transaction in the given cursor.
 	 * @param c The transactions cursor.
 	 * @return The Calendar timeframe.
 	 */
-	private Calendar getTransactionTimeframe(Cursor c) {
+	protected Calendar getTransactionTimeframe(Cursor c) {
 		Calendar timeframe = new GregorianCalendar();
 		timeframe.setTimeInMillis(c.getLong(RESULT_DATETIME_COLUMN));
 		switch (aggregateUnit) {
+			case WEEK -> {
+				timeframe.set(timeframe.get(Calendar.YEAR), timeframe.get(Calendar.MONTH), timeframe.get(Calendar.DATE), 0, 0, 0);
+				timeframe.set(Calendar.MILLISECOND, 0);
+				timeframe.set(Calendar.DAY_OF_WEEK, firstDayOfWeek);
+			}
 			case MONTH -> {
 				timeframe.set(timeframe.get(Calendar.YEAR), timeframe.get(Calendar.MONTH), 1, 0, 0, 0);
 				timeframe.set(Calendar.MILLISECOND, 0);

@@ -25,6 +25,7 @@ import tw.tib.financisto.model.Account;
 import tw.tib.financisto.model.Category;
 import tw.tib.financisto.model.Currency;
 import tw.tib.financisto.model.MyEntity;
+import tw.tib.financisto.model.Payee;
 import tw.tib.financisto.model.Transaction;
 import tw.tib.financisto.model.TransactionStatus;
 import tw.tib.financisto.utils.CurrencyCache;
@@ -707,8 +708,9 @@ public class TransactionActivity extends AbstractTransactionActivity {
 
     private void setSplitDataTransaction(Transaction split, TextView label, TextView data) {
         Category category = db.getCategory(split.categoryId);
+        String payee = split.payeeId < 1 ? null : db.get(Payee.class, split.payeeId).title;
         label.setText(transactionTitleUtils.generateTransactionTitle(
-                false, null, null, split.note, null,
+                false, payee, null, split.note, null,
                 split.categoryId, category.title));
         Currency currency = getCurrency();
         u.setAmountText(data, currency, split.fromAmount, false);

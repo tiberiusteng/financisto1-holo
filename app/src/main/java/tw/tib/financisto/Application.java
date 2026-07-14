@@ -1,5 +1,7 @@
 package tw.tib.financisto;
 
+import android.os.StrictMode;
+
 import androidx.multidex.MultiDexApplication;
 
 import java.util.concurrent.ExecutorService;
@@ -24,5 +26,14 @@ public class Application extends MultiDexApplication {
         super.onCreate();
         instance = this;
         executor = Executors.newCachedThreadPool();
+
+        if (BuildConfig.DEBUG) {
+            StrictMode.setVmPolicy(new StrictMode.VmPolicy.Builder()
+            //        .detectLeakedSqlLiteObjects()
+            //        .detectLeakedClosableObjects()
+                    .detectAll()
+                    .penaltyLog()
+                    .build());
+        }
     }
 }

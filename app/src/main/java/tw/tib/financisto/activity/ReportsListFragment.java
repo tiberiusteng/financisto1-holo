@@ -38,7 +38,8 @@ public class ReportsListFragment extends ListFragment {
             ReportType.BY_PAYEE_BY_PERIOD,
             ReportType.BY_LOCATION_BY_PERIOD,
             ReportType.BY_PROJECT_BY_PERIOD,
-            ReportType.BY_ACCOUNT_BALANCE_BY_PERIOD
+            ReportType.BY_ACCOUNT_BALANCE_BY_PERIOD,
+            ReportType.TOTAL_BALANCE_BY_PERIOD
     };
 
     @Nullable

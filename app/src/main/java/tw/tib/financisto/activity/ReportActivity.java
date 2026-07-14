@@ -103,6 +103,9 @@ public class ReportActivity extends ListActivity implements RefreshSupportedActi
             if (currentReport instanceof PeriodReport) {
                 intent.putExtra(ReportFilterActivity.HIDE_PERIOD, true);
             }
+            if (!currentReport.allowFilterSplit) {
+                intent.putExtra(ReportFilterActivity.NO_FILTER_SPLIT, true);
+            }
             startActivityForResult(intent, FILTER_REQUEST);
         });
 

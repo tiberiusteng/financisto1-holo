@@ -18,6 +18,7 @@ select
        t.project_id as project_id,
        t.location_id as location_id,
        t.payee_id as payee_id,
+       t.parent_id as parent_id,
        t.status as status
 from v_blotter_for_account_with_splits t
 where t.category_id != -1 and from_account_is_include_into_totals=1;

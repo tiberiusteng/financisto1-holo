@@ -150,6 +150,8 @@
   <string name="report_by_project_by_period_summary">以專案與期間統計的交易報告</string>
   <string name="report_by_account_balance_by_period">以帳戶結餘 / 期間統計</string>
   <string name="report_by_account_balance_by_period_summary">以帳戶餘額與期間統計的報告</string>
+  <string name="report_total_balance_by_period">總餘額 / 期間統計</string>
+  <string name="report_total_balance_by_period_summary">以換算成本國貨幣總餘額與期間統計的報告</string>
   <string name="max_result_label">最多:</string>
   <string name="min_result_label">最少:</string>
   <string name="mean_result_label">平均:</string>
@@ -410,6 +412,7 @@
   <string name="report_aggregate_unit">小計單位</string>
   <string name="report_aggregate_unit_summary">選擇報表的小計單位</string>
   <string-array name="report_aggregate_unit_entities">
+    <item>週</item>
     <item>月</item>
     <item>年</item>
     <item>會計年度</item>
@@ -640,6 +643,9 @@
   <string name="prevent_edit_cleared_reconciled_summary">變更交易狀態即可再度修改。</string>
   <string name="quick_menu_split_transactions">分割交易快速選單</string>
   <string name="quick_menu_split_transactions_summary">顯示修改分割交易狀態捷徑</string>
+  <string name="split_entity_in_child">分割受款人/地點紀錄在子交易</string>
+  <string name="split_entity_in_child_summary">在分割子交易紀錄受款人/地點。
+    現有分割彙總交易若有受款人/地點則會繼續顯示編輯功能。</string>
   <string name="new_currency">新幣值 ...</string>
   <string name="lock_time">鎖定時間</string>
   <string name="lock_time_summary">主畫面在自動鎖定前的顯示時間</string>
@@ -928,6 +934,9 @@
 
   <string name="filter_transfer">移轉</string>
   <string name="filter_transfer_exclude">排除移轉</string>
+
+  <string name="filter_report_split_only_summary">只包含分割彙總</string>
+  <string name="filter_report_split_only_children">只包含子交易</string>
 
   <string name="confirm_create_entity">確定新建「%s」？</string>
 

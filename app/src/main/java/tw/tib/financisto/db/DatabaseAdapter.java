@@ -477,7 +477,9 @@ public class DatabaseAdapter extends MyEntityManager {
                 split.parentId = parent.id;
                 split.parentAccountId = parent.fromAccountId;
                 split.dateTime = parent.dateTime;
-                split.payeeId = parent.payeeId;
+                if (!MyPreferences.isTrackSplitEntityInChild()) {
+                    split.payeeId = parent.payeeId;
+                }
                 split.isTemplate = parent.isTemplate;
                 split.status = parent.status;
                 updateSplitOriginalAmount(parent, split);

@@ -355,8 +355,12 @@ public class DatabaseHelper extends DatabaseSchemaEvolution {
         public static final String ORIGINAL_CURRENCY_ID = "original_currency_id";
         public static final String ORIGINAL_FROM_AMOUNT = "original_from_amount";
         public static final String IS_TRANSFER = "is_transfer";
+        public static final String CATEGORY_ID = "category_id";
+        public static final String PARENT_ID = "parent_id";
 
-        public static String[] NORMAL_PROJECTION = {ID, NAME, DATETIME, FROM_ACCOUNT_CURRENCY_ID, FROM_AMOUNT, TO_ACCOUNT_CURRENCY_ID, TO_AMOUNT, ORIGINAL_CURRENCY_ID, ORIGINAL_FROM_AMOUNT, IS_TRANSFER};
+        public static String[] NORMAL_PROJECTION = {ID, NAME, DATETIME, FROM_ACCOUNT_CURRENCY_ID,
+                FROM_AMOUNT, TO_ACCOUNT_CURRENCY_ID, TO_AMOUNT, ORIGINAL_CURRENCY_ID,
+                ORIGINAL_FROM_AMOUNT, IS_TRANSFER, CATEGORY_ID, PARENT_ID};
 
     }
 
@@ -365,7 +369,9 @@ public class DatabaseHelper extends DatabaseSchemaEvolution {
         public static final String LEFT = "left";
         public static final String RIGHT = "right";
 
-        public static String[] NORMAL_PROJECTION = {ID, NAME, DATETIME, FROM_ACCOUNT_CURRENCY_ID, FROM_AMOUNT, TO_ACCOUNT_CURRENCY_ID, TO_AMOUNT, ORIGINAL_CURRENCY_ID, ORIGINAL_FROM_AMOUNT, LEFT, RIGHT, IS_TRANSFER};
+        public static String[] NORMAL_PROJECTION = {ID, NAME, DATETIME, FROM_ACCOUNT_CURRENCY_ID,
+                FROM_AMOUNT, TO_ACCOUNT_CURRENCY_ID, TO_AMOUNT, ORIGINAL_CURRENCY_ID,
+                ORIGINAL_FROM_AMOUNT, LEFT, RIGHT, IS_TRANSFER, CATEGORY_ID, PARENT_ID};
     }
 
     public static class LocationColumns {

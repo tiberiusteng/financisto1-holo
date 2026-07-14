@@ -34,6 +34,7 @@ import java.util.Date;
 public class ReportFilterActivity extends FilterAbstractActivity {
 
     public static final String HIDE_PERIOD = "hide_period";
+    public static final String NO_FILTER_SPLIT = "no_filter_split";
 
     private enum FilterTransfer implements LocalizableEnum {
         NO_FILTER(R.string.no_filter),
@@ -51,19 +52,40 @@ public class ReportFilterActivity extends FilterAbstractActivity {
         }
     }
 
+    private enum FilterSplit implements LocalizableEnum {
+        NO_FILTER(R.string.no_filter),
+        ONLY_SUMMARY(R.string.filter_report_split_only_summary),
+        ONLY_CHILDREN(R.string.filter_report_split_only_children);
+
+        public final int titleId;
+
+        FilterSplit(int titleId) {
+            this.titleId = titleId;
+        }
+
+        @Override
+        public int getTitleId() {
+            return titleId;
+        }
+
+    }
+
     private static final FilterTransfer[] filterTransfer = FilterTransfer.values();
     private static final TransactionStatus[] statuses = TransactionStatus.values();
+    private static final FilterSplit[] filterSplit = FilterSplit.values();
 
     private TextView period;
     private TextView account;
     private TextView currency;
     private TextView status;
     private TextView transfer;
+    private TextView split;
 
     private DateFormat df;
     private String filterValueNotFound;
 
     private boolean hidePeriod = false;
+    private boolean noFilterSplit = false;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -77,6 +99,7 @@ public class ReportFilterActivity extends FilterAbstractActivity {
         Intent intent = getIntent();
         if (intent != null) {
             hidePeriod = intent.getBooleanExtra(HIDE_PERIOD, false);
+            noFilterSplit = intent.getBooleanExtra(NO_FILTER_SPLIT, false);
         }
 
         LinearLayout layout = findViewById(R.id.layout);
@@ -91,6 +114,9 @@ public class ReportFilterActivity extends FilterAbstractActivity {
         initLocationSelector(layout);
         status = x.addFilterNodeMinus(layout, R.id.status, R.id.status_clear, R.string.transaction_status, R.string.no_filter);
         transfer = x.addFilterNodeMinus(layout, R.id.transfer, R.id.transfer_clear, R.string.filter_transfer, R.string.no_filter);
+        if (!noFilterSplit) {
+            split = x.addFilterNodeMinus(layout, R.id.split, R.id.split_clear, R.string.filter_split, R.string.no_filter);
+        }
 
         Button bOk = findViewById(R.id.bOK);
         bOk.setOnClickListener(v -> {
@@ -125,6 +151,9 @@ public class ReportFilterActivity extends FilterAbstractActivity {
             updateLocationFromFilter();
             updateStatusFromFilter();
             updateTransferFromFilter();
+            if (!noFilterSplit) {
+                updateSplitFromFilter();
+            }
         }
 
     }
@@ -169,11 +198,25 @@ public class ReportFilterActivity extends FilterAbstractActivity {
     private void updateTransferFromFilter() {
         Criterion c = filter.get(ReportColumns.IS_TRANSFER);
         if (c != null) {
-            transfer.setText(getString(R.string.filter_transfer_exclude));
+            transfer.setText(R.string.filter_transfer_exclude);
             showMinusButton(transfer);
         } else {
             transfer.setText(R.string.no_filter);
             hideMinusButton(transfer);
+        }
+    }
+
+    private void updateSplitFromFilter() {
+        Criterion c = filter.get(ReportColumns.CATEGORY_ID);
+        Criterion p = filter.get(ReportColumns.PARENT_ID);
+        if (c == null && p == null) {
+            split.setText(R.string.no_filter);
+        }
+        else if (p != null) {
+            split.setText(R.string.filter_report_split_only_summary);
+        }
+        else {
+            split.setText(R.string.filter_report_split_only_children);
         }
     }
 
@@ -223,11 +266,28 @@ public class ReportFilterActivity extends FilterAbstractActivity {
                 int selectedPos = c != null ? 1 : 0;
                 x.selectPosition(this, R.id.transfer, R.string.filter_transfer, adapter, selectedPos);
             } break;
+            case R.id.split: {
+                ArrayAdapter<String> adapter = EnumUtils.createDropDownAdapter(this, filterSplit);
+                Criterion c = filter.get(ReportColumns.CATEGORY_ID);
+                Criterion p = filter.get(ReportColumns.PARENT_ID);
+                int selectedPos = 0;
+                if (p != null) {
+                    selectedPos = 1;
+                }
+                else if (c != null) {
+                    selectedPos = 2;
+                }
+                x.selectPosition(this, R.id.split, R.string.filter_split, adapter, selectedPos);
+            } break;
             case R.id.status_clear:
                 clear(BlotterFilter.STATUS, status);
                 break;
             case R.id.transfer_clear:
                 clear(ReportColumns.IS_TRANSFER, transfer);
+                break;
+            case R.id.split_clear:
+                clear(ReportColumns.CATEGORY_ID, split);
+                clear(ReportColumns.PARENT_ID, split);
                 break;
         }
     }
@@ -263,6 +323,21 @@ public class ReportFilterActivity extends FilterAbstractActivity {
                     filter.put(Criterion.eq(ReportColumns.IS_TRANSFER, "0"));
                 }
                 updateTransferFromFilter();
+                break;
+            case R.id.split:
+                if (selectedPos == 0) {
+                    filter.remove(ReportColumns.CATEGORY_ID);
+                    filter.remove(ReportColumns.PARENT_ID);
+                }
+                else if (selectedPos == 1) {
+                    filter.remove(ReportColumns.CATEGORY_ID);
+                    filter.put(Criterion.eq(ReportColumns.PARENT_ID, "0"));
+                }
+                else if (selectedPos == 2) {
+                    filter.put(Criterion.neq(ReportColumns.CATEGORY_ID, "-1"));
+                    filter.remove(ReportColumns.PARENT_ID);
+                }
+                updateSplitFromFilter();
                 break;
         }
     }

@@ -169,6 +169,8 @@
     <string name="report_by_project_by_period_summary">Transactions report by project and period</string>
     <string name="report_by_account_balance_by_period">By Account Balance / Period</string>
     <string name="report_by_account_balance_by_period_summary">Account balance report by period</string>
+    <string name="report_total_balance_by_period">Total Balance / Period</string>
+    <string name="report_total_balance_by_period_summary">Total balance in home currency report by period</string>
     <string name="max_result_label">Max:</string>
     <string name="min_result_label">Min:</string>
     <string name="mean_result_label">Mean:</string>
@@ -186,6 +188,9 @@
     <string name="no_account">No account</string>
     <string name="filter_transfer">Transfer</string>
     <string name="filter_transfer_exclude">Exclude</string>
+
+    <string name="filter_report_split_only_summary">Only include split summary</string>
+    <string name="filter_report_split_only_children">Only include split children</string>
 
     <string name="period_today">Today</string>
     <string name="period_yesterday">Yesterday</string>
@@ -447,6 +452,7 @@
     <string name="report_aggregate_unit">Aggregate Unit</string>
     <string name="report_aggregate_unit_summary">Select the aggregate unit of report</string>
     <string-array name="report_aggregate_unit_entities">
+        <item>Week</item>
         <item>Month</item>
         <item>Year</item>
         <item>Fiscal year</item>
@@ -715,6 +721,10 @@
 
     <string name="quick_menu_split_transactions">Split transactions quick-menu</string>
     <string name="quick_menu_split_transactions_summary">Shortcut for changing split transaction status</string>
+
+    <string name="split_entity_in_child">Split transactions payee/location in child</string>
+    <string name="split_entity_in_child_summary">Track payee/location in split child instead of split summary.
+        Old transactions with payee/location will still show selector for edit.</string>
 
     <string name="new_currency">New currency…</string>
     <string name="lock_time">Lock time</string>

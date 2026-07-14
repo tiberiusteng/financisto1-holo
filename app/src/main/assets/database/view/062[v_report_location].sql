@@ -18,7 +18,8 @@ select
        t.project_id as project_id,
        t.location_id as location_id,
        t.payee_id as payee_id,
+       t.parent_id as parent_id,
        t.status as status
 from locations l
-inner join v_blotter_for_account t on t.location_id=l._id
+inner join v_blotter_for_account_with_splits t on t.location_id=l._id
 where l._id != 0 and from_account_is_include_into_totals=1;

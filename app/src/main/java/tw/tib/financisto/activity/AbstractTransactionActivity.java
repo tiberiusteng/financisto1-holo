@@ -134,6 +134,7 @@ public abstract class AbstractTransactionActivity extends AbstractActivity imple
 	protected boolean isShowIsCCardPayment;
 	protected boolean isOpenCalculatorForTemplates;
 	protected boolean isShowAccountBalanceOnSelector;
+	protected boolean isTrackSplitEntityInChild;
 
 	protected boolean isShowPayee = true;
 //    protected AutoCompleteTextView payeeText;
@@ -196,6 +197,7 @@ public abstract class AbstractTransactionActivity extends AbstractActivity imple
 		isShowIsCCardPayment = MyPreferences.isShowIsCCardPayment();
 		isOpenCalculatorForTemplates = MyPreferences.isOpenCalculatorForTemplates();
 		isShowAccountBalanceOnSelector = MyPreferences.isShowAccountBalanceOnSelector();
+		isTrackSplitEntityInChild = MyPreferences.isTrackSplitEntityInChild();
 
 		categorySelector = new CategorySelector<>(this, db, x);
 		categorySelector.setListener(this);
@@ -594,6 +596,14 @@ public abstract class AbstractTransactionActivity extends AbstractActivity imple
 		}
 		if (selectLast && isRememberLastProject) {
 			projectSelector.selectEntity(category.lastProjectId);
+		}
+		if (isTrackSplitEntityInChild) {
+			if (transaction.payeeId == Payee.EMPTY.id && payeeSelector != null) {
+				payeeSelector.setNodeVisible(!category.isSplit());
+			}
+			if (transaction.locationId == CURRENT_LOCATION_ID) {
+				locationSelector.setNodeVisible(!category.isSplit());
+			}
 		}
 		projectSelector.setNodeVisible(!category.isSplit());
 	}

@@ -57,6 +57,7 @@ public abstract class AbstractSplitActivity extends AbstractActivity {
     protected Transaction split;
     protected long splitParentAccountId;
 
+    protected LocationSelector<AbstractSplitActivity> locationSelector;
     protected ProjectSelector<AbstractSplitActivity> projectSelector;
 
     private final int layoutId;
@@ -81,6 +82,7 @@ public abstract class AbstractSplitActivity extends AbstractActivity {
         });
 
         // todo.mb: check selector here
+        locationSelector = new LocationSelector<>(this, db, x);
         projectSelector = new ProjectSelector<>(this, db, x);
 
         utils  = new Utils(this);
@@ -119,6 +121,7 @@ public abstract class AbstractSplitActivity extends AbstractActivity {
         // such that loading would never finish before view available
         fetchData();
         projectSelector.fetchEntities();
+        locationSelector.fetchEntities();
         updateUI();
         selectStatus(split.status);
     }
@@ -126,10 +129,22 @@ public abstract class AbstractSplitActivity extends AbstractActivity {
     private void createCommonUI(LinearLayout layout) {
         unsplitAmountText = x.addInfoNode(layout, R.id.add_split, R.string.unsplit_amount, "0");
 
-        noteText = new EditText(this);
-        x.addEditNode(layout, R.string.note, noteText);
+        int locationOrder = MyPreferences.getLocationOrder();
+        int noteOrder = MyPreferences.getNoteOrder();
+        int projectOrder = MyPreferences.getProjectOrder();
 
-        projectSelector.createNode(layout);
+        for (int i = 0; i < 6; i++) {
+            if (i == noteOrder) {
+                noteText = new EditText(this);
+                x.addEditNode(layout, R.string.note, noteText);
+            }
+            if (i == projectOrder) {
+                projectSelector.createNode(layout);
+            }
+            if (i == locationOrder) {
+                locationSelector.createNode(layout);
+            }
+        }
 
         Button bSave = findViewById(R.id.bSave);
         bSave.setOnClickListener(arg0 -> saveAndFinish());
@@ -145,6 +160,7 @@ public abstract class AbstractSplitActivity extends AbstractActivity {
         boolean enabled = !isPreventEditing();
         if (noteText != null) noteText.setEnabled(enabled);
         if (projectSelector != null) projectSelector.setEnabled(enabled);
+        if (locationSelector != null) locationSelector.setEnabled(enabled);
 
         if (enabled) {
             editDisabled.setVisibility(View.GONE);
@@ -164,11 +180,13 @@ public abstract class AbstractSplitActivity extends AbstractActivity {
 
     @Override
     protected void onClick(View v, int id) {
+        locationSelector.onClick(id);
         projectSelector.onClick(id);
     }
 
     @Override
     public void onSelectedPos(int id, int selectedPos) {
+        locationSelector.onSelectedPos(id, selectedPos);
         projectSelector.onSelectedPos(id, selectedPos);
         if (id ==  R.id.status) {
             selectStatus(statuses[selectedPos]);
@@ -177,6 +195,7 @@ public abstract class AbstractSplitActivity extends AbstractActivity {
 
     @Override
     public void onSelectedId(int id, long selectedId) {
+        locationSelector.onSelectedId(id, selectedId);
         projectSelector.onSelectedId(id, selectedId);
     }
 
@@ -189,6 +208,7 @@ public abstract class AbstractSplitActivity extends AbstractActivity {
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
+        locationSelector.onActivityResult(requestCode, resultCode, data);
         projectSelector.onActivityResult(requestCode, resultCode, data);
     }
 
@@ -203,11 +223,13 @@ public abstract class AbstractSplitActivity extends AbstractActivity {
 
     protected boolean updateFromUI() {
         split.note = text(noteText);
+        split.locationId = locationSelector.getSelectedEntityId();
         split.projectId = projectSelector.getSelectedEntityId();
         return true;
     }
 
     protected void updateUI() {
+        locationSelector.selectEntity(split.locationId);
         projectSelector.selectEntity(split.projectId);
         setNote(split.note);
     }
@@ -238,6 +260,7 @@ public abstract class AbstractSplitActivity extends AbstractActivity {
 
     @Override
     protected void onDestroy() {
+        if (locationSelector != null) locationSelector.onDestroy();
         if (projectSelector != null) projectSelector.onDestroy();
         super.onDestroy();
     }

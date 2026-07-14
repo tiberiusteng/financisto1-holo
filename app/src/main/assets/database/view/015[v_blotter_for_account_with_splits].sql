@@ -43,12 +43,12 @@ FROM
 	INNER JOIN account as a ON a._id=t.from_account_id
 	INNER JOIN currency as c ON c._id=a.currency_id
 	INNER JOIN category as cat ON cat._id=t.category_id
-	LEFT OUTER JOIN (SELECT MIN(_id), parent_id, payee_id, note FROM transactions WHERE parent_id != 0 GROUP BY parent_id) as split ON split.parent_id = t._id
+	LEFT OUTER JOIN (SELECT MIN(_id), parent_id, payee_id, project_id, location_id, note FROM transactions WHERE parent_id != 0 GROUP BY parent_id) as split ON split.parent_id = t._id
 	LEFT OUTER JOIN running_balance as rb ON rb.transaction_id=(CASE WHEN (t.parent_id != 0 AND t.parent_account_id = t.from_account_id) THEN t.parent_id ELSE t._id END) AND rb.account_id=t.from_account_id
 	LEFT OUTER JOIN account as a2 ON a2._id=t.to_account_id
-	LEFT OUTER JOIN locations as loc ON loc._id=t.location_id
-	LEFT OUTER JOIN project as p ON p._id=t.project_id
-	LEFT OUTER JOIN payee as pp ON pp._id=t.payee_id
+	LEFT OUTER JOIN locations as loc ON loc._id=(CASE WHEN t.category_id = -1 AND t.location_id = 0 THEN split.location_id ELSE t.location_id END)
+	LEFT OUTER JOIN project as p ON p._id=(CASE WHEN t.category_id = -1 AND t.project_id = 0 THEN split.project_id ELSE t.project_id END)
+	LEFT OUTER JOIN payee as pp ON pp._id=(CASE WHEN t.category_id = -1 AND t.payee_id = 0 THEN split.payee_id ELSE t.payee_id END)
 WHERE is_template=0
 UNION ALL
 SELECT
@@ -95,10 +95,10 @@ FROM
 	INNER JOIN account as a ON a._id=t.to_account_id
 	INNER JOIN currency as c ON c._id=a.currency_id
 	INNER JOIN category as cat ON cat._id=t.category_id
-	LEFT OUTER JOIN (SELECT MIN(_id), parent_id, payee_id, note FROM transactions WHERE parent_id != 0 GROUP BY parent_id) as split ON split.parent_id = t._id
+	LEFT OUTER JOIN (SELECT MIN(_id), parent_id, payee_id, project_id, location_id, note FROM transactions WHERE parent_id != 0 GROUP BY parent_id) as split ON split.parent_id = t._id
 	LEFT OUTER JOIN running_balance as rb ON rb.transaction_id=(CASE WHEN (t.parent_id != 0 AND t.parent_account_id = t.to_account_id) THEN t.parent_id ELSE t._id END) AND rb.account_id=t.to_account_id
 	LEFT OUTER JOIN account as a2 ON a2._id=t.from_account_id
-	LEFT OUTER JOIN locations as loc ON loc._id=t.location_id
-	LEFT OUTER JOIN project as p ON p._id=t.project_id
-	LEFT OUTER JOIN payee as pp ON pp._id=t.payee_id
+	LEFT OUTER JOIN locations as loc ON loc._id=(CASE WHEN t.category_id = -1 AND t.location_id = 0 THEN split.location_id ELSE t.location_id END)
+	LEFT OUTER JOIN project as p ON p._id=(CASE WHEN t.category_id = -1 AND t.project_id = 0 THEN split.project_id ELSE t.project_id END)
+	LEFT OUTER JOIN payee as pp ON pp._id=(CASE WHEN t.category_id = -1 AND t.payee_id = 0 THEN split.payee_id ELSE t.payee_id END)
 WHERE is_template=0;

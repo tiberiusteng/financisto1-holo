@@ -26,7 +26,6 @@ public class AutoBackupWorker extends Worker {
 
     public AutoBackupWorker(@NonNull Context context, @NonNull WorkerParameters workerParams) {
         super(context, workerParams);
-        TAG = getClass().getSimpleName();
     }
 
     @NonNull

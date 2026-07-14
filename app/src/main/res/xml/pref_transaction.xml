@@ -10,6 +10,11 @@
         android:key="quick_menu_split_transactions"
         android:summary="@string/quick_menu_split_transactions_summary"
         android:title="@string/quick_menu_split_transactions" />
+    <SwitchPreferenceCompat
+        android:defaultValue="false"
+        android:key="split_entity_in_child"
+        android:summary="@string/split_entity_in_child_summary"
+        android:title="@string/split_entity_in_child" />
     <PreferenceCategory android:title="@string/category_selector">
         <!-- todo.mb: remove it as not used really >> -->
         <SwitchPreferenceCompat

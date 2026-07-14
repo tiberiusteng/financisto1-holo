@@ -7,6 +7,7 @@ import android.content.Intent;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.text.format.DateUtils;
+import android.util.Log;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.ViewGroup;
@@ -50,6 +51,7 @@ import tw.tib.financisto.report.LocationByPeriodReport;
 import tw.tib.financisto.report.PayeeByPeriodReport;
 import tw.tib.financisto.report.ProjectByPeriodReport;
 import tw.tib.financisto.report.ReportType;
+import tw.tib.financisto.report.TotalBalanceByPeriodReport;
 import tw.tib.financisto.utils.CurrencyCache;
 import tw.tib.financisto.utils.MyPreferences;
 import tw.tib.financisto.utils.PinProtection;
@@ -193,6 +195,12 @@ public class Report2DChartActivity extends Activity implements OnChartValueSelec
                 findViewById(R.id.report_sum_label).setVisibility(View.INVISIBLE);
                 reportData = new AccountBalanceByPeriodReport(this, db, startPeriod, periodLength, currency, aggregateUnit);
                 break;
+            case TOTAL_BALANCE_BY_PERIOD:
+                findViewById(R.id.report_sum_result).setVisibility(View.INVISIBLE);
+                findViewById(R.id.report_sum_label).setVisibility(View.INVISIBLE);
+                reportData = new TotalBalanceByPeriodReport(this, db, startPeriod, periodLength, currency, aggregateUnit);
+                break;
+
         }
 
         initChart();
@@ -261,6 +269,9 @@ public class Report2DChartActivity extends Activity implements OnChartValueSelec
             Calendar timeframe = currentPoint.getTimeframe();
             Calendar end = (Calendar) timeframe.clone();
             switch (aggregateUnit) {
+                case WEEK -> {
+                    end.add(Calendar.DATE, 7);
+                }
                 case MONTH -> {
                     end.add(Calendar.MONTH, 1);
                 }
@@ -453,7 +464,8 @@ public class Report2DChartActivity extends Activity implements OnChartValueSelec
                 // x value is 32-bit floating point, on recent timestamps the step size is 131.072 seconds
                 // so sometimes it will become 1~2 minutes earlier in the previous month when converting to float
                 // we are only using the month part, so add 86400*1000*14 ms to shift it to middle of month
-                vals.add(new Entry(v.getTimeframeTimeInMillis() + 1209600000f, (float) v.getValue() / 100.0f, v));
+                // 2026-07 adjust to 43200*1000 since we added a week aggregate length
+                vals.add(new Entry(v.getTimeframeTimeInMillis() + 43200_000f, (float) v.getValue() / 100.0f, v));
             }
 
             ds.notifyDataSetChanged();
@@ -731,7 +743,8 @@ public class Report2DChartActivity extends Activity implements OnChartValueSelec
     @Override
     public void onValueSelected(Entry e, Highlight h) {
         currentPoint = (PeriodValue) e.getData();
-        pointDate.setText(DateUtils.formatDateTime(this, (long) e.getX(), DateUtils.FORMAT_NO_MONTH_DAY));
+        pointDate.setText(DateUtils.formatDateTime(this, (long) e.getX(),
+                aggregateUnit == MyPreferences.ReportAggregateUnit.WEEK ? 0 : DateUtils.FORMAT_NO_MONTH_DAY));
         pointAmount.setText(Utils.amountToString(currency, (long) (e.getY() * 100)));
         pointAmount.setTextColor(e.getY() >= 0 ? positive : negative);
     }

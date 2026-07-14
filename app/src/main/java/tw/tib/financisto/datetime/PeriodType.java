@@ -49,12 +49,7 @@ public enum PeriodType implements LocalizableEnum {
             Calendar c = Calendar.getInstance();
             c.setTimeInMillis(refTime);
             int dayOfWeek = c.get(Calendar.DAY_OF_WEEK);
-            int firstDayOfWeek;
-            switch (MyPreferences.getFirstDayOfWeek()) {
-                case SUNDAY -> firstDayOfWeek = Calendar.SUNDAY;
-                case MONDAY -> firstDayOfWeek = Calendar.MONDAY;
-                default -> firstDayOfWeek = c.getFirstDayOfWeek();
-            }
+            int firstDayOfWeek = MyPreferences.getFirstDayOfWeek();
             long start, end;
             if (dayOfWeek != firstDayOfWeek) {
                 c.add(Calendar.DAY_OF_MONTH, -(dayOfWeek > firstDayOfWeek ?
@@ -122,12 +117,7 @@ public enum PeriodType implements LocalizableEnum {
             c.setTimeInMillis(refTime);
             c.add(Calendar.DAY_OF_YEAR, -7);
             int dayOfWeek = c.get(Calendar.DAY_OF_WEEK);
-            int firstDayOfWeek;
-            switch (MyPreferences.getFirstDayOfWeek()) {
-                case SUNDAY -> firstDayOfWeek = Calendar.SUNDAY;
-                case MONDAY -> firstDayOfWeek = Calendar.MONDAY;
-                default -> firstDayOfWeek = c.getFirstDayOfWeek();
-            }
+            int firstDayOfWeek = MyPreferences.getFirstDayOfWeek();
             long start, end;
             if (dayOfWeek != firstDayOfWeek) {
                 c.add(Calendar.DAY_OF_MONTH, -(dayOfWeek > firstDayOfWeek ?

@@ -23,6 +23,7 @@ import androidx.annotation.StyleRes;
 import androidx.preference.PreferenceManager;
 
 import java.lang.reflect.Method;
+import java.util.Calendar;
 import java.util.Collection;
 import java.util.Locale;
 
@@ -137,6 +138,7 @@ public class MyPreferences {
 	}
 
 	public enum ReportAggregateUnit {
+		WEEK("WEEK"),
 		MONTH("MONTH"),
 		YEAR("YEAR"),
 		FISCAL_YEAR("FISCAL_YEAR");
@@ -495,6 +497,10 @@ public class MyPreferences {
 		return getBoolean("quick_menu_split_transactions", true);
 	}
 
+	public static boolean isTrackSplitEntityInChild() {
+		return getBoolean("split_entity_in_child", false);
+	}
+
 	private static final String DEFAULT = "default";
 
 	public static Context switchLocale(Context context) {
@@ -523,12 +529,23 @@ public class MyPreferences {
 		return context;
 	}
 
-	public static FirstDayOfWeek getFirstDayOfWeek() {
-		String firstDayOfWeek = getString("first_day_of_week", FirstDayOfWeek.SYSTEM_DEFAULT.name());
+	public static int getFirstDayOfWeek() {
+		FirstDayOfWeek fw;
 		try {
-			return FirstDayOfWeek.valueOf(firstDayOfWeek);
+			fw = FirstDayOfWeek.valueOf(getString("first_day_of_week", FirstDayOfWeek.SYSTEM_DEFAULT.name()));
 		} catch (IllegalArgumentException e) {
-			return FirstDayOfWeek.SYSTEM_DEFAULT;
+			fw = FirstDayOfWeek.SYSTEM_DEFAULT;
+		}
+		switch (fw) {
+			case SUNDAY -> {
+				return Calendar.SUNDAY;
+			}
+			case MONDAY -> {
+				return Calendar.MONDAY;
+			}
+			default -> {
+				return Calendar.getInstance().getFirstDayOfWeek();
+			}
 		}
 	}
 

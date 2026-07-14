@@ -7,7 +7,9 @@ import android.widget.TextView;
 import tw.tib.financisto.R;
 import tw.tib.financisto.model.Category;
 import tw.tib.financisto.model.Currency;
+import tw.tib.financisto.model.Payee;
 import tw.tib.financisto.model.TransactionAttribute;
+import tw.tib.financisto.utils.MyPreferences;
 import tw.tib.financisto.widget.AmountInput;
 import tw.tib.financisto.widget.AmountInput_;
 
@@ -20,7 +22,10 @@ public class SplitTransactionActivity extends AbstractSplitActivity implements C
     private TextView amountTitle;
     private AmountInput amountInput;
 
+    private PayeeSelector<SplitTransactionActivity> payeeSelector;
     private CategorySelector<SplitTransactionActivity> categorySelector;
+
+    private boolean isTrackSplitEntityInChild;
 
     public SplitTransactionActivity() {
         super(R.layout.split_fixed);
@@ -28,6 +33,16 @@ public class SplitTransactionActivity extends AbstractSplitActivity implements C
 
     @Override
     protected void createUI(LinearLayout layout) {
+        isTrackSplitEntityInChild = MyPreferences.isTrackSplitEntityInChild();
+
+        if (MyPreferences.isShowPayee() && isTrackSplitEntityInChild) {
+            payeeSelector = new PayeeSelector<>(this, db, x);
+            if (split.payeeId != Payee.EMPTY.id) {
+                payeeSelector.setIncludeEntityIds(split.payeeId);
+            }
+            payeeSelector.createNode(layout);
+        }
+
         categorySelector = new CategorySelector<>(this, db, x);
         categorySelector.createNode(layout, CategorySelector.SelectorType.SPLIT);
 
@@ -42,12 +57,14 @@ public class SplitTransactionActivity extends AbstractSplitActivity implements C
     @Override
     protected void updateUIforPreventEditing() {
         boolean enabled = !isPreventEditing();
+        if (payeeSelector != null) payeeSelector.setEnabled(enabled);
         categorySelector.setEnabled(enabled);
         amountInput.setEnabled(enabled);
     }
 
     @Override
     protected void fetchData() {
+        if (payeeSelector != null) payeeSelector.fetchEntities();
         categorySelector.setListener(this);
         categorySelector.doNotShowSplitCategory();
         categorySelector.fetchCategories(false);
@@ -56,6 +73,7 @@ public class SplitTransactionActivity extends AbstractSplitActivity implements C
     @Override
     protected void updateUI() {
         super.updateUI();
+        if (payeeSelector != null) payeeSelector.selectEntity(split.payeeId);
         categorySelector.selectCategory(split.categoryId);
         setAmount(split.fromAmount);
     }
@@ -63,6 +81,10 @@ public class SplitTransactionActivity extends AbstractSplitActivity implements C
     @Override
     protected boolean updateFromUI() {
         super.updateFromUI();
+        if (payeeSelector != null) {
+            payeeSelector.autoCreateNewEntityFromSearch();
+            split.payeeId = payeeSelector.getSelectedEntityId();
+        }
         split.fromAmount = amountInput.getAmount();
         split.categoryAttributes = getAttributes();
         return true;
@@ -99,12 +121,20 @@ public class SplitTransactionActivity extends AbstractSplitActivity implements C
     protected void onClick(View v, int id) {
         super.onClick(v, id);
         categorySelector.onClick(id);
+        if (payeeSelector != null) payeeSelector.onClick(id);
     }
 
     @Override
     public void onSelectedId(int id, long selectedId) {
         super.onSelectedId(id, selectedId);
         categorySelector.onSelectedId(id, selectedId);
+        if (payeeSelector != null) payeeSelector.onSelectedId(id, selectedId);
+    }
+
+    @Override
+    public void onSelectedPos(int id, int selectedPos) {
+        super.onSelectedPos(id, selectedPos);
+        if (payeeSelector != null) payeeSelector.onSelectedPos(id, selectedPos);
     }
 
     @Override

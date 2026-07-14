@@ -48,14 +48,21 @@ public abstract class Report {
     protected final Context context;
     protected final Currency currency;
 
+    public final boolean allowFilterSplit;
+
     protected IncomeExpense incomeExpense = IncomeExpense.BOTH;
 
-    public Report(ReportType reportType, Context context, Currency currency) {
+    public Report(ReportType reportType, Context context, Currency currency, boolean allowFilterSplit) {
         this.reportType = reportType;
         this.context = context;
         this.style = new GraphStyle.Builder(context).build();
         this.currency = currency;
+        this.allowFilterSplit = allowFilterSplit;
     }
+
+     public Report(ReportType reportType, Context context, Currency currency) {
+        this(reportType, context, currency, true);
+     }
 
     public void setIncomeExpense(IncomeExpense incomeExpense) {
         this.incomeExpense = incomeExpense;
