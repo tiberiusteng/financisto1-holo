@@ -258,6 +258,7 @@ abstract public class AbstractListFragment<D> extends ListFragment
         if (context == null) return;
         var adapter = createAdapter(context, data);
         if (adapter != null) {
+            this.adapter = adapter;
             setListAdapterKeepScrollState(adapter);
         }
     }
