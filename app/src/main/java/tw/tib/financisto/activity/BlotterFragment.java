@@ -975,6 +975,22 @@ public class BlotterFragment extends AbstractListFragment<Cursor> implements Blo
                 if (isNewAdapter) {
                     setListAdapterKeepScrollState(adapter);
                 }
+
+                Bundle args = getArguments();
+                if (args == null) return;
+
+                long txId = args.getLong(GO_TO_TRANSACTION, -1);
+                args.remove(GO_TO_TRANSACTION);
+
+                if (txId != -1) {
+                    int pos = 0;
+                    cursor.moveToFirst();
+                    while (cursor.getLong(0) != txId && !cursor.isAfterLast()) {
+                        cursor.moveToNext();
+                        pos += 1;
+                    }
+                    setSelection(pos);
+                }
             });
         });
 
@@ -991,27 +1007,6 @@ public class BlotterFragment extends AbstractListFragment<Cursor> implements Blo
         else {
             period.setText(R.string.no_filter);
             period.setVisibility(View.GONE);
-        }
-    }
-
-    @Override
-    public void onLoadFinished(@NonNull Loader<Cursor> loader, Cursor data) {
-        super.onLoadFinished(loader, data);
-
-        Bundle args = getArguments();
-        if (args == null) return;
-
-        long txId = args.getLong(GO_TO_TRANSACTION, -1);
-        args.remove(GO_TO_TRANSACTION);
-
-        if (txId != -1) {
-            int pos = 0;
-            data.moveToFirst();
-            while (data.getLong(0) != txId && !data.isAfterLast()) {
-                data.moveToNext();
-                pos += 1;
-            }
-            setSelection(pos);
         }
     }
 
