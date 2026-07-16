@@ -1118,7 +1118,7 @@ public class BlotterFragment extends AbstractListFragment<Cursor> implements Blo
     @Override
     public void integrityCheck() {
         Log.d(TAG, "integrityCheck");
-        new IntegrityCheckTask(this).execute(new IntegrityCheckRunningBalance(getContext(), db));
+        new IntegrityCheckTask(this).execute(new IntegrityCheckRunningBalance(getContext()));
     }
 
     public boolean onBackPressed()

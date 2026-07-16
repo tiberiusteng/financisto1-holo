@@ -10,6 +10,7 @@ package tw.tib.financisto.utils;
 
 import android.content.Context;
 
+import tw.tib.financisto.Application;
 import tw.tib.financisto.R;
 import tw.tib.financisto.db.DatabaseAdapter;
 import tw.tib.financisto.model.Account;
@@ -24,11 +25,9 @@ import java.util.List;
 public class IntegrityCheckRunningBalance implements IntegrityCheck {
 
     private final Context context;
-    private final DatabaseAdapter db;
 
-    public IntegrityCheckRunningBalance(Context context, DatabaseAdapter db) {
+    public IntegrityCheckRunningBalance(Context context) {
         this.context = context;
-        this.db = db;
     }
 
     @Override
@@ -41,6 +40,7 @@ public class IntegrityCheckRunningBalance implements IntegrityCheck {
     }
 
     private boolean isRunningBalanceBroken() {
+        DatabaseAdapter db = new DatabaseAdapter(Application.getInstance());
         List<Account> accounts = db.getAllAccountsList();
         for (Account account : accounts) {
             long totalFromAccount = account.totalAmount;
