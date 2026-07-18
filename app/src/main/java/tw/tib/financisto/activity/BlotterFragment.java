@@ -947,12 +947,6 @@ public class BlotterFragment extends AbstractListFragment<Cursor> implements Blo
         }
         else {
             isNewAdapter = false;
-            var a = (BlotterListAdapter) adapter;
-            Cursor old = a.swapCursor(cursor);
-            if (old != null && !old.isClosed()) {
-                Log.d(TAG, "createAdapter: closing old " + old);
-                old.close();
-            }
         }
 
         Application.getExecutor().execute(() -> {
@@ -974,6 +968,14 @@ public class BlotterFragment extends AbstractListFragment<Cursor> implements Blo
 
                 if (isNewAdapter) {
                     setListAdapterKeepScrollState(adapter);
+                }
+                else {
+                    var a = (BlotterListAdapter) adapter;
+                    Cursor old = a.swapCursor(cursor);
+                    if (old != null && !old.isClosed()) {
+                        Log.d(TAG, "createAdapter: closing old " + old);
+                        old.close();
+                    }
                 }
 
                 Bundle args = getArguments();
