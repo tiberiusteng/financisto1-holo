@@ -50,6 +50,13 @@ public class TransactionsListAdapter extends BlotterListAdapter {
 
     @Override
     protected void bindView(BlotterViewHolder v, Context context, Cursor cursor) {
+        if (cursor.getLong(BlotterColumns._id.ordinal()) == highlightTransactionId) {
+            v.layout.setBackgroundColor(highlightBackgroundColor);
+        }
+        else {
+            v.layout.setBackgroundColor(0);
+        }
+
         long toAccountId = cursor.getLong(BlotterColumns.to_account_id.ordinal());
         String payee = cursor.getString(BlotterColumns.payee.ordinal());
         String note = cursor.getString(BlotterColumns.note.ordinal());

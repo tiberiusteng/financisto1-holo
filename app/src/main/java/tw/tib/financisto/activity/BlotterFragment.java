@@ -140,6 +140,7 @@ public class BlotterFragment extends AbstractListFragment<Cursor> implements Blo
 
     private NodeInflater inflater;
     private long selectedId = -1;
+    private long duplicatedTransactionId = -1;
 
     public BlotterFragment(int layoutId) {
         super(layoutId);
@@ -863,6 +864,7 @@ public class BlotterFragment extends AbstractListFragment<Cursor> implements Blo
             toastText = getString(R.string.duplicate_success_with_multiplier, multiplier);
         }
         Toast.makeText(getContext(), toastText, Toast.LENGTH_LONG).show();
+        duplicatedTransactionId = newId;
         recreateCursor();
         AccountWidget.updateWidgets(getContext());
         return newId;
@@ -978,13 +980,22 @@ public class BlotterFragment extends AbstractListFragment<Cursor> implements Blo
                     }
                 }
 
-                Bundle args = getArguments();
-                if (args == null) return;
 
-                long txId = args.getLong(GO_TO_TRANSACTION, -1);
-                args.remove(GO_TO_TRANSACTION);
+                long txId = -1;
+                Bundle args = getArguments();
+                if (args != null) {
+                    txId = args.getLong(GO_TO_TRANSACTION, -1);
+                    args.remove(GO_TO_TRANSACTION);
+                }
+
+                if (duplicatedTransactionId != -1) {
+                    Log.d(TAG, "get duplicatedTransactionId = " + duplicatedTransactionId);
+                //    txId = duplicatedTransactionId;
+                    duplicatedTransactionId = -1;
+                }
 
                 if (txId != -1) {
+                    ((BlotterListAdapter) adapter).setHighlightTransactionId(txId);
                     int pos = 0;
                     cursor.moveToFirst();
                     while (cursor.getLong(0) != txId && !cursor.isAfterLast()) {

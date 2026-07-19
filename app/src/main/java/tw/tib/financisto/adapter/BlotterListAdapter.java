@@ -16,6 +16,7 @@ import android.database.Cursor;
 import android.graphics.Color;
 import android.graphics.drawable.Drawable;
 import android.text.format.DateUtils;
+import android.util.Log;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.ViewGroup;
@@ -64,6 +65,11 @@ public class BlotterListAdapter extends ResourceCursorAdapter {
 
     private final int projectColor;
 
+    private final int pendingBackgroundColor;
+    private final int clearedBackgroundColor;
+    private final int reconciledBackgroundColor;
+    protected final int highlightBackgroundColor;
+
     private boolean allChecked = true;
     private final HashMap<Long, Boolean> checkedItems = new HashMap<Long, Boolean>();
 
@@ -71,6 +77,8 @@ public class BlotterListAdapter extends ResourceCursorAdapter {
     private final boolean showProject;
     private final boolean colorizeWeekendDate;
     private final boolean showTimeOfDay;
+
+    protected long highlightTransactionId = -1;
 
     public BlotterListAdapter(Context context, DatabaseAdapter db, Cursor c) {
         this(context, db, R.layout.blotter_list_item, c, false);
@@ -89,6 +97,10 @@ public class BlotterListAdapter extends ResourceCursorAdapter {
         this.u = new Utils(context);
         this.colors = Utils.getTransactionStatusColors(context);
         this.projectColor = context.getResources().getColor(R.color.project_color);
+        this.pendingBackgroundColor = context.getResources().getColor(R.color.pending_transaction_background);
+        this.clearedBackgroundColor = context.getResources().getColor(R.color.cleared_transaction_background);
+        this.reconciledBackgroundColor = context.getResources().getColor(R.color.reconciled_transaction_background);
+        this.highlightBackgroundColor = context.getResources().getColor(R.color.highlight_background);
         this.showRunningBalance = MyPreferences.isShowRunningBalance();
         this.showProject = MyPreferences.isShowProjectInBlotter();
         this.colorizeWeekendDate = MyPreferences.isColorizeWeekendDate();
@@ -125,6 +137,12 @@ public class BlotterListAdapter extends ResourceCursorAdapter {
         TextView noteView = isTemplate == 1 ? v.bottomView : v.centerView;
 //        long t1, t2 = 0, t3, t4;
 //        t1 = System.nanoTime();
+        if (cursor.getLong(BlotterColumns._id.ordinal()) == highlightTransactionId) {
+            v.layout.setBackgroundColor(highlightBackgroundColor);
+        }
+        else {
+            v.layout.setBackgroundColor(0);
+        }
 
         if (v.iconView2 != null) {
             long parentId = cursor.getLong(BlotterColumns.parent_id.ordinal());
@@ -393,4 +411,7 @@ public class BlotterListAdapter extends ResourceCursorAdapter {
         return Longs.toArray(ids);
     }
 
+    public void setHighlightTransactionId(long id) {
+        highlightTransactionId = id;
+    }
 }

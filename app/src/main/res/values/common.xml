@@ -22,9 +22,12 @@
 	<color name="split_color">@color/holo_blue_dark</color>
 	<color name="restored_transaction_color">#df0024</color>
 	<color name="pending_transaction_color">#eda00d</color>
+	<color name="pending_transaction_background">#271a02</color>
 	<color name="unreconciled_transaction_color">#737373</color>
 	<color name="reconciled_transaction_color">#006a25</color>
+	<color name="reconciled_transaction_background">#001f0b</color>
 	<color name="cleared_transaction_color">#79c471</color>
+	<color name="cleared_transaction_background">#1a3716</color>
 	<color name="category_type_income">#39b54a</color>
 	<color name="category_type_expense">#f26522</color>
 	<color name="bottom_bar_tint">#555555</color>

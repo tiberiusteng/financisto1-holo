@@ -33,4 +33,6 @@
 
     <color name="currency_symbol">@android:color/holo_orange_light</color>
     <color name="currency_title">@android:color/secondary_text_dark</color>
+
+    <color name="highlight_background">#ff002030</color>
 </resources>
