@@ -905,6 +905,9 @@
     <string name="collapse_blotter_buttons">Collapse Blotter buttons</string>
     <string name="collapse_blotter_buttons_summary">Group New Transaction/Transfer/Template buttons together (requires restart)</string>
 
+    <string name="show_go_to_today_button">Show Go To Today</string>
+    <string name="show_go_to_today_button_summary">Show \'Go To Today\' button to scroll to transactions in today</string>
+
     <string name="is_active">Is active</string>
 
     <string name="report_income_expense_both">Income/Expenses</string>

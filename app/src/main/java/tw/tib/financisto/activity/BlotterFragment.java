@@ -64,6 +64,7 @@ import tw.tib.financisto.blotter.AccountTotalCalculationTask;
 import tw.tib.financisto.blotter.BlotterFilter;
 import tw.tib.financisto.blotter.BlotterTotalCalculationTask;
 import tw.tib.financisto.blotter.TotalCalculationTask;
+import tw.tib.financisto.db.DatabaseHelper;
 import tw.tib.financisto.dialog.TransactionInfoDialog;
 import tw.tib.financisto.filter.Criterion;
 import tw.tib.financisto.filter.DateTimeCriterion;
@@ -113,6 +114,7 @@ public class BlotterFragment extends AbstractListFragment<Cursor> implements Blo
     protected ImageButton bTransfer;
     protected ImageButton bTemplate;
     protected ImageButton bSearch;
+    protected ImageButton bGoToToday;
 //    protected ImageButton bMenu;
 
     protected QuickActionGrid transactionActionGrid;
@@ -450,6 +452,50 @@ public class BlotterFragment extends AbstractListFragment<Cursor> implements Blo
                     }
                 }
             });
+        }
+
+        bGoToToday = view.findViewById(R.id.bToday);
+        if (MyPreferences.isShowGoToTodayButton()) {
+            bGoToToday.setVisibility(View.VISIBLE);
+            bGoToToday.setOnClickListener(v -> {
+                if (adapter == null) return;
+                var cursor = ((BlotterListAdapter) adapter).getCursor();
+                Calendar today = Calendar.getInstance();
+                today.set(Calendar.HOUR, 0);
+                today.set(Calendar.MINUTE, 0);
+                today.set(Calendar.SECOND, 0);
+                today.set(Calendar.MILLISECOND, 0);
+                long todayStart = today.getTimeInMillis();
+                long todayEnd = todayStart + 86400000;
+                boolean asc = (blotterFilter.getSortOrder().contains(BlotterFilter.SORT_OLDER_TO_NEWER));
+                int pos;
+                if (asc) {
+                    cursor.moveToLast();
+                    pos = cursor.getCount() - 1;
+                }
+                else {
+                    cursor.moveToFirst();
+                    pos = 0;
+                }
+                while (!cursor.isAfterLast() && !cursor.isBeforeFirst()) {
+                    long txTime = cursor.getLong(DatabaseHelper.BlotterColumns.datetime.ordinal());
+                    if (txTime < todayEnd) {
+                        break;
+                    }
+                    if (asc) {
+                        cursor.moveToPrevious();
+                        pos -= 1;
+                    }
+                    else {
+                        cursor.moveToNext();
+                        pos += 1;
+                    }
+                }
+                setSelection(pos);
+            });
+        }
+        else {
+            bGoToToday.setVisibility(View.GONE);
         }
 
         applyFilter();

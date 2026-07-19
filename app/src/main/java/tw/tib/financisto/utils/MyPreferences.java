@@ -577,6 +577,10 @@ public class MyPreferences {
 		return getBoolean("collapse_blotter_buttons", false);
 	}
 
+	public static boolean isShowGoToTodayButton() {
+		return getBoolean("show_go_to_today_button", false);
+	}
+
 	private static boolean isFeatureSupported(String feature) {
 		if (hasSystemFeatureMethod != null) {
 			PackageManager pm = Application.getInstance().getPackageManager();

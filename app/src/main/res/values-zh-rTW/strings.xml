@@ -806,6 +806,8 @@
   <string name="rate_not_available_error" formatted="false">沒有指定 %s 與 %s 之間的匯率</string>
   <string name="collapse_blotter_buttons">縮合明細畫面按鈕</string>
   <string name="collapse_blotter_buttons_summary">將新交易/轉帳/範本按鈕合一 (需要重新啟動)</string>
+  <string name="show_go_to_today_button">顯示「前往今日」按鈕</string>
+  <string name="show_go_to_today_button_summary">顯示「前往今日」按鈕以捲動到今日交易</string>
   <string name="is_active">已啟用</string>
   <string name="report_income_expense_both">收入/支出</string>
   <string name="report_income_expense_income">收入</string>

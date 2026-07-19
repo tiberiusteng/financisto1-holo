@@ -31,6 +31,11 @@
         android:summary="@string/collapse_blotter_buttons_summary"
         android:title="@string/collapse_blotter_buttons" />
     <SwitchPreferenceCompat
+        android:defaultValue="false"
+        android:key="show_go_to_today_button"
+        android:summary="@string/show_go_to_today_button_summary"
+        android:title="@string/show_go_to_today_button" />
+    <SwitchPreferenceCompat
         android:defaultValue="true"
         android:key="show_running_balance"
         android:summary="@string/show_running_balance_summary"

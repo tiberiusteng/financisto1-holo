@@ -144,6 +144,13 @@
 					style="@style/BottomBarButton"
 					android:src="@drawable/actionbar_filter" />
 
+				<ImageButton
+					android:id="@+id/bToday"
+					style="@style/BottomBarButton"
+                    android:src="@drawable/today"
+                    app:tint="#e2e2e2"
+					android:visibility="gone" />
+
 			</LinearLayout>
 		</HorizontalScrollView>
 
