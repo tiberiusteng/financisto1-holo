@@ -10,7 +10,7 @@ package tw.tib.financisto.export.qif;
 
 import android.content.Intent;
 
-import gnu.trove.map.hash.TLongObjectHashMap;
+import it.unimi.dsi.fastutil.longs.Long2ObjectOpenHashMap;
 import tw.tib.financisto.Application;
 import tw.tib.financisto.activity.QifExportActivity;
 import tw.tib.financisto.db.DatabaseAdapter;
@@ -39,7 +39,7 @@ public class QifExportOptions {
     public final long[] selectedAccounts;
     public final boolean uploadToDropbox;
     public final boolean uploadToGDrive;
-    public final TLongObjectHashMap<Format> currencyAmountFormat = new TLongObjectHashMap<>();
+    public final Long2ObjectOpenHashMap<Format> currencyAmountFormat = new Long2ObjectOpenHashMap<>();
 
     public QifExportOptions(Currency currency, String dateFormat, long[] selectedAccounts, WhereFilter filter, boolean uploadToDropbox, boolean uploadToGDrive) {
         this.currency = currency;

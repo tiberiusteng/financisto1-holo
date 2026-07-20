@@ -11,7 +11,7 @@ package tw.tib.financisto.export.csv;
 import android.content.Intent;
 import android.util.Log;
 
-import gnu.trove.map.hash.TLongObjectHashMap;
+import it.unimi.dsi.fastutil.longs.Long2ObjectOpenHashMap;
 import tw.tib.financisto.Application;
 import tw.tib.financisto.activity.CsvExportActivity;
 import tw.tib.financisto.db.DatabaseAdapter;
@@ -46,7 +46,7 @@ public class CsvExportOptions {
     public final boolean uploadToGDrive;
     public final WhereFilter filter;
     public final boolean writeUtfBom;
-    public final TLongObjectHashMap<Format> currencyAmountFormat = new TLongObjectHashMap<>();
+    public final Long2ObjectOpenHashMap<Format> currencyAmountFormat = new Long2ObjectOpenHashMap<>();
 
     public CsvExportOptions(Currency currency, char fieldSeparator, boolean includeHeader,
                             boolean includeTxStatus, boolean exportSplits, boolean exportSplitParents,

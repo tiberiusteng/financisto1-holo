@@ -11,14 +11,14 @@ package tw.tib.financisto.rates;
 import android.content.Context;
 import android.util.Log;
 
-import gnu.trove.map.TLongObjectMap;
-import gnu.trove.map.hash.TLongObjectHashMap;
+import it.unimi.dsi.fastutil.longs.Long2ObjectOpenHashMap;
 import tw.tib.financisto.db.DatabaseAdapter;
 import tw.tib.financisto.model.Currency;
 import tw.tib.financisto.utils.CurrencyCache;
 
 import java.util.Arrays;
 import java.util.List;
+import java.util.Map;
 
 /**
  * Created by IntelliJ IDEA.
@@ -37,21 +37,21 @@ public class LatestExchangeRates implements ExchangeRateProvider, ExchangeRatesC
         this.db = new DatabaseAdapter(context);
     }
 
-    private final TLongObjectMap<TLongObjectMap<ExchangeRate>> rates = new TLongObjectHashMap<TLongObjectMap<ExchangeRate>>();
+    private final Map<Long, Map<Long, ExchangeRate>> rates = new Long2ObjectOpenHashMap<>();
 
     @Override
     public ExchangeRate getRate(Currency fromCurrency, Currency toCurrency) {
         if (fromCurrency.id == toCurrency.id) {
             return ExchangeRate.ONE;
         }
-        TLongObjectMap<ExchangeRate> rateMap = getMapFor(fromCurrency.id);
+        Map<Long, ExchangeRate> rateMap = getMapFor(fromCurrency.id);
         ExchangeRate rate = rateMap.get(toCurrency.id);
         if (rate != null) {
             Log.d(TAG, "getRate direct " + rate);
             return rate;
         }
         // estimate from inverse exchange
-        TLongObjectMap<ExchangeRate> rateMapInverse = getMapFor(toCurrency.id);
+        Map<Long, ExchangeRate> rateMapInverse = getMapFor(toCurrency.id);
         rate = rateMapInverse.get(fromCurrency.id);
         if (rate != null) {
             ExchangeRate inverse = rate.flip();
@@ -94,7 +94,7 @@ public class LatestExchangeRates implements ExchangeRateProvider, ExchangeRatesC
     }
 
     private ExchangeRate combineRate(
-            TLongObjectMap<ExchangeRate> rateMap, Currency fromCurrency, Currency toCurrency,
+            Map<Long, ExchangeRate> rateMap, Currency fromCurrency, Currency toCurrency,
             ExchangeRate e1, ExchangeRate e2
     ) {
         Log.d(TAG, "combineRate e1=" + e1 + ", e2=" + e2);
@@ -120,14 +120,14 @@ public class LatestExchangeRates implements ExchangeRateProvider, ExchangeRatesC
 
     @Override
     public void addRate(ExchangeRate r) {
-        TLongObjectMap<ExchangeRate> rateMap = getMapFor(r.fromCurrencyId);
+        Map<Long, ExchangeRate> rateMap = getMapFor(r.fromCurrencyId);
         rateMap.put(r.toCurrencyId, r);
     }
 
-    private TLongObjectMap<ExchangeRate> getMapFor(long fromCurrencyId) {
-        TLongObjectMap<ExchangeRate> m = rates.get(fromCurrencyId);
+    private Map<Long, ExchangeRate> getMapFor(long fromCurrencyId) {
+        Map<Long, ExchangeRate> m = rates.get(fromCurrencyId);
         if (m == null) {
-            m = new TLongObjectHashMap<ExchangeRate>();
+            m = new Long2ObjectOpenHashMap<>();
             rates.put(fromCurrencyId, m);
         }
         return m;

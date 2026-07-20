@@ -13,7 +13,7 @@ package tw.tib.financisto.utils;
 import android.database.Cursor;
 import android.os.Build;
 
-import gnu.trove.map.hash.TLongObjectHashMap;
+import it.unimi.dsi.fastutil.longs.Long2ObjectOpenHashMap;
 import tw.tib.financisto.Application;
 import tw.tib.financisto.db.DatabaseAdapter;
 import tw.tib.financisto.model.Currency;
@@ -29,7 +29,7 @@ public class CurrencyCache {
 	public static final String DEFAULT_FORMAT = "#,##0.00";
 
     //@ProtectedBy("this")
-	private static final TLongObjectHashMap<Currency> CURRENCIES = new TLongObjectHashMap<Currency>();
+	private static final Long2ObjectOpenHashMap<Currency> CURRENCIES = new Long2ObjectOpenHashMap<>();
 	private static Currency homeCurrency = Currency.EMPTY;
 	private static boolean loaded = false;
 
@@ -45,7 +45,7 @@ public class CurrencyCache {
 	}
 
 	public static synchronized void initialize(EntityManager em) {
-        TLongObjectHashMap<Currency> currencies = new TLongObjectHashMap<Currency>();
+		var currencies = new Long2ObjectOpenHashMap<Currency>();
 		Query<Currency> q = em.createQuery(Currency.class);
 		Cursor c = q.execute();
 		homeCurrency = Currency.EMPTY;
@@ -119,7 +119,7 @@ public class CurrencyCache {
 
 	public static synchronized Collection<Currency> getAllCurrencies() {
 		if (!loaded) initialize(new DatabaseAdapter(Application.getInstance()));
-		return CURRENCIES.valueCollection();
+		return CURRENCIES.values();
 	}
 
 

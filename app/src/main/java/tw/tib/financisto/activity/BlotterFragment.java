@@ -1008,7 +1008,7 @@ public class BlotterFragment extends AbstractListFragment<Cursor> implements Blo
 
             // at 2026-07-13, my database has ~33500 transactions and this takes ~200 ms
             // first getCount() actually calculates record count, subsequent calls are cached
-            var count = adapter.getCount();
+            var count = cursor.getCount();
 
             activity.runOnUiThread(() -> {
                 if (count == 0) {
