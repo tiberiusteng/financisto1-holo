@@ -460,7 +460,7 @@ public class BlotterFragment extends AbstractListFragment<Cursor> implements Blo
         }
 
         bGoToToday = view.findViewById(R.id.bToday);
-        if (MyPreferences.isShowGoToTodayButton()) {
+        if (MyPreferences.isShowGoToTodayButton() && bGoToToday != null) {
             bGoToToday.setVisibility(View.VISIBLE);
             bGoToToday.setOnClickListener(v -> {
                 if (adapter == null) return;
@@ -499,7 +499,7 @@ public class BlotterFragment extends AbstractListFragment<Cursor> implements Blo
                 setSelection(pos);
             });
         }
-        else {
+        else if (bGoToToday != null) {
             bGoToToday.setVisibility(View.GONE);
         }
 
