@@ -44,7 +44,7 @@
 			android:layout_width="match_parent"
 			android:layout_height="match_parent"
 			android:cacheColorHint="@android:color/transparent"
-			android:fastScrollEnabled="true" />
+			android:fastScrollEnabled="false" /> <!-- toggled dynamically, see SafeFastScroll -->
 
 		<TextView
 			android:id="@android:id/empty"
