@@ -190,6 +190,11 @@ public abstract class Report {
             filter.put(c);
         }
         filter.eq("from_account_is_include_into_totals", "1");
+        // Match the v_report_* views: report figures exclude transactions on accounts
+        // not included into reports, so the drill-down blotter must filter them too
+        // (it goes through v_blotter/v_all_transactions, single rows without mirrors —
+        // filtering the from side is enough)
+        filter.eq("from_account_is_include_into_reports", "1");
         Intent intent = new Intent(context, getBlotterActivityClass());
         filter.toIntent(intent);
         return intent;

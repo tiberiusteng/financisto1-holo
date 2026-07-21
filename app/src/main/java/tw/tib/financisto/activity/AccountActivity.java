@@ -83,6 +83,7 @@ public class AccountActivity extends AbstractActivity {
 	private EditText issuerName;
 	private EditText sortOrderText;
 	private CheckBox isIncludedIntoTotals;
+	private CheckBox isIncludedIntoReports;
 	private EditText noteText;
 	private EditText closingDayText;
 	private EditText paymentDayText;
@@ -249,6 +250,9 @@ public class AccountActivity extends AbstractActivity {
 		isIncludedIntoTotals = x.addCheckboxNode(layout,
 				R.id.is_included_into_totals, R.string.is_included_into_totals,
 				R.string.is_included_into_totals_summary, true);
+		isIncludedIntoReports = x.addCheckboxNode(layout,
+				R.id.is_included_into_reports, R.string.is_included_into_reports,
+				R.string.is_included_into_reports_summary, true);
 
 		if (account.id > 0) {
 			editAccount();
@@ -297,6 +301,7 @@ public class AccountActivity extends AbstractActivity {
 			String sortOrder = Utils.text(sortOrderText);
 			account.sortOrder = sortOrder == null ? 0 : Integer.parseInt(sortOrder);
 			account.isIncludeIntoTotals = isIncludedIntoTotals.isChecked();
+			account.isIncludeIntoReports = isIncludedIntoReports.isChecked();
 			account.limitAmount = -Math.abs(limitInput.getAmount());
 			account.note = Utils.text(noteText);
 			account.icon = iconText.getText().toString().trim();
@@ -332,6 +337,9 @@ public class AccountActivity extends AbstractActivity {
 		switch (id) {
 			case R.id.is_included_into_totals:
 				isIncludedIntoTotals.performClick();
+				break;
+			case R.id.is_included_into_reports:
+				isIncludedIntoReports.performClick();
 				break;
 			case R.id.account_type:
 				x.selectPosition(this, R.id.account_type, R.string.account_type, accountTypeAdapter, AccountType.valueOf(account.type).ordinal());
@@ -466,6 +474,7 @@ public class AccountActivity extends AbstractActivity {
 		/********************************/
 
 		isIncludedIntoTotals.setChecked(account.isIncludeIntoTotals);
+		isIncludedIntoReports.setChecked(account.isIncludeIntoReports);
 		if (account.limitAmount != 0) {
 			limitInput.setAmount(-Math.abs(account.limitAmount));
 		}

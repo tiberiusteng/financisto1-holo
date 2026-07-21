@@ -62,6 +62,7 @@
 	<item name="card_issuer" type="id" />
 	<item name="card_type" type="id" />
 	<item name="is_included_into_totals" type="id" />
+	<item name="is_included_into_reports" type="id" />
 	<item name="sort_order" type="id" />
 	<item name="sort_order_clear" type="id" />
 	<item name="budget_mode" type="id" />

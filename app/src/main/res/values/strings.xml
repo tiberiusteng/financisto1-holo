@@ -210,6 +210,8 @@
     <string name="update_exchange_rate">Include in exchange rate update</string>
     <string name="is_included_into_totals">Include into totals</string>
     <string name="is_included_into_totals_summary">Include transactions from this account into totals</string>
+    <string name="is_included_into_reports">Include into reports</string>
+    <string name="is_included_into_reports_summary">Include transactions from this account into reports</string>
     <string name="decimals">\nDecimals</string>
     <string name="decimals_warning">Decimals other than 0, 1, 2 are experimental</string>
     <string name="currency_max_value">Max amount value: %s</string>

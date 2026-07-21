@@ -57,7 +57,16 @@ public class Account extends MyEntity {
 	public int sortOrder;
 
 	@Column(name = "is_include_into_totals")
-	public boolean isIncludeIntoTotals = true; 
+	public boolean isIncludeIntoTotals = true;
+
+	/**
+	 * false = virtual sub-account (e.g. a budget envelope or sinking fund): still
+	 * counted into totals (that is what it exists for), but its own transactions are
+	 * excluded from report statistics, and transfers into it from a normal account
+	 * count as expenses of the source account (see the v_report_* views).
+	 */
+	@Column(name = "is_include_into_reports")
+	public boolean isIncludeIntoReports = true;
 	
 	@Column(name = "last_account_id")
 	public long lastAccountId;
