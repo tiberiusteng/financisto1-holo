@@ -550,10 +550,15 @@ public class ReportDataByPeriod {
 	{
 		int accounts[] = new int[0];
 		
-		String where = AccountColumns.CURRENCY_ID+"=?";
+		// Exclude accounts that are not included into reports: 2D charts query the
+		// transactions table directly (no mirrored rows), so dropping those accounts
+		// from the account set keeps their own transactions and outgoing transfers out
+		// of the chart, while transfers into them from normal accounts still count on
+		// the from side (as an expense) — consistent with the v_report_* views.
+		String where = AccountColumns.CURRENCY_ID+"=? and is_include_into_reports=1";
 		Cursor c = null;
 		try {
-			c = db.query(DatabaseHelper.ACCOUNT_TABLE, new String[]{AccountColumns.ID}, 
+			c = db.query(DatabaseHelper.ACCOUNT_TABLE, new String[]{AccountColumns.ID},
 					   where, new String[]{Long.toString(currency.id)}, null, null, null);
 			accounts = new int[c.getCount()];
 			int index=0;

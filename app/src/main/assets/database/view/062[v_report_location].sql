@@ -22,4 +22,6 @@ select
        t.status as status
 from locations l
 inner join v_blotter_for_account_with_splits t on t.location_id=l._id
-where l._id != 0 and from_account_is_include_into_totals=1;
+where l._id != 0 and from_account_is_include_into_totals=1
+  and from_account_is_include_into_reports=1
+  and (t.is_transfer != -1 or ifnull(to_account_is_include_into_reports,1)=1);

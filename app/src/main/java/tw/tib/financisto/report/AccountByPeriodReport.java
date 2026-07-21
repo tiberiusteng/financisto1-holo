@@ -60,6 +60,7 @@ public class AccountByPeriodReport extends Report2DChart {
 		currentFilterOrder = 0;
 		List<Account> accounts = em.getAllAccountsList();
 		for (Account a: accounts) {
+			if (!a.isIncludeIntoReports) continue;   // excluded from reports, no chart entry
 			filterIds.add(a.id);
 			filterTitles.add(a.title);
 		}
