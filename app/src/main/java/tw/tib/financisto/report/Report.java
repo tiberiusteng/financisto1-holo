@@ -92,20 +92,25 @@ public abstract class Report {
             ArrayList<GraphUnit> units = new ArrayList<GraphUnit>();
             GraphUnit u = null;
             long lastId = -1;
+            // getColumnIndex compares strings on every call; inside the loop that is three
+            // wasted lookups per row, and reports often have thousands of rows — resolve once
+            int isTransferIdx = c.getColumnIndex(ReportColumns.IS_TRANSFER);
+            int nameIdx = c.getColumnIndex(ReportColumns.NAME);
+            int datetimeIdx = c.getColumnIndex(ReportColumns.DATETIME);
             while (c.moveToNext()) {
                 long id = getId(c);
-                long isTransfer = c.getLong(c.getColumnIndex(ReportColumns.IS_TRANSFER));
+                long isTransfer = c.getLong(isTransferIdx);
                 if (id != lastId) {
                     if (u != null) {
                         units.add(u);
                     }
-                    String name = c.getString(c.getColumnIndex(ReportColumns.NAME));
+                    String name = c.getString(nameIdx);
                     u = new GraphUnit(id, alterName(id, name), currency, style);
                     lastId = id;
                 }
                 BigDecimal amount;
                 try {
-                    amount = TransactionsTotalCalculator.getAmountFromCursor(db, c, currency, rates, c.getColumnIndex(ReportColumns.DATETIME));
+                    amount = TransactionsTotalCalculator.getAmountFromCursor(db, c, currency, rates, datetimeIdx);
                 } catch (UnableToCalculateRateException e) {
                     amount = BigDecimal.ZERO;
                     u.error = TotalError.atDateRateError(e.fromCurrency, e.datetime);

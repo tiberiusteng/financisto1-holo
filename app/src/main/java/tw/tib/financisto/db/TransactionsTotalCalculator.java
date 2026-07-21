@@ -114,17 +114,45 @@ public class TransactionsTotalCalculator {
         return copy;
     }
 
+    /**
+     * Hybrid aggregation (performance): previously ALL matching rows (the main
+     * blotter is roughly every transaction) were pulled into Java and converted
+     * row by row — tens of thousands of rows across JNI plus per-row BigDecimal
+     * work made the total bar slow.
+     *
+     * getConvertedAmount's branch order guarantees that rows whose from-side
+     * currency equals the target currency ALWAYS contribute +from_amount
+     * (to/original are never consulted for them), so those rows (the vast
+     * majority) can be summed directly in SQL; only rows with a different
+     * from-side currency (foreign, usually very few) still need the original
+     * per-row conversion. Adding the two parts is exactly equivalent to the
+     * row-by-row version (integer SUM has no rounding; truncation still
+     * happens only at the final longValue()).
+     */
     private Total getBalanceInHomeCurrency(String view, Currency toCurrency, WhereFilter filter) {
         Log.d("Financisto", "Query balance: "+filter.getSelection()+" => "+ Arrays.toString(filter.getSelectionArgs()));
-        Cursor c;
-        c = db.db().query(view, HOME_CURRENCY_PROJECTION,
-                filter.getSelection(), filter.getSelectionArgs(),
-                null, null, null);
+        long t0 = System.currentTimeMillis();
+        // fast path: from-side already in the target currency, SUM directly in SQL
+        long homeSum = 0;
+        Cursor hc = db.db().query(view, new String[]{"SUM(from_amount)"},
+                andWhere(filter.getSelection(), "from_account_currency_id=" + toCurrency.id),
+                filter.getSelectionArgs(), null, null, null);
+        try {
+            if (hc.moveToFirst()) homeSum = hc.getLong(0);
+        } finally {
+            hc.close();
+        }
+        // slow path: remaining rows (need conversion) keep the per-row logic
+        Cursor c = db.db().query(view, HOME_CURRENCY_PROJECTION,
+                andWhere(filter.getSelection(), "from_account_currency_id!=" + toCurrency.id),
+                filter.getSelectionArgs(), null, null, null);
         try {
             try {
-                long balance = calculateTotalFromCursor(db, c, toCurrency);
+                BigDecimal converted = calculateTotalFromCursor(db, c, toCurrency);
                 Total total = new Total(toCurrency);
-                total.balance = balance;
+                total.balance = BigDecimal.valueOf(homeSum).add(converted).longValue();
+                Log.d("Financisto", "getBalanceInHomeCurrency " + (System.currentTimeMillis() - t0)
+                        + "ms (converted rows=" + c.getCount() + ")");
                 return total;
             } catch (UnableToCalculateRateException e) {
                 return new Total(e.toCurrency, TotalError.atDateRateError(e.fromCurrency, e.datetime));
@@ -134,13 +162,17 @@ public class TransactionsTotalCalculator {
         }
     }
 
-    private static long calculateTotalFromCursor(DatabaseAdapter db, Cursor c, Currency toCurrency) throws UnableToCalculateRateException {
+    private static String andWhere(String where, String cond) {
+        return (where == null || where.isEmpty()) ? cond : "(" + where + ") AND " + cond;
+    }
+
+    private static BigDecimal calculateTotalFromCursor(DatabaseAdapter db, Cursor c, Currency toCurrency) throws UnableToCalculateRateException {
         ExchangeRateProvider rates = db.getLatestRates();
         BigDecimal balance = BigDecimal.ZERO;
         while (c.moveToNext()) {
             balance = balance.add(getAmountFromCursor(db, c, toCurrency, rates, 0));
         }
-        return balance.longValue();
+        return balance;
     }
 
     public static Total calculateTotalFromListInHomeCurrency(DatabaseAdapter db, List<TransactionInfo> list) {
