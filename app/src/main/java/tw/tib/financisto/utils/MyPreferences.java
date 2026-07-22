@@ -816,6 +816,14 @@ public class MyPreferences {
 		return getBoolean("sms_transaction_note", true);
 	}
 
+	public static boolean isGoogleWalletTransactionEnabled() {
+		return getBoolean("google_wallet_transaction", false);
+	}
+
+	public static TransactionStatus getGoogleWalletTransactionStatus() {
+		return TransactionStatus.valueOf(getString("google_wallet_transaction_status", "PN"));
+	}
+
 	public static long getLastAutobackupCheck() {
 		return getLong("last_autobackup_check", 0);
 	}
