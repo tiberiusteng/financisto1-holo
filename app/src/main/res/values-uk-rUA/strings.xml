@@ -1047,7 +1047,7 @@
     <string name="pref_tpl_adding_to_note">Додавати текст сповіщення до примітки транзакції</string>
     <string name="pref_google_wallet">Google Wallet</string>
     <string name="pref_google_wallet_transaction_title">Створювати транзакції з Google Wallet</string>
-    <string name="pref_google_wallet_transaction_summary">Автоматично створювати транзакцію, коли з\'являється сповіщення про оплату Google Wallet. Потрібен доступ до сповіщень. Рахунок визначається за назвою: назвіть рахунок Financisto так само, як картка у сповіщенні після слова \"with\" (напр. \"Сільпо\"). Також підходять збіг за номером картки, рахунок із цими 4 цифрами в полі номера картки або назва рахунку, що міститься в мітці картки.</string>
+    <string name="pref_google_wallet_transaction_summary">Автоматично додавати транзакцію зі сповіщення Google Wallet. Рахунок шукається за назвою (як картка у сповіщенні) або за 4 цифрами картки.</string>
     <string name="pref_google_wallet_transaction_status">Статус транзакції, створеної зі сповіщення Google Wallet: %s</string>
     <string name="new_wallet_transaction_text">Нова транзакція додана з Google Wallet</string>
     <string name="new_wallet_transaction_title">Транзакція Google Wallet</string>
