@@ -33,6 +33,7 @@ import tw.tib.financisto.db.DatabaseAdapter;
 import tw.tib.financisto.model.Transaction;
 import tw.tib.financisto.model.TransactionInfo;
 import tw.tib.financisto.model.TransactionStatus;
+import tw.tib.financisto.utils.MyPreferences;
 import tw.tib.financisto.utils.NotificationUtils;
 
 import static tw.tib.financisto.utils.MyPreferences.getSmsTransactionStatus;
@@ -45,12 +46,16 @@ public class FinancistoService extends JobIntentService {
     public static final String ACTION_NEW_TRANSACTION_SMS = "tw.tib.financisto.NEW_TRANSACTON_SMS";
     public static final String SMS_TRANSACTION_NUMBER = "SMS_TRANSACTION_NUMBER";
     public static final String SMS_TRANSACTION_BODY = "SMS_TRANSACTION_BODY";
+    public static final String ACTION_NEW_TRANSACTION_WALLET = "tw.tib.financisto.NEW_TRANSACTION_WALLET";
+    public static final String WALLET_TRANSACTION_TITLE = "WALLET_TRANSACTION_TITLE";
+    public static final String WALLET_TRANSACTION_TEXT = "WALLET_TRANSACTION_TEXT";
 
     private static final int RESTORED_NOTIFICATION_ID = 0;
 
     private DatabaseAdapter db;
     private RecurrenceScheduler scheduler;
     private SmsTransactionProcessor smsProcessor;
+    private GoogleWalletTransactionProcessor walletProcessor;
     private IntentTransactionProcessor intentTransactionProcessor;
 
     public static void enqueueWork(Context context, Intent work) {
@@ -64,6 +69,7 @@ public class FinancistoService extends JobIntentService {
         db.open();
         scheduler = new RecurrenceScheduler(db);
         smsProcessor = new SmsTransactionProcessor(db);
+        walletProcessor = new GoogleWalletTransactionProcessor(db);
         intentTransactionProcessor = new IntentTransactionProcessor(db);
     }
 
@@ -86,6 +92,9 @@ public class FinancistoService extends JobIntentService {
                 case ACTION_NEW_TRANSACTION_SMS:
                     processSmsTransaction(intent);
                     break;
+                case ACTION_NEW_TRANSACTION_WALLET:
+                    processWalletTransaction(intent);
+                    break;
             }
         }
     }
@@ -102,6 +111,33 @@ public class FinancistoService extends JobIntentService {
                 NotificationUtils.notifyUser(this, notification, (int) t.id);
                 AccountWidget.updateWidgets(this);
             }
+        }
+    }
+
+    private void processWalletTransaction(Intent intent) {
+        String title = intent.getStringExtra(WALLET_TRANSACTION_TITLE);
+        String text = intent.getStringExtra(WALLET_TRANSACTION_TEXT);
+        if (title == null) title = "";
+        if (text == null) text = "";
+        String notificationText = (title + " " + text).trim();
+
+        Transaction t = null;
+        GoogleWalletNotificationParser.ParsedPayment payment =
+                GoogleWalletNotificationParser.parse(title, text);
+        if (payment != null) {
+            t = walletProcessor.createTransaction(this, payment, notificationText,
+                    MyPreferences.getGoogleWalletTransactionStatus(), shouldSaveSmsToTransactionNote());
+        }
+        if (t == null) {
+            // fall back to user-defined notification templates matched by title
+            t = smsProcessor.createTransactionBySms(this, title, notificationText,
+                    getSmsTransactionStatus(), shouldSaveSmsToTransactionNote());
+        }
+        if (t != null) {
+            TransactionInfo transactionInfo = db.getTransactionInfo(t.id);
+            Notification notification = createWalletTransactionNotification(transactionInfo);
+            NotificationUtils.notifyUser(this, notification, (int) t.id);
+            AccountWidget.updateWidgets(this);
         }
     }
 
@@ -138,6 +174,14 @@ public class FinancistoService extends JobIntentService {
     private Notification createSmsTransactionNotification(TransactionInfo t, String number) {
         String tickerText = getString(R.string.new_sms_transaction_text, number);
         String contentTitle = getString(R.string.new_sms_transaction_title, number);
+        String text = t.getNotificationContentText(this);
+
+        return NotificationUtils.generateNotification(this, t, tickerText, contentTitle, text);
+    }
+
+    private Notification createWalletTransactionNotification(TransactionInfo t) {
+        String tickerText = getString(R.string.new_wallet_transaction_text);
+        String contentTitle = getString(R.string.new_wallet_transaction_title);
         String text = t.getNotificationContentText(this);
 
         return NotificationUtils.generateNotification(this, t, tickerText, contentTitle, text);

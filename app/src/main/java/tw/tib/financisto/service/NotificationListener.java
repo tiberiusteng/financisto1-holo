@@ -1,8 +1,11 @@
 package tw.tib.financisto.service;
 
 import static tw.tib.financisto.service.FinancistoService.ACTION_NEW_TRANSACTION_SMS;
+import static tw.tib.financisto.service.FinancistoService.ACTION_NEW_TRANSACTION_WALLET;
 import static tw.tib.financisto.service.FinancistoService.SMS_TRANSACTION_BODY;
 import static tw.tib.financisto.service.FinancistoService.SMS_TRANSACTION_NUMBER;
+import static tw.tib.financisto.service.FinancistoService.WALLET_TRANSACTION_TEXT;
+import static tw.tib.financisto.service.FinancistoService.WALLET_TRANSACTION_TITLE;
 
 import android.app.Notification;
 import android.content.Context;
@@ -13,14 +16,24 @@ import android.service.notification.StatusBarNotification;
 import android.text.SpannableString;
 import android.util.Log;
 
+import java.util.Arrays;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
 import tw.tib.financisto.db.DatabaseAdapter;
 import tw.tib.financisto.model.SmsTemplate;
+import tw.tib.financisto.utils.MyPreferences;
 
 public class NotificationListener extends NotificationListenerService {
     private static final String TAG = "NotificationListener";
+
+    private static final Set<String> GOOGLE_WALLET_PACKAGES = new HashSet<>(Arrays.asList(
+            // Google Wallet
+            "com.google.android.apps.walletnfcrel",
+            // Google Pay (India)
+            "com.google.android.apps.nbu.paisa.user"));
+
     private String packageName;
     private NotificationCache notificationCache;
 
@@ -84,6 +97,16 @@ public class NotificationListener extends NotificationListenerService {
             Log.d(TAG, sbn.getNotification().extras.toString());
 
             if (processTemplate && (existing == null || !body.equals(existing.body))) {
+                if (GOOGLE_WALLET_PACKAGES.contains(packageName)
+                        && MyPreferences.isGoogleWalletTransactionEnabled())
+                {
+                    Intent serviceIntent = new Intent(ACTION_NEW_TRANSACTION_WALLET, null, context, FinancistoService.class);
+                    serviceIntent.putExtra(WALLET_TRANSACTION_TITLE, title);
+                    serviceIntent.putExtra(WALLET_TRANSACTION_TEXT, notification.text);
+                    FinancistoService.enqueueWork(context, serviceIntent);
+                    return;
+                }
+
                 final DatabaseAdapter db = new DatabaseAdapter(context);
                 List<SmsTemplate> templates = db.getSmsTemplatesByNumber(title);
 
@@ -116,6 +139,7 @@ public class NotificationListener extends NotificationListenerService {
                 }
                 sb.append(bigText);
             }
+            result.text = sb.toString();
             result.body = result.title + " " + sb;
         }
         return result;
@@ -124,6 +148,7 @@ public class NotificationListener extends NotificationListenerService {
     public static class ParsedNotification {
         public String key;
         public String title;
+        public String text;
         public String body;
     }
 

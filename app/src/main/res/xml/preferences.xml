@@ -64,6 +64,22 @@
             android:title="@string/pref_tpl_adding_to_note_title" />
     </PreferenceCategory>
 
+    <PreferenceCategory android:title="@string/pref_google_wallet">
+        <SwitchPreferenceCompat
+            android:defaultValue="false"
+            android:key="google_wallet_transaction"
+            android:summary="@string/pref_google_wallet_transaction_summary"
+            android:title="@string/pref_google_wallet_transaction_title" />
+        <ListPreference
+            android:defaultValue="PN"
+            android:dependency="google_wallet_transaction"
+            android:entries="@array/pref_transaction_statuses"
+            android:entryValues="@array/pref_transaction_status_values"
+            android:key="google_wallet_transaction_status"
+            android:summary="@string/pref_google_wallet_transaction_status"
+            android:title="@string/pref_tpl_transaction_status_title" />
+    </PreferenceCategory>
+
     <PreferenceCategory android:title="@string/protection">
         <SwitchPreferenceCompat
             android:defaultValue="true"
