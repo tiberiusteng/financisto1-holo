@@ -196,7 +196,7 @@
   <string name="field_separator">\n欄位分隔</string>
   <string name="include_header">包含標題</string>
   <string name="include_tx_status">包含交易狀態</string>
-  <string name="delete_account_confirm">確定砍掉帳戶?</string>
+  <string name="delete_account_confirm">確定刪除帳戶?</string>
   <string name="delete_transaction_confirm">確定刪掉交易?</string>
   <string name="delete_budget_confirm">確定刪除預算?</string>
   <string name="delete_budget_recurring_select">您確定要砍掉這個循環的預算嗎?</string>
@@ -287,6 +287,7 @@
   <string name="update_balance">調整餘額</string>
   <string name="close_account">關閉帳戶</string>
   <string name="reopen_account">重開帳戶</string>
+  <string name="delete_account">刪除帳戶</string>
   <string name="difference">差異值</string>
   <string name="new_balance">最新餘額</string>
   <string name="duplicate_success">已用現在的時間點複製交易項目</string>

@@ -30,6 +30,23 @@
 
 <h2>Changelog</h2>
 
+<p><b>2026-07-23</b></p>
+<dl>
+    <dt><span>[+]</span> Create transaction from Google Wallet notification (#125, by kokosik8998)</dt>
+    <dd>
+        Automatically create a transaction when a Google Wallet payment notification appears.
+        Requires notification access. The account is matched by name: name a Financisto account
+        the same as the card shown after "with" in the notification (e.g. "Сільпо").
+        A card number, an account whose card number field contains the last 4 digits, or an account
+        name contained in the card label also match.
+    </dd>
+    <dt><span>[+]</span> Fast scroll only after start scrolling (#122, by yeh1518)</dt>
+    <dt><span>[+]</span> Account include into reports config; If disabled, transfer from a normal
+        account into it still counts — as an expense of the source account, which matches how
+        envelope budgeting (#124, by yeh1518)</dt>
+    <dt><span>[-]</span> Fix 2D chart report potentially crash when there are no data point in selected period to display</dt>
+</dl>
+
 <p><b>2026-07-19 c</b></p>
 <dl>
     <dt><span>[+]</span> Go To Today button (enable in blotter preferences)</dt>
