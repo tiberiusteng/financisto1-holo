@@ -403,10 +403,12 @@ public class ReportDataByPeriod {
 		}
 		
 		// Generating statistics
-		max = values.get(0).getValue();
-		min = values.get(0).getValue();
-		absMax = Math.abs(values.get(0).getValue());
-		absMin = Math.abs(values.get(0).getValue());
+		if (!values.isEmpty()) {
+			max = values.get(0).getValue();
+			min = values.get(0).getValue();
+			absMax = Math.abs(values.get(0).getValue());
+			absMin = Math.abs(values.get(0).getValue());
+		}
 		minNonNull = Double.POSITIVE_INFINITY;
 		maxNonNull = Double.NEGATIVE_INFINITY;
 		absMinNonNull = Double.POSITIVE_INFINITY;
