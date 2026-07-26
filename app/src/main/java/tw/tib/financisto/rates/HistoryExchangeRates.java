@@ -33,7 +33,7 @@ public class HistoryExchangeRates implements ExchangeRateProvider, ExchangeRates
         this.context = context;
     }
 
-    private final Long2ObjectOpenHashMap<Map<Long, SortedSet<ExchangeRate>>> rates = new Long2ObjectOpenHashMap<>();
+    private final Long2ObjectOpenHashMap<Long2ObjectOpenHashMap<SortedSet<ExchangeRate>>> rates = new Long2ObjectOpenHashMap<>();
 
     @Override
     public void addRate(ExchangeRate r) {
@@ -104,12 +104,12 @@ public class HistoryExchangeRates implements ExchangeRateProvider, ExchangeRates
     }
 
     private SortedSet<ExchangeRate> getRates(long fromCurrencyId, long toCurrencyId) {
-        Map<Long, SortedSet<ExchangeRate>> map = getMapFor(fromCurrencyId);
+        var map = getMapFor(fromCurrencyId);
         return getSetFor(map, toCurrencyId);
     }
 
-    private Map<Long, SortedSet<ExchangeRate>> getMapFor(long fromCurrencyId) {
-        Map<Long, SortedSet<ExchangeRate>> m = rates.get(fromCurrencyId);
+    private Long2ObjectOpenHashMap<SortedSet<ExchangeRate>> getMapFor(long fromCurrencyId) {
+        var m = rates.get(fromCurrencyId);
         if (m == null) {
             m = new Long2ObjectOpenHashMap<>();
             rates.put(fromCurrencyId, m);
@@ -117,7 +117,7 @@ public class HistoryExchangeRates implements ExchangeRateProvider, ExchangeRates
         return m;
     }
     
-    private SortedSet<ExchangeRate> getSetFor(Map<Long, SortedSet<ExchangeRate>> rates, long date) {
+    private SortedSet<ExchangeRate> getSetFor(Long2ObjectOpenHashMap<SortedSet<ExchangeRate>> rates, long date) {
         SortedSet<ExchangeRate> s = rates.get(date);
         if (s == null) {
             s = new TreeSet<ExchangeRate>();
