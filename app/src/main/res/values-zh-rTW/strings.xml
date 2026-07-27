@@ -638,6 +638,8 @@
   <string name="reset_copied_foreign_transaction_status_to_summary">複製的外幣交易將設為: %s</string>
   <string name="update_copied_transaction_project">複製交易時更新專案</string>
   <string name="update_copied_transaction_project_summary">複製有專案的交易時改用最新使用過的專案</string>
+  <string name="highlight_copied_unedited_transactions">突顯複製後未編輯的交易</string>
+  <string name="highlight_copied_unedited_transactions_summary">突顯一天或到重啟程式為止</string>
   <string name="colorize_weekend_date">彩色標記週末日期</string>
   <string name="colorize_weekend_date_summary">將週六、週日的日期時間以紅色顯示</string>
   <string name="blotter_show_time_of_day">顯示交易時間</string>

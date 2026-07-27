@@ -82,6 +82,11 @@
         android:summary="@string/update_copied_transaction_project_summary"
         android:title="@string/update_copied_transaction_project" />
     <SwitchPreferenceCompat
+        android:defaultValue="false"
+        android:key="highlight_copied_unedited_transactions"
+        android:summary="@string/highlight_copied_unedited_transactions_summary"
+        android:title="@string/highlight_copied_unedited_transactions" />
+    <SwitchPreferenceCompat
         android:defaultValue="true"
         android:key="colorize_weekend_date"
         android:summary="@string/colorize_weekend_date_summary"

@@ -712,6 +712,9 @@
     <string name="update_copied_transaction_project">Update Project of copied transaction</string>
     <string name="update_copied_transaction_project_summary">Make copied transaction use latest project if it has a project</string>
 
+    <string name="highlight_copied_unedited_transactions">Highlight copied but unedited transaction</string>
+    <string name="highlight_copied_unedited_transactions_summary">Highlight for a day or until app restart</string>
+
     <string name="colorize_weekend_date">Colorize weekend date/time</string>
     <string name="colorize_weekend_date_summary">Show dates of Saturday/Sunday in red</string>
 
