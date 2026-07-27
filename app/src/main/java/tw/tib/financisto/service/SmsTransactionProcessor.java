@@ -56,6 +56,7 @@ public class SmsTransactionProcessor {
                 String payeeText =  match[PAYEE.ordinal()];
                 String projectText = match[PROJECT.ordinal()];
                 String currencyText = match[CURRENCY.ordinal()];
+                String timestampMillisText = match[TIMESTAMP_MILLIS.ordinal()];
                 if (text == null && greedy_text != null) {
                     text = greedy_text;
                 }
@@ -75,7 +76,7 @@ public class SmsTransactionProcessor {
                 try {
                     BigDecimal price = toBigDecimal(parsedPrice);
                     return createNewTransaction(context, addr, fullSmsBody, template, currencyText, price, account, account_name,
-                            transfer_to_account_name, payeeText, projectText, note, status);
+                            transfer_to_account_name, payeeText, projectText, note, timestampMillisText, status);
                 } catch (Exception e) {
                     Log.e(TAG, format("Failed to parse price value: \"%s\"", parsedPrice), e);
                 }
@@ -153,6 +154,7 @@ public class SmsTransactionProcessor {
         String payeeText,
         String projectText,
         String note,
+        String timestampMillis,
         TransactionStatus status)
     {
         Transaction res = null;
@@ -184,6 +186,10 @@ public class SmsTransactionProcessor {
             res = new Transaction();
             res.isTemplate = 0;
             res.fromAccountId = accountId;
+
+            if (timestampMillis != null) {
+                res.dateTime = Long.parseLong(timestampMillis);
+            }
 
             if (payee != null) {
                 res.payeeId = payee.id;
@@ -355,6 +361,7 @@ public class SmsTransactionProcessor {
         DATE("<:D:>", "\\s{0,3}(\\d[\\d\\. /:-]{12,14}\\d)\\s*?", "{{d}}"),
         PAYEE("<:E:>", "(\\S+?)", "{{e}}"),
         CURRENCY("<:F:>", "([A-Z]{3})", "{{f}}"),
+        TIMESTAMP_MILLIS("<:G:>", "(\\d{1,13})", "{{g}}"),
         PRICE("<:P:>", BALANCE.regexp, "{{p}}"),
         PROJECT("<:R:>", "(\\S+?)", "{{r}}"),
         TEXT("<:T:>", "(.*?)", "{{t}}"),
