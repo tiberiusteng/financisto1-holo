@@ -1,61 +1,74 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.preference.PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
+<androidx.preference.PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
     <SwitchPreferenceCompat
+        app:singleLineTitle="false"
         android:defaultValue="true"
         android:key="quick_menu_transaction_enabled"
         android:summary="@string/quick_menu_transaction_enabled_summary"
         android:title="@string/quick_menu_transaction_enabled" />
     <SwitchPreferenceCompat
+        app:singleLineTitle="false"
         android:defaultValue="false"
         android:key="quick_menu_transaction_additional_status"
         android:summary="@string/quick_menu_transaction_additional_status_summary"
         android:title="@string/quick_menu_transaction_additional_status" />
     <SwitchPreferenceCompat
+        app:singleLineTitle="false"
         android:defaultValue="false"
         android:key="quick_menu_transaction_duplicate_keep_time"
         android:summary="@string/quick_menu_transaction_duplicate_keep_time_summary"
         android:title="@string/quick_menu_transaction_duplicate_keep_time" />
     <SwitchPreferenceCompat
+        app:singleLineTitle="false"
         android:defaultValue="false"
         android:key="quick_menu_transaction_duplicate_keep_time_in_yesterday"
         android:summary="@string/quick_menu_transaction_duplicate_keep_time_in_yesterday_summary"
         android:title="@string/quick_menu_transaction_duplicate_keep_time_in_yesterday" />
     <SwitchPreferenceCompat
+        app:singleLineTitle="false"
         android:defaultValue="false"
         android:key="quick_menu_transaction_duplicate_keep_date_time"
         android:summary="@string/quick_menu_transaction_duplicate_keep_date_time_summary"
         android:title="@string/quick_menu_transaction_duplicate_keep_date_time" />
     <SwitchPreferenceCompat
+        app:singleLineTitle="false"
         android:defaultValue="false"
         android:key="collapse_blotter_buttons"
         android:summary="@string/collapse_blotter_buttons_summary"
         android:title="@string/collapse_blotter_buttons" />
     <SwitchPreferenceCompat
+        app:singleLineTitle="false"
         android:defaultValue="false"
         android:key="show_go_to_today_button"
         android:summary="@string/show_go_to_today_button_summary"
         android:title="@string/show_go_to_today_button" />
     <SwitchPreferenceCompat
+        app:singleLineTitle="false"
         android:defaultValue="true"
         android:key="show_running_balance"
         android:summary="@string/show_running_balance_summary"
         android:title="@string/show_running_balance" />
     <SwitchPreferenceCompat
+        app:singleLineTitle="false"
         android:defaultValue="true"
         android:key="colorize_blotter_item"
         android:summary="@string/colorize_blotter_item_summary"
         android:title="@string/colorize_blotter_item" />
     <SwitchPreferenceCompat
+        app:singleLineTitle="false"
         android:defaultValue="true"
         android:key="show_project_in_blotter"
         android:summary="@string/show_project_in_blotter_summary"
         android:title="@string/show_project_in_blotter" />
     <SwitchPreferenceCompat
+        app:singleLineTitle="false"
         android:defaultValue="true"
         android:key="reset_copied_transaction_status"
         android:summary="@string/reset_copied_transaction_status_summary"
         android:title="@string/reset_copied_transaction_status" />
     <ListPreference
+        app:singleLineTitle="false"
         android:dependency="reset_copied_transaction_status"
         android:defaultValue="UR"
         android:entries="@array/pref_transaction_statuses"
@@ -64,11 +77,13 @@
         android:summary="@string/reset_copied_transaction_status_to_summary"
         android:title="@string/reset_copied_transaction_status_to" />
     <SwitchPreferenceCompat
+        app:singleLineTitle="false"
         android:defaultValue="false"
         android:key="reset_copied_foreign_transaction_status"
         android:summary="@string/reset_copied_foreign_transaction_status_summary"
         android:title="@string/reset_copied_foreign_transaction_status" />
     <ListPreference
+        app:singleLineTitle="false"
         android:dependency="reset_copied_foreign_transaction_status"
         android:defaultValue="PN"
         android:entries="@array/pref_transaction_statuses"
@@ -77,21 +92,25 @@
         android:summary="@string/reset_copied_foreign_transaction_status_to_summary"
         android:title="@string/reset_copied_foreign_transaction_status_to" />
     <SwitchPreferenceCompat
+        app:singleLineTitle="false"
         android:defaultValue="false"
         android:key="update_copied_transaction_project"
         android:summary="@string/update_copied_transaction_project_summary"
         android:title="@string/update_copied_transaction_project" />
     <SwitchPreferenceCompat
+        app:singleLineTitle="false"
         android:defaultValue="false"
         android:key="highlight_copied_unedited_transactions"
         android:summary="@string/highlight_copied_unedited_transactions_summary"
         android:title="@string/highlight_copied_unedited_transactions" />
     <SwitchPreferenceCompat
+        app:singleLineTitle="false"
         android:defaultValue="true"
         android:key="colorize_weekend_date"
         android:summary="@string/colorize_weekend_date_summary"
         android:title="@string/colorize_weekend_date" />
     <SwitchPreferenceCompat
+        app:singleLineTitle="false"
         android:defaultValue="true"
         android:key="blotter_show_time_of_day"
         android:summary="@string/blotter_show_time_of_day_summary"
