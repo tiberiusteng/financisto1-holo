@@ -14,6 +14,7 @@ import static android.Manifest.permission.POST_NOTIFICATIONS;
 
 import android.content.Intent;
 import android.database.Cursor;
+import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
@@ -71,8 +72,10 @@ import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.core.graphics.Insets;
 import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
+import androidx.documentfile.provider.DocumentFile;
 
 public abstract class AbstractTransactionActivity extends AbstractActivity implements CategorySelector.CategorySelectorListener {
+	public static final String TAG = "AbstractTxActivity";
 
 	public static final String TRAN_ID_EXTRA = "tranId";
 	public static final String ACCOUNT_ID_EXTRA = "accountId";
@@ -104,6 +107,9 @@ public abstract class AbstractTransactionActivity extends AbstractActivity imple
 	protected TextView notificationText;
 
 	private View pictureTopView;
+	private View takePhotoButton;
+	private View selectFromAlbumButton;
+	private View removePictureButton;
 	private ImageView pictureView;
 	private TextView pictureDescView;
 
@@ -149,7 +155,11 @@ public abstract class AbstractTransactionActivity extends AbstractActivity imple
 
 	private QuickActionWidget pickImageActionGrid;
 
-	ActivityResultLauncher<PickVisualMediaRequest> pickMedia;
+	protected ActivityResultLauncher<PickVisualMediaRequest> pickMedia;
+	protected ActivityResultLauncher<Uri> takePicture;
+
+	protected static final String NEW_PICTURE_URI = "newPictureUri";
+	protected Uri newPictureUri;
 
 	protected Transaction transaction = new Transaction();
 
@@ -391,6 +401,12 @@ public abstract class AbstractTransactionActivity extends AbstractActivity imple
 							Log.d("PhotoPicker", "No media selected");
 						}
 					});
+
+			takePicture = registerForActivityResult(new ActivityResultContracts.TakePicture(), ret -> {
+				if (ret == false) return;
+				PicturesUtil.backupPictureFile(this, newPictureUri);
+				selectPicture(DocumentFile.fromSingleUri(this, newPictureUri).getName());
+			});
 		}
 
 		long t1 = System.currentTimeMillis();
@@ -472,9 +488,15 @@ public abstract class AbstractTransactionActivity extends AbstractActivity imple
 			}
 		}
 		if (isShowTakePicture && transaction.isNotTemplateLike()) {
-			pictureTopView = x.addPictureNodeMinus(this, layout, R.id.attach_picture, R.id.delete_picture, R.string.attach_picture, R.string.new_picture);
+			pictureTopView = x.addPictureNodeMinus(this, layout, R.id.attach_picture, R.id.take_photo, R.id.select_from_album, R.id.delete_picture, R.string.attach_picture, R.string.new_picture);
+			takePhotoButton = pictureTopView.findViewById(R.id.take_photo);
+			selectFromAlbumButton = pictureTopView.findViewById(R.id.select_from_album);
+			removePictureButton = pictureTopView.findViewById(R.id.delete_picture);
 			pictureView = pictureTopView.findViewById(R.id.picture);
 			pictureDescView = pictureTopView.findViewById(R.id.data);
+			takePhotoButton.setVisibility(View.VISIBLE);
+			selectFromAlbumButton.setVisibility(View.VISIBLE);
+			removePictureButton.setVisibility(View.GONE);
 		}
 		if (isShowIsCCardPayment) {
 			// checkbox to register if the transaction is a credit card payment.
@@ -495,44 +517,46 @@ public abstract class AbstractTransactionActivity extends AbstractActivity imple
 		projectSelector.onClick(id);
 		categorySelector.onClick(id);
 		locationSelector.onClick(id);
-		switch (id) {
-			case R.id.account:
-				x.select(this, R.id.account, R.string.account, accountCursor, accountAdapter,
-						AccountColumns.ID, getSelectedAccountId());
-				break;
-			case R.id.recurrence_pattern: {
-				Intent intent = new Intent(this, RecurrenceActivity.class);
-				intent.putExtra(RecurrenceActivity.RECURRENCE_PATTERN, recurrence);
-				startActivityForResult(intent, RECURRENCE_REQUEST);
-				break;
+
+		if (id == R.id.account) {
+			x.select(this, R.id.account, R.string.account, accountCursor, accountAdapter,
+					AccountColumns.ID, getSelectedAccountId());
+		}
+		else if (id == R.id.recurrence_pattern) {
+			Intent intent = new Intent(this, RecurrenceActivity.class);
+			intent.putExtra(RecurrenceActivity.RECURRENCE_PATTERN, recurrence);
+			startActivityForResult(intent, RECURRENCE_REQUEST);
+		}
+		else if (id == R.id.notification) {
+			if ((Build.VERSION.SDK_INT < Build.VERSION_CODES.TIRAMISU) ||
+				(!isRequestingPermission(this, POST_NOTIFICATIONS)))
+			{
+				Intent intent = new Intent(this, NotificationOptionsActivity.class);
+				intent.putExtra(NotificationOptionsActivity.NOTIFICATION_OPTIONS, notificationOptions);
+				startActivityForResult(intent, NOTIFICATION_REQUEST);
 			}
-			case R.id.notification: {
-				if ((Build.VERSION.SDK_INT < Build.VERSION_CODES.TIRAMISU) ||
-					(!isRequestingPermission(this, POST_NOTIFICATIONS)))
-				{
-					Intent intent = new Intent(this, NotificationOptionsActivity.class);
-					intent.putExtra(NotificationOptionsActivity.NOTIFICATION_OPTIONS, notificationOptions);
-					startActivityForResult(intent, NOTIFICATION_REQUEST);
-				}
-				break;
+		}
+		else if (id == R.id.select_from_album) {
+			if (PicturesUtil.getPictureFolderUri(this) != null) {
+				transaction.blobKey = null;
+				pickMedia.launch(new PickVisualMediaRequest.Builder()
+						.setMediaType(ActivityResultContracts.PickVisualMedia.ImageOnly.INSTANCE)
+						.build());
 			}
-			case R.id.attach_picture: {
-				if (PicturesUtil.getPictureFolderUri(this) != null) {
-					transaction.blobKey = null;
-					pickMedia.launch(new PickVisualMediaRequest.Builder()
-							.setMediaType(ActivityResultContracts.PickVisualMedia.ImageOnly.INSTANCE)
-							.build());
-				}
-				break;
+		}
+		else if (id ==R.id.take_photo) {
+			if (PicturesUtil.getPictureFolderUri(this) != null) {
+				transaction.blobKey = null;
+				newPictureUri = PicturesUtil.createPictureFile(this);
+				takePicture.launch(newPictureUri);
 			}
-			case R.id.delete_picture: {
-				removePicture();
-				break;
-			}
-			case R.id.is_ccard_payment: {
-				ccardPayment.setChecked(!ccardPayment.isChecked());
-				transaction.isCCardPayment = ccardPayment.isChecked() ? 1 : 0;
-			}
+		}
+		else if (id == R.id.delete_picture) {
+			removePicture();
+		}
+		else if (id == R.id.is_ccard_payment) {
+			ccardPayment.setChecked(!ccardPayment.isChecked());
+			transaction.isCCardPayment = ccardPayment.isChecked() ? 1 : 0;
 		}
 	}
 
@@ -678,17 +702,27 @@ public abstract class AbstractTransactionActivity extends AbstractActivity imple
 		PicturesUtil.showImage(this, pictureView, pictureDescView, pictureFileName);
 		pictureView.setTag(R.id.attached_picture, pictureFileName);
 		transaction.attachedPicture = pictureFileName;
+
+		takePhotoButton.setVisibility(View.GONE);
+		selectFromAlbumButton.setVisibility(View.GONE);
+		removePictureButton.setVisibility(View.VISIBLE);
 	}
 
 	private void removePicture() {
 		if (pictureView == null) {
 			return;
 		}
+		// TODO: delete (potentially multiple) removed pictures or not-saved new pictures
+		//  when saving and cancel creating
+		// can't just delete here, since it should be only committed when explicitly pressed "Save"
 		transaction.attachedPicture = null;
 		transaction.blobKey = null;
 		pictureView.setImageBitmap(null);
 		pictureView.setTag(R.id.attached_picture, null);
 		pictureDescView.setText(R.string.new_picture);
+		takePhotoButton.setVisibility(View.VISIBLE);
+		selectFromAlbumButton.setVisibility(View.VISIBLE);
+		removePictureButton.setVisibility(View.GONE);
 	}
 
 	protected void setDateTime(long date) {
@@ -824,5 +858,17 @@ public abstract class AbstractTransactionActivity extends AbstractActivity imple
 		if (locationSelector != null) locationSelector.onDestroy();
 		if (categorySelector != null) categorySelector.onDestroy();
 		super.onDestroy();
+	}
+
+	@Override
+	protected void onSaveInstanceState(Bundle outState) {
+		super.onSaveInstanceState(outState);
+		outState.putString(NEW_PICTURE_URI, newPictureUri.toString());
+	}
+
+	@Override
+	protected void onRestoreInstanceState(Bundle saved) {
+		super.onRestoreInstanceState(saved);
+		newPictureUri = Uri.parse(saved.getString(NEW_PICTURE_URI));
 	}
 }

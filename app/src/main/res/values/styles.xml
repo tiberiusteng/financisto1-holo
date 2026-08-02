@@ -118,6 +118,16 @@
 		<item name="android:src">@drawable/apps</item>
 		<item name="android:tint">#ff5c5c5c</item>
 	</style>
+	<style name="CameraButton">
+		<item name="android:background">@drawable/btn_circle2</item>
+		<item name="android:src">@drawable/photo_camera</item>
+		<item name="android:tint">#ff5c5c5c</item>
+	</style>
+	<style name="PhotoAlbumButton">
+		<item name="android:background">@drawable/btn_circle2</item>
+		<item name="android:src">@drawable/photo_album</item>
+		<item name="android:tint">#ff5c5c5c</item>
+	</style>
 	<style name="DownloadButton" parent="ListButton">
 		<item name="android:src">@drawable/material_download</item>
 	</style>

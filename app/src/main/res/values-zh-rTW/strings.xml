@@ -544,7 +544,8 @@
   <string name="enable_widget">啟用小工具</string>
   <string name="enable_widget_summary">在小工具顯示帳戶總額</string>
   <string name="attach_picture">附加照片</string>
-  <string name="new_picture">選取照片</string>
+  <string name="new_picture">拍照/選取照片</string>
+  <string name="delete_picture_confirm">確認移除並刪除照片檔案?</string>
   <string name="credits">信用額度</string>
   <string name="sort_by_title">根據標題排序</string>
   <string name="sort_all_by_title">全部根據標題排序</string>

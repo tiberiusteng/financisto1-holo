@@ -603,7 +603,8 @@
     <string name="enable_widget">Enable widget</string>
     <string name="enable_widget_summary">Show account total on the widget</string>
     <string name="attach_picture">Attach picture</string>
-    <string name="new_picture">Pick a picture</string>
+    <string name="new_picture">Take a photo / pick a picture</string>
+    <string name="delete_picture_confirm">Remove and delete the picture file?</string>
 
     <string name="credits">Credits</string>
     <string name="sort_by_title">Sort by title</string>

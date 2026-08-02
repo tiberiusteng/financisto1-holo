@@ -333,9 +333,13 @@ public class ActivityLayout {
 		plusImageView.setVisibility(View.VISIBLE);
 	}
 
-	public View addPictureNodeMinus(Context context, LinearLayout layout, int id, int minusId, int labelId, int defaultLabelResId) {
+	public View addPictureNodeMinus(Context context, LinearLayout layout, int id, int cameraId, int albumId, int minusId, int labelId, int defaultLabelResId) {
 		PictureBuilder b = inflater.new PictureBuilder(layout);
-		return b.withPicture(context, null).withButtonId(minusId, listener).withId(id, listener)
+		return b.withPicture(context, null)
+				.withCameraButtonId(cameraId, listener)
+				.withAlbumButtonId(albumId, listener)
+				.withButtonId(minusId, listener)
+				.withId(id, listener)
 				.withLabel(labelId).withData(defaultLabelResId).create();
 	}
 

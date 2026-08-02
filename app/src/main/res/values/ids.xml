@@ -78,6 +78,8 @@
 	<item name="status_clear" type="id" />
 	<item name="transfer" type="id" />
 	<item name="transfer_clear" type="id" />
+	<item name="take_photo" type="id" />
+	<item name="select_from_album" type="id" />
 	<item name="attach_picture" type="id" />
 	<item name="delete_picture" type="id" />
 	<item name="negative_opening_amount" type="id" />
