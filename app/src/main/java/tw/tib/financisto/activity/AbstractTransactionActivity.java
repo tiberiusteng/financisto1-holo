@@ -35,10 +35,10 @@ import tw.tib.financisto.datetime.DateUtils;
 import tw.tib.financisto.db.DatabaseHelper.AccountColumns;
 import tw.tib.financisto.db.DatabaseHelper.TransactionColumns;
 import tw.tib.financisto.dialog.DatePickerTwinDialog;
-import tw.tib.financisto.model.*;
 import tw.tib.financisto.model.Account;
 import tw.tib.financisto.model.Attribute;
 import tw.tib.financisto.model.Category;
+import tw.tib.financisto.model.Payee;
 import tw.tib.financisto.model.SystemAttribute;
 import tw.tib.financisto.model.Transaction;
 import tw.tib.financisto.model.TransactionAttribute;
@@ -863,12 +863,15 @@ public abstract class AbstractTransactionActivity extends AbstractActivity imple
 	@Override
 	protected void onSaveInstanceState(Bundle outState) {
 		super.onSaveInstanceState(outState);
-		outState.putString(NEW_PICTURE_URI, newPictureUri.toString());
+		if (newPictureUri != null) {
+			outState.putString(NEW_PICTURE_URI, newPictureUri.toString());
+		}
 	}
 
 	@Override
 	protected void onRestoreInstanceState(Bundle saved) {
 		super.onRestoreInstanceState(saved);
-		newPictureUri = Uri.parse(saved.getString(NEW_PICTURE_URI));
+		String savedUri = saved.getString(NEW_PICTURE_URI);
+		if (savedUri != null) newPictureUri = Uri.parse(savedUri);
 	}
 }
