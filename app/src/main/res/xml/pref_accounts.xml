@@ -1,11 +1,14 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.preference.PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
+<androidx.preference.PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
     <SwitchPreferenceCompat
+        app:singleLineTitle="false"
         android:defaultValue="true"
         android:key="quick_menu_account_enabled"
         android:summary="@string/quick_menu_account_enabled_summary"
         android:title="@string/quick_menu_account_enabled" />
     <ListPreference
+        app:singleLineTitle="false"
         android:defaultValue="LAST_TX"
         android:entries="@array/account_list_date_types"
         android:entryValues="@array/account_list_date_type_values"
@@ -13,6 +16,7 @@
         android:summary="@string/account_list_date_summary"
         android:title="@string/account_list_date" />
     <ListPreference
+        app:singleLineTitle="false"
         android:defaultValue="SORT_ORDER_ASC"
         android:entries="@array/sort_accounts_entities"
         android:entryValues="@array/sort_accounts_values"
@@ -24,22 +28,25 @@
         android:summary="@string/reorder_accounts_summary"
         android:title="@string/reorder_accounts" />
     <SwitchPreferenceCompat
+        app:singleLineTitle="false"
         android:defaultValue="false"
         android:key="blur_balances"
         android:summary="@string/blur_balances_summary"
         android:title="@string/blur_balances" />
-        />
     <SwitchPreferenceCompat
+        app:singleLineTitle="false"
         android:defaultValue="false"
         android:key="hide_closed_accounts"
         android:summary="@string/hide_closed_accounts_summary"
         android:title="@string/hide_closed_accounts" />
     <SwitchPreferenceCompat
+        app:singleLineTitle="false"
         android:defaultValue="true"
         android:key="show_menu_button_on_accounts_screen"
         android:summary="@string/show_menu_button_on_accounts_screen_summary"
         android:title="@string/show_menu_button_on_accounts_screen" />
     <SwitchPreferenceCompat
+        app:singleLineTitle="false"
         android:defaultValue="false"
         android:key="show_transfer_current_balance"
         android:summary="@string/show_transfer_current_balance_summary"

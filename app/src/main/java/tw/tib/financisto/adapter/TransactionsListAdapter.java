@@ -50,7 +50,20 @@ public class TransactionsListAdapter extends BlotterListAdapter {
 
     @Override
     protected void bindView(BlotterViewHolder v, Context context, Cursor cursor) {
-        if (cursor.getLong(BlotterColumns._id.ordinal()) == highlightTransactionId) {
+        long transactionId = cursor.getLong(BlotterColumns._id.ordinal());
+        boolean highlightUnedited = false;
+        if (this.highlightCopiedUnedited) {
+            long lastEditTimestamp = copiedUneditedTransactions.get(transactionId);
+            if (lastEditTimestamp != 0) {
+                if (listAdapterTimestamp - lastEditTimestamp < 86400_000) {
+                    highlightUnedited = true;
+                }
+                else {
+                    copiedUneditedTransactions.remove(transactionId);
+                }
+            }
+        }
+        if (highlightUnedited || transactionId == highlightTransactionId) {
             v.layout.setBackgroundColor(highlightBackgroundColor);
         }
         else {

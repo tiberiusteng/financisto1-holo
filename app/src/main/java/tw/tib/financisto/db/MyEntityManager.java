@@ -15,12 +15,13 @@ import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
+import android.util.Log;
 
 import tw.tib.financisto.blotter.BlotterFilter;
 import tw.tib.financisto.datetime.Period;
 import tw.tib.financisto.filter.Criterion;
 import tw.tib.financisto.filter.WhereFilter;
-import tw.tib.financisto.model.*;
+import tw.tib.financisto.model.AccountForSearch;
 import tw.tib.financisto.model.Currency;
 import tw.tib.financisto.utils.MyPreferences;
 import tw.tib.financisto.utils.RecurUtils;
@@ -45,6 +46,7 @@ import tw.tib.orb.Query;
 import java.util.*;
 
 public abstract class MyEntityManager extends EntityManager {
+	private static final String TAG = "MyEntityManager";
 
 	protected final Context context;
 
@@ -94,6 +96,7 @@ public abstract class MyEntityManager extends EntityManager {
 
 	public  <T extends MyEntity> ArrayList<T> getAllEntitiesList(Class<T> clazz, boolean include0, boolean onlyActive, String filter, long... includeEntityIds) {
 		try (Cursor c = queryEntities(clazz, filter, include0, onlyActive, includeEntityIds)) {
+			long t0 = System.nanoTime();
 			T e0 = null;
 			ArrayList<T> list = new ArrayList<>();
 			while (c.moveToNext()) {
@@ -107,6 +110,8 @@ public abstract class MyEntityManager extends EntityManager {
 			if (e0 != null) {
 				list.add(0, e0);
 			}
+			Log.d(TAG, "getAllEntitiesList " + Thread.currentThread().getName() + " " +
+					clazz.getSimpleName() + " " + String.format("%,d", System.nanoTime() - t0) + " ns");
 			return list;
 		}
 	}
@@ -370,9 +375,12 @@ public abstract class MyEntityManager extends EntityManager {
 
 	public int deleteCurrency(long id) {
 		String sid = String.valueOf(id);
-		tw.tib.financisto.model.Currency c = load(tw.tib.financisto.model.Currency.class, id);
-		return db().delete(DatabaseHelper.CURRENCY_TABLE, "_id=? AND NOT EXISTS (SELECT 1 FROM " + DatabaseHelper.ACCOUNT_TABLE + " WHERE " + DatabaseHelper.AccountColumns.CURRENCY_ID + "=?)",
+		int deleted = db().delete(DatabaseHelper.CURRENCY_TABLE, "_id=? AND NOT EXISTS (SELECT 1 FROM " + DatabaseHelper.ACCOUNT_TABLE + " WHERE " + DatabaseHelper.AccountColumns.CURRENCY_ID + "=?)",
 				new String[]{sid, sid});
+		if (deleted > 0) {
+			db().delete(DatabaseHelper.EXCHANGE_RATES_TABLE, "from_currency_id=? OR to_currency_id=?", new String[]{sid, sid});
+		}
+		return deleted;
 	}
 
 	public Cursor getAllCurrencies(String sortBy) {

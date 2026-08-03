@@ -97,6 +97,13 @@ public class CurrencySelector {
         }
         c.isDefault = isTheFirstCurrencyAdded();
         c.updateExchangeRate = true;
+        // prevent creating multiple instance of same currency
+        for (Currency existing : CurrencyCache.getAllCurrencies()) {
+            if (existing.name.equals(c.name)) {
+                listener.onCreated(existing.id);
+                return;
+            }
+        }
         em.saveOrUpdate(c);
         CurrencyCache.initialize(em);
         listener.onCreated(c.id);

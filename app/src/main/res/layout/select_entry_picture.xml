@@ -36,7 +36,7 @@
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"
             app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toStartOf="@id/plus_minus">
+            app:layout_constraintEnd_toStartOf="@id/camera_container">
 
             <TextView
                 android:id="@+id/label"
@@ -58,18 +58,59 @@
 
         </LinearLayout>
 
-        <ImageView
-            android:id="@+id/plus_minus"
-            style="@style/MinusButton"
+        <FrameLayout
+            android:id="@+id/camera_container"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:clickable="true"
-            android:focusable="true"
-            android:visibility="gone"
-            android:duplicateParentState="true"
             app:layout_constraintTop_toTopOf="parent"
             app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toEndOf="parent" />
+            app:layout_constraintEnd_toStartOf="@id/album_container">
+            <ImageView
+                android:id="@+id/camera"
+                style="@style/CameraButton"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:clickable="true"
+                android:focusable="true"
+                android:visibility="visible"
+                android:paddingHorizontal="8dp" />
+        </FrameLayout>
+
+        <FrameLayout
+            android:id="@+id/album_container"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toStartOf="@id/plus_minus_container">
+
+            <ImageView
+                android:id="@+id/album"
+                style="@style/PhotoAlbumButton"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:clickable="true"
+                android:focusable="true"
+                android:visibility="visible"
+                android:paddingHorizontal="8dp" />
+        </FrameLayout>
+
+        <FrameLayout
+            android:id="@+id/plus_minus_container"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent">
+            <ImageView
+                android:id="@+id/plus_minus"
+                style="@style/MinusButton"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:clickable="true"
+                android:focusable="true"
+                android:visibility="visible" />
+        </FrameLayout>
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 

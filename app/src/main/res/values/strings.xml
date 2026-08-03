@@ -603,7 +603,8 @@
     <string name="enable_widget">Enable widget</string>
     <string name="enable_widget_summary">Show account total on the widget</string>
     <string name="attach_picture">Attach picture</string>
-    <string name="new_picture">Pick a picture</string>
+    <string name="new_picture">Take a photo / pick a picture</string>
+    <string name="delete_picture_confirm">Remove and delete the picture file?</string>
 
     <string name="credits">Credits</string>
     <string name="sort_by_title">Sort by title</string>
@@ -711,6 +712,9 @@
 
     <string name="update_copied_transaction_project">Update Project of copied transaction</string>
     <string name="update_copied_transaction_project_summary">Make copied transaction use latest project if it has a project</string>
+
+    <string name="highlight_copied_unedited_transactions">Highlight copied but unedited transaction</string>
+    <string name="highlight_copied_unedited_transactions_summary">Highlight for a day or until app restart</string>
 
     <string name="colorize_weekend_date">Colorize weekend date/time</string>
     <string name="colorize_weekend_date_summary">Show dates of Saturday/Sunday in red</string>
@@ -1088,7 +1092,7 @@
     <string name="sms_number_hint">Notification sender app name or SMS sender number, use % to indicate wildcard match</string>
     <string name="sms_tpl">Notification / SMS Template</string>
     <string name="sms_tpl_title">Template (?)</string>
-    <string name="sms_tpl_desc">Placeholders: \n{{p}} - price\n{{a}} - account last digits\n{{c}} - account name\n{{x}} - transfer to account name\n{{f}} - ISO 4217 currency code\n{{e}} - payee title (can\'t contain space)\n{{r}} - project title (can\'t contain space)\n{{t}} - note text (non-greedy)\n{{u}} - note text (greedy)\n{{*}} - any symbols/words</string>
+    <string name="sms_tpl_desc">Placeholders: \n{{p}} - price\n{{a}} - account last digits\n{{c}} - account name\n{{x}} - transfer to account name\n{{f}} - ISO 4217 currency code\n{{e}} - payee title (can\'t contain space)\n{{r}} - project title (can\'t contain space)\n{{t}} - note text (non-greedy)\n{{u}} - note text (greedy)\n{{g}} - Unix timestamp in milliseconds\n{{*}} - any symbols/words</string>
     <string name="sms_tpl_hint">Specify template with placeholders here</string>
     <string name="sms_note_title">Note (?)</string>
     <string name="sms_note_desc">Placeholders: \n{{t}} - note text extracted by template</string>

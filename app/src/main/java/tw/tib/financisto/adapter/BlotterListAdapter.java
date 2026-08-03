@@ -30,6 +30,8 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
 
+import it.unimi.dsi.fastutil.longs.Long2LongOpenHashMap;
+import tw.tib.financisto.Application;
 import tw.tib.financisto.R;
 import tw.tib.financisto.db.DatabaseAdapter;
 import tw.tib.financisto.db.DatabaseHelper.BlotterColumns;
@@ -78,6 +80,10 @@ public class BlotterListAdapter extends ResourceCursorAdapter {
     private final boolean colorizeWeekendDate;
     private final boolean showTimeOfDay;
 
+    protected final boolean highlightCopiedUnedited;
+    protected final Long2LongOpenHashMap copiedUneditedTransactions;
+    protected final long listAdapterTimestamp;
+
     protected long highlightTransactionId = -1;
 
     public BlotterListAdapter(Context context, DatabaseAdapter db, Cursor c) {
@@ -105,6 +111,9 @@ public class BlotterListAdapter extends ResourceCursorAdapter {
         this.showProject = MyPreferences.isShowProjectInBlotter();
         this.colorizeWeekendDate = MyPreferences.isColorizeWeekendDate();
         this.showTimeOfDay = MyPreferences.isBlotterShowTimeOfDay();
+        this.highlightCopiedUnedited = MyPreferences.isHighlightCopiedUneditedTransactions();
+        this.copiedUneditedTransactions = Application.getCopiedUneditedTransactions();
+        this.listAdapterTimestamp = System.currentTimeMillis();
         this.transactionTitleUtils = new TransactionTitleUtils(context, MyPreferences.isColorizeBlotterItem());
         this.db = db;
     }
@@ -137,7 +146,20 @@ public class BlotterListAdapter extends ResourceCursorAdapter {
         TextView noteView = isTemplate == 1 ? v.bottomView : v.centerView;
 //        long t1, t2 = 0, t3, t4;
 //        t1 = System.nanoTime();
-        if (cursor.getLong(BlotterColumns._id.ordinal()) == highlightTransactionId) {
+        long transactionId = cursor.getLong(BlotterColumns._id.ordinal());
+        boolean highlightUnedited = false;
+        if (this.highlightCopiedUnedited) {
+            long lastEditTimestamp = copiedUneditedTransactions.get(transactionId);
+            if (lastEditTimestamp != 0) {
+                if (listAdapterTimestamp - lastEditTimestamp < 86400_000) {
+                    highlightUnedited = true;
+                }
+                else {
+                    copiedUneditedTransactions.remove(transactionId);
+                }
+            }
+        }
+        if (highlightUnedited || transactionId == highlightTransactionId) {
             v.layout.setBackgroundColor(highlightBackgroundColor);
         }
         else {

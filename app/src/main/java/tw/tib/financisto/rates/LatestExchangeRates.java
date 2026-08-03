@@ -18,7 +18,6 @@ import tw.tib.financisto.utils.CurrencyCache;
 
 import java.util.Arrays;
 import java.util.List;
-import java.util.Map;
 
 /**
  * Created by IntelliJ IDEA.
@@ -37,21 +36,21 @@ public class LatestExchangeRates implements ExchangeRateProvider, ExchangeRatesC
         this.db = new DatabaseAdapter(context);
     }
 
-    private final Map<Long, Map<Long, ExchangeRate>> rates = new Long2ObjectOpenHashMap<>();
+    private final Long2ObjectOpenHashMap<Long2ObjectOpenHashMap<ExchangeRate>> rates = new Long2ObjectOpenHashMap<>();
 
     @Override
     public ExchangeRate getRate(Currency fromCurrency, Currency toCurrency) {
         if (fromCurrency.id == toCurrency.id) {
             return ExchangeRate.ONE;
         }
-        Map<Long, ExchangeRate> rateMap = getMapFor(fromCurrency.id);
+        var rateMap = getMapFor(fromCurrency.id);
         ExchangeRate rate = rateMap.get(toCurrency.id);
         if (rate != null) {
             Log.d(TAG, "getRate direct " + rate);
             return rate;
         }
         // estimate from inverse exchange
-        Map<Long, ExchangeRate> rateMapInverse = getMapFor(toCurrency.id);
+        var rateMapInverse = getMapFor(toCurrency.id);
         rate = rateMapInverse.get(fromCurrency.id);
         if (rate != null) {
             ExchangeRate inverse = rate.flip();
@@ -94,7 +93,7 @@ public class LatestExchangeRates implements ExchangeRateProvider, ExchangeRatesC
     }
 
     private ExchangeRate combineRate(
-            Map<Long, ExchangeRate> rateMap, Currency fromCurrency, Currency toCurrency,
+            Long2ObjectOpenHashMap<ExchangeRate> rateMap, Currency fromCurrency, Currency toCurrency,
             ExchangeRate e1, ExchangeRate e2
     ) {
         Log.d(TAG, "combineRate e1=" + e1 + ", e2=" + e2);
@@ -120,12 +119,12 @@ public class LatestExchangeRates implements ExchangeRateProvider, ExchangeRatesC
 
     @Override
     public void addRate(ExchangeRate r) {
-        Map<Long, ExchangeRate> rateMap = getMapFor(r.fromCurrencyId);
+        var rateMap = getMapFor(r.fromCurrencyId);
         rateMap.put(r.toCurrencyId, r);
     }
 
-    private Map<Long, ExchangeRate> getMapFor(long fromCurrencyId) {
-        Map<Long, ExchangeRate> m = rates.get(fromCurrencyId);
+    private Long2ObjectOpenHashMap<ExchangeRate> getMapFor(long fromCurrencyId) {
+        var m = rates.get(fromCurrencyId);
         if (m == null) {
             m = new Long2ObjectOpenHashMap<>();
             rates.put(fromCurrencyId, m);

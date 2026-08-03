@@ -544,7 +544,8 @@
   <string name="enable_widget">啟用小工具</string>
   <string name="enable_widget_summary">在小工具顯示帳戶總額</string>
   <string name="attach_picture">附加照片</string>
-  <string name="new_picture">選取照片</string>
+  <string name="new_picture">拍照/選取照片</string>
+  <string name="delete_picture_confirm">確認移除並刪除照片檔案?</string>
   <string name="credits">信用額度</string>
   <string name="sort_by_title">根據標題排序</string>
   <string name="sort_all_by_title">全部根據標題排序</string>
@@ -638,6 +639,8 @@
   <string name="reset_copied_foreign_transaction_status_to_summary">複製的外幣交易將設為: %s</string>
   <string name="update_copied_transaction_project">複製交易時更新專案</string>
   <string name="update_copied_transaction_project_summary">複製有專案的交易時改用最新使用過的專案</string>
+  <string name="highlight_copied_unedited_transactions">突顯複製後未編輯的交易</string>
+  <string name="highlight_copied_unedited_transactions_summary">突顯一天或到重啟程式為止</string>
   <string name="colorize_weekend_date">彩色標記週末日期</string>
   <string name="colorize_weekend_date_summary">將週六、週日的日期時間以紅色顯示</string>
   <string name="blotter_show_time_of_day">顯示交易時間</string>
@@ -880,7 +883,7 @@
   <string name="sms_number_hint">發送通知的程式名稱或發送簡訊的門號, 可用 % 代表任意字串</string>
   <string name="sms_tpl">通知 / 簡訊模板</string>
   <string name="sms_tpl_title">模板 (?)</string>
-  <string name="sms_tpl_desc">佔位標籤: \n{{p}} - 金額\n{{a}} - 帳號/卡號片段\n{{c}} - 帳號名稱\n{{x}} - 轉帳對象帳號名稱\n{{f}} - ISO 4217 貨幣代碼\n{{e}} - 受款人名稱 (不能有空白)\n{{r}} - 專案名稱 (不能有空白)\n{{t}} - 交易內容敘述 (盡可能短)\n{{u}} - 交易內容敘述 (盡可能長)\n{{*}} - 任意內容 (不處理)</string>
+  <string name="sms_tpl_desc">佔位標籤: \n{{p}} - 金額\n{{a}} - 帳號/卡號片段\n{{c}} - 帳號名稱\n{{x}} - 轉帳對象帳號名稱\n{{f}} - ISO 4217 貨幣代碼\n{{e}} - 受款人名稱 (不能有空白)\n{{r}} - 專案名稱 (不能有空白)\n{{t}} - 交易內容敘述 (盡可能短)\n{{u}} - 交易內容敘述 (盡可能長)\n{{g}} - UNIX 時間戳記 (毫秒)\n{{*}} - 任意內容 (不處理)</string>
   <string name="sms_tpl_hint">在此輸入模板，並以佔位標籤標記資料</string>
   <string name="sms_note_title">備註 (?)</string>
   <string name="sms_note_desc">佔位標籤: \n{{t}} - 會被換成模板取得的交易內容敘述</string>

@@ -184,9 +184,44 @@ public class PicturesUtil {
         return df.format(new Date());
     }
 
-    public static String saveSelectedPicture(Context context, Uri source) {
+    public static Uri createPictureFile(Context context) {
         Uri pictureFolderUri = getPictureFolderUri(context);
+        try {
+            Uri targetFileUri = DocumentsContract.createDocument(context.getContentResolver(),
+                    pictureFolderUri, PICTURES_MIME_TYPE, generateFileName());
+            Log.i(TAG, "createPictureFile: " + targetFileUri);
+            return targetFileUri;
+        } catch (Exception e) {
+            return null;
+        }
+    }
 
+    public static void backupPictureFile(Context context, Uri targetFileUri) {
+        if (MyPreferences.isGoogleDriveUploadPictures()) {
+            Application.getExecutor().execute(() -> {
+                try {
+                    GoogleDriveRESTClient client = new GoogleDriveRESTClient(context);
+                    String pictureFolderId = client.getPictureFolderID(true);
+                    client.uploadFile(targetFileUri, PICTURES_MIME_TYPE, pictureFolderId);
+                } catch (Exception e) {
+                    Log.e(TAG, "upload picture to Google Drive failed", e);
+                }
+            });
+        }
+
+        if (MyPreferences.isDropboxUploadPictures()) {
+            Application.getExecutor().execute(() -> {
+                try {
+                    Dropbox dropbox = new Dropbox(context);
+                    dropbox.uploadPictureFile(targetFileUri);
+                } catch (Exception e) {
+                    Log.e(TAG, "upload picture to Dropbox failed", e);
+                }
+            });
+        }
+    }
+
+    public static String saveSelectedPicture(Context context, Uri source) {
         DocumentFile sourceFile = DocumentFile.fromSingleUri(context, source);
         String sourceFileName = sourceFile.getName();
         Log.i(TAG, "source name: " + sourceFileName);
@@ -194,40 +229,17 @@ public class PicturesUtil {
         Log.i(TAG, "source mime: " + sourceMimeType);
 
         try {
-            Uri targetFileUri = DocumentsContract.createDocument(context.getContentResolver(),
-                    pictureFolderUri, PICTURES_MIME_TYPE, generateFileName());
-            Log.i(TAG, "targetFileUri: " + targetFileUri);
+            Uri targetFileUri = createPictureFile(context);
 
             InputStream inputStream = context.getContentResolver().openInputStream(source);
             OutputStream outputStream = context.getContentResolver().openOutputStream(targetFileUri);
 
             IOUtils.copy(inputStream, outputStream);
 
+            backupPictureFile(context, targetFileUri);
+
             DocumentFile targetFile = DocumentFile.fromSingleUri(context, targetFileUri);
             Log.i(TAG, "targetFile name: " + targetFile.getName());
-
-            if (MyPreferences.isGoogleDriveUploadPictures()) {
-                Application.getExecutor().execute(() -> {
-                    try {
-                        GoogleDriveRESTClient client = new GoogleDriveRESTClient(context);
-                        String pictureFolderId = client.getPictureFolderID(true);
-                        client.uploadFile(targetFileUri, sourceMimeType, pictureFolderId);
-                    } catch (Exception e) {
-                        Log.e(TAG, "upload picture to Google Drive failed", e);
-                    }
-                });
-            }
-
-            if (MyPreferences.isDropboxUploadPictures()) {
-                Application.getExecutor().execute(() -> {
-                    try {
-                        Dropbox dropbox = new Dropbox(context);
-                        dropbox.uploadPictureFile(targetFileUri);
-                    } catch (Exception e) {
-                        Log.e(TAG, "upload picture to Dropbox failed", e);
-                    }
-                });
-            }
 
             return targetFile.getName();
 

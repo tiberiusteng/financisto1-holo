@@ -20,6 +20,8 @@ import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteException;
 import android.util.Log;
 import org.androidannotations.annotations.EBean;
+
+import tw.tib.financisto.Application;
 import tw.tib.financisto.R;
 import tw.tib.financisto.blotter.BlotterFilter;
 import tw.tib.financisto.datetime.DateUtils;
@@ -394,7 +396,11 @@ public class DatabaseAdapter extends MyEntityManager {
             }
             transaction.id = transactionId;
             transaction.splits = splits;
-            insertSplits(transaction);
+            boolean logCopied = MyPreferences.isHighlightCopiedUneditedTransactions();
+            if (logCopied) {
+                Application.getCopiedUneditedTransactions().put(transactionId, System.currentTimeMillis());
+            }
+            insertSplits(transaction, logCopied);
             db.setTransactionSuccessful();
             return transactionId;
         } finally {
@@ -429,6 +435,7 @@ public class DatabaseAdapter extends MyEntityManager {
             db().delete(DatabaseHelper.TRANSACTION_ATTRIBUTE_TABLE, DatabaseHelper.TransactionAttributeColumns.TRANSACTION_ID + "=?",
                     new String[]{String.valueOf(transactionId)});
             deleteSplitsForParentTransaction(transactionId);
+            Application.getCopiedUneditedTransactions().remove(transactionId);
         }
         if (attributes != null) {
             insertAttributes(transactionId, attributes);
@@ -470,6 +477,10 @@ public class DatabaseAdapter extends MyEntityManager {
     }
 
     private void insertSplits(Transaction parent) {
+        insertSplits(parent, false);
+    }
+
+    private void insertSplits(Transaction parent, boolean logCopied) {
         List<Transaction> splits = parent.splits;
         if (splits != null) {
             for (Transaction split : splits) {
@@ -485,6 +496,9 @@ public class DatabaseAdapter extends MyEntityManager {
                 updateSplitOriginalAmount(parent, split);
                 long splitId = insertTransaction(split);
                 insertAttributes(splitId, split.categoryAttributes);
+                if (logCopied) {
+                    Application.getCopiedUneditedTransactions().put(splitId, System.currentTimeMillis());
+                }
             }
         }
     }

@@ -281,11 +281,18 @@ public class NodeInflater {
 			super(layout, R.layout.select_entry_picture);
 		}
 
-		@Override
-		public ListBuilder withButtonId(int buttonId, OnClickListener listener) {
-			ImageView plusImageView = v.findViewById(R.id.plus_minus);
-			plusImageView.setVisibility(VISIBLE);
-			return super.withButtonId(buttonId, listener);
+		public PictureBuilder withCameraButtonId(int buttonId, OnClickListener listener) {
+			ImageView cameraButton = v.findViewById(R.id.camera);
+			cameraButton.setId(buttonId);
+			cameraButton.setOnClickListener(listener);
+			return this;
+		}
+
+		public PictureBuilder withAlbumButtonId(int buttonId, OnClickListener listener) {
+			ImageView albumButton = v.findViewById(R.id.album);
+			albumButton.setId(buttonId);
+			albumButton.setOnClickListener(listener);
+			return this;
 		}
 
 		public PictureBuilder withPicture(final Context context, String pictureFileName) {

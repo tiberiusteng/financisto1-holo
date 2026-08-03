@@ -481,6 +481,10 @@ public class MyPreferences {
 		return getBoolean("update_copied_transaction_project", false);
 	}
 
+	public static boolean isHighlightCopiedUneditedTransactions() {
+		return getBoolean("highlight_copied_unedited_transactions", false);
+	}
+
 	public static boolean isColorizeWeekendDate() {
 		return getBoolean("colorize_weekend_date", true);
 	}
