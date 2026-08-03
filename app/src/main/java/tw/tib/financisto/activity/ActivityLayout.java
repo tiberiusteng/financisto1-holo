@@ -344,6 +344,12 @@ public class ActivityLayout {
 		return b.withLabel(labelId).create();
 	}
 
+	public View addEditNodeWithButton(LinearLayout layout, int labelId, int buttonId,
+									  View.OnClickListener onClickListener, EditText editText) {
+		EditButtonBuilder b = inflater.new EditButtonBuilder(layout, editText);
+		return b.withButtonId(buttonId, onClickListener).withLabel(labelId).create();
+	}
+
 	public View addColorEditNode(LinearLayout layout, int labelId, int buttonId, View.OnClickListener onClickListener, EditText editText) {
 		EditColorBuilder b = inflater.new EditColorBuilder(layout, editText);
 		var view = b.withPaletteButtonId(buttonId, onClickListener).withLabel(labelId).create();

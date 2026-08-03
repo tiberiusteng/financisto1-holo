@@ -43,6 +43,7 @@ import java.util.List;
 
 import tw.tib.financisto.R;
 import tw.tib.financisto.adapter.EntityEnumAdapter;
+import tw.tib.financisto.dialog.AccountReorderDialog;
 import tw.tib.financisto.model.Account;
 import tw.tib.financisto.model.AccountType;
 import tw.tib.financisto.model.CardIssuer;
@@ -246,7 +247,13 @@ public class AccountActivity extends AbstractActivity {
 					.show();
 		}, accentColor);
 
-		x.addEditNode(layout, R.string.sort_order, sortOrderText);
+		x.addEditNodeWithButton(layout, R.string.sort_order, R.id.reorder_accounts, clicked -> {
+			new AccountReorderDialog(this, db, () -> {
+				if (account.id > 0) {
+					sortOrderText.setText(String.valueOf(db.getAccount(account.id).sortOrder));
+				}
+			}).show();
+		}, sortOrderText);
 		isIncludedIntoTotals = x.addCheckboxNode(layout,
 				R.id.is_included_into_totals, R.string.is_included_into_totals,
 				R.string.is_included_into_totals_summary, true);
