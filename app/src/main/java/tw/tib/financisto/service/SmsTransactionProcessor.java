@@ -366,7 +366,13 @@ public class SmsTransactionProcessor {
         PROJECT("<:R:>", "(\\S+?)", "{{r}}"),
         TEXT("<:T:>", "(.*?)", "{{t}}"),
         GREEDY_TEXT("<:U:>", "(.*)", "{{u}}"),
-        TRANSFER_TO_ACCOUNT_NAME("<:X:>", "(\\w+?)", "{{x}}");
+        // (\w+?) fails on account titles containing punctuation such as "-" or "()":
+        // those are not word characters, so the template does not match at all and no
+        // transaction is created. Use (\S+?), consistent with ACCOUNT_NAME / PAYEE /
+        // PROJECT above; \S is a superset of \w, so existing templates keep working.
+        // Covered by PlaceholderCaptureTest in androidTest — it has to run on a device,
+        // because Android's regex is ICU-backed and a desktop JVM answers differently.
+        TRANSFER_TO_ACCOUNT_NAME("<:X:>", "(\\S+?)", "{{x}}");
 
         public String code;
         public String regexp;
