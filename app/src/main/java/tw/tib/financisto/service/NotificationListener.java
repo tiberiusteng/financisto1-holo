@@ -8,13 +8,18 @@ import static tw.tib.financisto.service.FinancistoService.WALLET_TRANSACTION_TEX
 import static tw.tib.financisto.service.FinancistoService.WALLET_TRANSACTION_TITLE;
 
 import android.app.Notification;
+import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
+import android.content.pm.PackageManager;
+import android.os.Build;
 import android.os.Bundle;
 import android.service.notification.NotificationListenerService;
 import android.service.notification.StatusBarNotification;
 import android.text.SpannableString;
 import android.util.Log;
+
+import androidx.core.app.NotificationManagerCompat;
 
 import java.util.Arrays;
 import java.util.HashSet;
@@ -36,6 +41,56 @@ public class NotificationListener extends NotificationListenerService {
 
     private String packageName;
     private NotificationCache notificationCache;
+
+    /** Whether the user has granted notification access to this app. */
+    public static boolean isAccessGranted(Context context) {
+        return NotificationManagerCompat.getEnabledListenerPackages(context)
+                .contains(context.getPackageName());
+    }
+
+    /**
+     * Ask the system to bind the listener again.
+     *
+     * After an APK update the listener can end up unbound while the permission still
+     * shows as granted, so no notifications arrive at all and the only user-visible fix
+     * is toggling notification access off and on in system settings. Disabling and
+     * re-enabling the component does the same thing programmatically; requestRebind()
+     * alone was not enough in my testing.
+     *
+     * The component's enabled state is independent of the grant, which is stored per
+     * component name in Settings.Secure.enabled_notification_listeners, so this does not
+     * drop the permission. It is a no-op when the listener is already bound, and it does
+     * nothing at all when access was never granted.
+     */
+    public static void requestRebindIfGranted(Context context) {
+        if (!isAccessGranted(context)) return;
+        ComponentName cn = new ComponentName(context, NotificationListener.class);
+        try {
+            PackageManager pm = context.getPackageManager();
+            pm.setComponentEnabledSetting(cn,
+                    PackageManager.COMPONENT_ENABLED_STATE_DISABLED,
+                    PackageManager.DONT_KILL_APP);
+            pm.setComponentEnabledSetting(cn,
+                    PackageManager.COMPONENT_ENABLED_STATE_ENABLED,
+                    PackageManager.DONT_KILL_APP);
+        } catch (Exception e) {
+            Log.e(TAG, "toggling listener component failed", e);
+            // never leave the component disabled
+            try {
+                context.getPackageManager().setComponentEnabledSetting(cn,
+                        PackageManager.COMPONENT_ENABLED_STATE_ENABLED,
+                        PackageManager.DONT_KILL_APP);
+            } catch (Exception ignored) {}
+        }
+        // requestRebind() is API 24; on API 23 the component toggle above is all we have
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
+            try {
+                requestRebind(cn);
+            } catch (Exception e) {
+                Log.e(TAG, "requestRebind failed", e);
+            }
+        }
+    }
 
     @Override
     public void onListenerConnected() {
