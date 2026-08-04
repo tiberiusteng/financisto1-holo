@@ -127,6 +127,7 @@ public class NotificationListener extends NotificationListenerService {
             StringBuilder sb = new StringBuilder();
             result = new ParsedNotification();
             result.key = sbn.getKey();
+            result.postTime = sbn.getPostTime();
             result.title = getString(extras.getCharSequence(Notification.EXTRA_TITLE));
             String text = getString(extras.getCharSequence(Notification.EXTRA_TEXT));
             if (text != null) {
@@ -150,6 +151,8 @@ public class NotificationListener extends NotificationListenerService {
         public String title;
         public String text;
         public String body;
+        /** When the notification was posted; used to order the notification list. */
+        public long postTime;
     }
 
     private static String getString(Object s) {
