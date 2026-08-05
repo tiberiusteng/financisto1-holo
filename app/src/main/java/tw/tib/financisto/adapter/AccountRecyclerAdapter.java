@@ -100,25 +100,7 @@ public class AccountRecyclerAdapter extends RecyclerView.Adapter<AccountRecycler
 
         AccountType type = AccountType.valueOf(a.type);
 
-        if (!Utils.isEmpty(a.icon)) {
-            v.icon.setVisibility(View.INVISIBLE);
-            v.iconText.setVisibility(View.VISIBLE);
-            v.iconText.setText(a.icon);
-        }
-        else {
-            v.icon.setVisibility(View.VISIBLE);
-            v.iconText.setVisibility(View.INVISIBLE);
-
-            if (type.isCard && a.cardIssuer != null) {
-                CardIssuer cardIssuer = CardIssuer.valueOf(a.cardIssuer);
-                v.icon.setImageResource(cardIssuer.iconId);
-            } else if (type.isElectronic && a.cardIssuer != null) {
-                ElectronicPaymentType electronicPaymentType = ElectronicPaymentType.valueOf(a.cardIssuer);
-                v.icon.setImageResource(electronicPaymentType.iconId);
-            } else {
-                v.icon.setImageResource(type.iconId);
-            }
-        }
+        setAccountIcon(v.icon, v.iconText, a);
 
         if (a.isActive) {
             v.icon.getDrawable().mutate().setAlpha(0xFF);
@@ -237,6 +219,30 @@ public class AccountRecyclerAdapter extends RecyclerView.Adapter<AccountRecycler
     @Override
     public void onItemDismiss(int position, int direction) {
 
+    }
+
+    public static void setAccountIcon(ImageView icon, TextView iconText, Account a) {
+        AccountType type = AccountType.valueOf(a.type);
+
+        if (!Utils.isEmpty(a.icon)) {
+            icon.setVisibility(View.INVISIBLE);
+            iconText.setVisibility(View.VISIBLE);
+            iconText.setText(a.icon);
+        }
+        else {
+            icon.setVisibility(View.VISIBLE);
+            iconText.setVisibility(View.INVISIBLE);
+
+            if (type.isCard && a.cardIssuer != null) {
+                CardIssuer cardIssuer = CardIssuer.valueOf(a.cardIssuer);
+                icon.setImageResource(cardIssuer.iconId);
+            } else if (type.isElectronic && a.cardIssuer != null) {
+                ElectronicPaymentType electronicPaymentType = ElectronicPaymentType.valueOf(a.cardIssuer);
+                icon.setImageResource(electronicPaymentType.iconId);
+            } else {
+                icon.setImageResource(type.iconId);
+            }
+        }
     }
 
     public static class ViewHolder extends RecyclerView.ViewHolder

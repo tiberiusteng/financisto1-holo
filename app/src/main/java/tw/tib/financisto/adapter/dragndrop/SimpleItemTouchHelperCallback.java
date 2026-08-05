@@ -16,9 +16,15 @@ import androidx.recyclerview.widget.ItemTouchHelper;
 public class SimpleItemTouchHelperCallback extends ItemTouchHelper.Callback {
 
     private final ItemTouchHelperAdapter mAdapter;
+    private final boolean swipeEnabled;
 
     public SimpleItemTouchHelperCallback(ItemTouchHelperAdapter adapter) {
+        this(adapter, true);
+    }
+
+    public SimpleItemTouchHelperCallback(ItemTouchHelperAdapter adapter, boolean swipeEnabled) {
         mAdapter = adapter;
+        this.swipeEnabled = swipeEnabled;
     }
 
     @Override
@@ -28,13 +34,13 @@ public class SimpleItemTouchHelperCallback extends ItemTouchHelper.Callback {
 
     @Override
     public boolean isItemViewSwipeEnabled() {
-        return true;
+        return swipeEnabled;
     }
 
     @Override
     public int getMovementFlags(RecyclerView recyclerView, RecyclerView.ViewHolder viewHolder) {
         final int dragFlags = ItemTouchHelper.UP | ItemTouchHelper.DOWN;
-        final int swipeFlags = ItemTouchHelper.END | ItemTouchHelper.START;
+        final int swipeFlags = swipeEnabled ? ItemTouchHelper.END | ItemTouchHelper.START : 0;
         return makeMovementFlags(dragFlags, swipeFlags);
     }
 

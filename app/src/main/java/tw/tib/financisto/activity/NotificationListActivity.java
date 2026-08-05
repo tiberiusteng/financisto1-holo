@@ -19,6 +19,7 @@ import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
 
 import java.util.ArrayList;
+import java.util.Collections;
 
 import tw.tib.financisto.R;
 import tw.tib.financisto.service.NotificationCache;
@@ -67,6 +68,10 @@ public class NotificationListActivity extends AppCompatActivity {
 
         public NotificationListAdapter(Context context) {
             list = new ArrayList<>(NotificationCache.getInstance().cache.values());
+            // The cache is a HashMap, so its iteration order is bucket order: the list
+            // comes out in no meaningful order and can reshuffle when a notification is
+            // added. Show newest first instead.
+            Collections.sort(list, (a, b) -> Long.compare(b.postTime, a.postTime));
             inflater = LayoutInflater.from(context);
         }
 

@@ -7,3 +7,4 @@ captures/
 *.iml
 gradlew*
 local.properties
+CLAUDE.local.md

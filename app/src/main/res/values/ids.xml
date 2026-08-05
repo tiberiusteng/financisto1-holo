@@ -67,6 +67,7 @@
 	<item name="is_included_into_reports" type="id" />
 	<item name="sort_order" type="id" />
 	<item name="sort_order_clear" type="id" />
+	<item name="reorder_accounts" type="id" />
 	<item name="budget_mode" type="id" />
 	<item name="recurrence_pattern" type="id" />
 	<item name="recurrence_period" type="id" />
