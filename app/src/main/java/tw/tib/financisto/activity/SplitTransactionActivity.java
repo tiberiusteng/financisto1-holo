@@ -49,6 +49,7 @@ public class SplitTransactionActivity extends AbstractSplitActivity implements C
         amountInput = AmountInput_.build(this);
         amountInput.setOwner(this);
         amountInput.setOnAmountChangedListener((oldAmount, newAmount) -> setUnsplitAmount(split.unsplitAmount - newAmount));
+        amountInput.setId(R.id.amount_input);
         View v = x.addEditNode(layout, R.string.amount, amountInput);
         amountTitle = v.findViewById(R.id.label);
         categorySelector.createAttributesLayout(layout);

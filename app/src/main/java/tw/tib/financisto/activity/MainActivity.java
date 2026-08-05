@@ -114,27 +114,32 @@ public class MainActivity extends AppCompatActivity {
                     switch (position) {
                         case 0:
                             tab/*.setText(getString(R.string.accounts))*/
-                                    .setIcon(ResourcesCompat.getDrawable(getResources(), R.drawable.ic_tab_accounts, getTheme()));
+                                    .setIcon(ResourcesCompat.getDrawable(getResources(), R.drawable.ic_tab_accounts, getTheme()))
+                                    .setId(R.id.account_list_tab);
                             tabs.put("accounts", tab);
                             break;
                         case 1:
                             tab/*.setText(getString(R.string.blotter))*/
-                                    .setIcon(ResourcesCompat.getDrawable(getResources(), R.drawable.ic_tab_blotter, getTheme()));
+                                    .setIcon(ResourcesCompat.getDrawable(getResources(), R.drawable.ic_tab_blotter, getTheme()))
+                                    .setId(R.id.blotter_tab);
                             tabs.put("blotter", tab);
                             break;
                         case 2:
                             tab/*.setText(getString(R.string.budgets))*/
-                                    .setIcon(ResourcesCompat.getDrawable(getResources(), R.drawable.ic_tab_budgets, getTheme()));
+                                    .setIcon(ResourcesCompat.getDrawable(getResources(), R.drawable.ic_tab_budgets, getTheme()))
+                                    .setId(R.id.budgets_tab);
                             tabs.put("budgets", tab);
                             break;
                         case 3:
                             tab/*.setText(getString(R.string.reports))*/
-                                    .setIcon(ResourcesCompat.getDrawable(getResources(), R.drawable.ic_tab_reports, getTheme()));
+                                    .setIcon(ResourcesCompat.getDrawable(getResources(), R.drawable.ic_tab_reports, getTheme()))
+                                    .setId(R.id.reports_tab);
                             tabs.put("reports", tab);
                             break;
                         case 4:
                             tab/*.setText(getString(R.string.menu))*/
-                                    .setIcon(ResourcesCompat.getDrawable(getResources(), R.drawable.ic_tab_menu, getTheme()));
+                                    .setIcon(ResourcesCompat.getDrawable(getResources(), R.drawable.ic_tab_menu, getTheme()))
+                                    .setId(R.id.menu_tab);
                             tabs.put("menu", tab);
                             break;
                     }

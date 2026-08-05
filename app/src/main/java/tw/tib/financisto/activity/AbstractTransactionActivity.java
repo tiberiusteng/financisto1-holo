@@ -480,6 +480,7 @@ public abstract class AbstractTransactionActivity extends AbstractActivity imple
 					noteText = new EditText(this);
 					noteText.setInputType(InputType.TYPE_CLASS_TEXT | InputType.TYPE_TEXT_FLAG_CAP_SENTENCES | InputType.TYPE_TEXT_FLAG_MULTI_LINE);
 					noteText.setTextColor(getResources().getColorStateList(android.R.color.primary_text_dark));
+					noteText.setId(R.id.note);
 					x.addEditNode(layout, R.string.note, noteText);
 				}
 			}

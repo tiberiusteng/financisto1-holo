@@ -93,6 +93,7 @@ public class BudgetActivity extends AbstractActivity {
 
 		titleText = new EditText(this);
 		titleText.setInputType(InputType.TYPE_CLASS_TEXT | InputType.TYPE_TEXT_FLAG_CAP_SENTENCES);
+		titleText.setId(R.id.title);
 		x.addEditNode(layout, R.string.title, titleText);
 
 		accountText = x.addListNode(layout, R.id.account,
@@ -115,6 +116,7 @@ public class BudgetActivity extends AbstractActivity {
 
 		amountInput = AmountInput_.build(this);
 		amountInput.setOwner(this);
+		amountInput.setId(R.id.amount_input);
 		amountInput.setIncome();
 		amountInput.disableIncomeExpenseButton();
 		x.addEditNode(layout, R.string.amount, amountInput);

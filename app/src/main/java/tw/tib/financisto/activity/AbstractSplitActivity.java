@@ -136,6 +136,7 @@ public abstract class AbstractSplitActivity extends AbstractActivity {
         for (int i = 0; i < 6; i++) {
             if (i == noteOrder) {
                 noteText = new EditText(this);
+                noteText.setId(R.id.note);
                 x.addEditNode(layout, R.string.note, noteText);
             }
             if (i == projectOrder) {

@@ -72,12 +72,14 @@ public class RateLayoutView implements RateNodeOwner {
         amountInputFrom = AmountInput_.build(activity);
         amountInputFrom.setOwner(activity);
         amountInputFrom.setExpense();
+        amountInputFrom.setId(R.id.amount_input_from);
         amountFromTitleId = fromAmountTitleId;
         amountInputFromNode = x.addEditNode(layout, fromAmountTitleId, amountInputFrom);
         //amount to & rate
         amountInputTo = AmountInput_.build(activity);
         amountInputTo.setOwner(activity);
         amountInputTo.setIncome();
+        amountInputTo.setId(R.id.amount_input_to);
         amountToTitleId = toAmountTitleId;
         amountInputToNode = x.addEditNode(layout, toAmountTitleId, amountInputTo);
         amountInputTo.setOnAmountChangedListener((oldAmount, newAmount) -> {

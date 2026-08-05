@@ -57,6 +57,13 @@ android {
     buildFeatures {
         buildConfig = true
     }
+
+    testBuildType "debug"
+    sourceSets {
+        androidTest {
+            java.srcDirs += ['/src/androidTest/java']
+        }
+    }
 }
 
 final SUPPORT_LIB_VER = '27.0.2'

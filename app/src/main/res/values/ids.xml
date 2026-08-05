@@ -13,6 +13,8 @@
 	<item name="account_clear" type="id" />
 	<item name="account_from" type="id" />
 	<item name="account_to" type="id" />
+	<item name="amount_input_from" type="id" />
+	<item name="amount_input_to" type="id" />
 	<item name="category" type="id" />
 	<item name="category_clear" type="id" />
 	<item name="category_add" type="id" />
@@ -106,4 +108,11 @@
 	<item name="remove_sms_template" type="id" />
 	<item name="electronic_payment_type" type="id" />
 	<item name="attached_picture" type="id" />
+	<item name="income_expense" type="id" />
+	<item name="income_expense_clear" type="id" />
+	<item name="account_list_tab" type="id" />
+	<item name="blotter_tab" type="id" />
+	<item name="budgets_tab" type="id" />
+	<item name="reports_tab" type="id" />
+	<item name="menu_tab" type="id" />
 </resources>
