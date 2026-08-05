@@ -79,6 +79,7 @@
     <string name="select_project">Please select project…</string>
     <string name="warning">Warning</string>
     <string name="no_accounts">You should start with creating an account. Tap the \'+\' at the bottom…</string>
+    <string name="accounts_filtered">Filter is active and all accounts has been filtered out.\nTap here to clear filter.</string>
     <string name="no_budgets">No budgets</string>
     <string name="loading">Loading…</string>
     <string name="no_transactions">No transactions</string>

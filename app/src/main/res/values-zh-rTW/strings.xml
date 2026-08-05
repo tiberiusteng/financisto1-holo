@@ -67,6 +67,7 @@
   <string name="select_project">請選擇專案…</string>
   <string name="warning">警告</string>
   <string name="no_accounts">您必須從建立新帳戶開始，請點擊下面綠色的 \'+\' 按鈕…</string>
+  <string name="accounts_filtered">目前有過濾條件且所有帳戶都被過濾隱藏。\n按此以清除過濾條件。</string>
   <string name="no_budgets">無預算</string>
   <string name="loading">載入中…</string>
   <string name="no_transactions">無交易</string>

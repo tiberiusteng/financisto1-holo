@@ -108,6 +108,10 @@ public class AccountRecyclerFragment extends AbstractRecyclerViewFragment
         view.findViewById(R.id.integrity_error).setOnClickListener(v -> v.setVisibility(View.GONE));
 
         emptyText = view.findViewById(android.R.id.empty);
+        emptyText.setOnClickListener((v) -> {
+            searchText.setText("");
+        });
+
         progressBar = view.findViewById(android.R.id.progress);
 
         bSearch = view.findViewById(R.id.bSearch);
@@ -369,6 +373,12 @@ public class AccountRecyclerFragment extends AbstractRecyclerViewFragment
             return true;
         });
         if (cursor.getCount() == 0) {
+            if (filter != null && !filter.isEmpty()) {
+                emptyText.setText(R.string.accounts_filtered);
+            }
+            else {
+                emptyText.setText(R.string.no_accounts);
+            }
             emptyText.setVisibility(View.VISIBLE);
         }
         progressBar.setVisibility(View.GONE);
