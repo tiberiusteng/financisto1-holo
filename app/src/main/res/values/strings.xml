@@ -945,6 +945,8 @@
 
     <string name="accounts_list_screen">Accounts List</string>
     <string name="accounts_list_screen_summary">Preferences for accounts list screen</string>
+    <string name="reorder_accounts">Reorder accounts</string>
+    <string name="reorder_accounts_summary">Drag accounts to set their order in the accounts list</string>
     <string name="blotter_screen">Blotter</string>
     <string name="blotter_screen_summary">Preferences for blotter screen</string>
     <string name="hide_closed_accounts">Hide closed accounts</string>

@@ -23,6 +23,10 @@
         android:key="sort_accounts"
         android:summary="@string/sort_accounts_summary"
         android:title="@string/sort_accounts" />
+    <Preference
+        android:key="reorder_accounts"
+        android:summary="@string/reorder_accounts_summary"
+        android:title="@string/reorder_accounts" />
     <SwitchPreferenceCompat
         app:singleLineTitle="false"
         android:defaultValue="false"

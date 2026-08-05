@@ -298,6 +298,22 @@ public abstract class MyEntityManager extends EntityManager {
 		return saveOrUpdate(account);
 	}
 
+	public void updateAccountsSortOrder(List<Long> accountIds) {
+		SQLiteDatabase db = db();
+		db.beginTransaction();
+		try {
+			ContentValues cv = new ContentValues(1);
+			for (int i = 0; i < accountIds.size(); i++) {
+				cv.put(DEF_SORT_COL, i + 1);
+				db.update(DatabaseHelper.ACCOUNT_TABLE, cv, DEF_ID_COL + "=?",
+						new String[]{String.valueOf(accountIds.get(i))});
+			}
+			db.setTransactionSuccessful();
+		} finally {
+			db.endTransaction();
+		}
+	}
+
 	public List<Account> getAllAccountsList() {
 		return getAllAccountsListWithFilter(null, true);
 	}

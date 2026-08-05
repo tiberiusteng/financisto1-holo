@@ -113,6 +113,11 @@
 		<item name="android:src">@drawable/palette</item>
 		<item name="android:tint">#ff5c5c5c</item>
 	</style>
+	<style name="ReorderButton">
+		<item name="android:background">@drawable/btn_circle2</item>
+		<item name="android:src">@drawable/height</item>
+		<item name="android:tint">#ff5c5c5c</item>
+	</style>
 	<style name="KeypadButton">
 		<item name="android:background">@drawable/btn_circle2</item>
 		<item name="android:src">@drawable/apps</item>
