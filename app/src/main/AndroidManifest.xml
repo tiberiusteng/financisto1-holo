@@ -362,7 +362,7 @@
 
 		<provider
 			android:name="androidx.core.content.FileProvider"
-			android:authorities="tw.tib.financisto"
+			android:authorities="${applicationId}"
 			android:grantUriPermissions="true">
 			<meta-data
 				android:name="android.support.FILE_PROVIDER_PATHS"
