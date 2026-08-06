@@ -223,122 +223,104 @@ public class ReportFilterActivity extends FilterAbstractActivity {
     @Override
     protected void onClick(View v, int id) {
         super.onClick(v, id);
-        switch (id) {
-            case R.id.period:
-                Intent intent = new Intent(this, DateFilterActivity.class);
-                filter.toIntent(intent);
-                startActivityForResult(intent, 1);
-                break;
-            case R.id.period_clear:
-                clear(BlotterFilter.DATETIME, period);
-                break;
-            case R.id.account: {
-                Cursor cursor = db.getAllAccounts();
-                startManagingCursor(cursor);
-                ListAdapter adapter = TransactionUtils.createAccountAdapter(this, cursor);
-                Criterion c = filter.get(BlotterFilter.FROM_ACCOUNT_ID);
-                long selectedId = c != null ? c.getLongValue1() : -1;
-                x.select(this, R.id.account, R.string.account, cursor, adapter, "_id", selectedId);
-            } break;
-            case R.id.account_clear:
-                clear(BlotterFilter.FROM_ACCOUNT_ID, account);
-                break;
-            case R.id.currency: {
-                Cursor cursor = db.getAllCurrencies("name");
-                startManagingCursor(cursor);
-                ListAdapter adapter = TransactionUtils.createCurrencyAdapter(this, cursor);
-                Criterion c = filter.get(BlotterFilter.FROM_ACCOUNT_CURRENCY_ID);
-                long selectedId = c != null ? c.getLongValue1() : -1;
-                x.select(this, R.id.currency, R.string.currency, cursor, adapter, "_id", selectedId);
-            } break;
-            case R.id.currency_clear:
-                clear(BlotterFilter.FROM_ACCOUNT_CURRENCY_ID, currency);
-                break;
-            case R.id.status: {
-                ArrayAdapter<String> adapter = EnumUtils.createDropDownAdapter(this, statuses);
-                Criterion c = filter.get(BlotterFilter.STATUS);
-                int selectedPos = c != null ? TransactionStatus.valueOf(c.getStringValue()).ordinal() : -1;
-                x.selectPosition(this, R.id.status, R.string.transaction_status, adapter, selectedPos);
-            } break;
-            case R.id.transfer: {
-                ArrayAdapter<String> adapter = EnumUtils.createDropDownAdapter(this, filterTransfer);
-                Criterion c = filter.get(ReportColumns.IS_TRANSFER);
-                int selectedPos = c != null ? 1 : 0;
-                x.selectPosition(this, R.id.transfer, R.string.filter_transfer, adapter, selectedPos);
-            } break;
-            case R.id.split: {
-                ArrayAdapter<String> adapter = EnumUtils.createDropDownAdapter(this, filterSplit);
-                Criterion c = filter.get(ReportColumns.CATEGORY_ID);
-                Criterion p = filter.get(ReportColumns.PARENT_ID);
-                int selectedPos = 0;
-                if (p != null) {
-                    selectedPos = 1;
-                }
-                else if (c != null) {
-                    selectedPos = 2;
-                }
-                x.selectPosition(this, R.id.split, R.string.filter_split, adapter, selectedPos);
-            } break;
-            case R.id.status_clear:
-                clear(BlotterFilter.STATUS, status);
-                break;
-            case R.id.transfer_clear:
-                clear(ReportColumns.IS_TRANSFER, transfer);
-                break;
-            case R.id.split_clear:
-                clear(ReportColumns.CATEGORY_ID, split);
-                clear(ReportColumns.PARENT_ID, split);
-                break;
+        if (id == R.id.period) {
+            Intent intent = new Intent(this, DateFilterActivity.class);
+            filter.toIntent(intent);
+            startActivityForResult(intent, 1);
+        } else if (id == R.id.period_clear) {
+            clear(BlotterFilter.DATETIME, period);
+        } else if (id == R.id.account) {
+            Cursor cursor = db.getAllAccounts();
+            startManagingCursor(cursor);
+            ListAdapter adapter = TransactionUtils.createAccountAdapter(this, cursor);
+            Criterion c = filter.get(BlotterFilter.FROM_ACCOUNT_ID);
+            long selectedId = c != null ? c.getLongValue1() : -1;
+            x.select(this, R.id.account, R.string.account, cursor, adapter, "_id", selectedId);
+        } else if (id == R.id.account_clear) {
+            clear(BlotterFilter.FROM_ACCOUNT_ID, account);
+        } else if (id == R.id.currency) {
+            Cursor cursor = db.getAllCurrencies("name");
+            startManagingCursor(cursor);
+            ListAdapter adapter = TransactionUtils.createCurrencyAdapter(this, cursor);
+            Criterion c = filter.get(BlotterFilter.FROM_ACCOUNT_CURRENCY_ID);
+            long selectedId = c != null ? c.getLongValue1() : -1;
+            x.select(this, R.id.currency, R.string.currency, cursor, adapter, "_id", selectedId);
+        } else if (id == R.id.currency_clear) {
+            clear(BlotterFilter.FROM_ACCOUNT_CURRENCY_ID, currency);
+        } else if (id == R.id.status) {
+            ArrayAdapter<String> adapter = EnumUtils.createDropDownAdapter(this, statuses);
+            Criterion c = filter.get(BlotterFilter.STATUS);
+            int selectedPos = c != null ? TransactionStatus.valueOf(c.getStringValue()).ordinal() : -1;
+            x.selectPosition(this, R.id.status, R.string.transaction_status, adapter, selectedPos);
+        } else if (id == R.id.transfer) {
+            ArrayAdapter<String> adapter = EnumUtils.createDropDownAdapter(this, filterTransfer);
+            Criterion c = filter.get(ReportColumns.IS_TRANSFER);
+            int selectedPos = c != null ? 1 : 0;
+            x.selectPosition(this, R.id.transfer, R.string.filter_transfer, adapter, selectedPos);
+        } else if (id == R.id.split) {
+            ArrayAdapter<String> adapter = EnumUtils.createDropDownAdapter(this, filterSplit);
+            Criterion c = filter.get(ReportColumns.CATEGORY_ID);
+            Criterion p = filter.get(ReportColumns.PARENT_ID);
+            int selectedPos = 0;
+            if (p != null) {
+                selectedPos = 1;
+            }
+            else if (c != null) {
+                selectedPos = 2;
+            }
+            x.selectPosition(this, R.id.split, R.string.filter_split, adapter, selectedPos);
+        } else if (id == R.id.status_clear) {
+            clear(BlotterFilter.STATUS, status);
+        } else if (id == R.id.transfer_clear) {
+            clear(ReportColumns.IS_TRANSFER, transfer);
+        } else if (id == R.id.split_clear) {
+            clear(ReportColumns.CATEGORY_ID, split);
+            clear(ReportColumns.PARENT_ID, split);
         }
     }
 
     @Override
     public void onSelectedId(int id, long selectedId) {
         super.onSelectedId(id, selectedId);
-        switch (id) {
-            case R.id.account:
-                filter.put(Criterion.eq(BlotterFilter.FROM_ACCOUNT_ID, String.valueOf(selectedId)));
-                updateAccountFromFilter();
-                break;
-            case R.id.currency:
-                filter.put(Criterion.eq(BlotterFilter.FROM_ACCOUNT_CURRENCY_ID, String.valueOf(selectedId)));
-                updateCurrencyFromFilter();
-                break;
+        if (id == R.id.account) {
+            filter.put(Criterion.eq(BlotterFilter.FROM_ACCOUNT_ID, String.valueOf(selectedId)));
+            updateAccountFromFilter();
+        } else if (id == R.id.currency) {
+            filter.put(Criterion.or(
+                    Criterion.eq(BlotterFilter.FROM_ACCOUNT_CURRENCY_ID, String.valueOf(selectedId)),
+                    Criterion.eq(BlotterFilter.ORIGINAL_CURRENCY_ID, String.valueOf(selectedId))
+            ));
+            updateCurrencyFromFilter();
         }
     }
 
     @Override
     public void onSelectedPos(int id, int selectedPos) {
         super.onSelectedPos(id, selectedPos);
-        switch (id) {
-            case R.id.status:
-                filter.put(Criterion.eq(BlotterFilter.STATUS, statuses[selectedPos].name()));
-                updateStatusFromFilter();
-                break;
-            case R.id.transfer:
-                if (selectedPos == 0) {
-                    filter.remove(ReportColumns.IS_TRANSFER);
-                }
-                else {
-                    filter.put(Criterion.eq(ReportColumns.IS_TRANSFER, "0"));
-                }
-                updateTransferFromFilter();
-                break;
-            case R.id.split:
-                if (selectedPos == 0) {
-                    filter.remove(ReportColumns.CATEGORY_ID);
-                    filter.remove(ReportColumns.PARENT_ID);
-                }
-                else if (selectedPos == 1) {
-                    filter.remove(ReportColumns.CATEGORY_ID);
-                    filter.put(Criterion.eq(ReportColumns.PARENT_ID, "0"));
-                }
-                else if (selectedPos == 2) {
-                    filter.put(Criterion.neq(ReportColumns.CATEGORY_ID, "-1"));
-                    filter.remove(ReportColumns.PARENT_ID);
-                }
-                updateSplitFromFilter();
-                break;
+        if (id == R.id.status) {
+            filter.put(Criterion.eq(BlotterFilter.STATUS, statuses[selectedPos].name()));
+            updateStatusFromFilter();
+        } else if (id == R.id.transfer) {
+            if (selectedPos == 0) {
+                filter.remove(ReportColumns.IS_TRANSFER);
+            } else {
+                filter.put(Criterion.eq(ReportColumns.IS_TRANSFER, "0"));
+            }
+            updateTransferFromFilter();
+        } else if (id == R.id.split) {
+            if (selectedPos == 0) {
+                filter.remove(ReportColumns.CATEGORY_ID);
+                filter.remove(ReportColumns.PARENT_ID);
+            }
+            else if (selectedPos == 1) {
+                filter.remove(ReportColumns.CATEGORY_ID);
+                filter.put(Criterion.eq(ReportColumns.PARENT_ID, "0"));
+            }
+            else if (selectedPos == 2) {
+                filter.put(Criterion.neq(ReportColumns.CATEGORY_ID, "-1"));
+                filter.remove(ReportColumns.PARENT_ID);
+            }
+            updateSplitFromFilter();
         }
     }
 
