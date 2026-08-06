@@ -21,8 +21,8 @@ public class IntegrityFix {
     public void fix() {
         db.restoreSystemEntities();
         db.recalculateAccountsBalances();
-        db.rebuildRunningBalances();
         db.updateSplitParentAccountId();
+        db.rebuildRunningBalances();
     }
 
 }
