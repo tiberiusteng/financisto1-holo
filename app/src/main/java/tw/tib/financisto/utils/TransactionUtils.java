@@ -46,11 +46,6 @@ public class TransactionUtils {
                 new String[]{"e_"+AccountColumns.TITLE}, new int[]{android.R.id.text1});
     }
 
-    public static SimpleCursorAdapter createCurrencyAdapter(Context context, Cursor currencyCursor) {
-        return new SimpleCursorAdapter(context, android.R.layout.simple_list_item_activated_1, currencyCursor,
-                new String[]{"e_name"}, new int[]{android.R.id.text1});
-    }
-
     public static ListAdapter createCategoryAdapter(DatabaseAdapter db, Context context, Cursor categoryCursor) {
         return new CategoryListAdapter(db, context, android.R.layout.simple_list_item_activated_1, categoryCursor);
     }

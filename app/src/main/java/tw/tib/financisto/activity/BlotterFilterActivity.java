@@ -27,6 +27,7 @@ import tw.tib.financisto.filter.WhereFilter;
 import tw.tib.financisto.model.Account;
 import tw.tib.financisto.model.Currency;
 import tw.tib.financisto.model.MultiChoiceItem;
+import tw.tib.financisto.model.MyEntity;
 import tw.tib.financisto.model.TransactionStatus;
 import tw.tib.financisto.utils.TransactionUtils;
 
@@ -266,12 +267,12 @@ public class BlotterFilterActivity extends FilterAbstractActivity {
 			}
 			clear(FROM_ACCOUNT_ID, account);
 		} else if (id == R.id.currency) {
-			Cursor cursor = db.getAllCurrencies("name");
-			startManagingCursor(cursor);
-			ListAdapter adapter = TransactionUtils.createCurrencyAdapter(this, cursor);
+			List<Currency> currencies = db.getAllCurrenciesList();
+			ListAdapter adapter = TransactionUtils.createCurrencyAdapter(this, currencies);
 			Criterion c = filter.get(BlotterFilter.FROM_ACCOUNT_CURRENCY_ID);
 			long selectedId = c != null ? c.getLongValue1() : -1;
-			x.select(this, R.id.currency, R.string.currency, cursor, adapter, "_id", selectedId);
+			int selectedPos = MyEntity.indexOf(currencies, selectedId);
+			x.selectItemId(this, R.id.currency, R.string.currency, adapter, selectedPos);
 		} else if (id == R.id.currency_clear) {
 			clear(BlotterFilter.FROM_ACCOUNT_CURRENCY_ID, currency);
 		} else if (id ==  R.id.note) {
