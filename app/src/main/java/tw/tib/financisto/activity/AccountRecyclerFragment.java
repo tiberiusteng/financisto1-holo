@@ -104,8 +104,51 @@ public class AccountRecyclerFragment extends AbstractRecyclerViewFragment
         EditText searchText = view.findViewById(R.id.search_text);
         FrameLayout searchLayout = view.findViewById(R.id.search_text_frame);
         ImageButton clearButton = view.findViewById(R.id.search_text_clear);
+        InputMethodManager imm = (InputMethodManager) getContext().getSystemService(Context.INPUT_METHOD_SERVICE);
 
         view.findViewById(R.id.integrity_error).setOnClickListener(v -> v.setVisibility(View.GONE));
+
+        if (searchText != null) {
+            searchText.setOnFocusChangeListener((v, b) -> {
+                if (!v.hasFocus()) {
+                    imm.hideSoftInputFromWindow(searchLayout.getWindowToken(), 0);
+                }
+            });
+
+            searchText.addTextChangedListener(new TextWatcher() {
+                @Override
+                public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {
+                }
+
+                @Override
+                public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {
+                }
+
+                @Override
+                public void afterTextChanged(Editable editable) {
+                    ImageButton clearButton = view.findViewById(R.id.search_text_clear);
+                    String text = editable.toString();
+                    filter = text;
+
+                    if (!text.isEmpty()) {
+                        clearButton.setVisibility(View.VISIBLE);
+                        bSearch.setColorFilter(new LightingColorFilter(Color.BLACK, getResources().getColor(R.color.holo_blue_bright)));
+                    } else {
+                        clearButton.setVisibility(View.GONE);
+                        bSearch.setColorFilter(null);
+                    }
+
+                    recreateCursor();
+                    saveFilter();
+                }
+            });
+        }
+
+        if (clearButton != null) {
+            clearButton.setOnClickListener(v -> {
+                searchText.setText("");
+            });
+        }
 
         emptyText = view.findViewById(android.R.id.empty);
         emptyText.setOnClickListener((v) -> {
@@ -122,22 +165,10 @@ public class AccountRecyclerFragment extends AbstractRecyclerViewFragment
                 searchLayout.setVisibility(View.VISIBLE);
                 clearButton.setVisibility(View.VISIBLE);
                 searchText.setText(filter);
-                bSearch.setColorFilter(new LightingColorFilter(Color.BLACK, getResources().getColor(R.color.holo_blue_dark)));
+                bSearch.setColorFilter(new LightingColorFilter(Color.BLACK, getResources().getColor(R.color.holo_blue_bright)));
             }
 
             bSearch.setOnClickListener(method -> {
-                InputMethodManager imm = (InputMethodManager) getContext().getSystemService(Context.INPUT_METHOD_SERVICE);
-
-                searchText.setOnFocusChangeListener((v, b) -> {
-                    if (!v.hasFocus()) {
-                        imm.hideSoftInputFromWindow(searchLayout.getWindowToken(), 0);
-                    }
-                });
-
-                clearButton.setOnClickListener(v -> {
-                    searchText.setText("");
-                });
-
                 if (searchLayout.getVisibility() == View.VISIBLE) {
                     imm.hideSoftInputFromWindow(searchLayout.getWindowToken(), 0);
                     searchLayout.setVisibility(View.GONE);
@@ -147,34 +178,6 @@ public class AccountRecyclerFragment extends AbstractRecyclerViewFragment
                 searchLayout.setVisibility(View.VISIBLE);
                 searchText.requestFocusFromTouch();
                 imm.showSoftInput(searchText, InputMethodManager.SHOW_IMPLICIT);
-
-                searchText.addTextChangedListener(new TextWatcher() {
-                    @Override
-                    public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {
-                    }
-
-                    @Override
-                    public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {
-                    }
-
-                    @Override
-                    public void afterTextChanged(Editable editable) {
-                        ImageButton clearButton = view.findViewById(R.id.search_text_clear);
-                        String text = editable.toString();
-                        filter = text;
-
-                        if (!text.isEmpty()) {
-                            clearButton.setVisibility(View.VISIBLE);
-                            bSearch.setColorFilter(new LightingColorFilter(Color.BLACK, getResources().getColor(R.color.holo_blue_dark)));
-                        } else {
-                            clearButton.setVisibility(View.GONE);
-                            bSearch.setColorFilter(null);
-                        }
-
-                        recreateCursor();
-                        saveFilter();
-                    }
-                });
             });
         }
 
@@ -185,7 +188,7 @@ public class AccountRecyclerFragment extends AbstractRecyclerViewFragment
             bShowSortOrder.setOnClickListener(v -> {
                 showSortOrder = !showSortOrder;
                 bShowSortOrder.setColorFilter(showSortOrder ?
-                        getResources().getColor(R.color.holo_blue_dark) :
+                        getResources().getColor(R.color.holo_blue_bright) :
                         getResources().getColor(R.color.bottom_bar_tint));
                 recreateCursor();
             });
