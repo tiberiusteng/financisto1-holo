@@ -45,7 +45,7 @@ public abstract class MyEntityListActivity<T extends MyEntity> extends AbstractL
 	private static final int NEW_ENTITY_REQUEST = 1;
 	private static final int EDIT_ENTITY_REQUEST = 2;
 
-	public static final int FILTER_DELAY_MILLIS = 500;
+	public static final int FILTER_DELAY_MILLIS = 200;
 
 	private final Class<T> clazz;
 	private final int emptyResId;
