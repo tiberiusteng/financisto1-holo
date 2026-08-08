@@ -255,11 +255,13 @@
 	<string-array name="exchange_rate_provider_entities">
 		<item>OpenExchangeRates</item>
 		<item>FreeCurrency</item>
+		<item>FloatRates</item>
 	</string-array>
 
 	<string-array name="exchange_rate_provider_values">
 		<item>openexchangerates</item>
 		<item>freeCurrency</item>
+		<item>floatRates</item>
 	</string-array>
 
 	<string-array name="pref_transaction_statuses">
