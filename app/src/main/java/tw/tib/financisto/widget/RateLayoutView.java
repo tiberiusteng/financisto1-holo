@@ -21,6 +21,7 @@ import tw.tib.financisto.db.DatabaseAdapter;
 import tw.tib.financisto.model.Currency;
 import tw.tib.financisto.rates.ExchangeRate;
 import tw.tib.financisto.rates.ExchangeRateProvider;
+import tw.tib.financisto.rates.LatestExchangeRatesFromTransactions;
 import tw.tib.financisto.utils.MyPreferences;
 
 /**
@@ -222,9 +223,12 @@ public class RateLayoutView implements RateNodeOwner {
 
     private void getLatestRate() {
         Application.getExecutor().execute(() -> {
-            ExchangeRateProvider latestExchangeRates = new DatabaseAdapter(activity).getLatestRates();
-            //ExchangeRateProvider latestExchangeRates = new LatestExchangeRatesFromTransactions(activity);
-            ExchangeRate exchangeRate = latestExchangeRates.getRate(currencyFrom, currencyTo);
+            ExchangeRateProvider rateProvider;
+            switch (MyPreferences.getRateSource()) {
+                case RATES -> rateProvider = new DatabaseAdapter(activity).getLatestRates();
+                default -> rateProvider = new LatestExchangeRatesFromTransactions(activity);
+            }
+            ExchangeRate exchangeRate = rateProvider.getRate(currencyFrom, currencyTo);
             Log.d(TAG, "getLatestRate " + currencyFrom.name + "->" + currencyTo.name + " " +
                     exchangeRate.rate + " " + exchangeRate.is_flip + " " + (new Date(exchangeRate.date)));
             if (exchangeRate != ExchangeRate.NA) {

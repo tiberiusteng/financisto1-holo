@@ -137,6 +137,10 @@
 		<item>LAST_TRANSACTION_ASC</item>
 		<item>LAST_TRANSACTION_DESC</item>
 	</string-array>
+	<string-array name="ntsl_rate_source_values">
+		<item>RATES</item>
+		<item>TRANSACTIONS</item>
+	</string-array>
 	<string-array name="sort_locations_values">
 		<item>NAME</item>
 		<item>FREQUENCY</item>

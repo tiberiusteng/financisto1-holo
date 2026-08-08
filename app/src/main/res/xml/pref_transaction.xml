@@ -125,6 +125,14 @@
             android:key="ntsl_show_currency"
             android:summary="@string/show_currency_summary"
             android:title="@string/show_currency" />
+        <ListPreference
+            app:singleLineTitle="false"
+            android:defaultValue="TRANSACTIONS"
+            android:entries="@array/ntsl_rate_source_entities"
+            android:entryValues="@array/ntsl_rate_source_values"
+            android:key="ntsl_rate_source"
+            android:summary="@string/rate_source_summary"
+            android:title="@string/rate_source" />
         <SwitchPreferenceCompat
             app:singleLineTitle="false"
             android:defaultValue="true"

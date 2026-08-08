@@ -137,6 +137,15 @@ public class MyPreferences {
 		EntitySelectorType(String tag) { this.tag = tag; }
 	}
 
+	public enum RateSource {
+		RATES("RATES"),
+		TRANSACTIONS("TRANSACTIONS");
+
+		public final String tag;
+
+		RateSource(String tag) { this.tag = tag; }
+	}
+
 	public enum ReportAggregateUnit {
 		WEEK("WEEK"),
 		MONTH("MONTH"),
@@ -282,6 +291,15 @@ public class MyPreferences {
 
 	public static boolean isShowCurrency() {
 		return getBoolean("ntsl_show_currency", true);
+	}
+
+	public static RateSource getRateSource() {
+		String rateSource = getString("ntsl_rate_source", RateSource.TRANSACTIONS.name());
+		try {
+			return RateSource.valueOf(rateSource);
+		} catch (IllegalArgumentException e) {
+			return RateSource.TRANSACTIONS;
+		}
 	}
 
 	public static boolean isEnterCurrencyDecimalPlaces() {

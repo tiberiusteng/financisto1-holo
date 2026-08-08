@@ -268,6 +268,10 @@
         <item>By Last Transaction (Asc)</item>
         <item>By Last Transaction (Desc)</item>
     </string-array>
+    <string-array name="ntsl_rate_source_entities">
+        <item>Exchange rate entities</item>
+        <item>History transactions</item>
+    </string-array>
     <string name="sort_locations">Sort locations</string>
     <string name="sort_locations_summary">Define sort order for locations list</string>
     <string-array name="sort_locations_entities">
@@ -979,6 +983,8 @@
     <string name="split_transfer_not_supported_yet">Split-transfers with a currency differ from account\'s currency are not yet supported</string>
     <string name="show_currency">Show currency</string>
     <string name="show_currency_summary">Show currency selector in new transaction screen</string>
+    <string name="rate_source">Exchange rate source</string>
+    <string name="rate_source_summary">The source of initial displayed exchange rate for foreign currencies</string>
     <string name="enter_currency_decimal_places">Allow enter currency decimal places</string>
     <string name="enter_currency_decimal_places_summary">Allows you to enter decimals for some currencies (cents, etc.)</string>
     <string name="round_up_amount">Automatically up decimal places</string>
