@@ -20,7 +20,6 @@ BE SURE TO BACKUP YOUR DATA!
 * Tweaked text layout, support device text scaling
 * Search memo text, amount value (even with range)
 * Location removed due to huge change in google maps API
-* Photo removed due to backup and content linking/updating difficulties
 * Backup file compatible with Play store version 1.7.1
 * SMS template has been changed to Notification template, supporting other apps' push notification
 
