@@ -816,8 +816,12 @@ public abstract class AbstractTransactionActivity extends AbstractActivity imple
 
 	protected void updateTransactionFromUI(Transaction transaction) {
 		transaction.categoryId = categorySelector.getSelectedCategoryId();
-		transaction.projectId = projectSelector.getSelectedEntityId();
-		transaction.locationId = locationSelector.getSelectedEntityId();
+		if (isShowProject) {
+			transaction.projectId = projectSelector.getSelectedEntityId();
+		}
+		if (isShowLocation) {
+			transaction.locationId = locationSelector.getSelectedEntityId();
+		}
 		if (transaction.isScheduled()) {
 			DateUtils.zeroSeconds(dateTime);
 		}
