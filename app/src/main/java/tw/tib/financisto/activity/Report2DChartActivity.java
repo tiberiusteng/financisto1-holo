@@ -166,7 +166,7 @@ public class Report2DChartActivity extends Activity implements OnChartValueSelec
         // Reference Currency
         currency = getReferenceCurrency();
         // Period of Reference
-        int periodLength = getPeriodOfReference();
+        int periodLength = getPeriodOfReference(MyPreferences.getPeriodOfReference());
         selectedPeriod = selectPeriodFromLength(periodLength);
         aggregateUnit = MyPreferences.getReportAggregateUnit();
 
@@ -439,7 +439,7 @@ public class Report2DChartActivity extends Activity implements OnChartValueSelec
      */
     private void processPeriodLengthChange(int previousPeriod, boolean refresh) {
         if (previousPeriod != selectedPeriod) {
-            reportData.changePeriodLength(getPeriodOfReference());
+            reportData.changePeriodLength(getPeriodOfReference(periods[selectedPeriod]));
             setStartPeriod(periods[selectedPeriod]);
             reportData.changeStartPeriod(startPeriod);
             if (refresh) refreshView();
@@ -607,7 +607,7 @@ public class Report2DChartActivity extends Activity implements OnChartValueSelec
             boolean changed = preferencesChanged(initialPrefs, MyPreferences.getReportPreferences());
             if (changed) {
                 // rebuild data
-                int periodLength = getPeriodOfReference();
+                int periodLength = getPeriodOfReference(MyPreferences.getPeriodOfReference());
                 reportData.rebuild(this, db, startPeriod, periodLength, currency, aggregateUnit);
                 refreshView();
             }
@@ -633,7 +633,7 @@ public class Report2DChartActivity extends Activity implements OnChartValueSelec
         // 1 period of reference
         if (!initial[1].equals(actual[1])) {
             // change period length to the one set in report preferences
-            int refPeriodLength = getPeriodOfReference();
+            int refPeriodLength = getPeriodOfReference(MyPreferences.getPeriodOfReference());
             int previousPeriod = selectedPeriod;
             selectedPeriod = selectPeriodFromLength(refPeriodLength);
             processPeriodLengthChange(previousPeriod, false);
@@ -703,8 +703,7 @@ public class Report2DChartActivity extends Activity implements OnChartValueSelec
      *
      * @return The number of months to be represented in the 2D report.
      */
-    private int getPeriodOfReference() {
-        int periodLength = MyPreferences.getPeriodOfReference();
+    private int getPeriodOfReference(int periodLength) {
         if (periodLength == 0) {
             periodLength = ReportDataByPeriod.DEFAULT_PERIOD;
             prefPerNotSet = true;
