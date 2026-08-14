@@ -130,6 +130,10 @@ public class MenuListFragment extends ListFragment {
         super.onResume();
         PinProtection.unlock(getContext());
         bus.register(this);
+        // See ReportsListFragment.onResume(): after ViewPager2 detaches and re-attaches the
+        // fragment view, AbsListView's mDataChanged stays true until a layout pass, and the first
+        // tap is swallowed.
+        getListView().requestLayout();
     }
 
     ProgressDialog progressDialog;

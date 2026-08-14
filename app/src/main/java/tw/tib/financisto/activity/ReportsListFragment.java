@@ -77,6 +77,15 @@ public class ReportsListFragment extends ListFragment {
     public void onResume() {
         super.onResume();
         PinProtection.unlock(getContext());
+        // ViewPager2 detaches the page's fragment view when another tab is selected. On re-attach,
+        // AbsListView.onAttachedToWindow() sets mDataChanged = true ("data may have changed while
+        // we were detached"), and only a layout pass clears it. Coming back, the page bounds are
+        // unchanged and nothing requests a layout, so View.layout() skips onLayout(), the flag
+        // stays set, and the next tap is dropped in onTouchUp(). Dragging the list forces a layout,
+        // which is why scrolling once makes taps work again.
+        // The other tabs are not affected because refreshCurrentTab() re-sets their adapter; this
+        // one is a static list with nothing to refresh.
+        getListView().requestLayout();
     }
 
     @Override
