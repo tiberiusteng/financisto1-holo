@@ -97,6 +97,7 @@
 		<service android:name=".service.IntentService" android:exported="true">
 			<intent-filter>
 				<action android:name=".NEW_TRANSACTION" />
+				<action android:name=".CREATE_BACKUP" />
 			</intent-filter>
 		</service>
 
