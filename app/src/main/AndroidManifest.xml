@@ -287,8 +287,13 @@
 		<activity android:name=".activity.ScheduledListActivity" android:label="@string/scheduled_transactions"
 			android:theme="@style/AppThemeCompat" />
 
-		<activity android:name=".activity.SelectTemplateActivity" android:label="@string/transaction_templates"
-			android:theme="@style/AppDialogCompat" android:configChanges="screenSize|smallestScreenSize|orientation|screenLayout|keyboardHidden"/>
+		<activity android:name=".activity.SelectTemplateActivity" android:label="@string/transaction_templates" android:exported="true"
+			android:theme="@style/AppDialogCompat" android:configChanges="screenSize|smallestScreenSize|orientation|screenLayout|keyboardHidden">
+			<intent-filter>
+				<action android:name="android.intent.action.MAIN" />
+				<category android:name="android.intent.category.DEFAULT" />
+			</intent-filter>
+		</activity>
 
 		<activity android:name=".activity.CsvExportActivity" android:label="@string/csv_export"
 			android:theme="@style/AppThemeCompat" />
