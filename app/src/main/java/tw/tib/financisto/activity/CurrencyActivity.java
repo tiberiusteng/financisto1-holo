@@ -213,6 +213,7 @@ public class CurrencyActivity extends Activity implements ActivityLayoutListener
 
 	private void makeDefaultIfNecessary() {
 		isDefault.setChecked(db.getAllCurrenciesList().isEmpty());
+		decimals.setSelection(maxDecimals - 2);
 		updateExchangeRate.setChecked(false);
 	}
 
