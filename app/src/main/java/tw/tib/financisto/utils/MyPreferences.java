@@ -771,12 +771,12 @@ public class MyPreferences {
 	}
 
 	private static ExchangeRateProviderFactory getExchangeRateProviderFactory() {
-		String provider = getString("exchange_rate_provider", ExchangeRateProviderFactory.freeCurrency.name());
+		String provider = getString("exchange_rate_provider", ExchangeRateProviderFactory.floatRates.name());
 		ExchangeRateProviderFactory r;
 		try {
 			r = ExchangeRateProviderFactory.valueOf(provider);
 		} catch (IllegalArgumentException e) {
-			return ExchangeRateProviderFactory.freeCurrency;
+			return ExchangeRateProviderFactory.floatRates;
 		}
 		return r;
 	}
