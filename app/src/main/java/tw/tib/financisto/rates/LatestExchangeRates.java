@@ -10,6 +10,7 @@ package tw.tib.financisto.rates;
 
 import android.content.Context;
 import android.util.Log;
+import android.util.Pair;
 
 import it.unimi.dsi.fastutil.longs.Long2ObjectOpenHashMap;
 import tw.tib.financisto.db.DatabaseAdapter;
@@ -17,7 +18,9 @@ import tw.tib.financisto.model.Currency;
 import tw.tib.financisto.utils.CurrencyCache;
 
 import java.util.Arrays;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 /**
  * Created by IntelliJ IDEA.
@@ -40,11 +43,26 @@ public class LatestExchangeRates implements ExchangeRateProvider, ExchangeRatesC
 
     @Override
     public ExchangeRate getRate(Currency fromCurrency, Currency toCurrency) {
+        Set<Pair<Currency,Currency>> usedCurrencies = new HashSet<>();
+        return getRate(fromCurrency, toCurrency, usedCurrencies);
+    }
+
+    public ExchangeRate getRate(Currency fromCurrency, Currency toCurrency, Set<Pair<Currency,Currency>> usedCurrencies) {
         if (fromCurrency.id == toCurrency.id) {
             return ExchangeRate.ONE;
         }
         var rateMap = getMapFor(fromCurrency.id);
         ExchangeRate rate = rateMap.get(toCurrency.id);
+
+        var pair = new Pair<>(fromCurrency, toCurrency);
+        if (usedCurrencies.contains(pair)) {
+            // negative cache
+            rate = ExchangeRate.NA;
+            rateMap.put(toCurrency.id, rate);
+            return rate;
+        }
+        usedCurrencies.add(pair);
+
         if (rate != null) {
             Log.d(TAG, "getRate direct " + rate);
             return rate;
@@ -66,9 +84,9 @@ public class LatestExchangeRates implements ExchangeRateProvider, ExchangeRatesC
             !toCurrency.equals(homeCurrency))
         {
             Log.d(TAG, "getRate trying to estimate with home currency " + homeCurrency);
-            ExchangeRate e1 = getRate(fromCurrency, homeCurrency);
+            ExchangeRate e1 = getRate(fromCurrency, homeCurrency, usedCurrencies);
             if (e1 != ExchangeRate.NA) {
-                ExchangeRate e2 = getRate(homeCurrency, toCurrency);
+                ExchangeRate e2 = getRate(homeCurrency, toCurrency, usedCurrencies);
                 if (e2 != ExchangeRate.NA) {
                     return combineRate(rateMap, fromCurrency, toCurrency, e1, e2);
                 }
@@ -78,9 +96,9 @@ public class LatestExchangeRates implements ExchangeRateProvider, ExchangeRatesC
         if (fromCurrency.tradingCurrencyId != 0) {
             Currency tradingCurrency = CurrencyCache.getCurrency(fromCurrency.tradingCurrencyId);
             Log.d(TAG, "getRate via trading currency " + tradingCurrency);
-            ExchangeRate t1 = getRate(fromCurrency, tradingCurrency);
+            ExchangeRate t1 = getRate(fromCurrency, tradingCurrency, usedCurrencies);
             if (t1 != ExchangeRate.NA) {
-                ExchangeRate t2 = getRate(tradingCurrency, toCurrency);
+                ExchangeRate t2 = getRate(tradingCurrency, toCurrency, usedCurrencies);
                 if (t2 != ExchangeRate.NA) {
                     return combineRate(rateMap, fromCurrency, toCurrency, t1, t2);
                 }
