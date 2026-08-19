@@ -69,7 +69,10 @@ public class TransactionInfoDialog {
             return;
         }
         if (ti.parentId > 0) {
-            ti = db.getTransactionInfo(ti.parentId);
+            var parent = db.getTransactionInfo(ti.parentId);
+            if (parent != null) {
+                ti = parent;
+            }
         }
         View v = layoutInflater.inflate(R.layout.info_dialog, null);
         LinearLayout layout = v.findViewById(R.id.list);
