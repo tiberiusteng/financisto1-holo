@@ -35,6 +35,9 @@ public class Application extends MultiDexApplication {
         instance = this;
         executor = Executors.newCachedThreadPool();
         copiedUneditedTransactions = new Long2LongOpenHashMap();
+        // the MY_PACKAGE_REPLACED broadcast does not always manage to rebind the
+        // notification listener; opening the app is the other natural moment to retry
+        tw.tib.financisto.service.NotificationListener.requestRebindIfGranted(this);
 
         if (BuildConfig.DEBUG) {
             StrictMode.setVmPolicy(new StrictMode.VmPolicy.Builder()
