@@ -57,6 +57,13 @@ public class NotificationListener extends NotificationListenerService {
      * re-enabling the component does the same thing programmatically; requestRebind()
      * alone was not enough in my testing.
      *
+     * This is not specific to self-signed builds: the same symptom (notification list
+     * empty, access still shown as granted, off/on toggle required to recover) also
+     * reproduces with the Play Store build after a store update, observed on a Xiaomi
+     * phone running HyperOS 3 / Android 16. Vendor builds with aggressive background
+     * management appear more prone to leaving the listener unbound across updates,
+     * which is likely why it does not reproduce on every device.
+     *
      * The component's enabled state is independent of the grant, which is stored per
      * component name in Settings.Secure.enabled_notification_listeners, so this does not
      * drop the permission. It is a no-op when the listener is already bound, and it does
