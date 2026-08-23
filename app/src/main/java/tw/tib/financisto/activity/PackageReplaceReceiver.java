@@ -17,6 +17,7 @@ import android.util.Log;
 
 import tw.tib.financisto.service.DailyAutoBackupScheduler;
 import tw.tib.financisto.service.FinancistoService;
+import tw.tib.financisto.service.NotificationListener;
 
 public class PackageReplaceReceiver extends BroadcastReceiver {
     private static final String TAG = "PackageReplaceReceiver";
@@ -27,6 +28,8 @@ public class PackageReplaceReceiver extends BroadcastReceiver {
         Log.i(TAG, "reschedule transactions and auto backup");
         requestScheduleAll(context);
         requestScheduleAutoBackup(context);
+        // an APK update is the usual moment the notification listener gets unbound
+        NotificationListener.requestRebindIfGranted(context);
     }
 
     protected void requestScheduleAll(Context context) {

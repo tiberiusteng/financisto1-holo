@@ -48,6 +48,10 @@ public class NotificationListActivity extends AppCompatActivity {
             return WindowInsetsCompat.CONSUMED;
         });
 
+        // opening this screen is what a user does when notifications stopped arriving,
+        // so let it heal a listener the system silently unbound
+        NotificationListener.requestRebindIfGranted(this);
+
         list = findViewById(android.R.id.list);
         list.setAdapter(new NotificationListAdapter(this));
         list.setOnItemClickListener((adapterView, view, i, l) -> {
