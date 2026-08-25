@@ -1,0 +1,114 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical"
+    android:padding="20dp">
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="✨ 自然語言智慧記帳"
+        android:textSize="18sp"
+        android:textStyle="bold"
+        android:textColor="?android:attr/textColorPrimary" />
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="4dp"
+        android:text="透過 Gemini Nano 本機 AI 解析您的自然語言文字，資料完全不離身。"
+        android:textSize="12sp"
+        android:textColor="?android:attr/textColorSecondary" />
+
+    <EditText
+        android:id="@+id/et_nl_input"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="16dp"
+        android:minLines="2"
+        android:maxLines="4"
+        android:gravity="top|start"
+        android:hint="例如：中午在全家買了 85 元便當用現金"
+        android:background="@android:drawable/editbox_background_normal"
+        android:padding="12dp"
+        android:textSize="15sp" />
+
+    <!-- Sample Chips Container -->
+    <HorizontalScrollView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="8dp"
+        android:scrollbars="none">
+
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal">
+
+            <Button
+                android:id="@+id/btn_sample_1"
+                android:layout_width="wrap_content"
+                android:layout_height="36dp"
+                android:text="全家 85 便當 現金"
+                android:textSize="11sp"
+                style="?android:attr/buttonStyleSmall" />
+
+            <Button
+                android:id="@+id/btn_sample_2"
+                android:layout_width="wrap_content"
+                android:layout_height="36dp"
+                android:layout_marginStart="6dp"
+                android:text="星巴克 165 拿鐵 信用卡"
+                android:textSize="11sp"
+                style="?android:attr/buttonStyleSmall" />
+
+            <Button
+                android:id="@+id/btn_sample_3"
+                android:layout_width="wrap_content"
+                android:layout_height="36dp"
+                android:layout_marginStart="6dp"
+                android:text="中油加油 1000 刷卡"
+                android:textSize="11sp"
+                style="?android:attr/buttonStyleSmall" />
+
+            <Button
+                android:id="@+id/btn_sample_4"
+                android:layout_width="wrap_content"
+                android:layout_height="36dp"
+                android:layout_marginStart="6dp"
+                android:text="收到薪水 50000 國泰世華"
+                android:textSize="11sp"
+                style="?android:attr/buttonStyleSmall" />
+        </LinearLayout>
+    </HorizontalScrollView>
+
+    <!-- Real-time Preview Box -->
+    <LinearLayout
+        android:id="@+id/ll_preview_box"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="12dp"
+        android:orientation="vertical"
+        android:padding="12dp"
+        android:background="#15888888">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="即時解析結果"
+            android:textSize="12sp"
+            android:textStyle="bold"
+            android:textColor="?android:attr/textColorPrimary" />
+
+        <TextView
+            android:id="@+id/tv_preview_details"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="6dp"
+            android:text="等待輸入中..."
+            android:textSize="13sp"
+            android:textColor="?android:attr/textColorSecondary" />
+    </LinearLayout>
+
+</LinearLayout>

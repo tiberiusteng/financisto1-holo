@@ -17,6 +17,12 @@ import tw.tib.financisto.model.Currency;
 
 public enum ReportType {
 
+	AI_INSIGHTS(R.string.ai_insights_title, R.string.ai_insights_summary, R.drawable.ic_ai_sparkle){
+		@Override
+		public Report createReport(Context context, Currency currency) {
+			return null;
+		}
+	},
 	BY_PERIOD(R.string.report_by_period, R.string.report_by_period_summary, R.drawable.report_icon_default){
 		@Override
 		public Report createReport(Context context, Currency currency) {

@@ -59,6 +59,9 @@ android {
     }
 
     testBuildType "debug"
+    testOptions {
+        unitTests.returnDefaultValues = true
+    }
     sourceSets {
         androidTest {
             java.srcDirs += ['/src/androidTest/java']

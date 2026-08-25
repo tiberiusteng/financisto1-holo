@@ -1098,4 +1098,12 @@
     <item>只顯示彙總交易</item>
     <item>只顯示子交易</item>
   </string-array>
+
+  <string name="pref_ai_features_title">Gemini Nano AI 功能</string>
+  <string name="ai_nl_quick_add">AI 自然語言記帳</string>
+  <string name="ai_nl_quick_add_summary">由 Gemini Nano 驅動的語意快速記帳</string>
+  <string name="ai_nl_quick_add_pref_summary">在流水帳快速操作選單中顯示「自然語言記帳」功能</string>
+  <string name="ai_insights_title">AI 財務洞察與消費摘要</string>
+  <string name="ai_insights_summary">本機端智慧收支摘要與財務優化建議</string>
+  <string name="ai_insights_pref_summary">在選單中啟用「離線財務洞察與消費摘要」功能</string>
 </resources>

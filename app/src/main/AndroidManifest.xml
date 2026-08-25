@@ -298,6 +298,27 @@
 
 		<activity android:name=".activity.CsvExportActivity" android:label="@string/csv_export"
 			android:theme="@style/AppThemeCompat" />
+
+		<activity android:name=".activity.AIExpenseInsightsActivity" android:label="@string/ai_insights_title"
+			android:theme="@style/AppThemeCompat"
+			android:configChanges="screenSize|smallestScreenSize|orientation|screenLayout|keyboardHidden" />
+
+		<activity android:name=".activity.QuickAddActionActivity"
+			android:label="@string/ai_nl_quick_add"
+			android:theme="@style/AppThemeCompat"
+			android:exported="true">
+			<intent-filter>
+				<action android:name="android.intent.action.SEND" />
+				<category android:name="android.intent.category.DEFAULT" />
+				<data android:mimeType="text/plain" />
+			</intent-filter>
+			<intent-filter>
+				<action android:name="android.intent.action.VIEW" />
+				<category android:name="android.intent.category.DEFAULT" />
+				<category android:name="android.intent.category.BROWSABLE" />
+				<data android:scheme="financisto" android:host="quick-add" />
+			</intent-filter>
+		</activity>
 		<activity android:name=".activity.CsvImportActivity" android:label="@string/csv_import"
 			android:theme="@style/AppThemeCompat" android:exported="true">
 			<intent-filter>

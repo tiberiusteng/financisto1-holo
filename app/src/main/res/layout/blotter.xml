@@ -123,6 +123,13 @@
 					android:src="@drawable/actionbar_add_big" />
 
 				<ImageButton
+					android:id="@+id/bAi"
+					style="@style/BottomBarButton"
+					android:src="@drawable/ic_ai_sparkle"
+					android:contentDescription="@string/ai_nl_quick_add"
+					android:visibility="gone" />
+
+				<ImageButton
 					android:id="@+id/bTransfer"
 					style="@style/BottomBarButton"
 					android:src="@drawable/actionbar_transfer"

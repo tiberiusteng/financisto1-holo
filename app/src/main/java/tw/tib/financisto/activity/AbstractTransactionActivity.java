@@ -79,6 +79,10 @@ public abstract class AbstractTransactionActivity extends AbstractActivity imple
 
 	public static final String TRAN_ID_EXTRA = "tranId";
 	public static final String ACCOUNT_ID_EXTRA = "accountId";
+	public static final String CATEGORY_ID_EXTRA = "categoryIdExtra";
+	public static final String PAYEE_ID_EXTRA = "payeeIdExtra";
+	public static final String NOTE_EXTRA = "noteExtra";
+	public static final String PROJECT_ID_EXTRA = "projectIdExtra";
 	public static final String DUPLICATE_EXTRA = "isDuplicate";
 	public static final String TEMPLATE_EXTRA = "isTemplate";
 	public static final String DATETIME_EXTRA = "dateTimeExtra";
@@ -364,7 +368,8 @@ public abstract class AbstractTransactionActivity extends AbstractActivity imple
 			editTransaction(transaction);
 		} else {
 			setDateTime(transaction.dateTime);
-			categorySelector.selectCategory(NO_CATEGORY_ID);
+			long prefillCatId = intent != null ? intent.getLongExtra(CATEGORY_ID_EXTRA, NO_CATEGORY_ID) : NO_CATEGORY_ID;
+			categorySelector.selectCategory(prefillCatId);
 			if (accountId != -1) {
 				selectAccount(accountId);
 			} else {
@@ -373,8 +378,21 @@ public abstract class AbstractTransactionActivity extends AbstractActivity imple
 					selectAccount(lastAccountId);
 				}
 			}
-			if (!isRememberLastProject) {
+			long prefillPayeeId = intent != null ? intent.getLongExtra(PAYEE_ID_EXTRA, Payee.EMPTY.id) : Payee.EMPTY.id;
+			if (prefillPayeeId != Payee.EMPTY.id) {
+				selectPayee(prefillPayeeId);
+			}
+			long prefillProjId = intent != null ? intent.getLongExtra(PROJECT_ID_EXTRA, NO_PROJECT_ID) : NO_PROJECT_ID;
+			if (prefillProjId != NO_PROJECT_ID) {
+				projectSelector.selectEntity(prefillProjId);
+			} else if (!isRememberLastProject) {
 				projectSelector.selectEntity(NO_PROJECT_ID);
+			}
+			if (intent != null && intent.hasExtra(NOTE_EXTRA)) {
+				String note = intent.getStringExtra(NOTE_EXTRA);
+				if (note != null && noteText != null && isShowNote) {
+					noteText.setText(note);
+				}
 			}
 			if (!isRememberLastLocation) {
 				locationSelector.selectEntity(CURRENT_LOCATION_ID);

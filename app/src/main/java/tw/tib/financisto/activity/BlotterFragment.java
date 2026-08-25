@@ -111,6 +111,7 @@ public class BlotterFragment extends AbstractListFragment<Cursor> implements Blo
     protected ProgressBar progressBar;
 
     protected ImageButton bFilter;
+    protected ImageButton bAi;
     protected ImageButton bTransfer;
     protected ImageButton bTemplate;
     protected ImageButton bSearch;
@@ -274,7 +275,20 @@ public class BlotterFragment extends AbstractListFragment<Cursor> implements Blo
         isQuickMenuShowDuplicateKeepTime = MyPreferences.isQuickMenuShowDuplicateKeepTime();
         isQuickMenuShowDuplicateKeepDateTime = MyPreferences.isQuickMenuShowDuplicateKeepDateTime();
 
+        if (bAdd != null) {
+            bAdd.setOnLongClickListener(v -> {
+                addButtonActionGrid.show(bAdd);
+                return true;
+            });
+        }
+
         if (showAllBlotterButtons) {
+            bAi = view.findViewById(R.id.bAi);
+            if (bAi != null) {
+                bAi.setVisibility(MyPreferences.isAiNlQuickAddEnabled() ? View.VISIBLE : View.GONE);
+                bAi.setOnClickListener(v -> tw.tib.financisto.dialog.NLTransactionDialog.show(getContext(), db));
+            }
+
             bTransfer = view.findViewById(R.id.bTransfer);
             if (bTransfer != null) {
                 bTransfer.setVisibility(View.VISIBLE);
@@ -637,8 +651,9 @@ public class BlotterFragment extends AbstractListFragment<Cursor> implements Blo
         addButtonActionGrid.addQuickAction(new MyQuickAction(getContext(), R.drawable.ic_action_transfer, R.string.transfer));
         if (addTemplateToAddButton()) {
             addButtonActionGrid.addQuickAction(new MyQuickAction(getContext(), R.drawable.actionbar_tiles_large, R.string.template));
-        } else {
-            addButtonActionGrid.setNumColumns(2);
+        }
+        if (MyPreferences.isAiNlQuickAddEnabled()) {
+            addButtonActionGrid.addQuickAction(new MyQuickAction(getContext(), R.drawable.actionbar_add_big, R.string.ai_nl_quick_add));
         }
         addButtonActionGrid.setOnQuickActionClickListener(addButtonActionListener);
     }
@@ -648,16 +663,15 @@ public class BlotterFragment extends AbstractListFragment<Cursor> implements Blo
     }
 
     private QuickActionWidget.OnQuickActionClickListener addButtonActionListener = (widget, position, action) -> {
-        switch (position) {
-            case 0:
-                addItem(NEW_TRANSACTION_REQUEST, TransactionActivity.class);
-                break;
-            case 1:
-                addItem(NEW_TRANSFER_REQUEST, TransferActivity.class);
-                break;
-            case 2:
-                createFromTemplate();
-                break;
+        int titleId = ((MyQuickAction) action).titleId;
+        if (titleId == R.string.transaction) {
+            addItem(NEW_TRANSACTION_REQUEST, TransactionActivity.class);
+        } else if (titleId == R.string.transfer) {
+            addItem(NEW_TRANSFER_REQUEST, TransferActivity.class);
+        } else if (titleId == R.string.template) {
+            createFromTemplate();
+        } else if (titleId == R.string.ai_nl_quick_add) {
+            tw.tib.financisto.dialog.NLTransactionDialog.show(getContext(), db);
         }
     };
 
@@ -1141,6 +1155,9 @@ public class BlotterFragment extends AbstractListFragment<Cursor> implements Blo
             Account a = db.getAccount(accountId);
             bAdd.setVisibility(a != null && a.isActive ? View.VISIBLE : View.GONE);
             if (showAllBlotterButtons) {
+                if (bAi != null) {
+                    bAi.setVisibility(a != null && a.isActive && MyPreferences.isAiNlQuickAddEnabled() ? View.VISIBLE : View.GONE);
+                }
                 bTransfer.setVisibility(a != null && a.isActive ? View.VISIBLE : View.GONE);
             }
         }
@@ -1200,6 +1217,10 @@ public class BlotterFragment extends AbstractListFragment<Cursor> implements Blo
     public void onResume() {
         super.onResume();
         Log.d(TAG, "onResume");
+        prepareAddButtonActionGrid();
+        if (bAi != null) {
+            bAi.setVisibility(showAllBlotterButtons && MyPreferences.isAiNlQuickAddEnabled() ? View.VISIBLE : View.GONE);
+        }
         if (lastTxId != BEFORE_INITIAL_LOAD) {
             Application.getExecutor().execute(() -> {
                 long t1 = System.nanoTime();

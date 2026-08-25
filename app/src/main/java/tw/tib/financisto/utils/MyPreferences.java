@@ -906,4 +906,12 @@ public class MyPreferences {
 		}
 	}
 
+	public static boolean isAiNlQuickAddEnabled() {
+		return getBoolean("ai_nl_quick_add_enabled", true);
+	}
+
+	public static boolean isAiInsightsEnabled() {
+		return getBoolean("ai_insights_enabled", true);
+	}
+
 }

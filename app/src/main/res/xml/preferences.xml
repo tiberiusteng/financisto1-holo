@@ -56,6 +56,21 @@
             android:title="@string/fiscal_year_start" />
     </PreferenceCategory>
 
+    <PreferenceCategory android:title="@string/pref_ai_features_title">
+        <SwitchPreferenceCompat
+            app:singleLineTitle="false"
+            android:defaultValue="true"
+            android:key="ai_nl_quick_add_enabled"
+            android:summary="@string/ai_nl_quick_add_pref_summary"
+            android:title="@string/ai_nl_quick_add" />
+        <SwitchPreferenceCompat
+            app:singleLineTitle="false"
+            android:defaultValue="true"
+            android:key="ai_insights_enabled"
+            android:summary="@string/ai_insights_pref_summary"
+            android:title="@string/ai_insights_title" />
+    </PreferenceCategory>
+
     <PreferenceCategory android:title="@string/pref_tpl">
         <ListPreference
             app:singleLineTitle="false"

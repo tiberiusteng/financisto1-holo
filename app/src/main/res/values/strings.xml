@@ -1263,4 +1263,12 @@
         <item>Only show split summary</item>
         <item>Only show split children</item>
     </string-array>
+
+    <string name="pref_ai_features_title">Gemini Nano AI Features</string>
+    <string name="ai_nl_quick_add">AI Quick Transaction</string>
+    <string name="ai_nl_quick_add_summary">Natural language quick booking powered by Gemini Nano</string>
+    <string name="ai_nl_quick_add_pref_summary">Enable natural language quick booking action in blotter</string>
+    <string name="ai_insights_title">AI Expense Insights</string>
+    <string name="ai_insights_summary">On-device financial overview &amp; smart budget advice</string>
+    <string name="ai_insights_pref_summary">Enable on-device financial insights and expense summaries</string>
 </resources>

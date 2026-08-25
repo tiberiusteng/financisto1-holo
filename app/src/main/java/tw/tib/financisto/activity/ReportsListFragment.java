@@ -22,25 +22,34 @@ import tw.tib.financisto.graph.Report2DChart;
 import tw.tib.financisto.model.Currency;
 import tw.tib.financisto.report.Report;
 import tw.tib.financisto.report.ReportType;
+import tw.tib.financisto.utils.MyPreferences;
 import tw.tib.financisto.utils.PinProtection;
+
+import java.util.ArrayList;
+import java.util.List;
 
 public class ReportsListFragment extends ListFragment {
     public static final String EXTRA_REPORT_TYPE = "reportType";
 
-    public final ReportType[] reports = new ReportType[]{
-            ReportType.BY_PERIOD,
-            ReportType.BY_CATEGORY,
-            ReportType.BY_PAYEE,
-            ReportType.BY_LOCATION,
-            ReportType.BY_PROJECT,
-            ReportType.BY_ACCOUNT_BY_PERIOD,
-            ReportType.BY_CATEGORY_BY_PERIOD,
-            ReportType.BY_PAYEE_BY_PERIOD,
-            ReportType.BY_LOCATION_BY_PERIOD,
-            ReportType.BY_PROJECT_BY_PERIOD,
-            ReportType.BY_ACCOUNT_BALANCE_BY_PERIOD,
-            ReportType.TOTAL_BALANCE_BY_PERIOD
-    };
+    private ReportType[] getReports() {
+        List<ReportType> list = new ArrayList<>();
+        if (MyPreferences.isAiInsightsEnabled()) {
+            list.add(ReportType.AI_INSIGHTS);
+        }
+        list.add(ReportType.BY_PERIOD);
+        list.add(ReportType.BY_CATEGORY);
+        list.add(ReportType.BY_PAYEE);
+        list.add(ReportType.BY_LOCATION);
+        list.add(ReportType.BY_PROJECT);
+        list.add(ReportType.BY_ACCOUNT_BY_PERIOD);
+        list.add(ReportType.BY_CATEGORY_BY_PERIOD);
+        list.add(ReportType.BY_PAYEE_BY_PERIOD);
+        list.add(ReportType.BY_LOCATION_BY_PERIOD);
+        list.add(ReportType.BY_PROJECT_BY_PERIOD);
+        list.add(ReportType.BY_ACCOUNT_BALANCE_BY_PERIOD);
+        list.add(ReportType.TOTAL_BALANCE_BY_PERIOD);
+        return list.toArray(new ReportType[0]);
+    }
 
     @Nullable
     @Override
@@ -59,7 +68,7 @@ public class ReportsListFragment extends ListFragment {
             return WindowInsetsCompat.CONSUMED;
         });
 
-        setListAdapter(new ReportListAdapter(getContext(), reports));
+        setListAdapter(new ReportListAdapter(getContext(), getReports()));
     }
 
     @Override
@@ -77,28 +86,25 @@ public class ReportsListFragment extends ListFragment {
     public void onResume() {
         super.onResume();
         PinProtection.unlock(getContext());
-        // ViewPager2 detaches the page's fragment view when another tab is selected. On re-attach,
-        // AbsListView.onAttachedToWindow() sets mDataChanged = true ("data may have changed while
-        // we were detached"), and only a layout pass clears it. Coming back, the page bounds are
-        // unchanged and nothing requests a layout, so View.layout() skips onLayout(), the flag
-        // stays set, and the next tap is dropped in onTouchUp(). Dragging the list forces a layout,
-        // which is why scrolling once makes taps work again.
-        // The other tabs are not affected because refreshCurrentTab() re-sets their adapter; this
-        // one is a static list with nothing to refresh.
+        setListAdapter(new ReportListAdapter(getContext(), getReports()));
         getListView().requestLayout();
     }
 
     @Override
     public void onListItemClick(ListView l, View v, int position, long id) {
-        if (reports[position].isConventionalBarReport()) {
+        ReportType report = (ReportType) getListAdapter().getItem(position);
+        if (report == ReportType.AI_INSIGHTS) {
+            Intent intent = new Intent(getContext(), AIExpenseInsightsActivity.class);
+            startActivity(intent);
+        } else if (report.isConventionalBarReport()) {
             // Conventional Bars reports
             Intent intent = new Intent(getContext(), ReportActivity.class);
-            intent.putExtra(EXTRA_REPORT_TYPE, reports[position].name());
+            intent.putExtra(EXTRA_REPORT_TYPE, report.name());
             startActivity(intent);
         } else {
             // 2D Chart reports
             Intent intent = new Intent(getContext(), Report2DChartActivity.class);
-            intent.putExtra(Report2DChart.REPORT_TYPE, reports[position].name());
+            intent.putExtra(Report2DChart.REPORT_TYPE, report.name());
             startActivity(intent);
         }
     }
