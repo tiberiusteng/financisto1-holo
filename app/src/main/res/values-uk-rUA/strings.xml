@@ -1155,4 +1155,49 @@
         <item>Неділя</item>
         <item>Понеділок</item>
     </string-array>
+
+  <!-- Gemini Nano AI Features -->
+  <string name="pref_ai_features_title">Функції ШІ Gemini Nano</string>
+  <string name="ai_nl_quick_add">Швидке введення через ШІ</string>
+  <string name="ai_nl_quick_add_summary">Швидке додавання природною мовою на базі Gemini Nano</string>
+  <string name="ai_nl_quick_add_pref_summary">Увімкнути швидке додавання природною мовою в журналі</string>
+  <string name="ai_insights_title">Аналітика витрат ШІ</string>
+  <string name="ai_insights_summary">Локальний фінансовий огляд та розумні бюджетні поради</string>
+  <string name="ai_insights_pref_summary">Увімкнути локальну фінансову аналітику та підсумки витрат</string>
+  <string name="ai_insights_period_week">Цього тижня</string>
+  <string name="ai_insights_period_month">Цього місяця</string>
+  <string name="ai_insights_period_last30">Останні 30 днів</string>
+  <string name="ai_insights_stats_overview">Огляд: %s</string>
+  <string name="ai_insights_total_expense">Усього витрат</string>
+  <string name="ai_insights_total_income">Усього доходів</string>
+  <string name="ai_insights_net_balance">Чистий баланс</string>
+  <string name="ai_insights_summary_title">Фінансовий підсумок ШІ</string>
+  <string name="ai_insights_summary_loading">Формування фінансового підсумку…</string>
+  <string name="ai_insights_categories_title">Головні категорії витрат</string>
+  <string name="ai_insights_tips_title">Фінансові поради</string>
+  <string name="ai_insights_tips_loading">Аналіз структури витрат…</string>
+  <string name="ai_insights_no_expenses">Витрат за цей період не знайдено.</string>
+  <string name="ai_insights_subtitle">Офлайн-обробка на пристрої з Gemini Nano для збереження конфіденційності.</string>
+  <string name="ai_nl_dialog_title">Розумний запис природною мовою</string>
+  <string name="ai_nl_dialog_subtitle">ШІ Gemini Nano обробляє текст локально на пристрої. 100% конфіденційно.</string>
+  <string name="ai_nl_input_hint">напр. Обід 150 їжа готівка в кафе</string>
+  <string name="ai_nl_sample_1">Сільпо 350 продукти готівка</string>
+  <string name="ai_nl_sample_2">Кав\'ярня 80 кава картка</string>
+  <string name="ai_nl_sample_3">АЗС 1500 картка</string>
+  <string name="ai_nl_sample_4">Зарплата 35000 банк</string>
+  <string name="ai_nl_preview_title">Результат розпізнавання</string>
+  <string name="ai_nl_preview_waiting">Очікування введення…</string>
+  <string name="ai_nl_confirm_button">Заповнити транзакцію</string>
+  <string name="ai_nl_amount_label">Сума: </string>
+  <string name="ai_nl_account_label">Рахунок: </string>
+  <string name="ai_nl_category_label">Категорія: </string>
+  <string name="ai_nl_payee_label">Одержувач: </string>
+  <string name="ai_nl_note_label">Примітка: </string>
+  <string name="ai_nl_time_label">Час: </string>
+  <string name="ai_nl_unrecognized">(Не розпізнано)</string>
+  <string name="ai_nl_default_account">(Основний рахунок)</string>
+  <string name="ai_nl_uncategorized">(Без категорії)</string>
+  <string name="ai_nl_input_empty_warning">Будь ласка, введіть текст транзакції</string>
+  <string name="ai_expense">Витрата</string>
+  <string name="ai_income">Дохід</string>
 </resources>

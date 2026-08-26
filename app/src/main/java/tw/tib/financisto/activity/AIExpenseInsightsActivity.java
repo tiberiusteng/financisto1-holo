@@ -1,13 +1,16 @@
 package tw.tib.financisto.activity;
 
+import android.content.Context;
 import android.os.Bundle;
 import android.view.LayoutInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
 import android.widget.LinearLayout;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 
+import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AppCompatActivity;
 
 import java.util.Calendar;
@@ -17,6 +20,8 @@ import tw.tib.financisto.R;
 import tw.tib.financisto.ai.ExpenseInsightGenerator;
 import tw.tib.financisto.ai.ExpenseInsightReport;
 import tw.tib.financisto.db.DatabaseAdapter;
+import tw.tib.financisto.utils.MyPreferences;
+import tw.tib.financisto.utils.PinProtection;
 
 public class AIExpenseInsightsActivity extends AppCompatActivity {
     private DatabaseAdapter db;
@@ -34,9 +39,21 @@ public class AIExpenseInsightsActivity extends AppCompatActivity {
     private Button btnLast30;
 
     @Override
+    protected void attachBaseContext(Context base) {
+        super.attachBaseContext(MyPreferences.switchLocale(base));
+    }
+
+    @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_ai_expense_insights);
+
+        ActionBar actionBar = getSupportActionBar();
+        if (actionBar != null) {
+            actionBar.setDisplayHomeAsUpEnabled(true);
+            actionBar.setTitle(R.string.ai_insights_title);
+            actionBar.setSubtitle(R.string.ai_insights_summary);
+        }
 
         db = new DatabaseAdapter(this);
         db.open();
@@ -62,6 +79,27 @@ public class AIExpenseInsightsActivity extends AppCompatActivity {
     }
 
     @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        if (item.getItemId() == android.R.id.home) {
+            finish();
+            return true;
+        }
+        return super.onOptionsItemSelected(item);
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+        PinProtection.lock(this);
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        PinProtection.unlock(this);
+    }
+
+    @Override
     protected void onDestroy() {
         super.onDestroy();
         if (db != null) {
@@ -84,7 +122,7 @@ public class AIExpenseInsightsActivity extends AppCompatActivity {
         cal.set(Calendar.MILLISECOND, 0);
         long start = cal.getTimeInMillis();
 
-        loadReport("本週", start, end);
+        loadReport(getString(R.string.ai_insights_period_week), start, end);
     }
 
     private void loadThisMonth() {
@@ -102,24 +140,24 @@ public class AIExpenseInsightsActivity extends AppCompatActivity {
         cal.set(Calendar.MILLISECOND, 0);
         long start = cal.getTimeInMillis();
 
-        loadReport("本月", start, end);
+        loadReport(getString(R.string.ai_insights_period_month), start, end);
     }
 
     private void loadLast30Days() {
         long end = System.currentTimeMillis();
         long start = end - (30L * 24L * 60L * 60L * 1000L);
-        loadReport("近 30 天", start, end);
+        loadReport(getString(R.string.ai_insights_period_last30), start, end);
     }
 
     private void loadReport(String periodTitle, long start, long end) {
         ExpenseInsightReport report = ExpenseInsightGenerator.generateReport(db, periodTitle, start, end);
 
-        tvPeriodLabel.setText(String.format(Locale.TAIWAN, "%s收支概況", periodTitle));
-        tvTotalExpense.setText(String.format(Locale.TAIWAN, "$%,.0f", report.totalExpense / 100.0));
-        tvTotalIncome.setText(String.format(Locale.TAIWAN, "$%,.0f", report.totalIncome / 100.0));
+        tvPeriodLabel.setText(getString(R.string.ai_insights_stats_overview, periodTitle));
+        tvTotalExpense.setText(String.format(Locale.getDefault(), "$%,.0f", report.totalExpense / 100.0));
+        tvTotalIncome.setText(String.format(Locale.getDefault(), "$%,.0f", report.totalIncome / 100.0));
 
         double net = report.netBalance / 100.0;
-        tvNetBalance.setText(String.format(Locale.TAIWAN, "%s$%,.0f", (net >= 0 ? "+" : ""), net));
+        tvNetBalance.setText(String.format(Locale.getDefault(), "%s$%,.0f", (net >= 0 ? "+" : ""), net));
 
         tvAiSummary.setText(report.summaryText);
         tvAiTips.setText(report.tipsText);
@@ -130,8 +168,10 @@ public class AIExpenseInsightsActivity extends AppCompatActivity {
 
         if (report.topCategories.isEmpty()) {
             TextView emptyTv = new TextView(this);
-            emptyTv.setText("此期間尚無支出紀錄");
+            emptyTv.setText(R.string.ai_insights_no_expenses);
+            emptyTv.setTextAppearance(this, android.R.style.TextAppearance_Small);
             emptyTv.setTextColor(getResources().getColor(android.R.color.secondary_text_dark));
+            emptyTv.setPadding(0, 8, 0, 8);
             llCategoriesContainer.addView(emptyTv);
         } else {
             for (ExpenseInsightReport.CategoryStat stat : report.topCategories) {
@@ -141,7 +181,7 @@ public class AIExpenseInsightsActivity extends AppCompatActivity {
                 ProgressBar pb = row.findViewById(R.id.pb_category_progress);
 
                 tvName.setText(stat.categoryName);
-                tvAmount.setText(String.format(Locale.TAIWAN, "$%,.0f (%.1f%%)", stat.amount / 100.0, stat.percentage));
+                tvAmount.setText(String.format(Locale.getDefault(), "$%,.0f (%.1f%%)", stat.amount / 100.0, stat.percentage));
                 pb.setProgress((int) Math.round(stat.percentage));
 
                 llCategoriesContainer.addView(row);

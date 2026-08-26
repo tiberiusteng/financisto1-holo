@@ -710,4 +710,49 @@
     <item>10 minutter</item>
     <item>15 minutter</item>
   </string-array>
+
+  <!-- Gemini Nano AI Features -->
+  <string name="pref_ai_features_title">Gemini Nano AI-funksjoner</string>
+  <string name="ai_nl_quick_add">AI Hurtigføring</string>
+  <string name="ai_nl_quick_add_summary">Naturlig språkføring drevet av Gemini Nano</string>
+  <string name="ai_nl_quick_add_pref_summary">Aktiver hurtig AI-føring i kladder</string>
+  <string name="ai_insights_title">AI Forbruksinnsikt</string>
+  <string name="ai_insights_summary">Lokal økonomisk oversikt og smarte budsjettips</string>
+  <string name="ai_insights_pref_summary">Aktiver lokal økonomisk innsikt og forbruksoversikter</string>
+  <string name="ai_insights_period_week">Denne uken</string>
+  <string name="ai_insights_period_month">Denne måneden</string>
+  <string name="ai_insights_period_last30">Siste 30 dager</string>
+  <string name="ai_insights_stats_overview">Oversikt: %s</string>
+  <string name="ai_insights_total_expense">Totale utgifter</string>
+  <string name="ai_insights_total_income">Totale inntekter</string>
+  <string name="ai_insights_net_balance">Nettosaldo</string>
+  <string name="ai_insights_summary_title">AI Økonomisk sammendrag</string>
+  <string name="ai_insights_summary_loading">Genererer økonomisk analyse…</string>
+  <string name="ai_insights_categories_title">Største utgiftskategorier</string>
+  <string name="ai_insights_tips_title">Økonomiske råd</string>
+  <string name="ai_insights_tips_loading">Analyserer forbruksmønstre…</string>
+  <string name="ai_insights_no_expenses">Ingen utgifter funnet for denne perioden.</string>
+  <string name="ai_insights_subtitle">Lokal offline-behandling med Gemini Nano for fullt personvern.</string>
+  <string name="ai_nl_dialog_title">Smart transaksjon med naturlig språk</string>
+  <string name="ai_nl_dialog_subtitle">Gemini Nano AI behandler teksten lokalt på enheten. 100% privat.</string>
+  <string name="ai_nl_input_hint">f.eks. Lunsj 120 mat kontant på restaurant</string>
+  <string name="ai_nl_sample_1">Dagligvarer 250 mat kontant</string>
+  <string name="ai_nl_sample_2">Starbucks 65 kaffe kredittkort</string>
+  <string name="ai_nl_sample_3">Bensinstasjon 600 kredittkort</string>
+  <string name="ai_nl_sample_4">Lønn 35000 bank</string>
+  <string name="ai_nl_preview_title">Sanntids analyseresultat</string>
+  <string name="ai_nl_preview_waiting">Venter på inndata…</string>
+  <string name="ai_nl_confirm_button">Fyll inn transaksjon</string>
+  <string name="ai_nl_amount_label">Beløp: </string>
+  <string name="ai_nl_account_label">Konto: </string>
+  <string name="ai_nl_category_label">Kategori: </string>
+  <string name="ai_nl_payee_label">Mottaker: </string>
+  <string name="ai_nl_note_label">Notat: </string>
+  <string name="ai_nl_time_label">Tidspunkt: </string>
+  <string name="ai_nl_unrecognized">(Ikke gjenkjent)</string>
+  <string name="ai_nl_default_account">(Standardkonto)</string>
+  <string name="ai_nl_uncategorized">(Ukategorisert)</string>
+  <string name="ai_nl_input_empty_warning">Vennligst skriv inn transaksjonstekst</string>
+  <string name="ai_expense">Utgift</string>
+  <string name="ai_income">Inntekt</string>
 </resources>

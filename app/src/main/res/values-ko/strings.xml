@@ -710,4 +710,49 @@
     <item>10 분</item>
     <item>15 분</item>
   </string-array>
+
+  <!-- Gemini Nano AI Features -->
+  <string name="pref_ai_features_title">Gemini Nano AI 기능</string>
+  <string name="ai_nl_quick_add">AI 자연어 빠른 입력</string>
+  <string name="ai_nl_quick_add_summary">Gemini Nano 기반 자연어 빠른 가계부 작성</string>
+  <string name="ai_nl_quick_add_pref_summary">거래 내역에서 AI 빠른 자연어 입력 버튼 사용</string>
+  <string name="ai_insights_title">AI 지출 인사이트 및 요약</string>
+  <string name="ai_insights_summary">온디바이스 스마트 수지 요약 및 재정 조언</string>
+  <string name="ai_insights_pref_summary">오프라인 재정 인사이트 및 지출 요약 기능 활성화</string>
+  <string name="ai_insights_period_week">이번 주</string>
+  <string name="ai_insights_period_month">이번 달</string>
+  <string name="ai_insights_period_last30">최근 30일</string>
+  <string name="ai_insights_stats_overview">%s 수지 현황</string>
+  <string name="ai_insights_total_expense">총 지출</string>
+  <string name="ai_insights_total_income">총 수입</string>
+  <string name="ai_insights_net_balance">순 잔액</string>
+  <string name="ai_insights_summary_title">AI 스마트 재정 요약</string>
+  <string name="ai_insights_summary_loading">재정 요약 분석을 생성하는 중…</string>
+  <string name="ai_insights_categories_title">주요 지출 카테고리</string>
+  <string name="ai_insights_tips_title">재정 개선 조언</string>
+  <string name="ai_insights_tips_loading">소비 패턴을 분석하는 중…</string>
+  <string name="ai_insights_no_expenses">해당 기간 동안의 지출 내역이 없습니다.</string>
+  <string name="ai_insights_subtitle">기기 내 Gemini Nano AI로 100% 오프라인 처리되어 개인정보를 완벽히 보호합니다.</string>
+  <string name="ai_nl_dialog_title">자연어 스마트 거래 입력</string>
+  <string name="ai_nl_dialog_subtitle">Gemini Nano 온디바이스 AI가 기기 내에서 안전하게 텍스트를 분석합니다.</string>
+  <string name="ai_nl_input_hint">예: 점심 편의점 도시락 6500원 현금</string>
+  <string name="ai_nl_sample_1">편의점 6500 도시락 현금</string>
+  <string name="ai_nl_sample_2">스타벅스 5500 라떼 신용카드</string>
+  <string name="ai_nl_sample_3">주유소 50000 주유 카드</string>
+  <string name="ai_nl_sample_4">월급 입금 3500000 신한은행</string>
+  <string name="ai_nl_preview_title">실시간 분석 결과</string>
+  <string name="ai_nl_preview_waiting">입력을 기다리는 중…</string>
+  <string name="ai_nl_confirm_button">거래 내역에 입력</string>
+  <string name="ai_nl_amount_label">금액: </string>
+  <string name="ai_nl_account_label">계좌: </string>
+  <string name="ai_nl_category_label">카테고리: </string>
+  <string name="ai_nl_payee_label">거래처: </string>
+  <string name="ai_nl_note_label">메모: </string>
+  <string name="ai_nl_time_label">일시: </string>
+  <string name="ai_nl_unrecognized">(미인식)</string>
+  <string name="ai_nl_default_account">(기본 계좌)</string>
+  <string name="ai_nl_uncategorized">(미분류)</string>
+  <string name="ai_nl_input_empty_warning">거래 내용을 먼저 입력해주세요</string>
+  <string name="ai_expense">지출</string>
+  <string name="ai_income">수입</string>
 </resources>

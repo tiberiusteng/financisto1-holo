@@ -23,10 +23,13 @@ import tw.tib.financisto.ai.ParsedTransactionResult;
 import tw.tib.financisto.db.DatabaseAdapter;
 
 public class NLTransactionDialog {
-    private static final SimpleDateFormat DATE_FORMAT = new SimpleDateFormat("yyyy/MM/dd HH:mm", Locale.TAIWAN);
+    private static final SimpleDateFormat DATE_FORMAT = new SimpleDateFormat("yyyy/MM/dd HH:mm", Locale.getDefault());
 
     public static void show(Context context, DatabaseAdapter db) {
         AlertDialog.Builder builder = new AlertDialog.Builder(context);
+        builder.setTitle(R.string.ai_nl_dialog_title);
+        builder.setIcon(R.drawable.ic_ai_sparkle);
+
         View view = LayoutInflater.from(context).inflate(R.layout.dialog_nl_transaction, null);
 
         EditText etInput = view.findViewById(R.id.et_nl_input);
@@ -42,7 +45,7 @@ public class NLTransactionDialog {
         Runnable updatePreview = () -> {
             String text = etInput.getText().toString();
             if (text.trim().isEmpty()) {
-                tvPreview.setText("等待輸入中...");
+                tvPreview.setText(R.string.ai_nl_preview_waiting);
                 currentResult[0] = new ParsedTransactionResult();
                 return;
             }
@@ -51,22 +54,26 @@ public class NLTransactionDialog {
             currentResult[0] = r;
 
             StringBuilder sb = new StringBuilder();
-            sb.append("• 金額：").append(r.isExpense ? "支出 " : "收入 ");
+            sb.append("• ").append(context.getString(R.string.ai_nl_amount_label))
+              .append(r.isExpense ? context.getString(R.string.ai_expense) : context.getString(R.string.ai_income))
+              .append(" ");
             if (r.amount > 0) {
-                sb.append(String.format(Locale.TAIWAN, "$%,.2f 元\n", r.amount / 100.0));
+                sb.append(String.format(Locale.getDefault(), "$%,.2f\n", r.amount / 100.0));
             } else {
-                sb.append("(未識別)\n");
+                sb.append(context.getString(R.string.ai_nl_unrecognized)).append("\n");
             }
 
-            sb.append("• 帳戶：").append(!r.accountName.isEmpty() ? r.accountName : "(預設帳戶)").append("\n");
-            sb.append("• 類別：").append(!r.categoryName.isEmpty() ? r.categoryName : "(未分類)").append("\n");
+            sb.append("• ").append(context.getString(R.string.ai_nl_account_label))
+              .append(!r.accountName.isEmpty() ? r.accountName : context.getString(R.string.ai_nl_default_account)).append("\n");
+            sb.append("• ").append(context.getString(R.string.ai_nl_category_label))
+              .append(!r.categoryName.isEmpty() ? r.categoryName : context.getString(R.string.ai_nl_uncategorized)).append("\n");
             if (!r.payeeName.isEmpty()) {
-                sb.append("• 店家：").append(r.payeeName).append("\n");
+                sb.append("• ").append(context.getString(R.string.ai_nl_payee_label)).append(r.payeeName).append("\n");
             }
             if (!r.note.isEmpty()) {
-                sb.append("• 備註：").append(r.note).append("\n");
+                sb.append("• ").append(context.getString(R.string.ai_nl_note_label)).append(r.note).append("\n");
             }
-            sb.append("• 時間：").append(DATE_FORMAT.format(new Date(r.dateTime)));
+            sb.append("• ").append(context.getString(R.string.ai_nl_time_label)).append(DATE_FORMAT.format(new Date(r.dateTime)));
 
             tvPreview.setText(sb.toString());
         };
@@ -96,10 +103,10 @@ public class NLTransactionDialog {
         btnSample4.setOnClickListener(sampleClickListener);
 
         builder.setView(view);
-        builder.setPositiveButton("確認並填入記帳", (dialog, which) -> {
+        builder.setPositiveButton(R.string.ai_nl_confirm_button, (dialog, which) -> {
             ParsedTransactionResult r = currentResult[0];
             if (r == null || (r.amount == 0 && r.note.isEmpty())) {
-                Toast.makeText(context, "請先輸入交易內容", Toast.LENGTH_SHORT).show();
+                Toast.makeText(context, R.string.ai_nl_input_empty_warning, Toast.LENGTH_SHORT).show();
                 return;
             }
 
@@ -112,3 +119,4 @@ public class NLTransactionDialog {
         dialog.show();
     }
 }
+

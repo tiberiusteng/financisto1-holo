@@ -750,4 +750,49 @@
     <item>Bugete</item>
     <item>Rapoarte</item>
   </string-array>
+
+  <!-- Gemini Nano AI Features -->
+  <string name="pref_ai_features_title">Funcții AI Gemini Nano</string>
+  <string name="ai_nl_quick_add">Adăugare rapidă AI</string>
+  <string name="ai_nl_quick_add_summary">Înregistrare în limbaj natural prin Gemini Nano</string>
+  <string name="ai_nl_quick_add_pref_summary">Activează adăugarea rapidă în limbaj natural în registru</string>
+  <string name="ai_insights_title">Analiză cheltuieli AI</string>
+  <string name="ai_insights_summary">Prezentare financiară pe dispozitiv și sfaturi inteligente</string>
+  <string name="ai_insights_pref_summary">Activează analizele financiare și rezumatele locale de cheltuieli</string>
+  <string name="ai_insights_period_week">Săptămâna aceasta</string>
+  <string name="ai_insights_period_month">Luna aceasta</string>
+  <string name="ai_insights_period_last30">Ultimele 30 de zile</string>
+  <string name="ai_insights_stats_overview">Prezentare: %s</string>
+  <string name="ai_insights_total_expense">Total cheltuieli</string>
+  <string name="ai_insights_total_income">Total venituri</string>
+  <string name="ai_insights_net_balance">Sold net</string>
+  <string name="ai_insights_summary_title">Rezumat financiar AI</string>
+  <string name="ai_insights_summary_loading">Se generează rezumatul financiar…</string>
+  <string name="ai_insights_categories_title">Categorii principale de cheltuieli</string>
+  <string name="ai_insights_tips_title">Sfaturi financiare</string>
+  <string name="ai_insights_tips_loading">Se analizează tiparele de cheltuieli…</string>
+  <string name="ai_insights_no_expenses">Nu există cheltuieli în această perioadă.</string>
+  <string name="ai_insights_subtitle">Procesare offline pe dispozitiv cu Gemini Nano pentru confidențialitate totală.</string>
+  <string name="ai_nl_dialog_title">Tranzacție inteligentă în limbaj natural</string>
+  <string name="ai_nl_dialog_subtitle">AI Gemini Nano procesează textul local pe dispozitiv. 100% privat.</string>
+  <string name="ai_nl_input_hint">ex. Prânz 35 mâncare numerar la restaurant</string>
+  <string name="ai_nl_sample_1">Supermarket 80 cumpărături numerar</string>
+  <string name="ai_nl_sample_2">Starbucks 18 cafea card</string>
+  <string name="ai_nl_sample_3">Benzinărie 250 card</string>
+  <string name="ai_nl_sample_4">Salariu 4500 bancă</string>
+  <string name="ai_nl_preview_title">Rezultat analiză în timp real</string>
+  <string name="ai_nl_preview_waiting">Se așteaptă introducerea…</string>
+  <string name="ai_nl_confirm_button">Completează tranzacția</string>
+  <string name="ai_nl_amount_label">Sumă: </string>
+  <string name="ai_nl_account_label">Cont: </string>
+  <string name="ai_nl_category_label">Categorie: </string>
+  <string name="ai_nl_payee_label">Beneficiar: </string>
+  <string name="ai_nl_note_label">Notă: </string>
+  <string name="ai_nl_time_label">Dată/Oră: </string>
+  <string name="ai_nl_unrecognized">(Nerecunoscut)</string>
+  <string name="ai_nl_default_account">(Cont implicit)</string>
+  <string name="ai_nl_uncategorized">(Necategorizat)</string>
+  <string name="ai_nl_input_empty_warning">Vă rugăm să introduceți textul tranzacției</string>
+  <string name="ai_expense">Cheltuială</string>
+  <string name="ai_income">Venit</string>
 </resources>

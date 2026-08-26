@@ -750,4 +750,49 @@
     <item>预算</item>
     <item>报告</item>
   </string-array>
+
+  <!-- Gemini Nano AI Features -->
+  <string name="pref_ai_features_title">Gemini Nano AI 功能</string>
+  <string name="ai_nl_quick_add">AI 自然语言记账</string>
+  <string name="ai_nl_quick_add_summary">由 Gemini Nano 驱动的语义快速记账</string>
+  <string name="ai_nl_quick_add_pref_summary">在流水账快速操作菜单中显示“自然语言记账”功能</string>
+  <string name="ai_insights_title">AI 财务洞察与消费摘要</string>
+  <string name="ai_insights_summary">本机端智能收支摘要与财务优化建议</string>
+  <string name="ai_insights_pref_summary">在菜单中启用“离线财务洞察与消费摘要”功能</string>
+  <string name="ai_insights_period_week">本周</string>
+  <string name="ai_insights_period_month">本月</string>
+  <string name="ai_insights_period_last30">近 30 天</string>
+  <string name="ai_insights_stats_overview">%s收支概况</string>
+  <string name="ai_insights_total_expense">总支出</string>
+  <string name="ai_insights_total_income">总收入</string>
+  <string name="ai_insights_net_balance">净结余</string>
+  <string name="ai_insights_summary_title">AI 智能财务摘要</string>
+  <string name="ai_insights_summary_loading">正在生成财务摘要分析…</string>
+  <string name="ai_insights_categories_title">支出类别排行</string>
+  <string name="ai_insights_tips_title">财务改善建议</string>
+  <string name="ai_insights_tips_loading">正在分析消费模式…</string>
+  <string name="ai_insights_no_expenses">此期间尚无支出记录</string>
+  <string name="ai_insights_subtitle">由设备端 Gemini Nano AI 本机推论，100% 离线运算保护隐私。</string>
+  <string name="ai_nl_dialog_title">自然语言智能记账</string>
+  <string name="ai_nl_dialog_subtitle">通过 Gemini Nano 本机 AI 解析自然语言，数据完全不离身。</string>
+  <string name="ai_nl_input_hint">例如：中午在便利店买了 85 元便当用现金</string>
+  <string name="ai_nl_sample_1">便利店 85 便当 现金</string>
+  <string name="ai_nl_sample_2">星巴克 165 拿铁 信用卡</string>
+  <string name="ai_nl_sample_3">加油 1000 刷卡</string>
+  <string name="ai_nl_sample_4">收到工资 50000 银行</string>
+  <string name="ai_nl_preview_title">实时解析结果</string>
+  <string name="ai_nl_preview_waiting">等待输入中…</string>
+  <string name="ai_nl_confirm_button">确认并填入记账</string>
+  <string name="ai_nl_amount_label">金额：</string>
+  <string name="ai_nl_account_label">账户：</string>
+  <string name="ai_nl_category_label">类别：</string>
+  <string name="ai_nl_payee_label">收款人：</string>
+  <string name="ai_nl_note_label">备注：</string>
+  <string name="ai_nl_time_label">时间：</string>
+  <string name="ai_nl_unrecognized">(未识别)</string>
+  <string name="ai_nl_default_account">(默认账户)</string>
+  <string name="ai_nl_uncategorized">(未分类)</string>
+  <string name="ai_nl_input_empty_warning">请先输入交易内容</string>
+  <string name="ai_expense">支出</string>
+  <string name="ai_income">收入</string>
 </resources>

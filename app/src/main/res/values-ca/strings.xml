@@ -750,4 +750,49 @@
     <item>Pressupostos</item>
     <item>Informes</item>
   </string-array>
+
+  <!-- Gemini Nano AI Features -->
+  <string name="pref_ai_features_title">Funcions d\'IA Gemini Nano</string>
+  <string name="ai_nl_quick_add">Registre ràpid amb IA</string>
+  <string name="ai_nl_quick_add_summary">Registre en llenguatge natural impulsat per Gemini Nano</string>
+  <string name="ai_nl_quick_add_pref_summary">Habilitar acció de registre ràpid amb IA al llibre diari</string>
+  <string name="ai_insights_title">Anàlisi de despeses amb IA</string>
+  <string name="ai_insights_summary">Resum financer al dispositiu i consells intel·ligents</string>
+  <string name="ai_insights_pref_summary">Habilitar anàlisi financera i resums de despeses al dispositiu</string>
+  <string name="ai_insights_period_week">Aquesta setmana</string>
+  <string name="ai_insights_period_month">Aquest mes</string>
+  <string name="ai_insights_period_last30">Últims 30 dies</string>
+  <string name="ai_insights_stats_overview">Resum: %s</string>
+  <string name="ai_insights_total_expense">Despesa total</string>
+  <string name="ai_insights_total_income">Ingrés total</string>
+  <string name="ai_insights_net_balance">Saldo net</string>
+  <string name="ai_insights_summary_title">Resum financer amb IA</string>
+  <string name="ai_insights_summary_loading">Generant resum financer…</string>
+  <string name="ai_insights_categories_title">Principals categories de despeses</string>
+  <string name="ai_insights_tips_title">Consells financers</string>
+  <string name="ai_insights_tips_loading">Analitzant patrons de despesa…</string>
+  <string name="ai_insights_no_expenses">No s\'han trobat despeses en aquest període.</string>
+  <string name="ai_insights_subtitle">Processament local sense connexió amb Gemini Nano per protegir la teva privacitat.</string>
+  <string name="ai_nl_dialog_title">Registre intel·ligent en llenguatge natural</string>
+  <string name="ai_nl_dialog_subtitle">Gemini Nano processa el text localment al teu dispositiu. 100% privat.</string>
+  <string name="ai_nl_input_hint">ex. Dinar 15 menjar efectiu al restaurant</string>
+  <string name="ai_nl_sample_1">Supermercat 35 menjar efectiu</string>
+  <string name="ai_nl_sample_2">Starbucks 5 cafè targeta de crèdit</string>
+  <string name="ai_nl_sample_3">Gasolinera 50 targeta de crèdit</string>
+  <string name="ai_nl_sample_4">Nòmina 2500 banc</string>
+  <string name="ai_nl_preview_title">Resultat de l\'anàlisi en temps real</string>
+  <string name="ai_nl_preview_waiting">Esperant entrada…</string>
+  <string name="ai_nl_confirm_button">Emplenar transacció</string>
+  <string name="ai_nl_amount_label">Import: </string>
+  <string name="ai_nl_account_label">Compte: </string>
+  <string name="ai_nl_category_label">Categoria: </string>
+  <string name="ai_nl_payee_label">Beneficiari: </string>
+  <string name="ai_nl_note_label">Nota: </string>
+  <string name="ai_nl_time_label">Data/Hora: </string>
+  <string name="ai_nl_unrecognized">(No reconegut)</string>
+  <string name="ai_nl_default_account">(Compte predeterminat)</string>
+  <string name="ai_nl_uncategorized">(Sense categoria)</string>
+  <string name="ai_nl_input_empty_warning">Si us plau, introdueix el text de la transacció</string>
+  <string name="ai_expense">Despesa</string>
+  <string name="ai_income">Ingrés</string>
 </resources>

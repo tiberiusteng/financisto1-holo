@@ -9,235 +9,210 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="vertical"
-        android:padding="16dp">
-
-        <!-- Title & Subtitle -->
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="✨ 離線財務洞察與消費摘要"
-            android:textSize="20sp"
-            android:textStyle="bold"
-            android:textColor="?android:attr/textColorPrimary" />
-
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="4dp"
-            android:text="由裝置端 Gemini Nano AI 本機推論，100% 離線運算保護隱私。"
-            android:textSize="12sp"
-            android:textColor="?android:attr/textColorSecondary" />
+        android:paddingLeft="12dp"
+        android:paddingRight="12dp"
+        android:paddingTop="8dp"
+        android:paddingBottom="16dp">
 
         <!-- Period Toggle Buttons -->
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="16dp"
-            android:orientation="horizontal">
+            android:orientation="horizontal"
+            android:gravity="center">
 
             <Button
                 android:id="@+id/btn_period_week"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
-                android:text="本週"
+                android:text="@string/ai_insights_period_week"
                 style="?android:attr/buttonStyleSmall" />
 
             <Button
                 android:id="@+id/btn_period_month"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                android:layout_marginStart="8dp"
+                android:layout_marginStart="6dp"
                 android:layout_weight="1"
-                android:text="本月"
+                android:text="@string/ai_insights_period_month"
                 style="?android:attr/buttonStyleSmall" />
 
             <Button
                 android:id="@+id/btn_period_last30"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                android:layout_marginStart="8dp"
+                android:layout_marginStart="6dp"
                 android:layout_weight="1"
-                android:text="近30天"
+                android:text="@string/ai_insights_period_last30"
                 style="?android:attr/buttonStyleSmall" />
         </LinearLayout>
 
-        <!-- Stats Overview Card -->
+        <!-- Stats Overview Section -->
+        <TextView
+            android:id="@+id/tv_period_label"
+            style="@style/ContactListSeparatorTextViewStyle"
+            android:text="@string/ai_insights_title" />
+
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="16dp"
-            android:orientation="vertical"
-            android:padding="16dp"
-            android:background="#15888888">
-
-            <TextView
-                android:id="@+id/tv_period_label"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="本月收支概況"
-                android:textSize="13sp"
-                android:textStyle="bold"
-                android:textColor="?android:attr/textColorSecondary" />
+            android:orientation="horizontal"
+            android:baselineAligned="false"
+            android:paddingTop="10dp"
+            android:paddingBottom="12dp"
+            android:paddingLeft="6dp"
+            android:paddingRight="6dp">
 
             <LinearLayout
-                android:layout_width="match_parent"
+                android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="8dp"
-                android:orientation="horizontal">
+                android:layout_weight="1"
+                android:orientation="vertical"
+                android:gravity="center_horizontal">
 
-                <LinearLayout
-                    android:layout_width="0dp"
+                <TextView
+                    android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_weight="1"
-                    android:orientation="vertical">
+                    android:text="@string/ai_insights_total_expense"
+                    android:textAppearance="?android:attr/textAppearanceSmall"
+                    android:textColor="?android:attr/textColorSecondary" />
 
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="總支出"
-                        android:textSize="12sp"
-                        android:textColor="?android:attr/textColorSecondary" />
-
-                    <TextView
-                        android:id="@+id/tv_total_expense"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="$0"
-                        android:textSize="18sp"
-                        android:textStyle="bold"
-                        android:textColor="#E53935" />
-                </LinearLayout>
-
-                <LinearLayout
-                    android:layout_width="0dp"
+                <TextView
+                    android:id="@+id/tv_total_expense"
+                    android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_weight="1"
-                    android:orientation="vertical">
+                    android:layout_marginTop="2dp"
+                    android:text="$0"
+                    android:textSize="18sp"
+                    android:textStyle="bold"
+                    android:textColor="@color/holo_red_light" />
+            </LinearLayout>
 
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="總收入"
-                        android:textSize="12sp"
-                        android:textColor="?android:attr/textColorSecondary" />
+            <View
+                android:layout_width="1dp"
+                android:layout_height="match_parent"
+                android:background="?android:attr/dividerVertical" />
 
-                    <TextView
-                        android:id="@+id/tv_total_income"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="$0"
-                        android:textSize="18sp"
-                        android:textStyle="bold"
-                        android:textColor="#43A047" />
-                </LinearLayout>
+            <LinearLayout
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:orientation="vertical"
+                android:gravity="center_horizontal">
 
-                <LinearLayout
-                    android:layout_width="0dp"
+                <TextView
+                    android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_weight="1"
-                    android:orientation="vertical">
+                    android:text="@string/ai_insights_total_income"
+                    android:textAppearance="?android:attr/textAppearanceSmall"
+                    android:textColor="?android:attr/textColorSecondary" />
 
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="淨結餘"
-                        android:textSize="12sp"
-                        android:textColor="?android:attr/textColorSecondary" />
+                <TextView
+                    android:id="@+id/tv_total_income"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="2dp"
+                    android:text="$0"
+                    android:textSize="18sp"
+                    android:textStyle="bold"
+                    android:textColor="@color/holo_green_light" />
+            </LinearLayout>
 
-                    <TextView
-                        android:id="@+id/tv_net_balance"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="$0"
-                        android:textSize="18sp"
-                        android:textStyle="bold"
-                        android:textColor="?android:attr/textColorPrimary" />
-                </LinearLayout>
+            <View
+                android:layout_width="1dp"
+                android:layout_height="match_parent"
+                android:background="?android:attr/dividerVertical" />
+
+            <LinearLayout
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:orientation="vertical"
+                android:gravity="center_horizontal">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/ai_insights_net_balance"
+                    android:textAppearance="?android:attr/textAppearanceSmall"
+                    android:textColor="?android:attr/textColorSecondary" />
+
+                <TextView
+                    android:id="@+id/tv_net_balance"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="2dp"
+                    android:text="$0"
+                    android:textSize="18sp"
+                    android:textStyle="bold"
+                    android:textColor="?android:attr/textColorPrimary" />
             </LinearLayout>
         </LinearLayout>
 
-        <!-- AI Executive Summary Card -->
-        <LinearLayout
+        <View
+            style="@style/EditDivider"
+            android:layout_width="match_parent"
+            android:layout_height="1dp" />
+
+        <!-- AI Executive Summary Section -->
+        <TextView
+            style="@style/ContactListSeparatorTextViewStyle"
+            android:text="@string/ai_insights_summary_title" />
+
+        <TextView
+            android:id="@+id/tv_ai_summary"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="16dp"
-            android:orientation="vertical"
-            android:padding="16dp"
-            android:background="#15888888">
+            android:padding="8dp"
+            android:lineSpacingMultiplier="1.2"
+            android:text="@string/ai_insights_summary_loading"
+            android:textAppearance="?android:attr/textAppearanceMedium"
+            android:textSize="14sp"
+            android:textColor="?android:attr/textColorPrimary" />
 
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="🤖 AI 智慧財務摘要"
-                android:textSize="15sp"
-                android:textStyle="bold"
-                android:textColor="?android:attr/textColorPrimary" />
+        <View
+            style="@style/EditDivider"
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:layout_marginTop="4dp" />
 
-            <TextView
-                android:id="@+id/tv_ai_summary"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="8dp"
-                android:lineSpacingMultiplier="1.2"
-                android:text="正在生成財務摘要分析..."
-                android:textSize="14sp"
-                android:textColor="?android:attr/textColorPrimary" />
-        </LinearLayout>
+        <!-- Top Categories Breakdown Section -->
+        <TextView
+            style="@style/ContactListSeparatorTextViewStyle"
+            android:text="@string/ai_insights_categories_title" />
 
-        <!-- Top Categories Breakdown Card -->
         <LinearLayout
+            android:id="@+id/ll_categories_container"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="16dp"
-            android:orientation="vertical"
-            android:padding="16dp"
-            android:background="#15888888">
+            android:paddingLeft="8dp"
+            android:paddingRight="8dp"
+            android:paddingTop="6dp"
+            android:paddingBottom="6dp"
+            android:orientation="vertical" />
 
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="📊 支出類別排行"
-                android:textSize="15sp"
-                android:textStyle="bold"
-                android:textColor="?android:attr/textColorPrimary" />
+        <View
+            style="@style/EditDivider"
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:layout_marginTop="4dp" />
 
-            <LinearLayout
-                android:id="@+id/ll_categories_container"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="8dp"
-                android:orientation="vertical" />
-        </LinearLayout>
+        <!-- AI Savings Tips Section -->
+        <TextView
+            style="@style/ContactListSeparatorTextViewStyle"
+            android:text="@string/ai_insights_tips_title" />
 
-        <!-- AI Savings Tips Card -->
-        <LinearLayout
+        <TextView
+            android:id="@+id/tv_ai_tips"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="16dp"
-            android:layout_marginBottom="24dp"
-            android:orientation="vertical"
-            android:padding="16dp"
-            android:background="#15888888">
-
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="💡 財務改善建議"
-                android:textSize="15sp"
-                android:textStyle="bold"
-                android:textColor="?android:attr/textColorPrimary" />
-
-            <TextView
-                android:id="@+id/tv_ai_tips"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="8dp"
-                android:lineSpacingMultiplier="1.2"
-                android:text="正在分析消費模式..."
-                android:textSize="14sp"
-                android:textColor="?android:attr/textColorPrimary" />
-        </LinearLayout>
+            android:padding="8dp"
+            android:lineSpacingMultiplier="1.2"
+            android:text="@string/ai_insights_tips_loading"
+            android:textAppearance="?android:attr/textAppearanceMedium"
+            android:textSize="14sp"
+            android:textColor="?android:attr/textColorPrimary" />
 
     </LinearLayout>
 </ScrollView>

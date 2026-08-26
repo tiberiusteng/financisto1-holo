@@ -1066,4 +1066,49 @@
     <item>Rozpočty</item>
     <item>Zprávy</item>
   </string-array>
+
+  <!-- Gemini Nano AI Features -->
+  <string name="pref_ai_features_title">Funkce AI Gemini Nano</string>
+  <string name="ai_nl_quick_add">Rychlé zadání pomocí AI</string>
+  <string name="ai_nl_quick_add_summary">Zadávání přirozeným jazykem pomocí Gemini Nano</string>
+  <string name="ai_nl_quick_add_pref_summary">Povolit rychlé zadávání přirozeným jazykem v deníku</string>
+  <string name="ai_insights_title">AI přehled výdajů</string>
+  <string name="ai_insights_summary">Lokální finanční přehled a chytré rozpočtové tipy</string>
+  <string name="ai_insights_pref_summary">Povolit lokální finanční přehledy a souhrny výdajů</string>
+  <string name="ai_insights_period_week">Tento týden</string>
+  <string name="ai_insights_period_month">Tento měsíc</string>
+  <string name="ai_insights_period_last30">Posledních 30 dní</string>
+  <string name="ai_insights_stats_overview">Přehled: %s</string>
+  <string name="ai_insights_total_expense">Celkové výdaje</string>
+  <string name="ai_insights_total_income">Celkové příjmy</string>
+  <string name="ai_insights_net_balance">Čistý zůstatek</string>
+  <string name="ai_insights_summary_title">AI finanční shrnutí</string>
+  <string name="ai_insights_summary_loading">Vytváření finančního shrnutí…</string>
+  <string name="ai_insights_categories_title">Hlavní kategorie výdajů</string>
+  <string name="ai_insights_tips_title">Finanční doporučení</string>
+  <string name="ai_insights_tips_loading">Analýza vzorců výdajů…</string>
+  <string name="ai_insights_no_expenses">V tomto období nebyly nalezeny žádné výdaje.</string>
+  <string name="ai_insights_subtitle">Offline zpracování v zařízení pomocí Gemini Nano pro ochranu soukromí.</string>
+  <string name="ai_nl_dialog_title">Chytré zadání přirozeným jazykem</string>
+  <string name="ai_nl_dialog_subtitle">Gemini Nano AI zpracovává text lokálně v zařízení. 100% soukromé.</string>
+  <string name="ai_nl_input_hint">např. Oběd 180 jídlo hotovost v restauraci</string>
+  <string name="ai_nl_sample_1">Supermarket 450 nákup hotovost</string>
+  <string name="ai_nl_sample_2">Kavárna 95 káva karta</string>
+  <string name="ai_nl_sample_3">Čerpací stanice 1200 karta</string>
+  <string name="ai_nl_sample_4">Výplata 45000 banka</string>
+  <string name="ai_nl_preview_title">Výsledek rozpoznání v reálném čase</string>
+  <string name="ai_nl_preview_waiting">Čekání na zadání…</string>
+  <string name="ai_nl_confirm_button">Vyplnit transakci</string>
+  <string name="ai_nl_amount_label">Částka: </string>
+  <string name="ai_nl_account_label">Účet: </string>
+  <string name="ai_nl_category_label">Kategorie: </string>
+  <string name="ai_nl_payee_label">Příjemce: </string>
+  <string name="ai_nl_note_label">Poznámka: </string>
+  <string name="ai_nl_time_label">Čas: </string>
+  <string name="ai_nl_unrecognized">(Nerozpoznáno)</string>
+  <string name="ai_nl_default_account">(Výchozí účet)</string>
+  <string name="ai_nl_uncategorized">(Nezařazeno)</string>
+  <string name="ai_nl_input_empty_warning">Zadejte prosím text transakce</string>
+  <string name="ai_expense">Výdaj</string>
+  <string name="ai_income">Příjem</string>
 </resources>

@@ -712,4 +712,49 @@
   </string-array>
     <string name="planner">A venir</string>
       
+
+  <!-- Gemini Nano AI Features -->
+  <string name="pref_ai_features_title">Fonctionnalités IA Gemini Nano</string>
+  <string name="ai_nl_quick_add">Saisie rapide IA</string>
+  <string name="ai_nl_quick_add_summary">Saisie rapide en langage naturel via Gemini Nano</string>
+  <string name="ai_nl_quick_add_pref_summary">Activer l\'action de saisie rapide IA dans le journal</string>
+  <string name="ai_insights_title">Aperçu financier par IA</string>
+  <string name="ai_insights_summary">Aperçu financier sur l\'appareil et conseils budgétaires</string>
+  <string name="ai_insights_pref_summary">Activer les analyses financières locales et les résumés de dépenses</string>
+  <string name="ai_insights_period_week">Cette semaine</string>
+  <string name="ai_insights_period_month">Ce mois-ci</string>
+  <string name="ai_insights_period_last30">30 derniers jours</string>
+  <string name="ai_insights_stats_overview">Aperçu: %s</string>
+  <string name="ai_insights_total_expense">Total dépenses</string>
+  <string name="ai_insights_total_income">Total revenus</string>
+  <string name="ai_insights_net_balance">Solde net</string>
+  <string name="ai_insights_summary_title">Résumé financier IA</string>
+  <string name="ai_insights_summary_loading">Génération du résumé financier…</string>
+  <string name="ai_insights_categories_title">Catégories de dépenses principales</string>
+  <string name="ai_insights_tips_title">Conseils financiers</string>
+  <string name="ai_insights_tips_loading">Analyse des habitudes de dépenses…</string>
+  <string name="ai_insights_no_expenses">Aucune dépense trouvée pour cette période.</string>
+  <string name="ai_insights_subtitle">Traitement hors ligne sur l\'appareil avec Gemini Nano pour protéger votre vie privée.</string>
+  <string name="ai_nl_dialog_title">Transaction intelligente en langage naturel</string>
+  <string name="ai_nl_dialog_subtitle">L\'IA Gemini Nano traite votre texte localement sur l\'appareil. 100% privé.</string>
+  <string name="ai_nl_input_hint">ex. Déjeuner 15 repas espèces au restaurant</string>
+  <string name="ai_nl_sample_1">Supermarché 40 courses espèces</string>
+  <string name="ai_nl_sample_2">Starbucks 6 café carte bancaire</string>
+  <string name="ai_nl_sample_3">Essence 60 carte bancaire</string>
+  <string name="ai_nl_sample_4">Salaire 3000 banque</string>
+  <string name="ai_nl_preview_title">Résultat de l\'analyse en direct</string>
+  <string name="ai_nl_preview_waiting">En attente de saisie…</string>
+  <string name="ai_nl_confirm_button">Remplir la transaction</string>
+  <string name="ai_nl_amount_label">Montant: </string>
+  <string name="ai_nl_account_label">Compte: </string>
+  <string name="ai_nl_category_label">Catégorie: </string>
+  <string name="ai_nl_payee_label">Bénéficiaire: </string>
+  <string name="ai_nl_note_label">Note: </string>
+  <string name="ai_nl_time_label">Date/Heure: </string>
+  <string name="ai_nl_unrecognized">(Non reconnu)</string>
+  <string name="ai_nl_default_account">(Compte par défaut)</string>
+  <string name="ai_nl_uncategorized">(Non catégorisé)</string>
+  <string name="ai_nl_input_empty_warning">Veuillez saisir le texte de la transaction</string>
+  <string name="ai_expense">Dépense</string>
+  <string name="ai_income">Revenu</string>
 </resources>

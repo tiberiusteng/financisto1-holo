@@ -1106,4 +1106,42 @@
   <string name="ai_insights_title">AI 財務洞察與消費摘要</string>
   <string name="ai_insights_summary">本機端智慧收支摘要與財務優化建議</string>
   <string name="ai_insights_pref_summary">在選單中啟用「離線財務洞察與消費摘要」功能</string>
+
+  <string name="ai_insights_period_week">本週</string>
+  <string name="ai_insights_period_month">本月</string>
+  <string name="ai_insights_period_last30">近 30 天</string>
+  <string name="ai_insights_stats_overview">%s收支概況</string>
+  <string name="ai_insights_total_expense">總支出</string>
+  <string name="ai_insights_total_income">總收入</string>
+  <string name="ai_insights_net_balance">淨結餘</string>
+  <string name="ai_insights_summary_title">AI 智慧財務摘要</string>
+  <string name="ai_insights_summary_loading">正在生成財務摘要分析…</string>
+  <string name="ai_insights_categories_title">支出類別排行</string>
+  <string name="ai_insights_tips_title">財務改善建議</string>
+  <string name="ai_insights_tips_loading">正在分析消費模式…</string>
+  <string name="ai_insights_no_expenses">此期間尚無支出紀錄</string>
+  <string name="ai_insights_subtitle">由裝置端 Gemini Nano AI 本機推論，100% 離線運算保護隱私。</string>
+
+  <string name="ai_nl_dialog_title">自然語言智慧記帳</string>
+  <string name="ai_nl_dialog_subtitle">透過 Gemini Nano 本機 AI 解析自然語言，資料完全不離身。</string>
+  <string name="ai_nl_input_hint">例如：中午在全家買了 85 元便當用現金</string>
+  <string name="ai_nl_sample_1">全家 85 便當 現金</string>
+  <string name="ai_nl_sample_2">星巴克 165 拿鐵 信用卡</string>
+  <string name="ai_nl_sample_3">中油加油 1000 刷卡</string>
+  <string name="ai_nl_sample_4">收到薪水 50000 國泰世華</string>
+  <string name="ai_nl_preview_title">即時解析結果</string>
+  <string name="ai_nl_preview_waiting">等待輸入中…</string>
+  <string name="ai_nl_confirm_button">確認並填入記帳</string>
+  <string name="ai_nl_amount_label">金額：</string>
+  <string name="ai_nl_account_label">帳戶：</string>
+  <string name="ai_nl_category_label">類別：</string>
+  <string name="ai_nl_payee_label">店家：</string>
+  <string name="ai_nl_note_label">備註：</string>
+  <string name="ai_nl_time_label">時間：</string>
+  <string name="ai_nl_unrecognized">(未識別)</string>
+  <string name="ai_nl_default_account">(預設帳戶)</string>
+  <string name="ai_nl_uncategorized">(未分類)</string>
+  <string name="ai_nl_input_empty_warning">請先輸入交易內容</string>
+  <string name="ai_expense">支出</string>
+  <string name="ai_income">收入</string>
 </resources>

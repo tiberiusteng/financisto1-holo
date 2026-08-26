@@ -750,4 +750,49 @@
     <item>Költségvetések</item>
     <item>Jelentések</item>
   </string-array>
+
+  <!-- Gemini Nano AI Features -->
+  <string name="pref_ai_features_title">Gemini Nano MI funkciók</string>
+  <string name="ai_nl_quick_add">MI gyors rögzítés</string>
+  <string name="ai_nl_quick_add_summary">Természetes nyelvű gyors könyvelés Gemini Nano-val</string>
+  <string name="ai_nl_quick_add_pref_summary">Természetes nyelvű gyors rögzítés engedélyezése a naplóban</string>
+  <string name="ai_insights_title">MI kiadási áttekintés</string>
+  <string name="ai_insights_summary">Eszközön futó pénzügyi áttekintés és költségvetési tanácsok</string>
+  <string name="ai_insights_pref_summary">Helyi pénzügyi elemzések és kiadási összefoglalók engedélyezése</string>
+  <string name="ai_insights_period_week">Ezen a héten</string>
+  <string name="ai_insights_period_month">Ebben a hónapban</string>
+  <string name="ai_insights_period_last30">Elmúlt 30 nap</string>
+  <string name="ai_insights_stats_overview">Áttekintés: %s</string>
+  <string name="ai_insights_total_expense">Összes kiadás</string>
+  <string name="ai_insights_total_income">Összes bevétel</string>
+  <string name="ai_insights_net_balance">Nettó egyenleg</string>
+  <string name="ai_insights_summary_title">MI pénzügyi összefoglaló</string>
+  <string name="ai_insights_summary_loading">Pénzügyi összefoglaló generálása…</string>
+  <string name="ai_insights_categories_title">Fő kiadási kategóriák</string>
+  <string name="ai_insights_tips_title">Pénzügyi tanácsok</string>
+  <string name="ai_insights_tips_loading">Kiadási minták elemzése…</string>
+  <string name="ai_insights_no_expenses">Ebben az időszakban nincsenek kiadások.</string>
+  <string name="ai_insights_subtitle">Offline feldolgozás az eszközön Gemini Nano-val az adatvédelem érdekében.</string>
+  <string name="ai_nl_dialog_title">Okos tranzakció természetes nyelven</string>
+  <string name="ai_nl_dialog_subtitle">A Gemini Nano MI helyben dolgozza fel a szöveget. 100% privát.</string>
+  <string name="ai_nl_input_hint">pl. Ebéd 2500 étel készpénz étteremben</string>
+  <string name="ai_nl_sample_1">Szupermarket 6000 bevásárlás készpénz</string>
+  <string name="ai_nl_sample_2">Kávézó 1200 kávé bankkártya</string>
+  <string name="ai_nl_sample_3">Benzinkút 15000 bankkártya</string>
+  <string name="ai_nl_sample_4">Fizetés 400000 bank</string>
+  <string name="ai_nl_preview_title">Valós idejű felismerési eredmény</string>
+  <string name="ai_nl_preview_waiting">Várakozás bevitelre…</string>
+  <string name="ai_nl_confirm_button">Tranzakció kitöltése</string>
+  <string name="ai_nl_amount_label">Összeg: </string>
+  <string name="ai_nl_account_label">Számla: </string>
+  <string name="ai_nl_category_label">Kategória: </string>
+  <string name="ai_nl_payee_label">Kedvezményezett: </string>
+  <string name="ai_nl_note_label">Megjegyzés: </string>
+  <string name="ai_nl_time_label">Időpont: </string>
+  <string name="ai_nl_unrecognized">(Felismerhetetlen)</string>
+  <string name="ai_nl_default_account">(Alapértelmezett számla)</string>
+  <string name="ai_nl_uncategorized">(Kategorizálatlan)</string>
+  <string name="ai_nl_input_empty_warning">Kérjük, adja meg a tranzakció szövegét</string>
+  <string name="ai_expense">Kiadás</string>
+  <string name="ai_income">Bevétel</string>
 </resources>
