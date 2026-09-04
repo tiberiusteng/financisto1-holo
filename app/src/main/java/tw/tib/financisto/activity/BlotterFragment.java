@@ -1156,7 +1156,34 @@ public class BlotterFragment extends AbstractListFragment<Cursor> implements Blo
     }
 
     protected void updateFilterImage() {
-        FilterState.updateFilterColor(getContext(), blotterFilter, bFilter);
+        FilterState.updateFilterColor(getContext(), blotterFilter, bFilter,
+                isNavigationOnlyFilter(isAccountBlotter, blotterFilter));
+    }
+
+    /**
+     * Whether everything in this filter came from navigation rather than from the user
+     * picking it in the filter screen.
+     *
+     * Opening an account from the account list lands on a blotter that shows only that
+     * account: the account criterion is part of "show me this account", not a filter the
+     * user expressed. It lives in the same WhereFilter as real filters though, so
+     * isEmpty() is false and the filter icon lights up the moment the screen opens —
+     * claiming "what you see is not everything" before the user has done anything, which
+     * also costs the icon its meaning when a filter really is applied. Adding any further
+     * criterion (category, date, ...) makes it the user's intent again. Picking an account
+     * from the transactions screen through the filter UI is intentional and unaffected.
+     *
+     * The test is on the filter's *contents*, not on "has the filter screen been opened":
+     * in the account blotter the filter screen's clear button restores "just this account"
+     * (see BlotterFilterActivity.bNoFilter), so a has-been-opened flag would leave the icon
+     * lit after the user cleared everything. The account criterion also cannot be removed
+     * there (its minus button is hidden), which is what makes "exactly one criterion, and
+     * it is the account" a stable shape.
+     */
+    static boolean isNavigationOnlyFilter(boolean isAccountBlotter, WhereFilter filter) {
+        return isAccountBlotter
+                && filter.getAccountId() > 0
+                && filter.criteriaCount() == 1;
     }
 
     @Override
