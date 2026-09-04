@@ -15,6 +15,9 @@ import java.util.regex.Pattern;
  *   title="$4.50 with Visa •••• 1234", text="STARBUCKS"
  *   title="McDonald's",                text="12,34 € · Mastercard •• 4321"
  *
+ *   (Taiwan)
+ *   title="McDonald's Restaurant", body="McDonald's Restaurant $185.00 (使用 國泰世華CUBE卡 (原KOKO卡) ••1234 付款) "
+ *
  * This class is intentionally free of Android dependencies so it can be unit
  * tested on the JVM.
  */
@@ -50,7 +53,7 @@ public class GoogleWalletNotificationParser {
      * A couple of localized connectors are matched defensively.
      */
     private static final Pattern CARD_LABEL_PATTERN = Pattern.compile(
-            "\\b(?:with|через|карткою|з карткою|con|mit|avec)\\s+(.+?)\\s*$",
+            "\\b(?:with|через|карткою|з карткою|con|mit|avec|使用)\\s+(.+?)\\s*$",
             Pattern.CASE_INSENSITIVE | Pattern.UNICODE_CASE);
 
     private static final Map<String, String> CURRENCY_BY_SYMBOL = new HashMap<>();
@@ -186,10 +189,12 @@ public class GoogleWalletNotificationParser {
     }
 
     private static String toCurrencyCode(String marker) {
-        String code = CURRENCY_BY_SYMBOL.get(marker);
-        if (code != null) {
-            return code;
-        }
+// 2026-09-04 tib: disable getting currency with only symbol, since there are ambiguity
+// if there are only symbol, treat as payment with account local currency
+//        String code = CURRENCY_BY_SYMBOL.get(marker);
+//        if (code != null) {
+//            return code;
+//        }
         if (marker.matches("[A-Z]{3}")) {
             return marker;
         }
