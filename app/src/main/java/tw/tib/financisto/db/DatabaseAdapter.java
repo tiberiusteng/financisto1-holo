@@ -683,8 +683,23 @@ public class DatabaseAdapter extends MyEntityManager {
     private static final String INSERT_RUNNING_BALANCE =
             "insert or replace into running_balance(account_id,transaction_id,datetime,balance) values (?,?,?,?)";
 
+    /**
+     * Shifts the running balance of every row that sorts after the given transaction.
+     *
+     * <p>The table is ordered by {@code (datetime, transaction_id)}, so comparing
+     * {@code datetime} alone skips rows that share the same timestamp: those are never
+     * adjusted and the running balance drifts away from the account total, which is what
+     * surfaces as "running balance seems to be inaccurate".
+     *
+     * <p>Two transactions on one account can share an exact timestamp without anything
+     * unusual happening: scheduled transactions have their seconds and milliseconds zeroed
+     * ({@link tw.tib.financisto.datetime.DateUtils#zeroSeconds}), and CSV import never
+     * carries milliseconds. Editing such a transaction reaches this code as well, since an
+     * update is a delete followed by an insert.
+     */
     private static final String UPDATE_RUNNING_BALANCE =
-            "update running_balance set balance = balance+(?) where account_id = ? and datetime > ?";
+            "update running_balance set balance = balance+(?) where account_id = ?"
+                    + " and (datetime > ? or (datetime = ? and transaction_id > ?))";
 
     private static final String DELETE_RUNNING_BALANCE =
             "delete from running_balance where account_id = ? and transaction_id = ?";
@@ -693,10 +708,10 @@ public class DatabaseAdapter extends MyEntityManager {
         if (accountId <= 0) {
             return;
         }
-        long previousTransactionBalance = fetchAccountBalanceAtTheTime(accountId, datetime);
+        long previousTransactionBalance = fetchAccountBalanceAtTheTime(accountId, transactionId, datetime);
         SQLiteDatabase db = db();
         db.execSQL(INSERT_RUNNING_BALANCE, new Object[]{accountId, transactionId, datetime, previousTransactionBalance + amount});
-        db.execSQL(UPDATE_RUNNING_BALANCE, new Object[]{deltaAmount, accountId, datetime});
+        db.execSQL(UPDATE_RUNNING_BALANCE, new Object[]{deltaAmount, accountId, datetime, datetime, transactionId});
     }
 
     private void updateRunningBalance(Transaction oldTransaction, Transaction newTransaction) {
@@ -714,12 +729,23 @@ public class DatabaseAdapter extends MyEntityManager {
         }
         SQLiteDatabase db = db();
         db.execSQL(DELETE_RUNNING_BALANCE, new Object[]{accountId, transactionId});
-        db.execSQL(UPDATE_RUNNING_BALANCE, new Object[]{-amount, accountId, dateTime});
+        db.execSQL(UPDATE_RUNNING_BALANCE, new Object[]{-amount, accountId, dateTime, dateTime, transactionId});
     }
 
-    private long fetchAccountBalanceAtTheTime(long accountId, long datetime) {
-        return DatabaseUtils.rawFetchLongValue(this, "select balance from running_balance where account_id = ? and datetime <= ? order by datetime desc, transaction_id desc limit 1",
-                new String[]{String.valueOf(accountId), String.valueOf(datetime)});
+    /**
+     * Returns the balance of the row that sorts immediately before this transaction, used as
+     * the base for the new row. The comparison needs both {@code (datetime, transaction_id)}
+     * for the same reason: with {@code datetime} alone, a same-timestamp neighbour that sorts
+     * <em>after</em> this transaction would be picked as the previous row. When there is no
+     * such neighbour the result is identical to the previous {@code datetime <= ?} form.
+     */
+    private long fetchAccountBalanceAtTheTime(long accountId, long transactionId, long datetime) {
+        return DatabaseUtils.rawFetchLongValue(this,
+                "select balance from running_balance where account_id = ?"
+                        + " and (datetime < ? or (datetime = ? and transaction_id < ?))"
+                        + " order by datetime desc, transaction_id desc limit 1",
+                new String[]{String.valueOf(accountId), String.valueOf(datetime),
+                        String.valueOf(datetime), String.valueOf(transactionId)});
     }
 
     // ===================================================================
