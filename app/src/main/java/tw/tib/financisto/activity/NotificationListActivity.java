@@ -48,6 +48,24 @@ public class NotificationListActivity extends AppCompatActivity {
             return WindowInsetsCompat.CONSUMED;
         });
 
+        // Bottom insets: under edge-to-edge the last list item ends up behind the
+        // navigation bar and cannot be scrolled clear of it. Do what the settings screen
+        // (androidx preference) does: pad by the navigation bar height and turn off
+        // clipToPadding, so content still scrolls under the bar but the last item comes
+        // fully clear at the end of the list.
+        //
+        // The listener is attached to the root rather than the list: insets are dispatched
+        // to the root first, and the toolbar listener above returns CONSUMED, so a listener
+        // on the list itself may receive already-consumed insets. This one does not consume
+        // them, leaving the toolbar's top handling untouched.
+        ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.notification_list), (v, windowInsets) -> {
+            Insets insets = windowInsets.getInsets(WindowInsetsCompat.Type.systemBars());
+            ListView lv = findViewById(android.R.id.list);
+            lv.setPadding(lv.getPaddingLeft(), lv.getPaddingTop(), lv.getPaddingRight(), insets.bottom);
+            lv.setClipToPadding(false);
+            return windowInsets;
+        });
+
         // opening this screen is what a user does when notifications stopped arriving,
         // so let it heal a listener the system silently unbound
         NotificationListener.requestRebindIfGranted(this);
