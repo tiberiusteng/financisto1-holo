@@ -8,45 +8,70 @@
   Contributors:
       Denis Solonenko - initial API and implementation
 -->
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="fill_parent"
+    android:layout_height="wrap_content">
+<LinearLayout
     android:layout_height="fill_parent" android:layout_width="fill_parent"
     android:orientation="vertical" android:paddingLeft="3dp"
     android:paddingRight="3dp" android:paddingTop="3dp"
     android:id="@+id/edit_entity">
-    <LinearLayout
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:orientation="horizontal">
-        <TextView
-            android:id="@+id/create"
-            android:layout_height="wrap_content"
-            android:layout_width="wrap_content"
-            android:text="@string/create" />
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text=" " />
-        <TextView
-            android:layout_width="fill_parent"
-            android:layout_height="wrap_content"
-            android:text="@string/title" />
-    </LinearLayout>
 
-    <EditText android:layout_height="wrap_content"
-        android:layout_width="fill_parent" android:id="@+id/title" />
+            <LinearLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal">
+                <TextView
+                    android:id="@+id/create"
+                    android:layout_height="wrap_content"
+                    android:layout_width="wrap_content"
+                    android:text="@string/create" />
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text=" " />
+                <TextView
+                    android:layout_width="fill_parent"
+                    android:layout_height="wrap_content"
+                    android:text="@string/title" />
+            </LinearLayout>
 
-    <LinearLayout
-        android:id="@+id/editActive"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:orientation="vertical"
-        android:visibility="gone">
-        <TextView android:text="@string/is_active"
-            android:layout_height="wrap_content"
-            android:layout_width="fill_parent" />
-        <CheckBox android:id="@+id/isActive"
-            android:layout_height="wrap_content"
-            android:layout_width="fill_parent" />
-    </LinearLayout>
+            <EditText android:layout_height="wrap_content"
+                android:layout_width="fill_parent" android:id="@+id/title" />
+
+            <LinearLayout
+                android:id="@+id/aliases_block"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical">
+
+                <TextView
+                    android:layout_width="fill_parent"
+                    android:layout_height="wrap_content"
+                    android:text="@string/aliases" />
+
+                <EditText
+                    android:id="@+id/aliases"
+                    android:layout_height="wrap_content"
+                    android:layout_width="match_parent"
+                    android:inputType="textMultiLine"
+                    android:singleLine="false"
+                    android:hint="@string/aliases_hint" />
+            </LinearLayout>
+
+            <LinearLayout
+                android:id="@+id/editActive"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:visibility="gone">
+                <TextView android:text="@string/is_active"
+                    android:layout_height="wrap_content"
+                    android:layout_width="fill_parent" />
+                <CheckBox android:id="@+id/isActive"
+                    android:layout_height="wrap_content"
+                    android:layout_width="fill_parent" />
+            </LinearLayout>
     <include layout="@layout/ok_cancel_buttons" />
 </LinearLayout>
+</ScrollView>

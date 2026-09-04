@@ -84,7 +84,7 @@ public abstract class MyEntityManager extends EntityManager {
 		}
 		if (!StringUtil.isEmpty(titleLike)) {
 			titleLike = "%" + titleLike.replace(" ", "%") + "%";
-			whereEx = Expressions.and(whereEx, Expressions.like("title", "%" + titleLike + "%"));
+			whereEx = Expressions.and(whereEx, Expressions.titleLike(titleLike));
 		}
 		q.where(whereEx).ascLocale("title");
 		return q.execute();
@@ -599,7 +599,7 @@ public abstract class MyEntityManager extends EntityManager {
 
 	public <T extends MyEntity> T findEntityByTitle(Class<T> entityClass, String title) {
 		Query<T> q = createQuery(entityClass);
-		q.where(Expressions.eq("title", title));
+		q.where(Expressions.titleEq(title));
 		return q.uniqueResult();
 	}
 

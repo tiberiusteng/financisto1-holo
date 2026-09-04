@@ -16,6 +16,8 @@
   <string name="edit_account">編輯帳戶</string>
   <string name="add_account">新增帳戶</string>
   <string name="title">名稱</string>
+  <string name="aliases">別名 (搜尋, 通知匹配用)</string>
+  <string name="aliases_hint">可多個, 一行一個</string>
   <string name="payee">受款人</string>
   <string name="currency">貨幣</string>
   <string name="trading_currency">交易幣值</string>

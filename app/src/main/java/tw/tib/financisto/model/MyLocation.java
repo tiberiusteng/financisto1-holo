@@ -17,7 +17,10 @@ import javax.persistence.Table;
 import static tw.tib.financisto.db.DatabaseHelper.LOCATIONS_TABLE;
 import static tw.tib.orb.EntityManager.DEF_SORT_COL;
 
+import tw.tib.orb.SupportAliases;
+
 @Entity
+@SupportAliases
 @Table(name = LOCATIONS_TABLE)
 public class MyLocation extends MyEntity implements SortableEntity {
 
@@ -54,6 +57,9 @@ public class MyLocation extends MyEntity implements SortableEntity {
 
 	@Column(name = DEF_SORT_COL)
 	public long sortOrder;
+
+	@Column(name = "aliases")
+	public String aliases;
 
 	@Override
 	public long getSortOrder() {

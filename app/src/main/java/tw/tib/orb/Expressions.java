@@ -65,5 +65,15 @@ public class Expressions {
     public static Expression like(String field, Object value1) {
         return new Like(field, value1);
     }
+
+	/* filter using aliases table if supported */
+
+	public static Expression titleLike(String value) {
+		return new TitleLike(value);
+	}
+
+	public static Expression titleEq(String value) {
+		return new TitleEq(value);
+	}
 }
 

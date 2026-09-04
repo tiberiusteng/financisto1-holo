@@ -24,6 +24,7 @@ class EntityDefinition {
 		private Constructor<?> constructor;
 		private String tableName; 
 		private FieldInfo idField;
+		private boolean supportAliases;
 		private final List<FieldInfo> fields = new LinkedList<FieldInfo>();
 		
 		Builder(Class<?> clazz) {
@@ -49,32 +50,42 @@ class EntityDefinition {
 			fields.add(fi);
 			return this;
 		}
+
+		Builder supportAliases() {
+			supportAliases = true;
+			return this;
+		}
 		
 		EntityDefinition create() {
 			if (tableName == null) {
 				tableName = clazz.getSimpleName().toUpperCase();
 			}
-			return new EntityDefinition(constructor, tableName, idField, fields.toArray(new FieldInfo[fields.size()]));
+			return new EntityDefinition(constructor, tableName, idField, fields.toArray(new FieldInfo[fields.size()]), supportAliases);
 		}
 
 	}
 
 	static final String DEFAULT_ID_COLUMN_NAME = "_id";
+	static final String ALIASES_TABLE_SUFFIX = "_aliases";
 
 	final Constructor<?> constructor;
 	final String tableName;
+	final String aliasesTableName;
 	final FieldInfo idField;
 	final FieldInfo[] fields;
 //	final String[] primitiveColumns;
 //	final JoinEntity[] joinEntities;
 	final String sqlQuery;
 	final HashMap<String, FieldInfo> fieldToInfoMap = new HashMap<String, FieldInfo>();
+	final boolean supportAliases;
 	
-	private EntityDefinition(Constructor<?> constructor, String tableName, FieldInfo idField, FieldInfo[] fields) {
+	private EntityDefinition(Constructor<?> constructor, String tableName, FieldInfo idField, FieldInfo[] fields, boolean supportAliases) {
 		this.constructor = constructor;
 		this.tableName = tableName;
 		this.idField = idField;
 		this.fields = fields;
+		this.supportAliases = supportAliases;
+		this.aliasesTableName = supportAliases ? tableName + ALIASES_TABLE_SUFFIX : null;
 		this.sqlQuery = prepareSqlQuery();
 		prepareColumns();
 //		this.primitiveColumns = prepareColumns();
@@ -160,10 +171,12 @@ class EntityDefinition {
 	}
 
 	protected String prepareSqlQuery() {
-		StringBuilder sb1 = new StringBuilder("select ");
-		sb1.append("e").append(".").append(idField.columnName).append(" as ").append(DEFAULT_ID_COLUMN_NAME);
+		StringBuilder sb1 = new StringBuilder("SELECT ");
+		if (supportAliases) sb1.append("DISTINCT ");
+		sb1.append("e").append(".").append(idField.columnName).append(" AS ").append(DEFAULT_ID_COLUMN_NAME);
 		StringBuilder sb2 = new StringBuilder();
-		sb2.append(" from ").append(tableName).append(" as e");
+		sb2.append(" FROM ").append(tableName).append(" AS e");
+		if (supportAliases) sb2.append(" LEFT JOIN ").append(aliasesTableName).append(" AS a ON (e._id = a._id)");
 		prepareSqlQuery(this, sb1, sb2, "e", true);		
 		return sb1.append(sb2).toString();		
 	}
@@ -177,8 +190,8 @@ class EntityDefinition {
 				String e = pe+f.index;
 				boolean isRequired = required & f.required;
 				EntityDefinition edJoin = EntityManager.getEntityDefinitionOrThrow(f.field.getType());				
-				sbJoins.append(isRequired ? " inner join " : " left outer join ").append(edJoin.tableName).append(" as ").append(e);
-				sbJoins.append(" on ").append(e).append(".").append(ed.idField.columnName).append("=").append(pe).append(".").append(f.columnName);
+				sbJoins.append(isRequired ? " INNER JOIN " : " LEFT OUTER JOIN ").append(edJoin.tableName).append(" AS ").append(e);
+				sbJoins.append(" ON ").append(e).append(".").append(ed.idField.columnName).append("=").append(pe).append(".").append(f.columnName);
 				prepareSqlQuery(edJoin, sbColumns, sbJoins, e, isRequired);
 			}
 		}
@@ -211,6 +224,6 @@ class EntityDefinition {
 //	}
 
 	private void appendColumn(StringBuilder sb, String e, String c) {
-		sb.append(", ").append(e).append(".").append(c).append(" as ").append(e).append("_").append(c);
+		sb.append(", ").append(e).append(".").append(c).append(" AS ").append(e).append("_").append(c);
 	}
 }

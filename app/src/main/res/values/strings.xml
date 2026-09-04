@@ -27,6 +27,8 @@
     <string name="edit_account">Edit Account</string>
     <string name="add_account">Add account</string>
     <string name="title">Title</string>
+    <string name="aliases">Aliases (for search, notification matching)</string>
+    <string name="aliases_hint">Can have multiple, one per line</string>
     <string name="payee">Payee</string>
     <string name="currency">Currency</string>
     <string name="trading_currency">Trading currency</string>

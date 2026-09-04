@@ -43,6 +43,7 @@ public abstract class EntityManager {
 	public static final String DEF_ID_COL = "_id";
 	public static final String DEF_TITLE_COL = "title";
 	public static final String DEF_SORT_COL = "sort_order";
+	public static final String ALIASES_COL = "aliases";
 
 	private static final ConcurrentMap<Class<?>, EntityDefinition> definitions = new ConcurrentHashMap<>();
 
@@ -71,6 +72,9 @@ public abstract class EntityManager {
 		if (clazz.isAnnotationPresent(Table.class)) {
 			Table tableAnnotation = clazz.getAnnotation(Table.class);
 			edb.withTable(tableAnnotation.name());
+		}
+		if (clazz.isAnnotationPresent(SupportAliases.class)) {
+			edb.supportAliases();
 		}
 		Field[] fields = clazz.getFields();
 		if (fields != null) {
@@ -342,5 +346,35 @@ public abstract class EntityManager {
 			}
 		}
 		return false;
+	}
+
+	public <T extends MyEntity> void rebuildAliases(Class<T> clazz, SQLiteDatabase db, long entity_id, String aliases) {
+		var ed = getEntityDefinitionOrThrow(clazz);
+
+		db.execSQL("UPDATE " + ed.tableName + " SET aliases = ? WHERE _id = ?", new String[]{aliases, String.valueOf(entity_id)});
+		db.execSQL("DELETE FROM " + ed.aliasesTableName + " WHERE _id = ?", new String[]{String.valueOf(entity_id)});
+
+		for (String alias : aliases.split("\n")) {
+			db.execSQL("INSERT INTO " + ed.aliasesTableName + " (_id, alias) VALUES (?, ?)", new String[]{
+					String.valueOf(entity_id),
+					alias
+			});
+		}
+	}
+
+	public <T extends MyEntity> void rebuildAllAliases(Class<T> clazz) {
+		var ed = getEntityDefinitionOrThrow(clazz);
+		var db = db();
+		db.beginTransaction();
+		try (Cursor c = db.rawQuery("SELECT _id, aliases FROM " + ed.tableName, new String[0]))
+		{
+			while (c.moveToNext()) {
+				rebuildAliases(clazz, db, c.getLong(0), c.getString(1));
+			}
+			db.setTransactionSuccessful();
+		}
+		finally {
+			db.endTransaction();
+		}
 	}
 }

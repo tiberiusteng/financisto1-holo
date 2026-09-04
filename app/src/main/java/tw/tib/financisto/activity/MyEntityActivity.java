@@ -41,9 +41,16 @@ public abstract class MyEntityActivity<T extends MyEntity> extends Activity {
 
 	private T entity;
 
+	private boolean supportAliases;
+
 	protected MyEntityActivity(Class<T> clazz) {
+		this(clazz, false);
+	}
+
+	protected MyEntityActivity(Class<T> clazz, boolean supportAliases) {
 		try {
 			this.clazz = clazz;
+			this.supportAliases = supportAliases;
 			this.entity = clazz.newInstance();
 		} catch (Exception e) {
 			throw new RuntimeException(e);
@@ -59,6 +66,10 @@ public abstract class MyEntityActivity<T extends MyEntity> extends Activity {
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.edit_entity);
+
+		if (!supportAliases) {
+			findViewById(R.id.aliases_block).setVisibility(View.GONE);
+		}
 
 		ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.edit_entity), (v, windowInsets) -> {
 			Insets insets = windowInsets.getInsets(WindowInsetsCompat.Type.systemBars()
@@ -82,8 +93,8 @@ public abstract class MyEntityActivity<T extends MyEntity> extends Activity {
 			EditText title = findViewById(R.id.title);
 			entity.title = title.getText().toString();
 			entity.isActive = activityCheckBox.isChecked();
-			updateEntity(entity);
 			long id = db.saveOrUpdate(entity);
+			updateEntity(entity);
 			Intent intent = new Intent();
 			intent.putExtra(DatabaseHelper.EntityColumns.ID, id);
 			setResult(RESULT_OK, intent);
@@ -111,6 +122,10 @@ public abstract class MyEntityActivity<T extends MyEntity> extends Activity {
 
 	}
 
+	protected String getAliases(T entity) {
+		return null;
+	}
+
 	protected void updateEntity(T entity) {
 		// do nothing
 	}
@@ -118,6 +133,11 @@ public abstract class MyEntityActivity<T extends MyEntity> extends Activity {
 	private void editEntity() {
 		EditText title = findViewById(R.id.title);
 		title.setText(entity.title);
+
+		if (supportAliases) {
+			EditText aliases = findViewById(R.id.aliases);
+			aliases.setText(getAliases(entity));
+		}
 
 		CheckBox activityCheckBox = findViewById(R.id.isActive);
 		activityCheckBox.setChecked(entity.isActive);

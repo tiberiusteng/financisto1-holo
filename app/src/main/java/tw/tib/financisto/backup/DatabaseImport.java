@@ -35,6 +35,7 @@ import static tw.tib.financisto.backup.Backup.RESTORE_SCRIPTS;
 import static tw.tib.financisto.backup.Backup.tableHasOrder;
 import static tw.tib.financisto.db.DatabaseHelper.ATTRIBUTES_TABLE;
 import static tw.tib.financisto.db.DatabaseHelper.LOCATIONS_TABLE;
+import static tw.tib.orb.EntityManager.ALIASES_COL;
 import static tw.tib.orb.EntityManager.DEF_SORT_COL;
 
 public class DatabaseImport extends FullDatabaseImport {
@@ -132,7 +133,7 @@ public class DatabaseImport extends FullDatabaseImport {
                     int i = line.indexOf(":");
                     if (i > 0) {
                         String columnName = line.substring(0, i);
-                        String value = backupNewlines ? unescape(sb, line.substring(i + 1)) : line.substring(i + 1);
+                        String value = (backupNewlines || columnName.equals(ALIASES_COL)) ? unescape(sb, line.substring(i + 1)) : line.substring(i + 1);
                         values.put(columnName, value);
                     }
                 }

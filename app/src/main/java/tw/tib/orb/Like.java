@@ -24,7 +24,7 @@ class Like implements Expression {
 	
 	@Override
 	public Selection toSelection(EntityDefinition ed) {
-		return new Selection("("+ed.getColumnForField(field)+" like ?)", Collections.singletonList(String.valueOf(value)));
+		return new Selection("("+ed.getColumnForField(field)+" LIKE ?)", Collections.singletonList(String.valueOf(value)));
 	}
 
 }

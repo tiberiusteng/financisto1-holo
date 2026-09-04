@@ -49,12 +49,12 @@ public class Query<T> {
 	}
 	
 	public Query<T> asc(String field) {
-		orderBy.add(ed.getColumnForField(field)+" asc");
+		orderBy.add(ed.getColumnForField(field)+" ASC");
 		return this;
 	}
 	
 	public Query<T> desc(String field) {
-		orderBy.add(ed.getColumnForField(field)+" desc");
+		orderBy.add(ed.getColumnForField(field)+" DESC");
 		return this;
 	}
 
@@ -64,10 +64,10 @@ public class Query<T> {
 		String[] whereArgs = this.whereArgs;
 		StringBuilder sb = new StringBuilder(query);
 		if (where != null) {
-			sb.append(" where ").append(where);			
+			sb.append(" WHERE ").append(where);
 		}
 		if (orderBy.size() > 0) {
-			sb.append(" order by ");
+			sb.append(" ORDER BY ");
 			boolean addComma = false;
 			for (String order : orderBy) {
 				if (addComma) {

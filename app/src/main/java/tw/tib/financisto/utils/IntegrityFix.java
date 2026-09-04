@@ -9,6 +9,8 @@
 package tw.tib.financisto.utils;
 
 import tw.tib.financisto.db.DatabaseAdapter;
+import tw.tib.financisto.model.MyLocation;
+import tw.tib.financisto.model.Payee;
 
 public class IntegrityFix {
 
@@ -23,6 +25,8 @@ public class IntegrityFix {
         db.recalculateAccountsBalances();
         db.updateSplitParentAccountId();
         db.rebuildRunningBalances();
+        db.rebuildAllAliases(Payee.class);
+        db.rebuildAllAliases(MyLocation.class);
     }
 
 }
