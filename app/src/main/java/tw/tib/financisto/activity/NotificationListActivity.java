@@ -72,6 +72,8 @@ public class NotificationListActivity extends AppCompatActivity {
 
         list = findViewById(android.R.id.list);
         list.setAdapter(new NotificationListAdapter(this));
+
+        // Copy notification content to clipboard
         list.setOnItemClickListener((adapterView, view, i, l) -> {
             NotificationViewHolder holder = (NotificationViewHolder) view.getTag();
 
@@ -82,6 +84,21 @@ public class NotificationListActivity extends AppCompatActivity {
 
             Toast.makeText(this, R.string.notification_copied, Toast.LENGTH_SHORT).show();
         });
+
+        // Copy notification package name to clipboard
+        list.setOnItemLongClickListener((adapterView, view, i, l) -> {
+            NotificationViewHolder holder = (NotificationViewHolder) view.getTag();
+
+            ClipboardManager clipboard = (ClipboardManager) getSystemService(Context.CLIPBOARD_SERVICE);
+            ClipData clip = ClipData.newPlainText(getString(R.string.notification_package_name),
+                    holder.notification.pkg);
+            clipboard.setPrimaryClip(clip);
+
+            Toast.makeText(this, R.string.notification_package_name_copied, Toast.LENGTH_SHORT).show();
+
+            return true;
+        });
+
     }
 
     static class NotificationListAdapter extends BaseAdapter {
@@ -130,17 +147,20 @@ public class NotificationListActivity extends AppCompatActivity {
     }
 
     static class NotificationViewHolder {
+        public TextView pkg;
         public TextView title;
         public TextView body;
         public NotificationListener.ParsedNotification notification;
 
         public NotificationViewHolder(@NonNull View itemView) {
+            pkg = itemView.findViewById(R.id.pkg);
             title = itemView.findViewById(R.id.title);
             body = itemView.findViewById(R.id.body);
         }
 
         public void bindView(NotificationListener.ParsedNotification notification) {
             this.notification = notification;
+            pkg.setText(notification.pkg);
             title.setText(notification.title);
             body.setText(notification.body);
         }

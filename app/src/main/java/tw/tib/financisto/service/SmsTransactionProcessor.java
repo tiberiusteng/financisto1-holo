@@ -40,8 +40,8 @@ public class SmsTransactionProcessor {
      * Parses sms and adds new transaction if it matches any sms template
      * @return new transaction or null if not matched/parsed
      */
-    public Transaction createTransactionBySms(Context context, String addr, String fullSmsBody, TransactionStatus status, boolean updateNote) {
-        List<SmsTemplate> addrTemplates = db.getSmsTemplatesByNumber(addr);
+    public Transaction createTransactionBySms(Context context, String pkg, String addr, String fullSmsBody, TransactionStatus status, boolean updateNote) {
+        List<SmsTemplate> addrTemplates = db.getSmsTemplatesByPkgTitle(pkg, addr);
         for (final SmsTemplate template : addrTemplates) {
             String[] match = findTemplateMatches(template.template, fullSmsBody);
             if (match != null) {

@@ -1094,9 +1094,9 @@
     <!-- SMS stuff >> -->
     <string name="sms_description">Description of rule</string>
     <string name="sms_description_hint">Show in list title to help identify; not required</string>
-    <string name="sms_sender">Notification Sender / SMS Number</string>
+    <string name="sms_sender">Notification Sender Package / Title / SMS Number</string>
     <string name="sms_tpl_filter_hint">Filter by number or text</string>
-    <string name="sms_number_hint">Notification sender app name or SMS sender number, use % to indicate wildcard match</string>
+    <string name="sms_number_hint">Notification sender package name, notification title or SMS sender number, use % to indicate wildcard match</string>
     <string name="sms_tpl">Notification / SMS Template</string>
     <string name="sms_tpl_title">Template (?)</string>
     <string name="sms_tpl_desc">Placeholders: \n{{p}} - price\n{{a}} - account last digits\n{{c}} - account name\n{{x}} - transfer to account name\n{{f}} - ISO 4217 currency code\n{{e}} - payee title (can\'t contain space)\n{{r}} - project title (can\'t contain space)\n{{t}} - note text (non-greedy)\n{{u}} - note text (greedy)\n{{g}} - Unix timestamp in milliseconds\n{{*}} - any symbols/words</string>
@@ -1109,8 +1109,11 @@
     <string name="no_sms_templates">No templates</string>
     <string name="add_sms_template">Add template</string>
     <string name="notification_list">Notification List</string>
+    <string name="notification_list_usage">Click to copy content, Long press to copy package name</string>
     <string name="notification_content">Notification Content</string>
     <string name="notification_copied">Copied notification content to clipboard</string>
+    <string name="notification_package_name">Notification Package Name</string>
+    <string name="notification_package_name_copied">Copied notification package name to clipboard</string>
     <string name="sort_sms_templates">Sort By Name</string>
     <string name="duplicate_sms_template">Template has been duplicated</string>
     <string name="sms_delete_alert">Delete this template?</string>

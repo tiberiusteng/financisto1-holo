@@ -881,9 +881,9 @@
   <!-- SMS stuff >> -->
   <string name="sms_description">規則說明</string>
   <string name="sms_description_hint">顯示為列表標題方便識別; 非必要</string>
-  <string name="sms_sender">發送通知的程式 / 簡訊發送門號</string>
+  <string name="sms_sender">發送通知的程式 / 通知標題 / 簡訊門號</string>
   <string name="sms_tpl_filter_hint">輸入數字或文字過濾</string>
-  <string name="sms_number_hint">發送通知的程式名稱或發送簡訊的門號, 可用 % 代表任意字串</string>
+  <string name="sms_number_hint">發送通知的程式套件名稱、通知標題或發送簡訊的門號, 可用 % 代表任意字串</string>
   <string name="sms_tpl">通知 / 簡訊模板</string>
   <string name="sms_tpl_title">模板 (?)</string>
   <string name="sms_tpl_desc">佔位標籤: \n{{p}} - 金額\n{{a}} - 帳號/卡號片段\n{{c}} - 帳號名稱\n{{x}} - 轉帳對象帳號名稱\n{{f}} - ISO 4217 貨幣代碼\n{{e}} - 受款人名稱 (不能有空白)\n{{r}} - 專案名稱 (不能有空白)\n{{t}} - 交易內容敘述 (盡可能短)\n{{u}} - 交易內容敘述 (盡可能長)\n{{g}} - UNIX 時間戳記 (毫秒)\n{{*}} - 任意內容 (不處理)</string>
@@ -896,8 +896,11 @@
   <string name="no_sms_templates">沒有模板</string>
   <string name="add_sms_template">新增模板</string>
   <string name="notification_list">通知列表</string>
+  <string name="notification_list_usage">短按複製內容，長按複製所有者套件名稱</string>
   <string name="notification_content">通知內容</string>
   <string name="notification_copied">已將通知內容複製到剪貼簿</string>
+  <string name="notification_package_name">通知所有者套件名稱</string>
+  <string name="notification_package_name_copied">已將通知所有者套件名稱複製到剪貼簿</string>
   <string name="sort_sms_templates">以名稱排序</string>
   <string name="duplicate_sms_template">已複製模板</string>
   <string name="sms_delete_alert">刪除此模板?</string>

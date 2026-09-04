@@ -1211,14 +1211,16 @@ public class DatabaseAdapter extends MyEntityManager {
         }
     }
 
-    public List<SmsTemplate> getSmsTemplatesByNumber(String smsNumber) {
+    public List<SmsTemplate> getSmsTemplatesByPkgTitle(String pkg, String title) {
         try (Cursor c = db().rawQuery(
-                String.format("select %s from %s where ? LIKE %s order by %s, length(%s) desc",
-                        DatabaseUtils.generateSelectClause(DatabaseHelper.SmsTemplateColumns.NORMAL_PROJECTION, null),
-                        DatabaseHelper.SMS_TEMPLATES_TABLE,
-                        DatabaseHelper.SmsTemplateColumns.title,
-                        DatabaseHelper.SmsTemplateColumns.sort_order,
-                        DatabaseHelper.SmsTemplateColumns.template), new String[]{smsNumber})) {
+                String.format("select %1$s from %2$s where (? LIKE %3$s) OR (%3$s = ?) order by %4$s, length(%5$s) desc",
+                        /* 1 */ DatabaseUtils.generateSelectClause(DatabaseHelper.SmsTemplateColumns.NORMAL_PROJECTION, null),
+                        /* 2 */ DatabaseHelper.SMS_TEMPLATES_TABLE,
+                        /* 3 */ DatabaseHelper.SmsTemplateColumns.title,
+                        /* 4 */ DatabaseHelper.SmsTemplateColumns.sort_order,
+                        /* 5 */ DatabaseHelper.SmsTemplateColumns.template),
+                new String[]{title, pkg}))
+        {
             List<SmsTemplate> res = new ArrayList<>(c.getCount());
             while (c.moveToNext()) {
                 SmsTemplate a = SmsTemplate.fromCursor(c);

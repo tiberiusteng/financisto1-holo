@@ -4,12 +4,21 @@
     android:layout_height="wrap_content"
     xmlns:app="http://schemas.android.com/apk/res-auto">
 
+    <TextView android:id="@+id/pkg"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="package"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        android:textAppearance="?android:attr/textAppearanceSmall"
+        android:textColor="@color/material_blue_gray" />
+
     <TextView android:id="@+id/title"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="Title"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/pkg"
         android:textAppearance="?android:attr/textAppearanceMedium"
         android:textColor="@color/material_teal" />
 

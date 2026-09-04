@@ -44,6 +44,7 @@ public class FinancistoService extends JobIntentService {
 
     public static final String ACTION_SCHEDULE_ALL = "tw.tib.financisto.SCHEDULE_ALL";
     public static final String ACTION_NEW_TRANSACTION_SMS = "tw.tib.financisto.NEW_TRANSACTON_SMS";
+    public static final String SMS_TRANSACTION_PACKAGE = "SMS_TRANSACTION_PACKAGE";
     public static final String SMS_TRANSACTION_NUMBER = "SMS_TRANSACTION_NUMBER";
     public static final String SMS_TRANSACTION_BODY = "SMS_TRANSACTION_BODY";
     public static final String ACTION_NEW_TRANSACTION_WALLET = "tw.tib.financisto.NEW_TRANSACTION_WALLET";
@@ -100,10 +101,11 @@ public class FinancistoService extends JobIntentService {
     }
 
     private void processSmsTransaction(Intent intent) {
+        String pkg = intent.getStringExtra(SMS_TRANSACTION_PACKAGE);
         String number = intent.getStringExtra(SMS_TRANSACTION_NUMBER);
         String body = intent.getStringExtra(SMS_TRANSACTION_BODY);
         if (number != null && body != null) {
-            Transaction t = smsProcessor.createTransactionBySms(this, number, body, getSmsTransactionStatus(),
+            Transaction t = smsProcessor.createTransactionBySms(this, pkg, number, body, getSmsTransactionStatus(),
                     shouldSaveSmsToTransactionNote());
             if (t != null) {
                 TransactionInfo transactionInfo = db.getTransactionInfo(t.id);
@@ -115,6 +117,7 @@ public class FinancistoService extends JobIntentService {
     }
 
     private void processWalletTransaction(Intent intent) {
+        String pkg = intent.getStringExtra(SMS_TRANSACTION_PACKAGE);
         String title = intent.getStringExtra(WALLET_TRANSACTION_TITLE);
         String text = intent.getStringExtra(WALLET_TRANSACTION_TEXT);
         if (title == null) title = "";
@@ -130,7 +133,7 @@ public class FinancistoService extends JobIntentService {
         }
         if (t == null) {
             // fall back to user-defined notification templates matched by title
-            t = smsProcessor.createTransactionBySms(this, title, notificationText,
+            t = smsProcessor.createTransactionBySms(this, pkg, title, notificationText,
                     getSmsTransactionStatus(), shouldSaveSmsToTransactionNote());
         }
         if (t != null) {
