@@ -53,7 +53,19 @@ public class SmsTransactionProcessor {
                 String parsedPrice = match[PRICE.ordinal()];
                 String text = match[TEXT.ordinal()];
                 String greedy_text = match[GREEDY_TEXT.ordinal()];
-                String payeeText =  match[PAYEE.ordinal()];
+                // {{e}} now accepts merchant names containing spaces (see Placeholder.PAYEE),
+                // and the price of that is picking up the surrounding whitespace as well
+                // (a trailing space after the merchant name is common). A payee is created
+                // when it is not found, so without trimming we end up with two payees that
+                // differ only by a space — and the payee is what carries lastCategoryId, so
+                // splitting it in two loses the remembered category.
+                String payeeText = match[PAYEE.ordinal()];
+                if (payeeText != null) {
+                    payeeText = payeeText.trim();
+                    if (payeeText.isEmpty()) {
+                        payeeText = null;
+                    }
+                }
                 String projectText = match[PROJECT.ordinal()];
                 String currencyText = match[CURRENCY.ordinal()];
                 String timestampMillisText = match[TIMESTAMP_MILLIS.ordinal()];
@@ -359,7 +371,19 @@ public class SmsTransactionProcessor {
         BALANCE("<:B:>", "\\s{0,3}([\\d\\.,\\-\\+\\']+(?:[\\d \\xA0\\.,]+?)*)\\s{0,3}", "{{b}}"),
         ACCOUNT_NAME("<:C:>", "(\\S+?)", "{{c}}"),
         DATE("<:D:>", "\\s{0,3}(\\d[\\d\\. /:-]{12,14}\\d)\\s*?", "{{d}}"),
-        PAYEE("<:E:>", "(\\S+?)", "{{e}}"),
+        // (\S+?) fails on merchant names containing a space ("ALPHA THEATRES",
+        // "SHOPFAST TW"): the template then does not match at all, so the notification is
+        // silently dropped and no transaction is created. Spaces inside a merchant name
+        // are common, and the failure is invisible — nothing is logged as an error, the
+        // ledger is simply missing an entry. Use ([^\r\n]+?): a merchant name never spans
+        // lines, and excluding the line breaks stops a runaway capture when the closing
+        // anchor only appears on a later line (the pattern is compiled with DOTALL).
+        // [^\r\n] is a superset of \S, and both are non-greedy, so they expand identically
+        // until a space is needed — every template that matched before matches the same
+        // way, and only previously-failing ones start to match.
+        // Covered by PlaceholderCaptureTest in androidTest — it has to run on a device,
+        // because Android's regex is ICU-backed and a desktop JVM answers differently.
+        PAYEE("<:E:>", "([^\\r\\n]+?)", "{{e}}"),
         CURRENCY("<:F:>", "([A-Z]{3})", "{{f}}"),
         TIMESTAMP_MILLIS("<:G:>", "(\\d{1,13})", "{{g}}"),
         PRICE("<:P:>", BALANCE.regexp, "{{p}}"),
@@ -368,8 +392,12 @@ public class SmsTransactionProcessor {
         GREEDY_TEXT("<:U:>", "(.*)", "{{u}}"),
         // (\w+?) fails on account titles containing punctuation such as "-" or "()":
         // those are not word characters, so the template does not match at all and no
-        // transaction is created. Use (\S+?), consistent with ACCOUNT_NAME / PAYEE /
-        // PROJECT above; \S is a superset of \w, so existing templates keep working.
+        // transaction is created. Use (\S+?), consistent with ACCOUNT_NAME / PROJECT
+        // above; \S is a superset of \w, so existing templates keep working.
+        // Left as (\S+?) rather than widened like PAYEE: an account title containing a
+        // space would break the same way, but there is no reported case, and these two
+        // are matched against existing entities rather than created on the fly. Widen
+        // them the same way if one turns up.
         // Covered by PlaceholderCaptureTest in androidTest — it has to run on a device,
         // because Android's regex is ICU-backed and a desktop JVM answers differently.
         TRANSFER_TO_ACCOUNT_NAME("<:X:>", "(\\S+?)", "{{x}}");
