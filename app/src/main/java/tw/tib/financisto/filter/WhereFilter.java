@@ -364,6 +364,14 @@ public class WhereFilter {
 		return title;
 	}
 
+	/**
+	 * Number of criteria in this filter. For telling "is this filter down to a single
+	 * condition" apart from "is it empty" — see BlotterFragment.isNavigationOnlyFilter.
+	 */
+	public synchronized int criteriaCount() {
+		return criteria.size();
+	}
+
 	public synchronized boolean isEmpty() {
 		return criteria.isEmpty();
 	}
