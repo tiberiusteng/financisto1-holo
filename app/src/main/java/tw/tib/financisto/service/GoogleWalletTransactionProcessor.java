@@ -71,8 +71,6 @@ public class GoogleWalletTransactionProcessor {
 
         if (saveNotificationToNote) {
             t.note = notificationText;
-        } else {
-            t.note = payment.merchant != null ? payment.merchant : "";
         }
         t.status = status;
         t.id = db.insertOrUpdate(t);
