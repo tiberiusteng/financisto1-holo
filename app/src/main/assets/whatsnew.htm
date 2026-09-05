@@ -30,11 +30,18 @@
 
 <h2>Changelog</h2>
 
-<p><b>2026-09-04</b></p>
+<p><b>2026-09-04 a</b></p>
 <dl>
+    <dt><span>[+]</span> Payee, Location alias for search, notification matching, e.g.</dt>
+    <dd>
+        <p>(1) I have a payee "McD" but I want Google Wallet transactions wtih merchant "McDonald's Restaurant"
+        save to it, then edit "McD" payee and put "McDonald's Restaurant" in alias.</p>
+        <p>(2) A payee named "麵屋昕家" with alias "shinga" can be searched with "sh".</p>
+    </dd>
     <dt><span>[+]</span> Notification template matching by package name</dt>
     <dt><span>[*]</span> Notification template {{e}} can match payee names containing space (#146, by yeh1518)</dt>
     <dt><span>[*]</span> Google Wallet transactions with only currency symbol will be treated as local currency</dt>
+    <dt><span>[*]</span> Google Wallet transaction no longer store payee name as note (a)</dt>
     <dt><span>[-]</span> Fix notification listener potentially stop working after updating app (#135, by yeh1518)</dt>
     <dt><span>[-]</span> Fix running balance after split transactions (#145, by yeh1518)</dt>
     <dt><span>[-]</span> Fix notification list last item scroll above gesture bar (#147, by yeh1518)</dt>
