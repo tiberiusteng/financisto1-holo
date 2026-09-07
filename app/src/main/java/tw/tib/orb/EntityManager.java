@@ -354,11 +354,15 @@ public abstract class EntityManager {
 		db.execSQL("UPDATE " + ed.tableName + " SET aliases = ? WHERE _id = ?", new String[]{aliases, String.valueOf(entity_id)});
 		db.execSQL("DELETE FROM " + ed.aliasesTableName + " WHERE _id = ?", new String[]{String.valueOf(entity_id)});
 
-		for (String alias : aliases.split("\n")) {
-			db.execSQL("INSERT INTO " + ed.aliasesTableName + " (_id, alias) VALUES (?, ?)", new String[]{
-					String.valueOf(entity_id),
-					alias
-			});
+		if (aliases != null) {
+			for (String alias : aliases.split("\n")) {
+				if (!aliases.isEmpty()) {
+					db.execSQL("INSERT INTO " + ed.aliasesTableName + " (_id, alias) VALUES (?, ?)", new String[]{
+							String.valueOf(entity_id),
+							alias
+					});
+				}
+			}
 		}
 	}
 
