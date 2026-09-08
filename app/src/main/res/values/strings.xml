@@ -113,6 +113,7 @@
     <string name="select_location">Select location</string>
     <string name="no_fix">Unknown location</string>
     <string name="attribute">Attribute</string>
+    <string name="attribute_not_set">[Not set]</string>
     <string name="attributes">Attributes</string>
     <string name="parent_attributes">Parent attributes</string>
     <string name="change_attributes">Change attributes</string>

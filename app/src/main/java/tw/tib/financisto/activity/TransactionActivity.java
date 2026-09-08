@@ -389,8 +389,10 @@ public class TransactionActivity extends AbstractTransactionActivity {
     private void fetchSplits() {
         List<Transaction> splits = db.getSplitsForTransaction(transaction.id);
         for (Transaction split : splits) {
-            split.id = --idSequence;
+            // fetch attributes with original in-database id
             split.categoryAttributes = db.getAllAttributesForTransaction(split.id);
+            // we are going to recreate them with order
+            split.id = --idSequence;
             if (split.originalCurrencyId > 0) {
                 split.fromAmount = split.originalFromAmount;
             }

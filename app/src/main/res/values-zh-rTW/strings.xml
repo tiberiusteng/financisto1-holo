@@ -101,6 +101,7 @@
   <string name="select_location">選取地點</string>
   <string name="no_fix">不明地點</string>
   <string name="attribute">屬性</string>
+  <string name="attribute_not_set">[未設定]</string>
   <string name="attributes">屬性</string>
   <string name="parent_attributes">上層屬性</string>
   <string name="change_attributes">變更屬性</string>

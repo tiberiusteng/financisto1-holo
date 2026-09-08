@@ -124,6 +124,7 @@ class ListAttributeView extends AttributeView {
 	public View inflateView(LinearLayout layout, String value) {
 		Builder b = inflater.new ListBuilder(layout, R.layout.select_entry);
 		b.withId(R.id.click_attribute, this);
+		b.withData(context.getString(R.string.attribute_not_set));
 		if (value != null) {
 			b.withData(value);
 			for (int i = 0; i < items.length; i++) {
