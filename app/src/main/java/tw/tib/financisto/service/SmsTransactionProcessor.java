@@ -383,7 +383,7 @@ public class SmsTransactionProcessor {
         // way, and only previously-failing ones start to match.
         // Covered by PlaceholderCaptureTest in androidTest — it has to run on a device,
         // because Android's regex is ICU-backed and a desktop JVM answers differently.
-        PAYEE("<:E:>", "([^\\r\\n]+?)", "{{e}}"),
+        PAYEE("<:E:>", "([^\\r\\n]+)", "{{e}}"),
         CURRENCY("<:F:>", "([A-Z]{3})", "{{f}}"),
         TIMESTAMP_MILLIS("<:G:>", "(\\d{1,13})", "{{g}}"),
         PRICE("<:P:>", BALANCE.regexp, "{{p}}"),
