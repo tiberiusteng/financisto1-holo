@@ -388,6 +388,9 @@ public class DatabaseAdapter extends MyEntityManager {
                 insertAttributes(transactionId, attributes);
             }
             List<Transaction> splits = getSplitsForTransaction(id);
+            for (Transaction split : splits) {
+                split.categoryAttributes = getAllAttributesForTransaction(split.id);
+            }
             if (multiplier > 1) {
                 for (Transaction split : splits) {
                     split.fromAmount *= multiplier;
