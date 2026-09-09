@@ -31,6 +31,7 @@ public class IntentTransactionProcessor {
     public static final String NOTE = "NOTE";
     public static final String IS_CREDIT_CARD_PAYMENT = "IS_CREDIT_CARD_PAYMENT";
     public static final String STATUS = "STATUS"; // "RS", "PN", "UR", "CL", "RC"; see TransactionStatus
+    public static final String TIMESTAMP_MILLIS = "TIMESTAMP_MILLIS"; // Unix timestamp in milliseconds, long
 
     private static BigDecimal HUNDRED = new BigDecimal(100);
 
@@ -96,6 +97,11 @@ public class IntentTransactionProcessor {
             status = TransactionStatus.UR;
         }
 
+        long timestampMillis = intent.getLongExtra(TIMESTAMP_MILLIS, 0);
+        if (timestampMillis != 0) {
+            tx.dateTime = timestampMillis;
+        }
+
         Log.d(TAG, format("status=%s", status));
 
         if (amount.compareTo(BigDecimal.ZERO) != 0 && accountId != 0) {
@@ -135,7 +141,9 @@ public class IntentTransactionProcessor {
 
             long id = db.insertOrUpdate(tx);
             tx.id = id;
+            return tx;
         }
-        return tx;
+
+        return null;
     }
 }
