@@ -56,14 +56,14 @@
 					  a:layout_height="wrap_content" a:layout_below="@+id/label"
 					  a:layout_alignLeft="@+id/label" a:textAppearance="?android:attr/textAppearanceMedium"
 					  a:textColor="@android:color/primary_text_dark"
-					  a:maxLines="2" a:duplicateParentState="true"/>
+					  a:duplicateParentState="true"/>
 		</RelativeLayout>
 
 		<ImageView a:id="@+id/more"
 				   style="@style/MoreButton"
-					a:layout_width="wrap_content"
+				   a:layout_width="wrap_content"
 				   a:layout_height="wrap_content"
-				   a:layout_gravity="bottom"
+				   a:layout_gravity="center_vertical"
 				   a:duplicateParentState="true" />
 
 		<ImageView style="@style/MinusButton"

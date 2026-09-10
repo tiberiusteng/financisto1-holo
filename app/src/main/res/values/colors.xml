@@ -28,6 +28,13 @@
     <color name="transaction_note">@android:color/secondary_text_dark</color>
     <color name="transaction_payee">@android:color/holo_blue_light</color>
     <color name="transaction_location">@android:color/holo_green_light</color>
+    <color name="transaction_tag">@color/holo_orange_light</color>
+    <color name="tag_pill_bg">#25272D</color>
+    <color name="tag_pill_stroke">#3D414C</color>
+    <color name="tag_pill_text">#E4E6EB</color>
+    <color name="tag_counter_bg">#1A2B3C</color>
+    <color name="tag_counter_stroke">#33B5E5</color>
+    <color name="tag_counter_text">#33B5E5</color>
     <color name="transaction_date">#999</color>
     <color name="transaction_date_weekend">#c66</color>
 

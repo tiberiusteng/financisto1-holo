@@ -1,0 +1,9 @@
+CREATE TABLE IF NOT EXISTS tag (
+    _id INTEGER PRIMARY KEY AUTOINCREMENT,
+    title TEXT NOT NULL,
+    is_active INTEGER NOT NULL DEFAULT 1,
+    sort_order INTEGER NOT NULL DEFAULT 0,
+    updated_on INTEGER
+);
+
+CREATE UNIQUE INDEX IF NOT EXISTS uidx_tag_title ON tag(title);

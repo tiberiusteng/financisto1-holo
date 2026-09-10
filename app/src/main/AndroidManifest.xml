@@ -271,6 +271,11 @@
 			android:theme="@style/AppDialog" android:configChanges="screenSize|smallestScreenSize|orientation|screenLayout|keyboardHidden"/>
 		
 		<activity android:name=".activity.ProjectListActivity" android:label="@string/projects"/>
+
+		<activity android:name=".activity.TagActivity" android:label="@string/tag"
+			android:theme="@style/AppDialog" android:configChanges="screenSize|smallestScreenSize|orientation|screenLayout|keyboardHidden"/>
+
+		<activity android:name=".activity.TagListActivity" android:label="@string/tags"/>
 		
 		<activity android:name=".activity.PayeeActivity" android:label="@string/payee"
 			android:theme="@style/AppDialog" android:configChanges="screenSize|smallestScreenSize|orientation|screenLayout|keyboardHidden"/>

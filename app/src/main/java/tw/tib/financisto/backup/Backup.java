@@ -22,6 +22,7 @@ import static tw.tib.financisto.db.DatabaseHelper.LOCATIONS_TABLE;
 import static tw.tib.financisto.db.DatabaseHelper.PAYEE_TABLE;
 import static tw.tib.financisto.db.DatabaseHelper.PROJECT_TABLE;
 import static tw.tib.financisto.db.DatabaseHelper.SMS_TEMPLATES_TABLE;
+import static tw.tib.financisto.db.DatabaseHelper.TAG_TABLE;
 import static tw.tib.financisto.db.DatabaseHelper.TRANSACTION_ATTRIBUTE_TABLE;
 import static tw.tib.financisto.db.DatabaseHelper.TRANSACTION_TABLE;
 
@@ -32,6 +33,7 @@ public final class Backup {
 			TRANSACTION_ATTRIBUTE_TABLE, BUDGET_TABLE, CATEGORY_TABLE,
 			CURRENCY_TABLE, LOCATIONS_TABLE, PROJECT_TABLE, TRANSACTION_TABLE,
 			PAYEE_TABLE, CCARD_CLOSING_DATE_TABLE, SMS_TEMPLATES_TABLE,
+			TAG_TABLE,
 			"split", /* todo: seems not used, found only in old 20110422_0051_create_split_table.sql, should be removed then */
 			EXCHANGE_RATES_TABLE};
 
@@ -39,7 +41,7 @@ public final class Backup {
 			ATTRIBUTES_TABLE, CATEGORY_TABLE, PROJECT_TABLE, LOCATIONS_TABLE};
 
 	public static final String[] BACKUP_TABLES_WITH_SORT_ORDER = {
-			ACCOUNT_TABLE, SMS_TEMPLATES_TABLE, PROJECT_TABLE, PAYEE_TABLE, BUDGET_TABLE, CURRENCY_TABLE, LOCATIONS_TABLE, ATTRIBUTES_TABLE};
+			ACCOUNT_TABLE, SMS_TEMPLATES_TABLE, PROJECT_TABLE, PAYEE_TABLE, BUDGET_TABLE, CURRENCY_TABLE, LOCATIONS_TABLE, ATTRIBUTES_TABLE, TAG_TABLE};
 
 	public static final String[] RESTORE_SCRIPTS = {
 			"20100114_1158_alter_accounts_types.sql",

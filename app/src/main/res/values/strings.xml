@@ -144,6 +144,15 @@
     <string name="move_go_to_marker">Go to marker</string>
     <string name="tap_location">Tap \'My location\' marker to manually adjust location</string>
     <string name="note">Note</string>
+    <string name="tag">Tag</string>
+    <string name="tags">Tags</string>
+    <string name="no_tags">No tags</string>
+    <string name="select_tags">Select tags…</string>
+    <string name="new_tag">New Tag</string>
+    <string name="enter_tag_name">Enter tag name</string>
+    <string name="tags_hint">tag1, tag2…</string>
+    <string name="tags_filter">Tags containing</string>
+    <string name="tags_filter_value">Tag \"%1$s\"</string>
     <string name="note_text_containing">Note text containing</string>
     <string name="note_text_containing_value">Containing \"%1$s\"</string>
     <string name="service_is_not_available">Service is not available, please try again later</string>
@@ -371,6 +380,10 @@
     <string name="show_project_summary">Show project drop-down (requires restart)</string>
     <string name="show_project_order">Project order</string>
     <string name="show_project_order_summary">Relative position for the project drop-down</string>
+    <string name="show_tags">Show tags</string>
+    <string name="show_tags_summary">Show tags drop-down (requires restart)</string>
+    <string name="show_tags_order">Tags order</string>
+    <string name="show_tags_order_summary">Relative position for the tags drop down</string>
     <string name="remember_selection">Remember the selection</string>
     <string name="remember_last_account">Last account</string>
     <string name="remember_last_account_summary">Remember the last selected account</string>

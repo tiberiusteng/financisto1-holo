@@ -10,13 +10,16 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.LinearLayout;
+import android.widget.MultiAutoCompleteTextView;
 import android.widget.TextView;
 import tw.tib.financisto.R;
 import tw.tib.financisto.datetime.DateUtils;
 import tw.tib.financisto.model.Account;
 import tw.tib.financisto.model.Currency;
+import tw.tib.financisto.model.Tag;
 import tw.tib.financisto.model.Transaction;
 import tw.tib.financisto.model.TransactionStatus;
+import tw.tib.financisto.service.IntentTransactionProcessor;
 import tw.tib.financisto.utils.CurrencyCache;
 import tw.tib.financisto.utils.EnumUtils;
 import tw.tib.financisto.utils.MyPreferences;
@@ -31,6 +34,7 @@ import androidx.core.view.WindowInsetsCompat;
 import java.text.DateFormat;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.List;
 
 /**
  * Created by IntelliJ IDEA.
@@ -49,6 +53,7 @@ public abstract class AbstractSplitActivity extends AbstractActivity {
     protected TextView editDisabled;
 
     protected EditText noteText;
+    protected TagSelector<AbstractSplitActivity> tagSelector;
     protected TextView unsplitAmountText;
 
     protected Account fromAccount;
@@ -132,8 +137,9 @@ public abstract class AbstractSplitActivity extends AbstractActivity {
         int locationOrder = MyPreferences.getLocationOrder();
         int noteOrder = MyPreferences.getNoteOrder();
         int projectOrder = MyPreferences.getProjectOrder();
+        int tagsOrder = MyPreferences.getTagsOrder();
 
-        for (int i = 0; i < 6; i++) {
+        for (int i = 0; i < 7; i++) {
             if (i == noteOrder) {
                 noteText = new EditText(this);
                 noteText.setId(R.id.note);
@@ -144,6 +150,11 @@ public abstract class AbstractSplitActivity extends AbstractActivity {
             }
             if (i == locationOrder) {
                 locationSelector.createNode(layout);
+            }
+            if (i == tagsOrder) {
+                if (MyPreferences.isShowTags()) {
+                    createTagsNode(layout);
+                }
             }
         }
 
@@ -157,9 +168,15 @@ public abstract class AbstractSplitActivity extends AbstractActivity {
         });
     }
 
+    protected void createTagsNode(LinearLayout layout) {
+        tagSelector = new TagSelector<>(this, db, x);
+        tagSelector.createNode(layout);
+    }
+
     protected void updateCommonUIforPreventEditing() {
         boolean enabled = !isPreventEditing();
         if (noteText != null) noteText.setEnabled(enabled);
+        if (tagSelector != null) tagSelector.setEnabled(enabled);
         if (projectSelector != null) projectSelector.setEnabled(enabled);
         if (locationSelector != null) locationSelector.setEnabled(enabled);
 
@@ -183,6 +200,7 @@ public abstract class AbstractSplitActivity extends AbstractActivity {
     protected void onClick(View v, int id) {
         locationSelector.onClick(id);
         projectSelector.onClick(id);
+        if (tagSelector != null) tagSelector.onClick(id);
     }
 
     @Override
@@ -224,6 +242,9 @@ public abstract class AbstractSplitActivity extends AbstractActivity {
 
     protected boolean updateFromUI() {
         split.note = text(noteText);
+        if (tagSelector != null) {
+            split.tags = tagSelector.getSelectedTags();
+        }
         split.locationId = locationSelector.getSelectedEntityId();
         split.projectId = projectSelector.getSelectedEntityId();
         return true;
@@ -233,6 +254,20 @@ public abstract class AbstractSplitActivity extends AbstractActivity {
         locationSelector.selectEntity(split.locationId);
         projectSelector.selectEntity(split.projectId);
         setNote(split.note);
+        Intent intent = getIntent();
+        if (intent != null) {
+            List<String> intentTags = IntentTransactionProcessor.extractTagsFromIntent(intent);
+            if (!intentTags.isEmpty()) {
+                for (String tag : intentTags) {
+                    db.findOrInsertEntityByTitle(Tag.class, tag);
+                }
+                split.tags = String.join("\n", intentTags);
+            }
+        }
+        if (tagSelector != null && split.tags != null) {
+            tagSelector.setSelectedTags(split.tags);
+            tagSelector.fetchEntities();
+        }
     }
 
     private void setNote(String note) {
@@ -263,6 +298,7 @@ public abstract class AbstractSplitActivity extends AbstractActivity {
     protected void onDestroy() {
         if (locationSelector != null) locationSelector.onDestroy();
         if (projectSelector != null) projectSelector.onDestroy();
+        if (tagSelector != null) tagSelector.onDestroy();
         super.onDestroy();
     }
 }

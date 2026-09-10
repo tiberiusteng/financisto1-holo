@@ -24,6 +24,7 @@ public class TransactionTitleUtils {
     private ForegroundColorSpan payeeSpan;
     private ForegroundColorSpan locationSpan;
     private ForegroundColorSpan noteSpan;
+    private ForegroundColorSpan tagSpan;
     private ForegroundColorSpan transferSpan;
 
     public TransactionTitleUtils(Context context, boolean colorizeItem) {
@@ -36,7 +37,24 @@ public class TransactionTitleUtils {
         this.payeeSpan = new ForegroundColorSpan(r.getColor(R.color.transaction_payee));
         this.locationSpan = new ForegroundColorSpan(r.getColor(R.color.transaction_location));
         this.noteSpan = new ForegroundColorSpan(r.getColor(R.color.transaction_note));
+        this.tagSpan = new ForegroundColorSpan(r.getColor(R.color.transaction_tag));
         this.transferSpan = new ForegroundColorSpan(r.getColor(R.color.transfer_color));
+    }
+
+    public static String formatTagsForDisplay(String tags) {
+        if (tags == null || tags.trim().isEmpty()) return "";
+        StringBuilder sb = new StringBuilder();
+        for (String tag : tags.split("\n")) {
+            String trimmed = tag.trim();
+            if (!trimmed.isEmpty()) {
+                if (sb.length() > 0) sb.append(" ");
+                if (!trimmed.startsWith("#")) {
+                    sb.append("#");
+                }
+                sb.append(trimmed);
+            }
+        }
+        return sb.toString();
     }
 
     public CharSequence generateTransactionTitle(boolean isTransfer, String payee, String transfer, String note, String location, long categoryId, String category) {
@@ -45,6 +63,10 @@ public class TransactionTitleUtils {
         } else {
             return generateTransactionTitleForRegular(isTransfer, payee, transfer, note, location, category);
         }
+    }
+
+    public CharSequence generateTransactionTitle(boolean isTransfer, String payee, String transfer, String note, String tags, String location, long categoryId, String category) {
+        return generateTransactionTitle(isTransfer, payee, transfer, note, location, categoryId, category);
     }
 
     private CharSequence generateTransactionTitleForRegular(boolean isTransfer, String payee, String transfer, String note, String location, String category) {

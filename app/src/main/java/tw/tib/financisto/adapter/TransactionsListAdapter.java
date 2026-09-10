@@ -99,7 +99,8 @@ public class TransactionsListAdapter extends BlotterListAdapter {
         if (categoryId != 0) {
             category = cursor.getString(BlotterColumns.category_title.ordinal());
         }
-        CharSequence text = transactionTitleUtils.generateTransactionTitle(toAccountId > 0, payee, transfer, note, location, categoryId, category);
+        String tags = cursor.getString(BlotterColumns.tags.ordinal());
+        CharSequence text = transactionTitleUtils.generateTransactionTitle(toAccountId > 0, payee, transfer, note, tags, location, categoryId, category);
         v.centerView.setText(text);
         sb.setLength(0);
 

@@ -41,6 +41,9 @@ public abstract class TransactionBase implements Serializable, Cloneable {
 	@Column(name = "note")
 	public String note;
 
+	@Column(name = "tags")
+	public String tags;
+
     @Column(name = "original_from_amount")
     public long originalFromAmount;
 

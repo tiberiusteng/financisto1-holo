@@ -183,11 +183,12 @@ public class BlotterListAdapter extends ResourceCursorAdapter {
             String fromAccountTitle = cursor.getString(BlotterColumns.from_account_title.ordinal());
             String toAccountTitle = cursor.getString(BlotterColumns.to_account_title.ordinal());
             String note = cursor.getString(BlotterColumns.note.ordinal());
+            String tags = cursor.getString(BlotterColumns.tags.ordinal());
             long categoryId = cursor.getLong(BlotterColumns.category_id.ordinal());
             String category = getCategoryTitle(cursor, categoryId);
 
             CharSequence text = transactionTitleUtils.generateTransactionTitle(true,
-                    null, u.getTransferTitleText(fromAccountTitle, toAccountTitle), note,
+                    null, u.getTransferTitleText(fromAccountTitle, toAccountTitle), note, tags,
                     null, categoryId, category);
             noteView.setText(text);
             noteView.setTextColor(Color.WHITE);
@@ -320,11 +321,12 @@ public class BlotterListAdapter extends ResourceCursorAdapter {
         sb.setLength(0);
         String payee = cursor.getString(BlotterColumns.payee.ordinal());
         String note = cursor.getString(BlotterColumns.note.ordinal());
+        String tags = cursor.getString(BlotterColumns.tags.ordinal());
         long locationId = cursor.getLong(BlotterColumns.location_id.ordinal());
         String location = getLocationTitle(cursor, locationId);
         long categoryId = cursor.getLong(BlotterColumns.category_id.ordinal());
         String category = getCategoryTitle(cursor, categoryId);
-        CharSequence text = transactionTitleUtils.generateTransactionTitle(false, payee, null, note, location, categoryId, category);
+        CharSequence text = transactionTitleUtils.generateTransactionTitle(false, payee, null, note, tags, location, categoryId, category);
         noteView.setText(text);
         noteView.setTextColor(Color.WHITE);
     }

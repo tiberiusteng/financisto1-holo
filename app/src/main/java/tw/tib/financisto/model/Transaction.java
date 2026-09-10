@@ -102,6 +102,7 @@ public class Transaction extends TransactionBase {
 		values.put(TransactionColumns.is_ccard_payment.name(), isCCardPayment);
 		values.put(TransactionColumns.last_recurrence.name(), lastRecurrence);
 		values.put(TransactionColumns.blob_key.name(), blobKey);
+		values.put(TransactionColumns.tags.name(), tags);
 		return values;
 	}
 
@@ -145,6 +146,7 @@ public class Transaction extends TransactionBase {
 		t.lastRecurrence = c.getLong(BlotterColumns.last_recurrence.ordinal());
 		t.fromAccountBalance = c.getLong(BlotterColumns.from_account_balance.ordinal());
 		t.toAccountBalance = c.getLong(BlotterColumns.to_account_balance.ordinal());
+		t.tags = c.getString(BlotterColumns.tags.ordinal());
 		return t;
 	}
 

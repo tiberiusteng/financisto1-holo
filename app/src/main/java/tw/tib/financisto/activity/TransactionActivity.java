@@ -748,7 +748,7 @@ public class TransactionActivity extends AbstractTransactionActivity {
         Category category = db.getCategory(split.categoryId);
         String payee = split.payeeId < 1 ? null : db.get(Payee.class, split.payeeId).title;
         label.setText(transactionTitleUtils.generateTransactionTitle(
-                false, payee, null, split.note, null,
+                false, payee, null, split.note, split.tags, null,
                 split.categoryId, category.title));
         Currency currency = getCurrency();
         u.setAmountText(data, currency, split.fromAmount, false);
@@ -770,7 +770,7 @@ public class TransactionActivity extends AbstractTransactionActivity {
         Category category = db.getCategory(split.categoryId);
         label.setText(transactionTitleUtils.generateTransactionTitle(
                 true, null, u.getTransferTitleText(fromAccount, toAccount),
-                split.note, null, split.categoryId, split.categoryId == 0 ? "" : category.title));
+                split.note, split.tags, null, split.categoryId, split.categoryId == 0 ? "" : category.title));
         //u.setTransferTitleText(label, fromAccount, toAccount);
         u.setTransferAmountText(data, fromAccount.currency, split.fromAmount, toAccount.currency, split.toAmount);
     }

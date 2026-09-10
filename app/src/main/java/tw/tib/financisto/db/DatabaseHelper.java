@@ -49,6 +49,7 @@ public class DatabaseHelper extends DatabaseSchemaEvolution {
     public static final String CCARD_CLOSING_DATE_TABLE = "ccard_closing_date";
     public static final String EXCHANGE_RATES_TABLE = "currency_exchange_rate";
     public static final String DELETE_LOG_TABLE = "delete_log";
+    public static final String TAG_TABLE = "tag";
 
     public static final String V_ALL_TRANSACTIONS = "v_all_transactions";
     public static final String V_BLOTTER = "v_blotter";
@@ -95,7 +96,8 @@ public class DatabaseHelper extends DatabaseSchemaEvolution {
         attached_picture,
         is_ccard_payment,
         last_recurrence,
-        blob_key;
+        blob_key,
+        tags;
 
         public static String[] NORMAL_PROJECTION = EnumUtils.asStringArray(TransactionColumns.values());
 
@@ -138,7 +140,8 @@ public class DatabaseHelper extends DatabaseSchemaEvolution {
         last_recurrence,
         from_account_balance,
         to_account_balance,
-        is_transfer;
+        is_transfer,
+        tags;
 
         public static final String[] NORMAL_PROJECTION = EnumUtils.asStringArray(BlotterColumns.values());
 

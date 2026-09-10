@@ -151,7 +151,7 @@ public class ScheduledListAdapter extends BaseAdapter {
 				category = t.category.title;
 			}
             String payee = t.payee != null ? t.payee.title : null;
-            CharSequence text = transactionTitleUtils.generateTransactionTitle(false, payee, null, note, location, t.category.id, category);
+            CharSequence text = transactionTitleUtils.generateTransactionTitle(false, payee, null, note, t.tags, location, t.category.id, category);
             noteView.setText(text);
 			noteView.setTextColor(Color.WHITE);
 
