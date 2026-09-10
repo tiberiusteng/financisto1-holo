@@ -168,7 +168,9 @@ public class TransactionActivity extends AbstractTransactionActivity {
 
     private void unsplitAdjustAmount() {
         long splitAmount = calculateSplitAmount();
-        rateView.setFromAmount(splitAmount);
+        // In balance-adjust mode the amount field holds the *new balance*, so the sum of the
+        // splits maps back to currentBalance + sum rather than to the sum itself.
+        rateView.setFromAmount(isUpdateBalanceMode ? currentBalance + splitAmount : splitAmount);
         updateUnsplitAmount();
     }
 
@@ -208,7 +210,10 @@ public class TransactionActivity extends AbstractTransactionActivity {
 
     @Override
     protected void fetchCategories() {
-        categorySelector.fetchCategories(!isUpdateBalanceMode);
+        // Balance-adjust mode lists the "Split" pseudo-category as well: the two queries only
+        // differ by the "_id >= 0" filter, and SPLIT_CATEGORY_ID (-1) is the only negative id.
+        // Splits hang off the difference, see calculateUnsplitAmount().
+        categorySelector.fetchCategories(true);
     }
 
     @Override
@@ -242,10 +247,14 @@ public class TransactionActivity extends AbstractTransactionActivity {
         // difference
         if (isUpdateBalanceMode) {
             differenceText = x.addInfoNode(layout, -1, R.string.difference, "0");
+            // Splits go right under the "Difference" row: the amount field is the counted
+            // result, the difference is what this transaction records, and that is what gets split.
+            createSplitsLayout(layout);
             rateView.setFromAmount(currentBalance);
             rateView.setAmountFromChangeListener((oldAmount, newAmount) -> {
                 long balanceDifference = newAmount - currentBalance;
                 u.setAmountText(differenceText, rateView.getCurrencyFrom(), balanceDifference, true);
+                updateUnsplitAmount();
             });
             if (currentBalance > 0) {
                 rateView.setIncome();
@@ -301,7 +310,14 @@ public class TransactionActivity extends AbstractTransactionActivity {
 
     private long calculateUnsplitAmount() {
         long splitAmount = calculateSplitAmount();
-        return rateView.getFromAmount() - splitAmount;
+        // Balance-adjust mode: the amount field is the new balance; the transaction itself
+        // records the difference (new balance - current balance) and the splits divide that.
+        // Same base as updateTransactionFromUI(), which subtracts currentBalance on save.
+        long amount = rateView.getFromAmount();
+        if (isUpdateBalanceMode) {
+            amount -= currentBalance;
+        }
+        return amount - splitAmount;
     }
 
     private long calculateSplitAmount() {
@@ -474,6 +490,14 @@ public class TransactionActivity extends AbstractTransactionActivity {
             }
 
             selectedAccount = a;
+
+            // Recompute the unsplit amount only now: calculateSplitAmount() decides each child's
+            // direction via getSelectedAccountId(), so the remapped children would be skipped if
+            // this ran before selectedAccount was updated. In balance-adjust mode currentBalance
+            // has changed as well, which moves the base the splits are subtracted from.
+            if (!viewToSplitMap.isEmpty()) {
+                updateUnsplitAmount();
+            }
 
             if (selectLast && !isShowPayee && isRememberLastCategory) {
                 categorySelector.selectCategory(a.lastCategoryId);
