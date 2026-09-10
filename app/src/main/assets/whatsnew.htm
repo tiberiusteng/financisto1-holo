@@ -30,7 +30,7 @@
 
 <h2>Changelog</h2>
 
-<p><b>2026-09-04 e</b></p>
+<p><b>2026-09-04 f</b></p>
 <dl>
     <dt><span>[+]</span> Payee, Location alias for search, notification matching, e.g.</dt>
     <dd>
@@ -40,12 +40,14 @@
     </dd>
     <dt><span>[+]</span> Notification template matching by package name</dt>
     <dt><span>[+]</span> Intent creating transaction support Unix timetamp with TIMESTAMP_MILLIS long extra (e)</dt>
+    <dt><span>[+]</span> Intent creating transaction support specifying time with TIMESTAMP_ISO8601 string extra ("2026-09-10T19:57:45+08:00") (e)</dt>
     <dt><span>[*]</span> Notification template {{e}} can match payee names containing space (#146, by yeh1518)</dt>
     <dt><span>[*]</span> Google Wallet transactions with only currency symbol will be treated as local currency</dt>
     <dt><span>[*]</span> Google Wallet transaction no longer store payee name as note (a)</dt>
     <dt><span>[*]</span> Notification template Payee pattern {{e}} now greedy, you may need to recheck if the template
         works correctly. Use some fixed strings after payee to anchor it. If you have difficulty making a working pattern
         feel free to mail me with an example and let's see how to work it out. (c)</dt>
+    <dt><span>[*]</span> Allow split in balance adjust mode (f) (#151, by yeh1518)</dt>
     <dt><span>[-]</span> Fix notification listener potentially stop working after updating app (#135, by yeh1518)</dt>
     <dt><span>[-]</span> Fix running balance after split transactions (#145, by yeh1518)</dt>
     <dt><span>[-]</span> Fix notification list last item scroll above gesture bar (#147, by yeh1518)</dt>
