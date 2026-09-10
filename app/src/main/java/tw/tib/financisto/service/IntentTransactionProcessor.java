@@ -6,6 +6,8 @@ import android.content.Intent;
 import android.util.Log;
 
 import java.math.BigDecimal;
+import java.time.Instant;
+import java.time.format.DateTimeFormatter;
 import java.util.List;
 
 import tw.tib.financisto.db.DatabaseAdapter;
@@ -32,6 +34,7 @@ public class IntentTransactionProcessor {
     public static final String IS_CREDIT_CARD_PAYMENT = "IS_CREDIT_CARD_PAYMENT";
     public static final String STATUS = "STATUS"; // "RS", "PN", "UR", "CL", "RC"; see TransactionStatus
     public static final String TIMESTAMP_MILLIS = "TIMESTAMP_MILLIS"; // Unix timestamp in milliseconds, long
+    public static final String TIMESTAMP_ISO8601 = "TIMESTAMP_ISO8601"; // "2026-09-10T19:57:45+08:00"
 
     private static BigDecimal HUNDRED = new BigDecimal(100);
 
@@ -97,11 +100,6 @@ public class IntentTransactionProcessor {
             status = TransactionStatus.UR;
         }
 
-        long timestampMillis = intent.getLongExtra(TIMESTAMP_MILLIS, 0);
-        if (timestampMillis != 0) {
-            tx.dateTime = timestampMillis;
-        }
-
         Log.d(TAG, format("status=%s", status));
 
         if (amount.compareTo(BigDecimal.ZERO) != 0 && accountId != 0) {
@@ -139,8 +137,22 @@ public class IntentTransactionProcessor {
                 tx.isCCardPayment = 1;
             }
 
-            long id = db.insertOrUpdate(tx);
-            tx.id = id;
+            long timestampMillis = intent.getLongExtra(TIMESTAMP_MILLIS, 0);
+            if (timestampMillis != 0) {
+                tx.dateTime = timestampMillis;
+            }
+
+            String timeIso8601 = intent.getStringExtra(TIMESTAMP_ISO8601);
+            if (timeIso8601 != null) {
+                DateTimeFormatter timeFormatter = DateTimeFormatter.ISO_DATE_TIME;
+                try {
+                    tx.dateTime = Instant.from(timeFormatter.parse(timeIso8601)).toEpochMilli();
+                } catch (Exception ignored) {
+
+                }
+            }
+
+            tx.id = db.insertOrUpdate(tx);
             return tx;
         }
 
