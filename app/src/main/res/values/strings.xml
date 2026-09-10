@@ -153,6 +153,7 @@
     <string name="tags_hint">tag1, tag2…</string>
     <string name="tags_filter">Tags containing</string>
     <string name="tags_filter_value">Tag \"%1$s\"</string>
+    <string name="tags_more">+ %1$d more</string>
     <string name="note_text_containing">Note text containing</string>
     <string name="note_text_containing_value">Containing \"%1$s\"</string>
     <string name="service_is_not_available">Service is not available, please try again later</string>

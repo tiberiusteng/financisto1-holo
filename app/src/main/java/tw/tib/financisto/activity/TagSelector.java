@@ -270,8 +270,7 @@ public class TagSelector<A extends AbstractActivity> {
             text.setText(R.string.select_tags);
             showHideMinusBtn(false);
         } else {
-            String commaSeparated = String.join(", ", selectedTags);
-            text.setText(PillSpan.formatAsPills(activity, commaSeparated));
+            text.setText(PillSpan.formatAsPills(activity, selectedTags));
             showHideMinusBtn(true);
         }
     }

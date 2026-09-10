@@ -4,11 +4,13 @@ import android.content.Context;
 import android.graphics.Canvas;
 import android.graphics.Paint;
 import android.graphics.RectF;
-import android.text.Spannable;
 import android.text.SpannableStringBuilder;
-import android.text.TextUtils;
+import android.text.Spanned;
 import android.text.style.ReplacementSpan;
 import androidx.core.content.ContextCompat;
+
+import java.util.Set;
+
 import tw.tib.financisto.R;
 
 public class PillSpan extends ReplacementSpan {
@@ -94,12 +96,12 @@ public class PillSpan extends ReplacementSpan {
         paint.setStyle(origStyle);
     }
 
-    public static CharSequence formatAsPills(Context context, String tagsString) {
-        if (TextUtils.isEmpty(tagsString)) {
+    public static CharSequence formatAsPills(Context context, Set<String> tags) {
+        if (tags.isEmpty()) {
             return "";
         }
-        String[] tags = tagsString.split("\n");
-        java.util.List<String> validTags = new java.util.ArrayList<>();
+
+        var validTags = new java.util.ArrayList<String>();
         for (String tag : tags) {
             String trimmed = tag.trim();
             if (!trimmed.isEmpty()) {
@@ -119,22 +121,16 @@ public class PillSpan extends ReplacementSpan {
             if (ssb.length() > 0) {
                 ssb.append(" ");
             }
-            int start = ssb.length();
-            ssb.append(validTags.get(i));
-            int end = ssb.length();
-            ssb.setSpan(new PillSpan(context, false), start, end, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
+            ssb.append(validTags.get(i), new PillSpan(context, false), Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
         }
 
         if (hasOverflow) {
             int remaining = validTags.size() - displayCount;
-            String counterText = "+" + remaining + " more";
+            String counterText = context.getString(R.string.tags_more, remaining);
             if (ssb.length() > 0) {
                 ssb.append(" ");
             }
-            int start = ssb.length();
-            ssb.append(counterText);
-            int end = ssb.length();
-            ssb.setSpan(new PillSpan(context, true), start, end, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
+            ssb.append(counterText, new PillSpan(context, true), Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
         }
 
         return ssb;
