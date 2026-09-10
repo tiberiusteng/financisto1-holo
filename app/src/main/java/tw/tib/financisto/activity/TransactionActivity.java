@@ -461,6 +461,18 @@ public class TransactionActivity extends AbstractTransactionActivity {
 
             u.setAccountTitleBalance(a, accountText, accountBalanceText, accountLimitText);
 
+            // Balance-adjust mode: the difference is (new balance - current balance) of the
+            // account that is selected *now*. currentBalance was only read from the intent
+            // once, so after switching accounts the difference was still computed against
+            // the balance of the account the form was opened with.
+            if (isUpdateBalanceMode && selectedAccount != null && a.id != selectedAccount.id) {
+                currentBalance = a.totalAmount;
+                if (differenceText != null) {
+                    u.setAmountText(differenceText, rateView.getCurrencyFrom(),
+                            rateView.getFromAmount() - currentBalance, true);
+                }
+            }
+
             selectedAccount = a;
 
             if (selectLast && !isShowPayee && isRememberLastCategory) {
