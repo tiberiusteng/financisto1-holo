@@ -446,6 +446,14 @@ public class MyPreferences {
 		return Integer.parseInt(getString("ntsl_show_project_order", "4"));
 	}
 
+	public static boolean isShowTags() {
+		return getBoolean("ntsl_show_tags", true);
+	}
+
+	public static int getTagsOrder() {
+		return Integer.parseInt(getString("ntsl_show_tags_order", "4"));
+	}
+
 	public static boolean isUseTwinDatePicker() {
 		return getBoolean("ntsl_use_twin_date_picker", false);
 

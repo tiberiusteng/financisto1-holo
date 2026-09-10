@@ -199,6 +199,21 @@
         <SwitchPreferenceCompat
             app:singleLineTitle="false"
             android:defaultValue="true"
+            android:key="ntsl_show_tags"
+            android:summary="@string/show_tags_summary"
+            android:title="@string/show_tags" />
+        <ListPreference
+            app:singleLineTitle="false"
+            android:defaultValue="4"
+            android:dependency="ntsl_show_tags"
+            android:entries="@array/sort_order_entities"
+            android:entryValues="@array/sort_order_entities"
+            android:key="ntsl_show_tags_order"
+            android:summary="@string/show_tags_order_summary"
+            android:title="@string/show_tags_order" />
+        <SwitchPreferenceCompat
+            app:singleLineTitle="false"
+            android:defaultValue="true"
             android:key="ntsl_show_picture"
             android:summary="@string/show_picture_summary"
             android:title="@string/show_picture" />

@@ -37,6 +37,7 @@ import java.util.Arrays;
 import java.util.Date;
 import java.util.HashSet;
 import java.util.List;
+import java.util.TreeSet;
 
 import static tw.tib.financisto.blotter.BlotterFilter.FROM_ACCOUNT_ID;
 
@@ -54,6 +55,7 @@ public class BlotterFilterActivity extends FilterAbstractActivity {
 	private TextView account;
 	private TextView currency;
 	private TextView note;
+	private TextView tags;
 	private TextView status;
 	private TextView split;
 	private TextView sortOrder;
@@ -92,6 +94,7 @@ public class BlotterFilterActivity extends FilterAbstractActivity {
 		initProjectSelector(layout);
 		initLocationSelector(layout);
 		note = x.addFilterNodeMinus(layout, R.id.note, R.id.note_clear, R.string.note, R.string.no_filter);
+		tags = x.addFilterNodeMinus(layout, R.id.tags, R.id.tags_clear, R.string.tags, R.string.no_filter);
 		status = x.addFilterNodeMinus(layout, R.id.status, R.id.status_clear, R.string.transaction_status, R.string.no_filter);
 		split = x.addFilterNodeMinus(layout, R.id.split, R.id.split_clear, R.string.filter_split, R.string.filter_split_default);
 		if (!isPlannerFilter) {
@@ -135,6 +138,7 @@ public class BlotterFilterActivity extends FilterAbstractActivity {
 			updateProjectFromFilter();
 			updatePayeeFromFilter();
 			updateNoteFromFilter();
+			updateTagsFromFilter();
 			updateLocationFromFilter();
 			updateSortOrderFromFilter();
 			updateStatusFromFilter();
@@ -210,6 +214,69 @@ public class BlotterFilterActivity extends FilterAbstractActivity {
 		}
 	}
 
+	private void updateTagsFromFilter() {
+		List<String> selectedTags = getSelectedTagsFromFilter();
+		if (!selectedTags.isEmpty()) {
+			tags.setText(String.join(", ", selectedTags));
+			showMinusButton(tags);
+		} else {
+			tags.setText(R.string.no_filter);
+			hideMinusButton(tags);
+		}
+	}
+
+	private List<String> getSelectedTagsFromFilter() {
+		List<String> list = new ArrayList<>();
+		Criterion c = filter.get(BlotterFilter.TAGS);
+		if (c != null) {
+			extractTagsFromCriterion(c, list);
+		}
+		return list;
+	}
+
+	private void extractTagsFromCriterion(Criterion c, List<String> list) {
+		if (c.getChildren() != null && c.getChildren().length > 0) {
+			for (Criterion child : c.getChildren()) {
+				extractTagsFromCriterion(child, list);
+			}
+		} else if (c.getValues() != null) {
+			for (String v : c.getValues()) {
+				if (v != null) {
+					if (v.startsWith("%") && v.endsWith("%") && v.length() >= 2) {
+						v = v.substring(1, v.length() - 1);
+					}
+					v = v.trim();
+					if (!v.isEmpty() && !list.contains(v)) {
+						list.add(v);
+					}
+				}
+			}
+		}
+	}
+
+	private void showTagsFilterDialog() {
+		var allTagsSet = new TreeSet<String>(String.CASE_INSENSITIVE_ORDER);
+		allTagsSet.addAll(db.getAllUniqueTags());
+		allTagsSet.addAll(getSelectedTagsFromFilter());
+		if (allTagsSet.isEmpty()) {
+			Toast.makeText(this, R.string.no_tags, Toast.LENGTH_SHORT).show();
+			return;
+		}
+
+		var items = new ArrayList<TagMultiChoiceItem>();
+		var selected = new TreeSet<String>(String.CASE_INSENSITIVE_ORDER);
+		selected.addAll(getSelectedTagsFromFilter());
+
+		for (String tag : allTagsSet) {
+			var item = new TagMultiChoiceItem(tag);
+			if (selected.contains(tag)) {
+				item.setChecked(true);
+			}
+			items.add(item);
+		}
+		x.selectMultiChoice(this, R.id.tags, R.string.tags, items);
+	}
+
 	private void updateStatusFromFilter() {
 		Criterion c = filter.get(BlotterFilter.STATUS);
 		if (c != null) {
@@ -281,6 +348,10 @@ public class BlotterFilterActivity extends FilterAbstractActivity {
 			startActivityForResult(intent, REQUEST_NOTE_FILTER);
 		} else if (id == R.id.note_clear) {
 			clear(BlotterFilter.NOTE, note);
+		} else if (id == R.id.tags) {
+			showTagsFilterDialog();
+		} else if (id == R.id.tags_clear) {
+			clear(BlotterFilter.TAGS, tags);
 		} else if (id == R.id.sort_order) {
 			ArrayAdapter<String> adapter = new ArrayAdapter<>(this, android.R.layout.simple_spinner_dropdown_item, sortBlotterEntries);
 			int selectedPos = BlotterFilter.SORT_OLDER_TO_NEWER.equals(filter.getSortOrder()) ? 1 : 0;
@@ -371,6 +442,27 @@ public class BlotterFilterActivity extends FilterAbstractActivity {
 				clear(BlotterFilter.STATUS, status);
 			}
 			updateStatusFromFilter();
+		} else if (id == R.id.tags) {
+			var selectedTags = new ArrayList<String>();
+			for (var item : items) {
+				if (item.isChecked()) {
+					selectedTags.add(((TagMultiChoiceItem) item).tag);
+				}
+			}
+			if (!selectedTags.isEmpty()) {
+				if (selectedTags.size() == 1) {
+					filter.put(new Criterion(BlotterFilter.TAGS, WhereFilter.Operation.LIKE, "%" + selectedTags.get(0) + "%"));
+				} else {
+					Criterion[] children = new Criterion[selectedTags.size()];
+					for (int i = 0; i < selectedTags.size(); i++) {
+						children[i] = new Criterion(BlotterFilter.TAGS, WhereFilter.Operation.LIKE, "%" + selectedTags.get(i) + "%");
+					}
+					filter.put(Criterion.or(children));
+				}
+			} else {
+				clear(BlotterFilter.TAGS, tags);
+			}
+			updateTagsFromFilter();
 		}
 	}
 
@@ -418,6 +510,35 @@ public class BlotterFilterActivity extends FilterAbstractActivity {
 		@Override
 		public String getTitle() {
 			return this.title;
+		}
+
+		@Override
+		public boolean isChecked() {
+			return isChecked;
+		}
+
+		@Override
+		public void setChecked(boolean checked) {
+			isChecked = checked;
+		}
+	}
+
+	static class TagMultiChoiceItem implements MultiChoiceItem {
+		public final String tag;
+		private boolean isChecked;
+
+		public TagMultiChoiceItem(String tag) {
+			this.tag = tag;
+		}
+
+		@Override
+		public long getId() {
+			return 0;
+		}
+
+		@Override
+		public String getTitle() {
+			return tag;
 		}
 
 		@Override

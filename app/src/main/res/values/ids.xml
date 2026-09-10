@@ -32,6 +32,10 @@
 	<item name="note" type="id" />
 	<item name="note_clear" type="id" />
 	<item name="note_add" type="id" />
+	<item name="tags" type="id" />
+	<item name="tags_clear" type="id" />
+	<item name="tags_add" type="id" />
+	<item name="tags_filter_toggle" type="id" />
 	<item name="split" type="id" />
 	<item name="split_clear" type="id" />
 	<item name="currency" type="id" />
