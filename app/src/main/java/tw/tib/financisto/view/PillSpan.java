@@ -98,7 +98,7 @@ public class PillSpan extends ReplacementSpan {
         if (TextUtils.isEmpty(tagsString)) {
             return "";
         }
-        String[] tags = tagsString.split("[,;]");
+        String[] tags = tagsString.split("\n");
         java.util.List<String> validTags = new java.util.ArrayList<>();
         for (String tag : tags) {
             String trimmed = tag.trim();

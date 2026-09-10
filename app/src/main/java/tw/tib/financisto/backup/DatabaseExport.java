@@ -16,6 +16,7 @@ import static tw.tib.financisto.backup.Backup.tableHasSystemIds;
 import static tw.tib.financisto.db.DatabaseHelper.ACCOUNT_TABLE;
 import static tw.tib.orb.EntityManager.ALIASES_COL;
 import static tw.tib.orb.EntityManager.DEF_SORT_COL;
+import tw.tib.financisto.db.DatabaseHelper;
 
 import java.io.BufferedWriter;
 import java.io.File;
@@ -110,7 +111,7 @@ public class DatabaseExport extends Export {
 						if (value != null) {
 							bw.write(colName);
 							bw.write(":");
-							bw.write((backupNewlines || colName.equals(ALIASES_COL)) ? escape(sb, value) : removeNewLine(value));
+							bw.write((backupNewlines || colName.equals(ALIASES_COL) || colName.equals(DatabaseHelper.TransactionColumns.tags.name())) ? escape(sb, value) : removeNewLine(value));
 							bw.write("\n");
 						}
 					}

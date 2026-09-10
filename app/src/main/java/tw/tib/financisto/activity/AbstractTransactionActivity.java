@@ -396,7 +396,7 @@ public abstract class AbstractTransactionActivity extends AbstractActivity imple
 				for (String tag : intentTags) {
 					db.findOrInsertEntityByTitle(Tag.class, tag);
 				}
-				String intentTagsStr = String.join(", ", intentTags);
+				String intentTagsStr = String.join("\n", intentTags);
 				transaction.tags = intentTagsStr;
 				if (isShowTags && tagSelector != null) {
 					tagSelector.setSelectedTags(intentTagsStr);

@@ -289,13 +289,13 @@ public class TagSelector<A extends AbstractActivity> {
         if (selectedTags.isEmpty()) {
             return null;
         }
-        return String.join(", ", selectedTags);
+        return String.join("\n", selectedTags);
     }
 
     public void setSelectedTags(String tagsString) {
         selectedTags.clear();
         if (!Utils.isEmpty(tagsString)) {
-            for (String t : tagsString.split("[,;]")) {
+            for (String t : tagsString.split("\n")) {
                 String trimmed = t.trim();
                 if (!trimmed.isEmpty()) {
                     selectedTags.add(trimmed);

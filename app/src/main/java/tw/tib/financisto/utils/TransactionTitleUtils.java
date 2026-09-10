@@ -44,7 +44,7 @@ public class TransactionTitleUtils {
     public static String formatTagsForDisplay(String tags) {
         if (tags == null || tags.trim().isEmpty()) return "";
         StringBuilder sb = new StringBuilder();
-        for (String tag : tags.split(",")) {
+        for (String tag : tags.split("\n")) {
             String trimmed = tag.trim();
             if (!trimmed.isEmpty()) {
                 if (sb.length() > 0) sb.append(" ");

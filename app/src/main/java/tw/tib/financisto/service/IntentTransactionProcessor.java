@@ -146,7 +146,7 @@ public class IntentTransactionProcessor {
                 for (String t : tags) {
                     db.findOrInsertEntityByTitle(Tag.class, t);
                 }
-                tx.tags = String.join(", ", tags);
+                tx.tags = String.join("\n", tags);
             }
 
             long timestampMillis = intent.getLongExtra(TIMESTAMP_MILLIS, 0);
@@ -193,11 +193,11 @@ public class IntentTransactionProcessor {
             }
         }
 
-        // 2. Check String extra (single tag e.g. "Coffee" or comma/semicolon-separated tags e.g. "Coffee, Food")
+        // 2. Check String extra (single tag e.g. "Coffee" or newline/comma/semicolon-separated tags e.g. "Coffee, Food")
         for (String key : new String[]{"TAGS", "tags"}) {
             String val = intent.getStringExtra(key);
             if (val != null && !val.trim().isEmpty()) {
-                for (String s : val.split("[,;]")) {
+                for (String s : val.split("[\n,;]")) {
                     addTagToList(result, s);
                 }
                 if (!result.isEmpty()) {

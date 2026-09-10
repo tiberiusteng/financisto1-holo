@@ -1364,7 +1364,7 @@ public class DatabaseAdapter extends MyEntityManager {
             while (c.moveToNext()) {
                 String raw = c.getString(0);
                 if (raw != null) {
-                    for (String t : raw.split(",")) {
+                    for (String t : raw.split("\n")) {
                         String trimmed = t.trim();
                         if (!trimmed.isEmpty()) {
                             set.add(trimmed);
