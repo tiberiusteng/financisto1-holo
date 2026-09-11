@@ -295,6 +295,17 @@ public class SmsTransactionProcessor {
         String[] results = null;
         template = preprocessPatterns(template);
         final int[] phIndexes = findPlaceholderIndexes(template);
+        // A lazy capture with nothing after it has no closing anchor, and find() does not require
+        // the match to reach the end of the message, so it settles for a single character
+        // ("NeoShop" -> "N"). That happens when the template ends with the placeholder, or ends
+        // with the placeholder followed by {{*}} (a wildcard swallowing the rest of the message
+        // is not an anchor either). Extend the capture to the end of its line in both cases.
+        // Captures followed by fixed text are unchanged: they still stop at the first
+        // occurrence of that text.
+        final boolean endsWithLazyCapture = endsWithLazyCapture(template);
+        final boolean endsWithLazyCaptureThenAny = !endsWithLazyCapture
+                && template.endsWith(ANY.code)
+                && endsWithLazyCapture(template.substring(0, template.length() - ANY.code.length()));
 
         if (phIndexes != null) {
             // escape regex characters (i.e. can't use regex in template)
@@ -306,6 +317,13 @@ public class SmsTransactionProcessor {
                 }
             }
             template = template.replace(ANY.code, ANY.regexp);
+            if (endsWithLazyCapture) {
+                template += END_OF_LINE;
+            } else if (endsWithLazyCaptureThenAny) {
+                // the compiled template ends with ANY's pattern; the anchor goes right before it
+                template = template.substring(0, template.length() - ANY.regexp.length())
+                        + END_OF_LINE + ANY.regexp;
+            }
             Log.d(TAG, "template=" + template);
 
             Matcher matcher = Pattern.compile(template, DOTALL).matcher(sms);
@@ -320,6 +338,19 @@ public class SmsTransactionProcessor {
             }
         }
         return results;
+    }
+
+    /** Lookahead appended to a lazy capture that has no anchor: expand to the end of the line, not beyond. */
+    private static final String END_OF_LINE = "(?=[\\r\\n]|$)";
+
+    /** True when the template ends with a placeholder whose pattern is a lazy capture, e.g. ([^\r\n]+?). */
+    static boolean endsWithLazyCapture(String template) {
+        for (Placeholder p : Placeholder.values()) {
+            if (template.endsWith(p.code)) {
+                return p.regexp.endsWith("?)");
+            }
+        }
+        return false;
     }
 
     private static String preprocessPatterns(String template) {
@@ -384,9 +415,14 @@ public class SmsTransactionProcessor {
         // [^\r\n] is a superset of \S, and both are non-greedy, so they expand identically
         // until a space is needed — every template that matched before matches the same
         // way, and only previously-failing ones start to match.
+        // Non-greedy on purpose: with a fixed anchor after it the capture stops at the *first*
+        // occurrence of that anchor. A greedy capture runs to the last one on the line, so
+        // "merchant, <disclaimer>, <more>, thanks" would put the whole disclaimer into the
+        // payee. A template that ends with {{e}} (no anchor at all) is handled in
+        // findTemplateMatches() by extending the capture to the end of the line.
         // Covered by PlaceholderCaptureTest in androidTest — it has to run on a device,
         // because Android's regex is ICU-backed and a desktop JVM answers differently.
-        PAYEE("<:E:>", "([^\\r\\n]+)", "{{e}}"),
+        PAYEE("<:E:>", "([^\\r\\n]+?)", "{{e}}"),
         CURRENCY("<:F:>", "([A-Z]{3})", "{{f}}"),
         TIMESTAMP_MILLIS("<:G:>", "(\\d{1,13})", "{{g}}"),
         PRICE("<:P:>", BALANCE.regexp, "{{p}}"),
