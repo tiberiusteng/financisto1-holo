@@ -2,8 +2,12 @@ package tw.tib.financisto.service;
 
 import static java.lang.String.format;
 
+import android.app.Notification;
+import android.content.Context;
 import android.content.Intent;
 import android.util.Log;
+
+import androidx.core.app.NotificationCompat;
 
 import java.math.BigDecimal;
 import java.time.Instant;
@@ -12,6 +16,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
+import tw.tib.financisto.R;
 import tw.tib.financisto.db.DatabaseAdapter;
 import tw.tib.financisto.model.Account;
 import tw.tib.financisto.model.Category;
@@ -20,6 +25,7 @@ import tw.tib.financisto.model.Project;
 import tw.tib.financisto.model.Tag;
 import tw.tib.financisto.model.Transaction;
 import tw.tib.financisto.model.TransactionStatus;
+import tw.tib.financisto.utils.NotificationUtils;
 
 public class IntentTransactionProcessor {
     private static final String TAG = "IntentTxProc";
@@ -69,9 +75,23 @@ public class IntentTransactionProcessor {
 
         Log.d(TAG, format("accountName=%s accountNumberPartial=%s accountId=%s", accountName, accountNumberPartial, accountId));
 
+        // Stress-test finding: Fail gracefully if account cannot be resolved, avoiding silent drop of transaction
+        if (accountId <= 0) {
+            Log.w(TAG, format("Account not found: %s — transaction skipped", accountName));
+            sendErrorNotification(format("Financisto: Unknown account '%s' — transaction not imported", accountName),
+                    accountName != null ? accountName.hashCode() : 1);
+            return null;
+        }
+
         String accountNameTransferTo = intent.getStringExtra(ACCOUNT_NAME_TRANSFER_TO);
         if (accountNameTransferTo != null) {
             transferToAccountId = db.getEntityIdByTitle(Account.class, accountNameTransferTo);
+            if (transferToAccountId <= 0) {
+                Log.w(TAG, format("Transfer account not found: %s — transaction skipped", accountNameTransferTo));
+                sendErrorNotification(format("Financisto: Unknown transfer account '%s' — transaction not imported", accountNameTransferTo),
+                        accountNameTransferTo.hashCode());
+                return null;
+            }
         }
 
         Log.d(TAG, format("accountNameTransferTo=%s transferToAccountId=%s", accountNameTransferTo, transferToAccountId));
@@ -93,7 +113,18 @@ public class IntentTransactionProcessor {
             project = db.findOrInsertEntityByTitle(Project.class, projectName);
         }
         String amountString = intent.getStringExtra(AMOUNT);
+        if (amountString == null || amountString.trim().isEmpty()) {
+            Log.e(TAG, "Empty or missing AMOUNT — transaction skipped");
+            sendErrorNotification("Financisto: Missing or empty amount — transaction not imported", 2);
+            return null;
+        }
         BigDecimal amount = SmsTransactionProcessor.toBigDecimal(amountString);
+        if (amount == null || amount.compareTo(BigDecimal.ZERO) == 0) {
+            Log.e(TAG, format("Invalid or zero AMOUNT '%s' — transaction skipped", amountString));
+            sendErrorNotification(format("Financisto: Invalid amount '%s' — transaction not imported", amountString),
+                    amountString.hashCode());
+            return null;
+        }
 
         Log.d(TAG, format("payee=%s project=%s amount=%s", payee, project, amount));
 
@@ -170,7 +201,6 @@ public class IntentTransactionProcessor {
 
         return null;
     }
-
     public static List<String> extractTagsFromIntent(Intent intent) {
         if (intent == null) return Collections.emptyList();
         List<String> result = new ArrayList<>();
@@ -214,6 +244,26 @@ public class IntentTransactionProcessor {
             String trimmed = s.trim();
             if (!trimmed.isEmpty() && !list.contains(trimmed)) {
                 list.add(trimmed);
+            }
+        }
+    }
+
+    private void sendErrorNotification(String message, int notificationId) {
+        Context context = db != null ? db.getContext() : null;
+        if (context != null) {
+            try {
+                Notification notification = new NotificationCompat.Builder(context, NotificationChannelService.TRANSACTIONS_CHANNEL)
+                        .setSmallIcon(R.mipmap.a_icon_notify)
+                        .setWhen(System.currentTimeMillis())
+                        .setContentTitle("Financisto")
+                        .setContentText(message)
+                        .setStyle(new NotificationCompat.BigTextStyle().bigText(message))
+                        .setTicker(message)
+                        .setAutoCancel(true)
+                        .build();
+                NotificationUtils.notifyUser(context, notification, notificationId);
+            } catch (Exception e) {
+                Log.e(TAG, "Failed to show notification: " + message, e);
             }
         }
     }
