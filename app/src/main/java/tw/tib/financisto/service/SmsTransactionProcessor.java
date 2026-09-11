@@ -101,6 +101,9 @@ public class SmsTransactionProcessor {
      * from <a href="https://stackoverflow.com/a/41697399/365675>SO</a>
      */
     static public BigDecimal toBigDecimal(final String value) {
+        if (value == null || value.trim().isEmpty()) {
+            return BigDecimal.ZERO;
+        }
         if (value != null) {
             final String EMPTY = "";
             final char COMMA = ',';
