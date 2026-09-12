@@ -84,7 +84,8 @@ public class IntentTransactionProcessor {
         }
 
         String accountNameTransferTo = intent.getStringExtra(ACCOUNT_NAME_TRANSFER_TO);
-        if (accountNameTransferTo != null) {
+        if (accountNameTransferTo != null && !accountNameTransferTo.trim().isEmpty()) {
+            accountNameTransferTo = accountNameTransferTo.trim();
             transferToAccountId = db.getEntityIdByTitle(Account.class, accountNameTransferTo);
             if (transferToAccountId <= 0) {
                 Log.w(TAG, format("Transfer account not found: %s — transaction skipped", accountNameTransferTo));
