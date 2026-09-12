@@ -58,12 +58,14 @@ public class IntentTransactionProcessor {
         long transferToAccountId = 0;
 
         String accountName = intent.getStringExtra(ACCOUNT_NAME);
-        if (accountName != null) {
+        if (accountName != null && !accountName.trim().isEmpty()) {
+            accountName = accountName.trim();
             accountId = db.getEntityIdByTitle(Account.class, accountName);
         }
 
         String accountNumberPartial = intent.getStringExtra(ACCOUNT_NUMBER_PARTIAL);
-        if (accountId == 0 && accountNumberPartial != null) {
+        if (accountId == 0 && accountNumberPartial != null && !accountNumberPartial.trim().isEmpty()) {
+            accountNumberPartial = accountNumberPartial.trim();
             List<Long> accountIds = db.findAccountsByNumber(accountNumberPartial);
             if (!accountIds.isEmpty()) {
                 accountId = accountIds.get(0);
@@ -77,14 +79,16 @@ public class IntentTransactionProcessor {
 
         // Stress-test finding: Fail gracefully if account cannot be resolved, avoiding silent drop of transaction
         if (accountId <= 0) {
-            Log.w(TAG, format("Account not found: %s — transaction skipped", accountName));
-            sendErrorNotification(format("Financisto: Unknown account '%s' — transaction not imported", accountName),
-                    accountName != null ? accountName.hashCode() : 1);
+            String identifier = accountName != null && !accountName.isEmpty() ? accountName : (accountNumberPartial != null ? accountNumberPartial : "");
+            Log.w(TAG, format("Account not found: %s — transaction skipped", identifier));
+            sendErrorNotification(format("Financisto: Unknown account '%s' — transaction not imported", identifier),
+                    identifier.hashCode());
             return null;
         }
 
         String accountNameTransferTo = intent.getStringExtra(ACCOUNT_NAME_TRANSFER_TO);
-        if (accountNameTransferTo != null) {
+        if (accountNameTransferTo != null && !accountNameTransferTo.trim().isEmpty()) {
+            accountNameTransferTo = accountNameTransferTo.trim();
             transferToAccountId = db.getEntityIdByTitle(Account.class, accountNameTransferTo);
             if (transferToAccountId <= 0) {
                 Log.w(TAG, format("Transfer account not found: %s — transaction skipped", accountNameTransferTo));
