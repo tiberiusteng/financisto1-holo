@@ -63,6 +63,23 @@ public class PlaceholderCaptureTest {
         assertEquals("(旅遊儲蓄金)", captureTransferTo("(旅遊儲蓄金)"));
     }
 
+    /**
+     * The end-of-line rule is decided by the placeholder's pattern, not by {{e}} specifically:
+     * {{x}} / {{c}} / {{r}} are (\S+?) and used to capture one character at the end of a template
+     * too. With the rule they capture the whole last word of the line. Because \S cannot cross a
+     * space, a value followed by more words on the same line makes the template not match at
+     * all — better than the silent one-character account name that failed the lookup anyway.
+     */
+    @Test
+    public void transferToAccountAtTemplateEndCapturesTheLastWord() {
+        String[] match = SmsTransactionProcessor.findTemplateMatches(
+                "transfer {{p}} to {{x}}", "transfer 100 to Visa-Gold\nthank you");
+        assertNotNull("template did not match", match);
+        assertEquals("Visa-Gold", match[Placeholder.TRANSFER_TO_ACCOUNT_NAME.ordinal()]);
+        assertNull(SmsTransactionProcessor.findTemplateMatches(
+                "transfer {{p}} to {{x}}", "transfer 100 to Visa Gold done"));
+    }
+
     // --- {{e}} (payee / merchant) ---
 
     /** The usual shape of a card notification: the merchant sits between two fixed labels. */
@@ -106,6 +123,54 @@ public class PlaceholderCaptureTest {
                         + "卡號末四碼5678於 2026/08/17 13:57在SHOPFAST TW 刷卡。立即查看消費明細");
         assertNotNull("template did not match", match);
         assertEquals("SHOPFAST TW", match[Placeholder.PAYEE.ordinal()]);
+    }
+
+    /**
+     * A template that ends with {{e}} has no closing anchor. A lazy capture used to settle for
+     * a single character there ("SHOPFAST TW" -> "S"); it now runs to the end of the line, and
+     * the next line is not pulled in. A message that ends right after the payee works too.
+     */
+    @Test
+    public void payeeAtTemplateEndCapturesToEndOfLine() {
+        String[] match = SmsTransactionProcessor.findTemplateMatches(
+                "金額NT${{p}}元{{*}}在{{e}}",
+                "丙銀行 【刷卡通知】金額NT$205元 \n卡號末四碼5678於 2026/08/17 13:57在SHOPFAST TW\n立即查看消費明細");
+        assertNotNull("template did not match", match);
+        assertEquals("SHOPFAST TW", match[Placeholder.PAYEE.ordinal()]);
+        match = SmsTransactionProcessor.findTemplateMatches("金額{{p}}元在{{e}}", "丙銀行 金額205元在NeoShop");
+        assertNotNull("template did not match at end of message", match);
+        assertEquals("NeoShop", match[Placeholder.PAYEE.ordinal()]);
+    }
+
+    /**
+     * {{e}} followed only by a trailing {{*}} (to ignore whatever comes after) has no anchor
+     * either: same treatment, the payee runs to the end of its line and {{*}} takes the rest.
+     * {{e}}{{*}} followed by fixed text is left alone — the wildcard then has to reach that text.
+     */
+    @Test
+    public void payeeBeforeTrailingWildcardCapturesToEndOfLine() {
+        String[] match = SmsTransactionProcessor.findTemplateMatches(
+                "金額NT${{p}}元{{*}}在{{e}}{{*}}",
+                "丙銀行 【刷卡通知】金額NT$205元 \n卡號末四碼5678於 2026/08/17 13:57在SHOPFAST TW\n立即查看消費明細");
+        assertNotNull("template did not match", match);
+        assertEquals("SHOPFAST TW", match[Placeholder.PAYEE.ordinal()]);
+    }
+
+    /**
+     * The closing anchor occurs more than once on the line — "merchant, disclaimer, more,
+     * thanks" is the usual shape of a card notification here. A lazy capture stops at the
+     * first anchor and yields the merchant; a greedy one runs to the last anchor and the
+     * whole disclaimer becomes the payee. Adding more fixed text after {{e}} does not help
+     * when the anchor itself is what repeats.
+     */
+    @Test
+    public void payeeStopsAtTheFirstAnchorEvenWithALongTail() {
+        String[] match = SmsTransactionProcessor.findTemplateMatches(
+                "丙銀行 {{*}}末四碼{{a}}{{*}}台幣{{p}}元，商店名稱:{{e}}，",
+                "丙銀行 丙銀行信用卡末四碼4321刷卡通知1150819_20:57金額台幣1,838元，商店名稱:測試商行，"
+                        + "實際商店名稱請以信用卡帳單列示為準，實際請款金額以帳單所列為準如有疑問請撥打卡片背面服務專線，謝謝！");
+        assertNotNull("template did not match", match);
+        assertEquals("測試商行", match[Placeholder.PAYEE.ordinal()]);
     }
 
     /**
