@@ -15,7 +15,10 @@ import android.content.res.Resources;
 import android.database.Cursor;
 import android.graphics.Color;
 import android.graphics.drawable.Drawable;
+import android.text.SpannableStringBuilder;
+import android.text.Spanned;
 import android.text.format.DateUtils;
+import android.text.style.BackgroundColorSpan;
 import android.util.Log;
 import android.view.View;
 import android.view.View.OnClickListener;
@@ -29,6 +32,7 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Set;
 
 import it.unimi.dsi.fastutil.longs.Long2LongOpenHashMap;
 import tw.tib.financisto.Application;
@@ -259,11 +263,37 @@ public class BlotterListAdapter extends ResourceCursorAdapter {
         if (v.top2View != null) {
             long projectId = cursor.getLong(BlotterColumns.project_id.ordinal());
             if (projectId == NO_PROJECT_ID || showProject == false) {
-                v.top2View.setVisibility(View.INVISIBLE);
+                v.top2View.setVisibility(View.GONE);
             } else {
                 v.top2View.setVisibility(View.VISIBLE);
                 v.top2View.setTextColor(projectColor);
                 v.top2View.setText(cursor.getString(BlotterColumns.project.ordinal()));
+            }
+        }
+
+        if (v.top3View != null) {
+            Set<String> selectedTags = new HashSet<>();
+            String tags = cursor.getString(BlotterColumns.tags.ordinal());
+            if (tags != null) {
+                var ssb = new SpannableStringBuilder();
+                boolean started = false;
+                for (String tag : tags.split("\n")) {
+                    String trimmed = tag.trim();
+                    if (!trimmed.isEmpty()) {
+                        if (started) {
+                            ssb.append(" ");
+                        }
+                        else {
+                            started = true;
+                        }
+                        ssb.append(" " + trimmed + " ", new BackgroundColorSpan(context.getColor(R.color.tag_pill_stroke)), Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
+                    }
+                }
+                v.top3View.setVisibility(View.VISIBLE);
+                v.top3View.setText(ssb);
+            }
+            else {
+                v.top3View.setVisibility(View.GONE);
             }
         }
 
@@ -392,6 +422,7 @@ public class BlotterListAdapter extends ResourceCursorAdapter {
         public final TextView indicator;
         public final TextView topView;
         public final TextView top2View;
+        public final TextView top3View;
         public final TextView centerView;
         public final TextView bottomView;
         public final TextView rightCenterView;
@@ -405,6 +436,7 @@ public class BlotterListAdapter extends ResourceCursorAdapter {
             indicator = view.findViewById(R.id.indicator);
             topView = view.findViewById(R.id.top);
             top2View = view.findViewById(R.id.top2);
+            top3View = view.findViewById(R.id.top3);
             centerView = view.findViewById(R.id.center);
             bottomView = view.findViewById(R.id.bottom);
             rightCenterView = view.findViewById(R.id.right_center);
