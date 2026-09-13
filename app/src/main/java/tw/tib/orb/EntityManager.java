@@ -356,7 +356,7 @@ public abstract class EntityManager {
 
 		if (aliases != null) {
 			for (String alias : aliases.split("\n")) {
-				if (!aliases.isEmpty()) {
+				if (!alias.isEmpty()) {
 					db.execSQL("INSERT INTO " + ed.aliasesTableName + " (_id, alias) VALUES (?, ?)", new String[]{
 							String.valueOf(entity_id),
 							alias
