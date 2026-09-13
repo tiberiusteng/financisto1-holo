@@ -188,7 +188,12 @@ public class NotificationListener extends NotificationListenerService {
 
     public static ParsedNotification extractNotification(StatusBarNotification sbn) {
         ParsedNotification result = null;
-        Bundle extras = sbn.getNotification().extras;
+        Notification notification = sbn.getNotification();
+        Bundle extras = notification.extras;
+        // skip group summary notifications
+        if ((notification.flags & Notification.FLAG_GROUP_SUMMARY) != 0) {
+            return null;
+        }
         if (extras != null) {
             StringBuilder sb = new StringBuilder();
             result = new ParsedNotification();
