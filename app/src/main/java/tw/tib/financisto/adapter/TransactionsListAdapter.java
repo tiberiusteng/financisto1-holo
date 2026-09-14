@@ -16,7 +16,10 @@ import android.content.Context;
 import android.content.res.Resources;
 import android.database.Cursor;
 import android.graphics.Color;
+import android.text.SpannableStringBuilder;
+import android.text.Spanned;
 import android.text.format.DateUtils;
+import android.text.style.BackgroundColorSpan;
 import android.view.View;
 
 import java.util.Calendar;
@@ -99,20 +102,42 @@ public class TransactionsListAdapter extends BlotterListAdapter {
         if (categoryId != 0) {
             category = cursor.getString(BlotterColumns.category_title.ordinal());
         }
-        String tags = cursor.getString(BlotterColumns.tags.ordinal());
-        CharSequence text = transactionTitleUtils.generateTransactionTitle(toAccountId > 0, payee, transfer, note, tags, location, categoryId, category);
+        CharSequence text = transactionTitleUtils.generateTransactionTitle(toAccountId > 0, payee, transfer, note, location, categoryId, category);
         v.centerView.setText(text);
         sb.setLength(0);
 
         long projectId = cursor.getLong(BlotterColumns.project_id.ordinal());
 
         if (projectId == NO_PROJECT_ID || showProject == false) {
-            v.top2View.setVisibility(View.INVISIBLE);
+            v.top2View.setVisibility(View.GONE);
         }
         else {
             v.top2View.setVisibility(View.VISIBLE);
             v.top2View.setTextColor(projectColor);
             v.top2View.setText(cursor.getString(BlotterColumns.project.ordinal()));
+        }
+
+        String tags = cursor.getString(BlotterColumns.tags.ordinal());
+        if (tags != null) {
+            var ssb = new SpannableStringBuilder();
+            boolean started = false;
+            for (String tag : tags.split("\n")) {
+                String trimmed = tag.trim();
+                if (!trimmed.isEmpty()) {
+                    if (started) {
+                        ssb.append(" ");
+                    }
+                    else {
+                        started = true;
+                    }
+                    ssb.append(" " + trimmed + " ", new BackgroundColorSpan(context.getColor(R.color.tag_pill_stroke)), Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
+                }
+            }
+            v.top3View.setVisibility(View.VISIBLE);
+            v.top3View.setText(ssb);
+        }
+        else {
+            v.top3View.setVisibility(View.GONE);
         }
 
         long currencyId = cursor.getLong(BlotterColumns.from_account_currency_id.ordinal());

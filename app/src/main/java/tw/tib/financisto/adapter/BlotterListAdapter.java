@@ -272,7 +272,6 @@ public class BlotterListAdapter extends ResourceCursorAdapter {
         }
 
         if (v.top3View != null) {
-            Set<String> selectedTags = new HashSet<>();
             String tags = cursor.getString(BlotterColumns.tags.ordinal());
             if (tags != null) {
                 var ssb = new SpannableStringBuilder();
