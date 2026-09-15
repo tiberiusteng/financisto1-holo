@@ -294,7 +294,8 @@ public class CategorySelectorActivity extends AbstractListActivity<Cursor> {
             } else {
                 v.layout.setBackgroundResource(0);
             }
-            v.top2View.setVisibility(View.INVISIBLE);
+            v.top2View.setVisibility(View.GONE);
+            v.top3View.setVisibility(View.GONE);
             return convertView;
         }
 

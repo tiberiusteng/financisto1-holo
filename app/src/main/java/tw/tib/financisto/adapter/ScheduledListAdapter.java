@@ -16,7 +16,10 @@ import android.content.Context;
 import android.content.res.Resources;
 import android.graphics.Color;
 import android.graphics.drawable.Drawable;
+import android.text.SpannableStringBuilder;
+import android.text.Spanned;
 import android.text.format.DateUtils;
+import android.text.style.BackgroundColorSpan;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -24,6 +27,7 @@ import android.widget.BaseAdapter;
 import android.widget.ImageView;
 import android.widget.TextView;
 import tw.tib.financisto.R;
+import tw.tib.financisto.db.DatabaseHelper;
 import tw.tib.financisto.model.Currency;
 import tw.tib.financisto.model.TransactionInfo;
 import tw.tib.financisto.model.TransactionStatus;
@@ -174,6 +178,28 @@ public class ScheduledListAdapter extends BaseAdapter {
 			v.top2View.setText(t.project.title);
 		}
 
+		if (t.tags != null) {
+			var ssb = new SpannableStringBuilder();
+			boolean started = false;
+			for (String tag : t.tags.split("\n")) {
+				String trimmed = tag.trim();
+				if (!trimmed.isEmpty()) {
+					if (started) {
+						ssb.append(" ");
+					}
+					else {
+						started = true;
+					}
+					ssb.append(" " + trimmed + " ", new BackgroundColorSpan(context.getColor(R.color.tag_pill_stroke)), Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
+				}
+			}
+			v.top3View.setVisibility(View.VISIBLE);
+			v.top3View.setText(ssb);
+		}
+		else {
+			v.top3View.setVisibility(View.GONE);
+		}
+
 		if (t.isTemplate == 1) {
 			v.centerView.setText(t.templateName);
 		} else {			
@@ -206,6 +232,7 @@ public class ScheduledListAdapter extends BaseAdapter {
 		public TextView indicator;
 		public TextView topView;
 		public TextView top2View;
+		public TextView top3View;
 		public TextView centerView;
 		public TextView bottomView;
 		public TextView rightCenterView;
@@ -217,6 +244,7 @@ public class ScheduledListAdapter extends BaseAdapter {
 			v.indicator = view.findViewById(R.id.indicator);
 			v.topView = view.findViewById(R.id.top);
 			v.top2View = view.findViewById(R.id.top2);
+			v.top3View = view.findViewById(R.id.top3);
 			v.centerView = view.findViewById(R.id.center);
 			v.bottomView = view.findViewById(R.id.bottom);
 			v.rightCenterView = view.findViewById(R.id.right_center);
