@@ -20,6 +20,7 @@ import java.util.Map;
 import java.util.TreeMap;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+import java.util.regex.PatternSyntaxException;
 
 import static java.lang.String.format;
 import static java.math.BigDecimal.ZERO;
@@ -292,7 +293,6 @@ public class SmsTransactionProcessor {
     public static String[] findTemplateMatches(String template, final String sms) {
         Log.d(TAG, "findTemplateMatches template=\"" + template + "\", sms=\"" + sms + "\"");
 
-        String[] results = null;
         template = preprocessPatterns(template);
         final int[] phIndexes = findPlaceholderIndexes(template);
         // A lazy capture with nothing after it has no closing anchor, and find() does not require
@@ -309,7 +309,7 @@ public class SmsTransactionProcessor {
 
         if (phIndexes != null) {
             // escape regex characters (i.e. can't use regex in template)
-            template = template.replaceAll("([.\\[\\]{}()*+\\-?^$|])", "\\\\$1");
+            template = template.replaceAll("([.\\[\\]{}()*+\\-?^$|\\\\])", "\\\\$1");
             for (int i = 0; i < phIndexes.length; i++) {
                 if (phIndexes[i] != -1) {
                     Placeholder placeholder = Placeholder.values()[i];
@@ -326,18 +326,23 @@ public class SmsTransactionProcessor {
             }
             Log.d(TAG, "template=" + template);
 
-            Matcher matcher = Pattern.compile(template, DOTALL).matcher(sms);
-            if (matcher.find()) {
-                results = new String[Placeholder.values().length];
-                for (int i = 0; i < phIndexes.length; i++) {
-                    final int groupNum = phIndexes[i] + 1;
-                    if (groupNum > 0) {
-                        results[i] = matcher.group(groupNum);
+            try {
+                Matcher matcher = Pattern.compile(template, DOTALL).matcher(sms);
+                if (matcher.find()) {
+                    var results = new String[Placeholder.values().length];
+                    for (int i = 0; i < phIndexes.length; i++) {
+                        final int groupNum = phIndexes[i] + 1;
+                        if (groupNum > 0) {
+                            results[i] = matcher.group(groupNum);
+                        }
                     }
+                    return results;
                 }
+            } catch (PatternSyntaxException ignored) {
+                return null;
             }
         }
-        return results;
+        return null;
     }
 
     /** Lookahead appended to a lazy capture that has no anchor: expand to the end of the line, not beyond. */
