@@ -132,7 +132,7 @@ public class Utils {
             editText.setError("Please specify the "+name+"..");
             return false;
         }
-        if (text != null && text.length() > length) {
+        if (text != null && length > 0 && text.length() > length) {
             editText.setError("Length of the "+name+" must not be more than "+length+" chars..");
             return false;
         }

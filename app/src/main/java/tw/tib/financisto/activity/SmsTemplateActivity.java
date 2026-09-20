@@ -15,7 +15,10 @@ import android.content.Intent;
 import android.content.res.Resources;
 import android.os.Bundle;
 import android.text.Editable;
+import android.text.SpannableStringBuilder;
+import android.text.Spanned;
 import android.text.TextWatcher;
+import android.text.style.ForegroundColorSpan;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.*;
@@ -100,8 +103,8 @@ public class SmsTemplateActivity extends AbstractActivity {
         Button bOK = findViewById(R.id.bOK);
         bOK.setOnClickListener(arg0 -> {
             updateSmsTemplateFromUI();
-            if (Utils.checkEditText(smsNumber, "sms number", true, 30)
-                && Utils.checkEditText(templateTxt, "sms template", true, 160)) {
+            if (Utils.checkEditText(smsNumber, "sms number", true, 0)
+                && Utils.checkEditText(templateTxt, "sms template", true, 0)) {
                 long id = db.saveOrUpdate(smsTemplate);
                 Intent intent = new Intent();
                 intent.putExtra(SmsTemplateColumns._id.name(), id);
@@ -324,7 +327,7 @@ public class SmsTemplateActivity extends AbstractActivity {
                 exampleTxt.setBackgroundColor(resources.getColor(R.color.negative_amount));
                 parseResult.setText("");
             } else {
-                StringBuilder sb = new StringBuilder();
+                var sb = new SpannableStringBuilder();
                 exampleTxt.setBackgroundColor(resources.getColor(R.color.cleared_transaction_color));
 
                 // dump match result to help debugging
@@ -338,13 +341,17 @@ public class SmsTemplateActivity extends AbstractActivity {
                         // price will be converted to big decimal
                         // show converted result instead of raw input
                         try {
-                            sb.append(SmsTransactionProcessor.toBigDecimal(matches[p.ordinal()]));
+                            sb.append(SmsTransactionProcessor.toBigDecimal(matches[p.ordinal()]).toString(),
+                                    new ForegroundColorSpan(getColor(R.color.cleared_transaction_color)),
+                                    Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
                         } catch (Exception e) {
                             sb.append(getString(R.string.tpl_failed_to_parse, matches[p.ordinal()]));
                         }
                     }
                     else {
-                        sb.append(matches[p.ordinal()]);
+                        sb.append(matches[p.ordinal()],
+                                new ForegroundColorSpan(getColor(R.color.cleared_transaction_color)),
+                                Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
                     }
                     sb.append("\n");
                 }
