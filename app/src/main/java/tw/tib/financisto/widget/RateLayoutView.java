@@ -170,6 +170,15 @@ public class RateLayoutView implements RateNodeOwner {
         amountInputTo.disableIncomeExpenseButton();
     }
 
+    /**
+     * Balance-adjust mode: the amount field takes the balance you counted, not the change,
+     * so it is labelled "New balance (currency)" instead of "Amount (currency)".
+     */
+    public void createBalanceUI() {
+        createUI(R.string.new_balance, R.string.new_balance);
+        amountInputTo.disableIncomeExpenseButton();
+    }
+
     public void setIncome() {
         amountInputFrom.setIncome();
         amountInputTo.setIncome();

@@ -243,7 +243,14 @@ public class TransactionActivity extends AbstractTransactionActivity {
         } else {
             currencyText = new TextView(this);
         }
-        rateView.createTransactionUI();
+        // In balance-adjust mode the amount field holds the new balance, so say so on the
+        // label and in the title; the rest of the form is the same as an ordinary transaction.
+        if (isUpdateBalanceMode) {
+            rateView.createBalanceUI();
+            setTitle(R.string.update_balance);
+        } else {
+            rateView.createTransactionUI();
+        }
         // difference
         if (isUpdateBalanceMode) {
             differenceText = x.addInfoNode(layout, -1, R.string.difference, "0");
