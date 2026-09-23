@@ -198,8 +198,10 @@ public class TransactionInfoDialog {
                         : (ti.toAccount == null ? R.string.transaction : R.string.transfer);
                 titleLabel.setText(titleId);
                 add(layout, R.string.date, DateUtils.formatDateTime(context, ti.dateTime,
-                        DateUtils.FORMAT_SHOW_DATE | DateUtils.FORMAT_SHOW_TIME | DateUtils.FORMAT_SHOW_YEAR),
-                        ti.attachedPicture);
+                        DateUtils.FORMAT_SHOW_DATE | DateUtils.FORMAT_SHOW_TIME | DateUtils.FORMAT_SHOW_YEAR));
+                if (ti.attachedPicture != null) {
+                    add(layout, R.string.attach_picture, ti.attachedPicture, ti.attachedPicture);
+                }
             }
         }
         TransactionStatus status = ti.status;
@@ -247,6 +249,9 @@ public class TransactionInfoDialog {
         v.setClickable(false);
         v.setFocusable(false);
         v.setFocusableInTouchMode(false);
+        v.findViewById(R.id.album).setVisibility(View.GONE);
+        v.findViewById(R.id.camera).setVisibility(View.GONE);
+        v.findViewById(R.id.plus_minus).setVisibility(View.GONE);
         ImageView pictureView = v.findViewById(R.id.picture);
         pictureView.setTag(pictureFileName);
     }
