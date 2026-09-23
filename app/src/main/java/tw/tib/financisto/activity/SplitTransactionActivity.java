@@ -102,10 +102,12 @@ public class SplitTransactionActivity extends AbstractSplitActivity implements C
 
     @Override
     public void onCategorySelected(Category category, boolean selectLast) {
-        if (category.isIncome()) {
-            amountInput.setIncome();
-        } else {
-            amountInput.setExpense();
+        if (amountInput.getAmount() == 0) {
+            if (category.isIncome()) {
+                amountInput.setIncome();
+            } else {
+                amountInput.setExpense();
+            }
         }
         split.categoryId = category.id;
         categorySelector.addAttributes(split);
