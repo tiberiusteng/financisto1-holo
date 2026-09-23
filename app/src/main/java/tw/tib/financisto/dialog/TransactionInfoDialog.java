@@ -12,6 +12,8 @@ package tw.tib.financisto.dialog;
 
 import android.app.AlertDialog;
 import android.app.Dialog;
+import android.content.ClipData;
+import android.content.ClipboardManager;
 import android.content.Context;
 import android.text.format.DateUtils;
 import android.view.LayoutInflater;
@@ -128,13 +130,16 @@ public class TransactionInfoDialog {
             if (c != null && c.id > 0) {
                 sb.append(c.title);
             }
-            if (isNotEmpty(split.note)) {
-                sb.append(" (").append(split.note).append(")");
-            }
-            LinearLayout topLayout = add(layout, sb.toString(), "");
+            // split child amount
+            LinearLayout topLayout = add(layout, sb.toString(), "", isNotEmpty(split.note));
             TextView amountView = topLayout.findViewById(R.id.data);
             u.setAmountText(amountView, fromAccount.currency, split.fromAmount, true);
             topLayout.setPadding(splitPadding, 0, 0, 0);
+            // split child note
+            if (isNotEmpty(split.note)) {
+                LinearLayout note = add(layout, context.getString(R.string.note), split.note);
+                note.setPadding(splitPadding, 0, 0, 0);
+            }
         }
     }
 
@@ -237,6 +242,13 @@ public class TransactionInfoDialog {
     private TextView add(LinearLayout layout, int labelId, String data) {
         View v = inflater.new Builder(layout, R.layout.select_entry_simple).withLabel(labelId)
                 .withData(data).create();
+
+        v.findViewById(R.id.data).setOnClickListener(vi -> {
+            ClipboardManager clipboard = (ClipboardManager) context.getSystemService(Context.CLIPBOARD_SERVICE);
+            ClipData clip = ClipData.newPlainText(context.getString(labelId), ((TextView) vi).getText());
+            clipboard.setPrimaryClip(clip);
+        });
+
         return (TextView)v.findViewById(R.id.data);
     }
 
@@ -257,8 +269,31 @@ public class TransactionInfoDialog {
     }
 
     private LinearLayout add(LinearLayout layout, String label, String data) {
-        return (LinearLayout) inflater.new Builder(layout, R.layout.select_entry_simple).withLabel(label)
+        LinearLayout r = (LinearLayout) inflater.new Builder(layout, R.layout.select_entry_simple).withLabel(label)
                 .withData(data).create();
+
+        r.findViewById(R.id.data).setOnClickListener(v -> {
+            ClipboardManager clipboard = (ClipboardManager) context.getSystemService(Context.CLIPBOARD_SERVICE);
+            ClipData clip = ClipData.newPlainText(label, data);
+            clipboard.setPrimaryClip(clip);
+        });
+
+        return r;
     }
 
+    private LinearLayout add(LinearLayout layout, String label, String data, boolean noDivider) {
+        var builder = inflater.new Builder(layout, R.layout.select_entry_simple).withLabel(label)
+                .withData(data);
+        if (noDivider) builder.withNoDivider();
+
+        LinearLayout r = (LinearLayout) builder.create();
+
+        r.findViewById(R.id.data).setOnClickListener(v -> {
+            ClipboardManager clipboard = (ClipboardManager) context.getSystemService(Context.CLIPBOARD_SERVICE);
+            ClipData clip = ClipData.newPlainText(label, ((TextView) v).getText());
+            clipboard.setPrimaryClip(clip);
+        });
+
+        return r;
+    }
 }
