@@ -125,21 +125,31 @@ public class TransactionInfoDialog {
             u.setTransferAmountText(amountView, fromAccount.currency, split.fromAmount, toAccount.currency, split.toAmount);
             topLayout.setPadding(splitPadding, 0, 0, 0);
         } else {
+            // split child category, amount
             Category c = db.getCategoryWithParent(split.categoryId);
             StringBuilder sb = new StringBuilder();
             if (c != null && c.id > 0) {
                 sb.append(c.title);
             }
-            // split child amount
-            LinearLayout topLayout = add(layout, sb.toString(), "", isNotEmpty(split.note));
+            LinearLayout topLayout = add(layout, sb.toString(), "", true);
             TextView amountView = topLayout.findViewById(R.id.data);
             u.setAmountText(amountView, fromAccount.currency, split.fromAmount, true);
             topLayout.setPadding(splitPadding, 0, 0, 0);
+            // split child attributes
+            List<TransactionAttributeInfo> attributes = db.getAttributesForTransaction(split.id);
+            for (TransactionAttributeInfo tai : attributes) {
+                String value = tai.getValue(context);
+                if (isNotEmpty(value)) {
+                    LinearLayout attr = add(layout, tai.name, value, true);
+                    attr.setPadding(splitPadding, 0, 0, 0);
+                }
+            }
             // split child note
             if (isNotEmpty(split.note)) {
-                LinearLayout note = add(layout, context.getString(R.string.note), split.note);
+                LinearLayout note = add(layout, context.getString(R.string.note), split.note, true);
                 note.setPadding(splitPadding, 0, 0, 0);
             }
+            inflater.addDivider(layout);
         }
     }
 
@@ -235,17 +245,23 @@ public class TransactionInfoDialog {
     }
 
     private void add(LinearLayout layout, int labelId, String data, AccountType accountType) {
-        inflater.new Builder(layout, R.layout.select_entry_simple_icon)
+        View v = inflater.new Builder(layout, R.layout.select_entry_simple_icon)
                 .withIcon(accountType.iconId).withLabel(labelId).withData(data).create();
+
+        v.findViewById(R.id.top_layout).setOnClickListener(vi -> {
+            ClipboardManager clipboard = (ClipboardManager) context.getSystemService(Context.CLIPBOARD_SERVICE);
+            ClipData clip = ClipData.newPlainText(context.getString(labelId), ((TextView) vi.findViewById(R.id.data)).getText());
+            clipboard.setPrimaryClip(clip);
+        });
     }
 
     private TextView add(LinearLayout layout, int labelId, String data) {
         View v = inflater.new Builder(layout, R.layout.select_entry_simple).withLabel(labelId)
                 .withData(data).create();
 
-        v.findViewById(R.id.data).setOnClickListener(vi -> {
+        v.findViewById(R.id.top_layout).setOnClickListener(vi -> {
             ClipboardManager clipboard = (ClipboardManager) context.getSystemService(Context.CLIPBOARD_SERVICE);
-            ClipData clip = ClipData.newPlainText(context.getString(labelId), ((TextView) vi).getText());
+            ClipData clip = ClipData.newPlainText(context.getString(labelId), ((TextView) vi.findViewById(R.id.data)).getText());
             clipboard.setPrimaryClip(clip);
         });
 
@@ -272,9 +288,9 @@ public class TransactionInfoDialog {
         LinearLayout r = (LinearLayout) inflater.new Builder(layout, R.layout.select_entry_simple).withLabel(label)
                 .withData(data).create();
 
-        r.findViewById(R.id.data).setOnClickListener(v -> {
+        r.findViewById(R.id.top_layout).setOnClickListener(v -> {
             ClipboardManager clipboard = (ClipboardManager) context.getSystemService(Context.CLIPBOARD_SERVICE);
-            ClipData clip = ClipData.newPlainText(label, data);
+            ClipData clip = ClipData.newPlainText(label, ((TextView) v.findViewById(R.id.data)).getText());
             clipboard.setPrimaryClip(clip);
         });
 
@@ -288,9 +304,9 @@ public class TransactionInfoDialog {
 
         LinearLayout r = (LinearLayout) builder.create();
 
-        r.findViewById(R.id.data).setOnClickListener(v -> {
+        r.findViewById(R.id.top_layout).setOnClickListener(v -> {
             ClipboardManager clipboard = (ClipboardManager) context.getSystemService(Context.CLIPBOARD_SERVICE);
-            ClipData clip = ClipData.newPlainText(label, ((TextView) v).getText());
+            ClipData clip = ClipData.newPlainText(label, ((TextView) v.findViewById(R.id.data)).getText());
             clipboard.setPrimaryClip(clip);
         });
 
