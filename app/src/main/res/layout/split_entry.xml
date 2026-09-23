@@ -18,29 +18,48 @@
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintBottom_toBottomOf="parent" />
 
-    <TextView android:id="@+id/label"
-        android:layout_height="wrap_content"
+    <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="0dp"
-        android:layout_marginStart="3sp"
-        android:text="label"
-        android:textAppearance="@style/ListPrimary"
-        android:textColor="@android:color/secondary_text_dark"
-        android:maxLines="1" android:ellipsize="end"
-        app:layout_constraintStart_toEndOf="@id/indicator"
-        app:layout_constraintEnd_toStartOf="@id/data"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintBottom_toBottomOf="parent" />
-
-    <TextView
-        android:id="@+id/data"
-        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:maxLines="1"
-        android:text="data"
-        android:textAppearance="@style/ListPrimary"
-        android:textColor="@android:color/primary_text_dark"
-        app:layout_constraintBaseline_toBaselineOf="@id/label"
-        app:layout_constraintEnd_toStartOf="@id/end" />
+        app:layout_constraintStart_toEndOf="@id/indicator"
+        app:layout_constraintEnd_toStartOf="@id/end"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintBottom_toBottomOf="parent">
+
+        <TextView android:id="@+id/label"
+            android:layout_height="wrap_content"
+            android:layout_width="0dp"
+            android:layout_marginStart="3sp"
+            android:text="label"
+            android:textAppearance="@style/ListPrimary"
+            android:textColor="@android:color/secondary_text_dark"
+            android:maxLines="1" android:ellipsize="end"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toStartOf="@id/data"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <TextView
+            android:id="@+id/data"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:maxLines="1"
+            android:text="data"
+            android:textAppearance="@style/ListPrimary"
+            android:textColor="@android:color/primary_text_dark"
+            app:layout_constraintBaseline_toBaselineOf="@id/label"
+            app:layout_constraintEnd_toEndOf="parent" />
+
+        <TextView android:id="@+id/secondary"
+            android:layout_height="wrap_content"
+            android:layout_width="0dp"
+            android:layout_marginStart="3sp"
+            android:text="secondary"
+            android:textAppearance="@style/ListPrimary"
+            android:textColor="@android:color/secondary_text_dark"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/label" />
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
 
     <FrameLayout
         android:id="@+id/end"

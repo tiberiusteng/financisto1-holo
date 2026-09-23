@@ -29,6 +29,7 @@
     <color name="transaction_payee">@android:color/holo_blue_light</color>
     <color name="transaction_location">@android:color/holo_green_light</color>
     <color name="transaction_tag">@color/holo_orange_light</color>
+    <color name="transaction_attribute">#A87B6C</color>
     <color name="tag_pill_bg">#25272D</color>
     <color name="tag_pill_stroke">#3D414C</color>
     <color name="tag_pill_text">#E4E6EB</color>

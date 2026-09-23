@@ -12,6 +12,9 @@ package tw.tib.financisto.activity;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.text.SpannableStringBuilder;
+import android.text.Spanned;
+import android.text.style.ForegroundColorSpan;
 import android.util.Log;
 import android.view.View;
 import android.widget.LinearLayout;
@@ -22,6 +25,7 @@ import greendroid.widget.QuickActionGrid;
 import greendroid.widget.QuickActionWidget;
 import tw.tib.financisto.R;
 import tw.tib.financisto.model.Account;
+import tw.tib.financisto.model.Attribute;
 import tw.tib.financisto.model.Category;
 import tw.tib.financisto.model.Currency;
 import tw.tib.financisto.model.MyEntity;
@@ -736,27 +740,57 @@ public class TransactionActivity extends AbstractTransactionActivity {
     private void setSplitData(View v, Transaction split) {
         TextView label = v.findViewById(R.id.label);
         TextView data = v.findViewById(R.id.data);
+        TextView secondary = v.findViewById(R.id.secondary);
         TextView indicator = v.findViewById(R.id.indicator);
 
         indicator.setBackgroundColor(colors[split.status.ordinal()]);
 
-        setSplitData(split, label, data);
+        setSplitData(split, label, data, secondary);
     }
 
-    private void setSplitData(Transaction split, TextView label, TextView data) {
+    private void setSplitData(Transaction split, TextView label, TextView data, TextView secondary) {
         if (split.isTransfer()) {
-            setSplitDataTransfer(split, label, data);
+            setSplitDataTransfer(split, label, data, secondary);
         } else {
-            setSplitDataTransaction(split, label, data);
+            setSplitDataTransaction(split, label, data, secondary);
         }
     }
 
-    private void setSplitDataTransaction(Transaction split, TextView label, TextView data) {
+    private void setSplitDataTransaction(Transaction split, TextView label, TextView data, TextView secondary) {
         Category category = db.getCategory(split.categoryId);
         String payee = split.payeeId < 1 ? null : db.get(Payee.class, split.payeeId).title;
         label.setText(transactionTitleUtils.generateTransactionTitle(
-                false, payee, null, split.note, split.tags, null,
+                false, payee, null, null, split.tags, null,
                 split.categoryId, category.title));
+
+        var sb = new SpannableStringBuilder();
+
+        ArrayList<Attribute> attributes = db.getAllAttributesForCategory(split.categoryId);
+        Map<Long, String> values = split.categoryAttributes;
+        for (Attribute a : attributes) {
+            String value = values != null ? values.get(a.id) : null;
+            if (value == null) {
+                value = a.defaultValue;
+            }
+            if (sb.length() > 0) sb.append("\n");
+            sb.append(a.title + ": " + value,
+                    new ForegroundColorSpan(getResources().getColor(R.color.transaction_attribute)),
+                    Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
+        }
+
+        if (split.note != null) {
+            if (sb.length() > 0) sb.append("\n");
+            sb.append(split.note);
+        }
+
+        if (sb.length() > 0) {
+            secondary.setVisibility(View.VISIBLE);
+            secondary.setText(sb);
+        }
+        else {
+            secondary.setVisibility(View.GONE);
+        }
+
         Currency currency = getCurrency();
         u.setAmountText(data, currency, split.fromAmount, false);
     }
@@ -771,13 +805,42 @@ public class TransactionActivity extends AbstractTransactionActivity {
         return sb.toString();
     }
 
-    private void setSplitDataTransfer(Transaction split, TextView label, TextView data) {
+    private void setSplitDataTransfer(Transaction split, TextView label, TextView data, TextView secondary) {
         Account fromAccount = db.getAccount(split.fromAccountId);
         Account toAccount = db.getAccount(split.toAccountId);
         Category category = db.getCategory(split.categoryId);
         label.setText(transactionTitleUtils.generateTransactionTitle(
                 true, null, u.getTransferTitleText(fromAccount, toAccount),
-                split.note, split.tags, null, split.categoryId, split.categoryId == 0 ? "" : category.title));
+                null, split.tags, null, split.categoryId, split.categoryId == 0 ? "" : category.title));
+
+        var sb = new SpannableStringBuilder();
+
+        ArrayList<Attribute> attributes = db.getAllAttributesForCategory(split.categoryId);
+        Map<Long, String> values = split.categoryAttributes;
+        for (Attribute a : attributes) {
+            String value = values != null ? values.get(a.id) : null;
+            if (value == null) {
+                value = a.defaultValue;
+            }
+            if (sb.length() > 0) sb.append("\n");
+            sb.append(a.title + ": " + value,
+                    new ForegroundColorSpan(getResources().getColor(R.color.transaction_attribute)),
+                    Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
+        }
+
+        if (split.note != null) {
+            if (sb.length() > 0) sb.append("\n");
+            sb.append(split.note);
+        }
+
+        if (sb.length() > 0) {
+            secondary.setVisibility(View.VISIBLE);
+            secondary.setText(sb);
+        }
+        else {
+            secondary.setVisibility(View.GONE);
+        }
+
         //u.setTransferTitleText(label, fromAccount, toAccount);
         u.setTransferAmountText(data, fromAccount.currency, split.fromAmount, toAccount.currency, split.toAmount);
     }
