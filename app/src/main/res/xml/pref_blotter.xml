@@ -10,6 +10,12 @@
     <SwitchPreferenceCompat
         app:singleLineTitle="false"
         android:defaultValue="false"
+        android:key="show_full_note_in_blotter"
+        android:summary="@string/show_full_note_summary"
+        android:title="@string/show_full_note" />
+    <SwitchPreferenceCompat
+        app:singleLineTitle="false"
+        android:defaultValue="false"
         android:key="quick_menu_transaction_additional_status"
         android:summary="@string/quick_menu_transaction_additional_status_summary"
         android:title="@string/quick_menu_transaction_additional_status" />

@@ -1024,6 +1024,7 @@ public class BlotterFragment extends AbstractListFragment<Cursor> implements Blo
                 }
                 else {
                     var a = (BlotterListAdapter) adapter;
+                    a.reloadPrefs(context);
                     Cursor old = a.swapCursor(cursor);
                     if (old != null && !old.isClosed()) {
                         Log.d(TAG, "createAdapter: closing old " + old);

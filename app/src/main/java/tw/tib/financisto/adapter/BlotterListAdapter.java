@@ -11,7 +11,6 @@
 package tw.tib.financisto.adapter;
 
 import android.content.Context;
-import android.content.res.Resources;
 import android.database.Cursor;
 import android.graphics.Color;
 import android.graphics.drawable.Drawable;
@@ -19,7 +18,7 @@ import android.text.SpannableStringBuilder;
 import android.text.Spanned;
 import android.text.format.DateUtils;
 import android.text.style.BackgroundColorSpan;
-import android.util.Log;
+import android.text.style.ForegroundColorSpan;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.ViewGroup;
@@ -32,7 +31,6 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
-import java.util.Set;
 
 import it.unimi.dsi.fastutil.longs.Long2LongOpenHashMap;
 import tw.tib.financisto.Application;
@@ -66,7 +64,7 @@ public class BlotterListAdapter extends ResourceCursorAdapter {
     protected final Drawable icBlotterSplit;
     protected final Utils u;
     protected final DatabaseAdapter db;
-    protected final TransactionTitleUtils transactionTitleUtils;
+    protected TransactionTitleUtils transactionTitleUtils;
     private final int colors[];
 
     private final int projectColor;
@@ -75,16 +73,18 @@ public class BlotterListAdapter extends ResourceCursorAdapter {
     private final int clearedBackgroundColor;
     private final int reconciledBackgroundColor;
     protected final int highlightBackgroundColor;
+    protected final int noteColor;
 
     private boolean allChecked = true;
     private final HashMap<Long, Boolean> checkedItems = new HashMap<Long, Boolean>();
 
-    private final boolean showRunningBalance;
-    private final boolean showProject;
-    private final boolean colorizeWeekendDate;
-    private final boolean showTimeOfDay;
+    protected boolean showFullNote;
+    protected boolean showRunningBalance;
+    protected boolean showProject;
+    protected boolean colorizeWeekendDate;
+    protected boolean showTimeOfDay;
 
-    protected final boolean highlightCopiedUnedited;
+    protected boolean highlightCopiedUnedited;
     protected final Long2LongOpenHashMap copiedUneditedTransactions;
     protected final long listAdapterTimestamp;
 
@@ -111,15 +111,21 @@ public class BlotterListAdapter extends ResourceCursorAdapter {
         this.clearedBackgroundColor = context.getResources().getColor(R.color.cleared_transaction_background);
         this.reconciledBackgroundColor = context.getResources().getColor(R.color.reconciled_transaction_background);
         this.highlightBackgroundColor = context.getResources().getColor(R.color.highlight_background);
+        this.noteColor = context.getResources().getColor(R.color.transaction_note);
+        this.copiedUneditedTransactions = Application.getCopiedUneditedTransactions();
+        this.listAdapterTimestamp = System.currentTimeMillis();
+        this.db = db;
+        reloadPrefs(context);
+    }
+
+    public void reloadPrefs(Context context) {
+        this.showFullNote = MyPreferences.isShowFullNoteInBlotter();
         this.showRunningBalance = MyPreferences.isShowRunningBalance();
         this.showProject = MyPreferences.isShowProjectInBlotter();
         this.colorizeWeekendDate = MyPreferences.isColorizeWeekendDate();
         this.showTimeOfDay = MyPreferences.isBlotterShowTimeOfDay();
         this.highlightCopiedUnedited = MyPreferences.isHighlightCopiedUneditedTransactions();
-        this.copiedUneditedTransactions = Application.getCopiedUneditedTransactions();
-        this.listAdapterTimestamp = System.currentTimeMillis();
         this.transactionTitleUtils = new TransactionTitleUtils(context, MyPreferences.isColorizeBlotterItem());
-        this.db = db;
     }
 
     protected boolean isShowRunningBalance() {
@@ -183,6 +189,7 @@ public class BlotterListAdapter extends ResourceCursorAdapter {
 
         if (toAccountId > 0) {
             v.topView.setText(R.string.transfer);
+            if (v.secondaryView != null) v.secondaryView.setVisibility(View.GONE);
 
             String fromAccountTitle = cursor.getString(BlotterColumns.from_account_title.ordinal());
             String toAccountTitle = cursor.getString(BlotterColumns.to_account_title.ordinal());
@@ -215,7 +222,7 @@ public class BlotterListAdapter extends ResourceCursorAdapter {
         } else {
             String fromAccountTitle = cursor.getString(BlotterColumns.from_account_title.ordinal());
             v.topView.setText(fromAccountTitle);
-            setTransactionTitleText(cursor, noteView);
+            setTransactionTitleText(cursor, noteView, v.secondaryView);
             sb.setLength(0);
             long fromCurrencyId = cursor.getLong(BlotterColumns.from_account_currency_id.ordinal());
             Currency fromCurrency = CurrencyCache.getCurrency(fromCurrencyId);
@@ -346,7 +353,7 @@ public class BlotterListAdapter extends ResourceCursorAdapter {
         }
     }
 
-    private void setTransactionTitleText(Cursor cursor, TextView noteView) {
+    private void setTransactionTitleText(Cursor cursor, TextView noteView, TextView secondaryView) {
         sb.setLength(0);
         String payee = cursor.getString(BlotterColumns.payee.ordinal());
         String note = cursor.getString(BlotterColumns.note.ordinal());
@@ -355,9 +362,16 @@ public class BlotterListAdapter extends ResourceCursorAdapter {
         String location = getLocationTitle(cursor, locationId);
         long categoryId = cursor.getLong(BlotterColumns.category_id.ordinal());
         String category = getCategoryTitle(cursor, categoryId);
-        CharSequence text = transactionTitleUtils.generateTransactionTitle(false, payee, null, note, tags, location, categoryId, category);
+        CharSequence text = transactionTitleUtils.generateTransactionTitle(false, payee, null, (secondaryView != null && showFullNote) ? null : note, tags, location, categoryId, category);
         noteView.setText(text);
         noteView.setTextColor(Color.WHITE);
+        if (secondaryView != null && showFullNote && note != null && !note.isEmpty()) {
+            secondaryView.setVisibility(View.VISIBLE);
+            secondaryView.setText(new SpannableStringBuilder().append(note, new ForegroundColorSpan(noteColor), Spanned.SPAN_EXCLUSIVE_EXCLUSIVE));
+        }
+        else if (secondaryView != null) {
+            secondaryView.setVisibility(View.GONE);
+        }
     }
 
     private String getCategoryTitle(Cursor cursor, long categoryId) {
@@ -377,8 +391,13 @@ public class BlotterListAdapter extends ResourceCursorAdapter {
     }
 
     void removeRightViewIfNeeded(BlotterViewHolder v) {
-        if (v.rightView != null && !isShowRunningBalance()) {
-            v.rightView.setVisibility(View.GONE);
+        if (v.rightView != null) {
+            if (isShowRunningBalance()) {
+                v.rightView.setVisibility(View.VISIBLE);
+            }
+            else {
+                v.rightView.setVisibility(View.GONE);
+            }
         }
     }
 
@@ -426,6 +445,7 @@ public class BlotterListAdapter extends ResourceCursorAdapter {
         public final TextView bottomView;
         public final TextView rightCenterView;
         public final TextView rightView;
+        public final TextView secondaryView;
         public final ImageView iconView;
         public final ImageView iconView2;
         public final CheckBox checkBox;
@@ -440,6 +460,7 @@ public class BlotterListAdapter extends ResourceCursorAdapter {
             bottomView = view.findViewById(R.id.bottom);
             rightCenterView = view.findViewById(R.id.right_center);
             rightView = view.findViewById(R.id.right);
+            secondaryView = view.findViewById(R.id.secondary);
             iconView = view.findViewById(R.id.right_top);
             iconView2 = view.findViewById(R.id.right_top_2);
             checkBox = view.findViewById(R.id.cb);

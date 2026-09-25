@@ -76,30 +76,52 @@
         android:scaleType="fitEnd"
         android:src="@drawable/ic_action_arrow_right_top" />
 
-    <TextView android:id="@+id/center"
-        android:layout_height="wrap_content"
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/center_container"
         android:layout_width="0dp"
-        android:layout_marginStart="3sp"
-        android:layout_marginTop="-2sp"
-        android:layout_marginBottom="-2sp"
-        android:layout_marginRight="2sp"
-        android:text="center"
-        android:textAppearance="@style/ListPrimary"
-        android:maxLines="1" android:ellipsize="end"
-        app:layout_constraintStart_toEndOf="@id/indicator"
-        app:layout_constraintEnd_toStartOf="@id/right_center"
-        app:layout_constraintTop_toBottomOf="@id/top"
-        />
-
-    <TextView
-        android:id="@+id/right_center"
-        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:maxLines="1"
-        android:text="right_center"
-        android:textAppearance="@style/ListPrimary"
-        app:layout_constraintBaseline_toBaselineOf="@id/center"
-        app:layout_constraintEnd_toEndOf="parent"/>
+        app:layout_constraintStart_toEndOf="@id/indicator"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/top">
+
+        <TextView android:id="@+id/center"
+            android:layout_height="wrap_content"
+            android:layout_width="0dp"
+            android:layout_marginStart="3sp"
+            android:layout_marginTop="-2sp"
+            android:layout_marginBottom="-2sp"
+            android:layout_marginRight="2sp"
+            android:text="center"
+            android:textAppearance="@style/ListPrimary"
+            android:maxLines="1" android:ellipsize="end"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toStartOf="@id/right_center"
+            />
+
+        <TextView
+            android:id="@+id/right_center"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:maxLines="1"
+            android:text="right_center"
+            android:textAppearance="@style/ListPrimary"
+            app:layout_constraintBaseline_toBaselineOf="@id/center"
+            app:layout_constraintEnd_toEndOf="parent"/>
+
+        <TextView
+            android:id="@+id/secondary"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:text="secondary"
+            android:textAppearance="@style/ListPrimary"
+            android:layout_marginStart="3sp"
+            android:layout_marginRight="2sp"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/center" />
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
 
     <TextView android:id="@+id/bottom"
         android:text="bottom"
@@ -110,7 +132,7 @@
         android:maxLines="1"
         android:paddingBottom="2sp"
         app:layout_constraintStart_toEndOf="@id/indicator"
-        app:layout_constraintTop_toBottomOf="@id/center" />
+        app:layout_constraintTop_toBottomOf="@id/center_container" />
 
     <TextView
         android:id="@+id/right"
@@ -120,7 +142,7 @@
         android:layout_marginTop="-1sp"
         android:maxLines="1"
         android:text="right"
-        app:layout_constraintTop_toBottomOf="@id/right_center"
+        app:layout_constraintTop_toBottomOf="@id/center_container"
         app:layout_constraintEnd_toEndOf="parent" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

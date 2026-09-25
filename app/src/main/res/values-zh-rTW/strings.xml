@@ -637,6 +637,8 @@
   <string name="filter_value_not_found">找不到...</string>
   <string name="empty_report">空報告</string>
   <string name="day_of_month">日期</string>
+  <string name="show_full_note">顯示完整備註</string>
+  <string name="show_full_note_summary">在獨立區塊顯示完整備註</string>
   <string name="show_running_balance">逐筆顯示餘額</string>
   <string name="show_running_balance_summary">每筆交易都顯示交易後的餘額 (需要重新啟動)</string>
   <string name="colorize_blotter_item">彩色標記交易欄位</string>

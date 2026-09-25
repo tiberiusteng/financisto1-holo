@@ -20,6 +20,7 @@ import android.text.SpannableStringBuilder;
 import android.text.Spanned;
 import android.text.format.DateUtils;
 import android.text.style.BackgroundColorSpan;
+import android.text.style.ForegroundColorSpan;
 import android.view.View;
 
 import java.util.Calendar;
@@ -102,8 +103,15 @@ public class TransactionsListAdapter extends BlotterListAdapter {
         if (categoryId != 0) {
             category = cursor.getString(BlotterColumns.category_title.ordinal());
         }
-        CharSequence text = transactionTitleUtils.generateTransactionTitle(toAccountId > 0, payee, transfer, note, location, categoryId, category);
+        CharSequence text = transactionTitleUtils.generateTransactionTitle(toAccountId > 0, payee, transfer, showFullNote ? null : note, location, categoryId, category);
         v.centerView.setText(text);
+        if (showFullNote && note != null && !note.isEmpty()) {
+            v.secondaryView.setVisibility(View.VISIBLE);
+            v.secondaryView.setText(new SpannableStringBuilder().append(note, new ForegroundColorSpan(noteColor), Spanned.SPAN_EXCLUSIVE_EXCLUSIVE));
+        }
+        else {
+            v.secondaryView.setVisibility(View.GONE);
+        }
         sb.setLength(0);
 
         long projectId = cursor.getLong(BlotterColumns.project_id.ordinal());

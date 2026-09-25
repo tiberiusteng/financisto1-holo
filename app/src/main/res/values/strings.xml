@@ -711,6 +711,9 @@
     <string name="empty_report">Empty report</string>
     <string name="day_of_month">Day of month</string>
 
+    <string name="show_full_note">Show full note</string>
+    <string name="show_full_note_summary">Show full note on separate section</string>
+
     <string name="show_running_balance">Show running balance</string>
     <string name="show_running_balance_summary">Show account running balance in the blotter (requires restart)</string>
 

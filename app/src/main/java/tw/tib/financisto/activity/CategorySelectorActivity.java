@@ -296,6 +296,7 @@ public class CategorySelectorActivity extends AbstractListActivity<Cursor> {
             }
             v.top2View.setVisibility(View.GONE);
             v.top3View.setVisibility(View.GONE);
+            v.secondaryView.setVisibility(View.GONE);
             return convertView;
         }
 

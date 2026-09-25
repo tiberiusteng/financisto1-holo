@@ -20,6 +20,7 @@ import android.text.SpannableStringBuilder;
 import android.text.Spanned;
 import android.text.format.DateUtils;
 import android.text.style.BackgroundColorSpan;
+import android.text.style.ForegroundColorSpan;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -46,6 +47,7 @@ public class ScheduledListAdapter extends BaseAdapter {
 	private final int transferColor;
 	private final int scheduledColor;
 	private final int projectColor;
+	private final int noteColor;
 	private final int colors[];
 	private final Drawable icBlotterIncome;
 	private final Drawable icBlotterExpense;
@@ -60,6 +62,7 @@ public class ScheduledListAdapter extends BaseAdapter {
 	private List<TransactionInfo> transactions;
 
 	private final boolean showProject;
+	private final boolean showFullNote;
 
 	public ScheduledListAdapter(Context context, List<TransactionInfo> transactions) {
 		this.context = context;
@@ -67,6 +70,7 @@ public class ScheduledListAdapter extends BaseAdapter {
 		this.transferColor = context.getResources().getColor(R.color.transfer_color);
 		this.scheduledColor = context.getResources().getColor(R.color.scheduled);
 		this.projectColor = context.getResources().getColor(R.color.project_color);
+		this.noteColor = context.getResources().getColor(R.color.transaction_note);
 		this.colors = initializeColors(context);
 		this.icBlotterIncome = context.getResources().getDrawable(R.drawable.ic_blotter_income);
 		this.icBlotterExpense = context.getResources().getDrawable(R.drawable.ic_blotter_expense);
@@ -75,6 +79,7 @@ public class ScheduledListAdapter extends BaseAdapter {
 		this.transactions = transactions;
 		this.transactionTitleUtils = new TransactionTitleUtils(context, MyPreferences.isColorizeBlotterItem());
 		this.showProject = MyPreferences.isShowProjectInBlotter();
+		this.showFullNote = MyPreferences.isShowFullNoteInBlotter();
 	}
 
 	public void setTransactions(ArrayList<TransactionInfo> transactions) {
@@ -155,9 +160,16 @@ public class ScheduledListAdapter extends BaseAdapter {
 				category = t.category.title;
 			}
             String payee = t.payee != null ? t.payee.title : null;
-            CharSequence text = transactionTitleUtils.generateTransactionTitle(false, payee, null, note, t.tags, location, t.category.id, category);
+            CharSequence text = transactionTitleUtils.generateTransactionTitle(false, payee, null, showFullNote ? null : note, t.tags, location, t.category.id, category);
             noteView.setText(text);
 			noteView.setTextColor(Color.WHITE);
+			if (showFullNote && note != null && !note.isEmpty()) {
+				v.secondaryView.setVisibility(View.VISIBLE);
+				v.secondaryView.setText(new SpannableStringBuilder().append(note, new ForegroundColorSpan(noteColor), Spanned.SPAN_EXCLUSIVE_EXCLUSIVE));
+			}
+			else {
+				v.secondaryView.setVisibility(View.GONE);
+			}
 
 			long amount = t.fromAmount;
 			sb.setLength(0);
@@ -235,6 +247,7 @@ public class ScheduledListAdapter extends BaseAdapter {
 		public TextView top3View;
 		public TextView centerView;
 		public TextView bottomView;
+		public TextView secondaryView;
 		public TextView rightCenterView;
 		public ImageView iconView;
 		
@@ -247,6 +260,7 @@ public class ScheduledListAdapter extends BaseAdapter {
 			v.top3View = view.findViewById(R.id.top3);
 			v.centerView = view.findViewById(R.id.center);
 			v.bottomView = view.findViewById(R.id.bottom);
+			v.secondaryView = view.findViewById(R.id.secondary);
 			v.rightCenterView = view.findViewById(R.id.right_center);
 			v.iconView = view.findViewById(R.id.right_top);
             removeRightView(view);

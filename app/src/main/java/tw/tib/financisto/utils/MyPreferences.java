@@ -479,6 +479,10 @@ public class MyPreferences {
 		return getBoolean("show_running_balance", true);
 	}
 
+	public static boolean isShowFullNoteInBlotter() {
+		return getBoolean("show_full_note_in_blotter", false);
+	}
+
 	public static boolean isColorizeBlotterItem() {
 		return getBoolean("colorize_blotter_item", true);
 	}
