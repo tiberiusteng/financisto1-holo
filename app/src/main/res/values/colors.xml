@@ -36,7 +36,7 @@
     <color name="tag_counter_bg">#1A2B3C</color>
     <color name="tag_counter_stroke">#33B5E5</color>
     <color name="tag_counter_text">#33B5E5</color>
-    <color name="transaction_date">#999</color>
+    <color name="transaction_date">#808080</color>
     <color name="transaction_date_weekend">#c66</color>
 
     <color name="currency_symbol">@android:color/holo_orange_light</color>

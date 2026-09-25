@@ -67,13 +67,15 @@ public class BlotterListAdapter extends ResourceCursorAdapter {
     protected TransactionTitleUtils transactionTitleUtils;
     private final int colors[];
 
-    private final int projectColor;
 
     private final int pendingBackgroundColor;
     private final int clearedBackgroundColor;
     private final int reconciledBackgroundColor;
     protected final int highlightBackgroundColor;
+    protected final int projectColor;
     protected final int noteColor;
+    protected final int dateColor;
+    protected final int dateWeekendColor;
 
     private boolean allChecked = true;
     private final HashMap<Long, Boolean> checkedItems = new HashMap<Long, Boolean>();
@@ -112,6 +114,8 @@ public class BlotterListAdapter extends ResourceCursorAdapter {
         this.reconciledBackgroundColor = context.getResources().getColor(R.color.reconciled_transaction_background);
         this.highlightBackgroundColor = context.getResources().getColor(R.color.highlight_background);
         this.noteColor = context.getResources().getColor(R.color.transaction_note);
+        this.dateColor = context.getResources().getColor(R.color.transaction_date);
+        this.dateWeekendColor = context.getResources().getColor(R.color.transaction_date_weekend);
         this.copiedUneditedTransactions = Application.getCopiedUneditedTransactions();
         this.listAdapterTimestamp = System.currentTimeMillis();
         this.db = db;
@@ -330,9 +334,9 @@ public class BlotterListAdapter extends ResourceCursorAdapter {
                     cal.setTimeInMillis(date);
                     int dayOfWeek = cal.get(Calendar.DAY_OF_WEEK);
                     if (colorizeWeekendDate && (dayOfWeek == Calendar.SUNDAY || dayOfWeek == Calendar.SATURDAY)) {
-                        v.bottomView.setTextColor(Color.rgb(224, 112, 112));
+                        v.bottomView.setTextColor(dateWeekendColor);
                     } else {
-                        v.bottomView.setTextColor(v.topView.getTextColors().getDefaultColor());
+                        v.bottomView.setTextColor(dateColor);
                     }
                 }
             }
