@@ -86,7 +86,7 @@ public class TotalBalanceByPeriodReport extends Report2DChart {
                                 DatabaseHelper.BlotterColumns.from_amount.name(),
                                 DatabaseHelper.BlotterColumns.datetime.name()
                         },
-                        null, null, null, null,
+                        "from_account_is_include_into_reports=1", null, null, null,
                         DatabaseHelper.BlotterColumns.datetime.name());
                 Log.d(TAG, "result count=" + r.getCount());
                 return r;
