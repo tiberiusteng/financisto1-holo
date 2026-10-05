@@ -36,6 +36,8 @@
     <!--uses-permission android:name="android.permission.CAMERA" /-->
     <uses-permission android:name="android.permission.INTERNET"/>
     <uses-permission android:name="android.permission.POST_NOTIFICATIONS" />
+    <uses-permission android:name="android.permission.FOREGROUND_SERVICE" />
+    <uses-permission android:name="android.permission.FOREGROUND_SERVICE_DATA_SYNC" />
     <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED" />
     <uses-permission android:name="android.permission.VIBRATE"/>
     <uses-permission android:name="android.permission.WAKE_LOCK"/>
@@ -98,6 +100,15 @@
 			<intent-filter>
 				<action android:name=".NEW_TRANSACTION" />
 				<action android:name=".CREATE_BACKUP" />
+			</intent-filter>
+		</service>
+
+		<!-- Replaces all data: only callers holding DUMP (adb shell) may start it -->
+		<service android:name=".service.RestoreBackupService" android:exported="true"
+			android:permission="android.permission.DUMP"
+			android:foregroundServiceType="dataSync">
+			<intent-filter>
+				<action android:name="tw.tib.financisto.RESTORE_BACKUP" />
 			</intent-filter>
 		</service>
 
