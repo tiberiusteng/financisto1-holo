@@ -71,10 +71,11 @@ public class RestoreBackupService extends Service {
 
     private void startForeground() {
         NotificationChannelService.initialize(this);
-        Notification notification = new NotificationCompat.Builder(this, NotificationChannelService.TRANSACTIONS_CHANNEL)
+        Notification notification = new NotificationCompat.Builder(this, NotificationChannelService.DATA_SYNC_CHANNEL)
                 .setSmallIcon(R.mipmap.a_icon_notify)
                 .setContentTitle(getString(R.string.restore_database_inprogress))
                 .setOngoing(true)
+                .setProgress(0, 0, true)
                 .build();
         int type = Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q ? ServiceInfo.FOREGROUND_SERVICE_TYPE_DATA_SYNC : 0;
         ServiceCompat.startForeground(this, NOTIFICATION_ID, notification, type);

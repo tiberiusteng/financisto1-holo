@@ -11,6 +11,7 @@ public class NotificationChannelService {
     private static boolean initialized = false;
 
     public static final String TRANSACTIONS_CHANNEL = "transactions";
+    public static final String DATA_SYNC_CHANNEL = "datasync";
 
     private NotificationChannelService(Context context) {
     }
@@ -25,6 +26,9 @@ public class NotificationChannelService {
             NotificationChannel channel = new NotificationChannel(TRANSACTIONS_CHANNEL, name, NotificationManager.IMPORTANCE_DEFAULT);
 
             NotificationManager notificationManager = c.getSystemService(NotificationManager.class);
+            notificationManager.createNotificationChannel(channel);
+
+            channel = new NotificationChannel(DATA_SYNC_CHANNEL, name, NotificationManager.IMPORTANCE_DEFAULT);
             notificationManager.createNotificationChannel(channel);
         }
     }
