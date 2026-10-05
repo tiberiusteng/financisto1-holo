@@ -56,6 +56,9 @@ public class SmsTemplate extends MyEntity implements SortableEntity {
     @Column(name = "is_income")
     public boolean isIncome;
 
+    @Column(name = "match_group_summary")
+    public boolean matchGroupSummary;
+
     @Column(name = DEF_SORT_COL)
     public long sortOrder;
 
@@ -80,6 +83,7 @@ public class SmsTemplate extends MyEntity implements SortableEntity {
         t.title = c.getString(SmsTemplateColumns.title.ordinal());
         t.description = c.getString(SmsTemplateColumns.description.ordinal());
         t.template = c.getString(SmsTemplateColumns.template.ordinal());
+        t.matchGroupSummary = c.getInt(SmsTemplateColumns.match_group_summary.ordinal()) != 0;
         t.note = c.getString(SmsTemplateColumns.note.ordinal());
         t.categoryId = c.getLong(SmsTemplateColumns.category_id.ordinal());
         t.payeeId = c.getLong(SmsTemplateColumns.payee_id.ordinal());
