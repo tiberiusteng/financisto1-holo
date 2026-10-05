@@ -163,8 +163,22 @@ public class NotificationListActivity extends AppCompatActivity {
         public void bindView(NotificationListener.ParsedNotification notification) {
             this.notification = notification;
             pkg.setText(notification.pkg);
-            title.setText(notification.title);
-            body.setText(notification.body);
+
+            if (notification.title.isEmpty()) {
+                title.setVisibility(View.GONE);
+            }
+            else {
+                title.setVisibility(View.VISIBLE);
+                title.setText(notification.title);
+            }
+
+            if (notification.body.isBlank()) {
+                body.setVisibility(View.GONE);
+            }
+            else {
+                body.setVisibility(View.VISIBLE);
+                body.setText(notification.body);
+            }
             
             if (notification.isGroupSummary) {
                 isGroupSummary.setVisibility(View.VISIBLE);
