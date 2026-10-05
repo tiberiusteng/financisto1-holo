@@ -42,9 +42,16 @@ public class SmsTransactionProcessor {
      * Parses sms and adds new transaction if it matches any sms template
      * @return new transaction or null if not matched/parsed
      */
-    public Transaction createTransactionBySms(Context context, String pkg, String addr, String fullSmsBody, TransactionStatus status, boolean updateNote) {
+    public Transaction createTransactionBySms(
+            Context context, String pkg, String addr, String fullSmsBody, boolean isGroupSummary,
+            TransactionStatus status, boolean updateNote)
+    {
         List<SmsTemplate> addrTemplates = db.getSmsTemplatesByPkgTitle(pkg, addr);
         for (final SmsTemplate template : addrTemplates) {
+            if (isGroupSummary != template.matchGroupSummary) {
+                continue;
+            }
+
             String[] match = findTemplateMatches(template.template, fullSmsBody);
             if (match != null) {
                 Log.d(TAG, format("Found template \"%s\" with matches \"%s\"", template, Arrays.toString(match)));

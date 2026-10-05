@@ -47,6 +47,7 @@ public class FinancistoService extends JobIntentService {
     public static final String SMS_TRANSACTION_PACKAGE = "SMS_TRANSACTION_PACKAGE";
     public static final String SMS_TRANSACTION_NUMBER = "SMS_TRANSACTION_NUMBER";
     public static final String SMS_TRANSACTION_BODY = "SMS_TRANSACTION_BODY";
+    public static final String SMS_TRANSACTION_IS_GROUP_SUMMARY = "SMS_TRANSACTION_IS_GROUP_SUMMARY";
     public static final String ACTION_NEW_TRANSACTION_WALLET = "tw.tib.financisto.NEW_TRANSACTION_WALLET";
     public static final String WALLET_TRANSACTION_TITLE = "WALLET_TRANSACTION_TITLE";
     public static final String WALLET_TRANSACTION_TEXT = "WALLET_TRANSACTION_TEXT";
@@ -104,8 +105,9 @@ public class FinancistoService extends JobIntentService {
         String pkg = intent.getStringExtra(SMS_TRANSACTION_PACKAGE);
         String number = intent.getStringExtra(SMS_TRANSACTION_NUMBER);
         String body = intent.getStringExtra(SMS_TRANSACTION_BODY);
+        boolean isGroupSummary = intent.getBooleanExtra(SMS_TRANSACTION_IS_GROUP_SUMMARY, false);
         if (number != null && body != null) {
-            Transaction t = smsProcessor.createTransactionBySms(this, pkg, number, body, getSmsTransactionStatus(),
+            Transaction t = smsProcessor.createTransactionBySms(this, pkg, number, body, isGroupSummary, getSmsTransactionStatus(),
                     shouldSaveSmsToTransactionNote());
             if (t != null) {
                 TransactionInfo transactionInfo = db.getTransactionInfo(t.id);
@@ -133,7 +135,7 @@ public class FinancistoService extends JobIntentService {
         }
         if (t == null) {
             // fall back to user-defined notification templates matched by title
-            t = smsProcessor.createTransactionBySms(this, pkg, title, notificationText,
+            t = smsProcessor.createTransactionBySms(this, pkg, title, notificationText, false,
                     getSmsTransactionStatus(), shouldSaveSmsToTransactionNote());
         }
         if (t != null) {

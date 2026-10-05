@@ -32,6 +32,24 @@
 			<EditText a:gravity="top" a:layout_height="wrap_content" a:hint="@string/sms_tpl_hint"
 				a:layout_width="fill_parent" a:id="@+id/sms_template"/>
 
+			<RadioGroup
+				a:id="@+id/match_radios"
+				a:layout_width="match_parent"
+				a:layout_height="wrap_content"
+				a:orientation="vertical">
+				<RadioButton
+					a:id="@+id/match_normal"
+					a:layout_width="wrap_content"
+					a:layout_height="48dp"
+					a:checked="true"
+					a:text="@string/sms_tpl_match_normal" />
+				<RadioButton
+					a:id="@+id/match_group_summary"
+					a:layout_width="wrap_content"
+					a:layout_height="48dp"
+					a:text="@string/sms_tpl_match_group_summary" />
+			</RadioGroup>
+
 			<TextView a:layout_height="wrap_content" a:id="@+id/sms_note_title"
 				a:layout_width="fill_parent" a:text="@string/sms_note_title" />
 			<TextView a:layout_height="wrap_content" a:id="@+id/sms_note_desc" a:visibility="gone"

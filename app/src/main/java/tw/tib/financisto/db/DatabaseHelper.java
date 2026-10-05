@@ -308,15 +308,16 @@ public class DatabaseHelper extends DatabaseSchemaEvolution {
         title,
         description,
         template,
+        match_group_summary,
         note,
         category_id,
         payee_id,
         project_id,
+        location_id,
         account_id,
         to_account_id,
         is_income,
-        sort_order,
-        location_id;
+        sort_order;
 
         public static final String[] NORMAL_PROJECTION = EnumUtils.asStringArray(SmsTemplateColumns.values());
     }

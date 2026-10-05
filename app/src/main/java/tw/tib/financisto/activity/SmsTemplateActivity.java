@@ -50,6 +50,9 @@ public class SmsTemplateActivity extends AbstractActivity {
     private EditText smsDescription;
     private EditText smsNumber;
     private EditText templateTxt;
+    private RadioGroup matchRadios;
+    private RadioButton matchNormal;
+    private RadioButton matchGroupSummary;
     private EditText noteTxt;
     private EditText exampleTxt;
     private TextView parseResult;
@@ -94,6 +97,9 @@ public class SmsTemplateActivity extends AbstractActivity {
         smsNumber = findViewById(R.id.sms_number);
         initTitleAndDynamicDescription();
         templateTxt = findViewById(R.id.sms_template);
+        matchRadios = findViewById(R.id.match_radios);
+        matchNormal = findViewById(R.id.match_normal);
+        matchGroupSummary = findViewById(R.id.match_group_summary);
         noteTxt = findViewById(R.id.sms_note);
         initAccounts();
         toggleIncome = findViewById(R.id.toggle);
@@ -251,6 +257,7 @@ public class SmsTemplateActivity extends AbstractActivity {
         smsTemplate.description = smsDescription.getText().toString();
         smsTemplate.title = smsNumber.getText().toString();
         smsTemplate.template = templateTxt.getText().toString();
+        smsTemplate.matchGroupSummary = matchGroupSummary.isChecked();
         smsTemplate.note = noteTxt.getText().toString();
         smsTemplate.categoryId = categorySelector == null ? categoryId : categorySelector.getSelectedCategoryId();
         smsTemplate.isIncome = toggleIncome.isChecked();
@@ -285,6 +292,15 @@ public class SmsTemplateActivity extends AbstractActivity {
         selectedAccount(smsTemplate.accountId);
         selectedToAccount(smsTemplate.toAccountId);
         toggleIncome.setChecked(smsTemplate.isIncome);
+
+        matchRadios.clearCheck();
+        if (smsTemplate.matchGroupSummary) {
+            matchGroupSummary.setChecked(true);
+        }
+        else {
+            matchNormal.setChecked(true);
+        }
+
     }
 
     private void selectedAccount(long selectedAccountId) {

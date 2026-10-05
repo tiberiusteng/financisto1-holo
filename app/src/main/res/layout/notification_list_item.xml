@@ -16,10 +16,9 @@
     <TextView android:id="@+id/is_group_summary"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginLeft="5dp"
-        android:text="GROUP_SUMMARY"
-        app:layout_constraintStart_toEndOf="@id/pkg"
-        app:layout_constraintTop_toTopOf="parent"
+        android:text="@string/sms_tpl_group_summary"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/pkg"
         android:textAppearance="?android:attr/textAppearanceSmall"
         android:textColor="@color/material_brown" />
 
@@ -28,7 +27,7 @@
         android:layout_height="wrap_content"
         android:text="Title"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/pkg"
+        app:layout_constraintTop_toBottomOf="@id/is_group_summary"
         android:textAppearance="?android:attr/textAppearanceMedium"
         android:textColor="@color/material_teal" />
 

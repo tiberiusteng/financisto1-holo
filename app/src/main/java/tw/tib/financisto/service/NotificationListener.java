@@ -3,6 +3,7 @@ package tw.tib.financisto.service;
 import static tw.tib.financisto.service.FinancistoService.ACTION_NEW_TRANSACTION_SMS;
 import static tw.tib.financisto.service.FinancistoService.ACTION_NEW_TRANSACTION_WALLET;
 import static tw.tib.financisto.service.FinancistoService.SMS_TRANSACTION_BODY;
+import static tw.tib.financisto.service.FinancistoService.SMS_TRANSACTION_IS_GROUP_SUMMARY;
 import static tw.tib.financisto.service.FinancistoService.SMS_TRANSACTION_NUMBER;
 import static tw.tib.financisto.service.FinancistoService.SMS_TRANSACTION_PACKAGE;
 import static tw.tib.financisto.service.FinancistoService.WALLET_TRANSACTION_TEXT;
@@ -156,8 +157,9 @@ public class NotificationListener extends NotificationListenerService {
             String pkg = notification.pkg;
             String title = notification.title;
             String body = notification.body;
+            boolean isGroupSummary = notification.isGroupSummary;
 
-            Log.d(TAG, "title=\"" + title + "\", body=\"" + body + "\"");
+            Log.d(TAG, "title=\"" + title + "\", body=\"" + body + "\", isGroupSummary=" + isGroupSummary);
             Log.d(TAG, sbn.getNotification().extras.toString());
 
             if (processTemplate && (existing == null || !body.equals(existing.body))) {
@@ -180,6 +182,7 @@ public class NotificationListener extends NotificationListenerService {
                     serviceIntent.putExtra(SMS_TRANSACTION_PACKAGE, pkg);
                     serviceIntent.putExtra(SMS_TRANSACTION_NUMBER, title);
                     serviceIntent.putExtra(SMS_TRANSACTION_BODY, body);
+                    serviceIntent.putExtra(SMS_TRANSACTION_IS_GROUP_SUMMARY, isGroupSummary);
                     FinancistoService.enqueueWork(context, serviceIntent);
                 }
             }

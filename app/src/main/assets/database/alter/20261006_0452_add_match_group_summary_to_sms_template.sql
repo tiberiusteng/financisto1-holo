@@ -1,0 +1,1 @@
+ALTER TABLE sms_template ADD COLUMN match_group_summary BOOLEAN NOT NULL DEFAULT 0;
