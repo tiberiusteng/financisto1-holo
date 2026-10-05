@@ -1,0 +1,1 @@
+ALTER TABLE sms_template ADD COLUMN location_id INTEGER NOT NULL DEFAULT 0;

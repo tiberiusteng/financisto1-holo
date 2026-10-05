@@ -315,7 +315,8 @@ public class DatabaseHelper extends DatabaseSchemaEvolution {
         account_id,
         to_account_id,
         is_income,
-        sort_order;
+        sort_order,
+        location_id;
 
         public static final String[] NORMAL_PROJECTION = EnumUtils.asStringArray(SmsTemplateColumns.values());
     }
@@ -324,7 +325,8 @@ public class DatabaseHelper extends DatabaseSchemaEvolution {
         cat_name,
         cat_level,
         payee_name,
-        project_name
+        project_name,
+        location_name
     }
 
     public static class TransactionAttributeColumns {

@@ -6,6 +6,7 @@ import android.util.Log;
 import tw.tib.financisto.R;
 import tw.tib.financisto.db.DatabaseAdapter;
 import tw.tib.financisto.model.Account;
+import tw.tib.financisto.model.MyLocation;
 import tw.tib.financisto.model.Payee;
 import tw.tib.financisto.model.Project;
 import tw.tib.financisto.model.SmsTemplate;
@@ -226,6 +227,11 @@ public class SmsTransactionProcessor {
                 if (templateProject != null) {
                     res.projectId = smsTemplate.projectId;
                 }
+            }
+
+            if (smsTemplate.locationId != MyLocation.CURRENT_LOCATION_ID
+                    && db.get(MyLocation.class, smsTemplate.locationId) != null) {
+                res.locationId = smsTemplate.locationId;
             }
 
             long fromAmount = (smsTemplate.isIncome ? 1 : -1) * Math.abs(price.multiply(HUNDRED).longValue());

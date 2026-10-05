@@ -32,6 +32,7 @@ import tw.tib.financisto.adapter.MyEntityAdapter;
 import tw.tib.financisto.db.DatabaseAdapter;
 import tw.tib.financisto.db.DatabaseHelper.SmsTemplateColumns;
 import tw.tib.financisto.model.Account;
+import tw.tib.financisto.model.MyLocation;
 import tw.tib.financisto.model.Payee;
 import tw.tib.financisto.model.Project;
 import tw.tib.financisto.model.SmsTemplate;
@@ -63,6 +64,7 @@ public class SmsTemplateActivity extends AbstractActivity {
     private CategorySelector<SmsTemplateActivity> categorySelector;
     private PayeeSelector<SmsTemplateActivity> payeeSelector;
     private ProjectSelector<SmsTemplateActivity> projectSelector;
+    private LocationSelector<SmsTemplateActivity> locationSelector;
 
     @Override
     protected void attachBaseContext(Context base) {
@@ -123,7 +125,7 @@ public class SmsTemplateActivity extends AbstractActivity {
 
         fillByCallerData();
         initCategorySelector();
-        initPayeeProjectSelector();
+        initPayeeProjectLocationSelector();
     }
 
     private void initTitleAndDynamicDescription() {
@@ -181,9 +183,11 @@ public class SmsTemplateActivity extends AbstractActivity {
         }
     }
 
-    private void initPayeeProjectSelector() {
+    private void initPayeeProjectLocationSelector() {
         payeeSelector = new PayeeSelector<>(this, db, x);
         projectSelector = new ProjectSelector<>(this, db, x);
+        locationSelector = new LocationSelector<>(this, db, x,
+                R.id.location_add, R.id.location_clear, R.string.no_location);
 
         if (smsTemplate != null) {
             if (smsTemplate.payeeId != Payee.EMPTY.id) {
@@ -199,6 +203,13 @@ public class SmsTemplateActivity extends AbstractActivity {
             projectSelector.createNode(selectors);
             projectSelector.fetchEntities();
             projectSelector.selectEntity(smsTemplate.projectId);
+
+            if (smsTemplate.locationId != MyLocation.CURRENT_LOCATION_ID) {
+                locationSelector.setIncludeEntityIds(smsTemplate.locationId);
+            }
+            locationSelector.createNode(selectors);
+            locationSelector.fetchEntities();
+            locationSelector.selectEntity(smsTemplate.locationId);
         }
     }
 
@@ -207,6 +218,7 @@ public class SmsTemplateActivity extends AbstractActivity {
         categorySelector.onClick(id);
         payeeSelector.onClick(id);
         projectSelector.onClick(id);
+        locationSelector.onClick(id);
     }
 
     private void initAccounts() {
@@ -247,8 +259,10 @@ public class SmsTemplateActivity extends AbstractActivity {
 
         payeeSelector.autoCreateNewEntityFromSearch();
         projectSelector.autoCreateNewEntityFromSearch();
+        locationSelector.autoCreateNewEntityFromSearch();
         smsTemplate.payeeId = payeeSelector.getSelectedEntityId();
         smsTemplate.projectId = projectSelector.getSelectedEntityId();
+        smsTemplate.locationId = locationSelector.getSelectedEntityId();
     }
 
     private void fillByCallerData() {
@@ -298,6 +312,7 @@ public class SmsTemplateActivity extends AbstractActivity {
         categorySelector.onSelectedId(id, selectedId);
         payeeSelector.onSelectedId(id, selectedId);
         projectSelector.onSelectedId(id, selectedId);
+        locationSelector.onSelectedId(id, selectedId);
         switch (id) {
             case R.id.category:
                 categoryId = categorySelector.getSelectedCategoryId();
@@ -309,6 +324,7 @@ public class SmsTemplateActivity extends AbstractActivity {
     public void onSelectedPos(int id, int selectedPos) {
         payeeSelector.onSelectedPos(id, selectedPos);
         projectSelector.onSelectedPos(id, selectedPos);
+        locationSelector.onSelectedPos(id, selectedPos);
     }
 
     @Override
@@ -317,6 +333,7 @@ public class SmsTemplateActivity extends AbstractActivity {
         categorySelector.onActivityResult(requestCode, resultCode, data);
         payeeSelector.onActivityResult(requestCode, resultCode, data);
         projectSelector.onActivityResult(requestCode, resultCode, data);
+        locationSelector.onActivityResult(requestCode, resultCode, data);
     }
 
     private void validateExampleAndHighlight(String template, String example) {
