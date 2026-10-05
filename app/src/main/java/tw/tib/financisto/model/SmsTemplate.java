@@ -44,6 +44,9 @@ public class SmsTemplate extends MyEntity implements SortableEntity {
     @Column(name = "project_id")
     public long projectId;
 
+    @Column(name = "location_id")
+    public long locationId;
+
     @Column(name = "account_id")
     public long accountId = -1;
 
@@ -68,6 +71,9 @@ public class SmsTemplate extends MyEntity implements SortableEntity {
     @Transient
     public String projectName;
 
+    @Transient
+    public String locationName;
+
     public static SmsTemplate fromCursor(Cursor c) {
         SmsTemplate t = new SmsTemplate();
         t.id = c.getLong(SmsTemplateColumns._id.ordinal());
@@ -78,6 +84,7 @@ public class SmsTemplate extends MyEntity implements SortableEntity {
         t.categoryId = c.getLong(SmsTemplateColumns.category_id.ordinal());
         t.payeeId = c.getLong(SmsTemplateColumns.payee_id.ordinal());
         t.projectId = c.getLong(SmsTemplateColumns.project_id.ordinal());
+        t.locationId = c.getLong(SmsTemplateColumns.location_id.ordinal());
         t.accountId = c.getLong(SmsTemplateColumns.account_id.ordinal());
         t.toAccountId = c.getLong(SmsTemplateColumns.to_account_id.ordinal());
         t.isIncome = c.getInt(SmsTemplateColumns.is_income.ordinal()) != 0;
@@ -92,6 +99,7 @@ public class SmsTemplate extends MyEntity implements SortableEntity {
         t.categoryLevel = c.getInt(offset + SmsTemplateListColumns.cat_level.ordinal());
         t.payeeName = c.getString(offset + SmsTemplateListColumns.payee_name.ordinal());
         t.projectName = c.getString(offset + SmsTemplateListColumns.project_name.ordinal());
+        t.locationName = c.getString(offset + SmsTemplateListColumns.location_name.ordinal());
         return t;
     }
 

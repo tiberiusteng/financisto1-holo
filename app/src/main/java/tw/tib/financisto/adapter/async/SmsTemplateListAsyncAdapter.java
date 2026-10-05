@@ -188,9 +188,13 @@ public class SmsTemplateListAsyncAdapter extends AsyncAdapter<SmsTemplate, SmsTe
                 titleView.setText(item.description);
                 senderView.setText(item.title);
                 templateView.setText(item.template);
-                extraView.setText(activity.getString(R.string.sms_tpl_list_category_payee_project_name,
+                String extra = activity.getString(R.string.sms_tpl_list_category_payee_project_name,
                         Category.getTitle(item.categoryName, item.categoryLevel),
-                        payeeName, item.projectName));
+                        payeeName, item.projectName);
+                if (item.locationName != null) {
+                    extra += ", " + item.locationName;
+                }
+                extraView.setText(extra);
             }
         }
 

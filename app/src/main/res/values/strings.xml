@@ -359,6 +359,7 @@
     <string name="duplicate_success_with_multiplier">Transaction has been duplicated with the current date and time (x%d)</string>
     <string name="no_category">No category</string>
     <string name="no_project">No project</string>
+    <string name="no_location">No location</string>
     <string name="no_period">No period</string>
     <string name="current_location">Current location</string>
     <string name="protection">Protection</string>
