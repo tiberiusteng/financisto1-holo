@@ -13,6 +13,16 @@
         android:textAppearance="?android:attr/textAppearanceSmall"
         android:textColor="@color/material_blue_gray" />
 
+    <TextView android:id="@+id/is_group_summary"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="5dp"
+        android:text="GROUP_SUMMARY"
+        app:layout_constraintStart_toEndOf="@id/pkg"
+        app:layout_constraintTop_toTopOf="parent"
+        android:textAppearance="?android:attr/textAppearanceSmall"
+        android:textColor="@color/material_brown" />
+
     <TextView android:id="@+id/title"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"

@@ -150,12 +150,14 @@ public class NotificationListActivity extends AppCompatActivity {
         public TextView pkg;
         public TextView title;
         public TextView body;
+        public TextView isGroupSummary;
         public NotificationListener.ParsedNotification notification;
 
         public NotificationViewHolder(@NonNull View itemView) {
             pkg = itemView.findViewById(R.id.pkg);
             title = itemView.findViewById(R.id.title);
             body = itemView.findViewById(R.id.body);
+            isGroupSummary = itemView.findViewById(R.id.is_group_summary);
         }
 
         public void bindView(NotificationListener.ParsedNotification notification) {
@@ -163,6 +165,13 @@ public class NotificationListActivity extends AppCompatActivity {
             pkg.setText(notification.pkg);
             title.setText(notification.title);
             body.setText(notification.body);
+            
+            if (notification.isGroupSummary) {
+                isGroupSummary.setVisibility(View.VISIBLE);
+            }
+            else {
+                isGroupSummary.setVisibility(View.GONE);
+            }
         }
     }
 }

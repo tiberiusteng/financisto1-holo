@@ -191,15 +191,16 @@ public class NotificationListener extends NotificationListenerService {
         Notification notification = sbn.getNotification();
         Bundle extras = notification.extras;
         // skip group summary notifications
-        if ((notification.flags & Notification.FLAG_GROUP_SUMMARY) != 0) {
-            return null;
-        }
+//        if ((notification.flags & Notification.FLAG_GROUP_SUMMARY) != 0) {
+//            return null;
+//        }
         if (extras != null) {
             StringBuilder sb = new StringBuilder();
             result = new ParsedNotification();
             result.pkg = sbn.getPackageName();
             result.key = sbn.getKey();
             result.postTime = sbn.getPostTime();
+            result.isGroupSummary = ((notification.flags & Notification.FLAG_GROUP_SUMMARY) != 0);
             result.title = getString(extras.getCharSequence(Notification.EXTRA_TITLE));
             String text = getString(extras.getCharSequence(Notification.EXTRA_TEXT));
             if (text != null) {
@@ -224,6 +225,7 @@ public class NotificationListener extends NotificationListenerService {
         public String title;
         public String text;
         public String body;
+        public boolean isGroupSummary;
         /** When the notification was posted; used to order the notification list. */
         public long postTime;
     }
