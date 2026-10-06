@@ -21,10 +21,10 @@ On your device. Back it up regularly. See [Backup and restore](backup-and-restor
 Choose or create a new backup folder, copy your old backup files into it, then restore from backup. Backups from Financier and Financisto 1.8+ can also be imported.
 
 **Why doesn't SMS auto-import work?**
-Google no longer allows SMS permissions for newly submitted apps. Use [notification templates](notification-templates) (SMS notifications can be parsed that way), or build from source.
+Google no longer allows SMS permissions for newly submitted apps. Use [notification templates](notification-templates.md) (SMS notifications can be parsed that way), or build from source.
 
 **My notification template stopped matching after an update.**
-Payee, account and project placeholders became non-greedy. Anchor the payee with fixed text after it, and see the [placeholder notes](notification-templates). The maintainer asks for an example by email if you can't make it work.
+Payee, account and project placeholders became non-greedy. Anchor the payee with fixed text after it, and see the [placeholder notes](notification-templates.md). The maintainer asks for an example by email if you can't make it work.
 
 **Dropbox authorization is stuck.**
 Close the browser and return to the app, or install the Dropbox app and retry.
@@ -33,7 +33,7 @@ Close the browser and return to the app, or install the Dropbox app and retry.
 Run Integrity Fix (Menu, More).
 
 **My notification template doesn't create transactions.**
-Check the permission, use the app's package name as the sender, fill the account's Card Number, and make sure no earlier template matches first. See [Notification templates](notification-templates).
+Check the permission, use the app's package name as the sender, fill the account's Card Number, and make sure no earlier template matches first. See [Notification templates](notification-templates.md).
 
 **How do I make a template for incoming money?**
 Set the plus sign in the template editor (left of the account). The category doesn't decide the sign.
