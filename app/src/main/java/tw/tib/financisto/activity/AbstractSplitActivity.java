@@ -261,7 +261,7 @@ public abstract class AbstractSplitActivity extends AbstractActivity {
                 for (String tag : intentTags) {
                     db.findOrInsertEntityByTitle(Tag.class, tag);
                 }
-                split.tags = String.join("\n", intentTags);
+                split.tags = "\n" + String.join("\n", intentTags) + "\n";
             }
         }
         if (tagSelector != null && split.tags != null) {

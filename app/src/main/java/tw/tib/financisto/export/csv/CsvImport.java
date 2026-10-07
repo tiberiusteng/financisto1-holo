@@ -23,6 +23,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import it.unimi.dsi.fastutil.objects.ObjectOpenHashSet;
 import tw.tib.financisto.R;
 import tw.tib.financisto.export.CategoryCache;
 import tw.tib.financisto.export.ProgressListener;
@@ -35,6 +36,7 @@ import tw.tib.financisto.model.Currency;
 import tw.tib.financisto.model.MyEntity;
 import tw.tib.financisto.model.Payee;
 import tw.tib.financisto.model.Project;
+import tw.tib.financisto.model.Tag;
 import tw.tib.financisto.model.Transaction;
 import tw.tib.financisto.model.TransactionAttribute;
 import tw.tib.financisto.model.TransactionStatus;
@@ -64,30 +66,33 @@ public class CsvImport {
     }
 
     public Object doImport() throws Exception {
-        long t0 = System.currentTimeMillis();
+        long t0 = System.nanoTime();
         List<CsvTransaction> transactions = parseTransactions();
-        long t1 = System.currentTimeMillis();
-        Log.i("Financisto", "Parsing transactions =" + (t1 - t0) + "ms");
+        long t1 = System.nanoTime();
+        Log.i("Financisto", "Parsing transactions = " + (t1 - t0) + " ns");
         Map<String, Category> categories = collectAndInsertCategories(transactions);
-        long t2 = System.currentTimeMillis();
-        Log.i("Financisto", "Collecting categories =" + (t2 - t1) + "ms");
+        long t2 = System.nanoTime();
+        Log.i("Financisto", "Collecting categories = " + (t2 - t1) + " ns");
         Map<String, Project> projects = collectAndInsertProjects(transactions);
-        long t3 = System.currentTimeMillis();
-        Log.i("Financisto", "Collecting projects =" + (t3 - t2) + "ms");
+        long t3 = System.nanoTime();
+        Log.i("Financisto", "Collecting projects = " + (t3 - t2) + " ns");
         Map<String, Payee> payees = collectAndInsertPayees(transactions);
-        long t4 = System.currentTimeMillis();
-        Log.i("Financisto", "Collecting payees =" + (t4 - t3) + "ms");
+        long t4 = System.nanoTime();
+        Log.i("Financisto", "Collecting payees = " + (t4 - t3) + " ns");
         Map<String, Currency> currencies = collectAndInsertCurrencies(transactions);
-        long t5 = System.currentTimeMillis();
-        Log.i("Financisto", "Collecting currencies =" + (t5 - t4) + "ms");
+        long t5 = System.nanoTime();
+        Log.i("Financisto", "Collecting currencies = " + (t5 - t4) + " ns");
+        Map<String, Tag> tags = collectAndInsertTags(transactions);
+        long t6 = System.nanoTime();
+        Log.i("Financisto", "Collecting tags = " + (t6 - t5) + " ns");
         Map<String, Account> accountsByName = db.getAllAccountsByTitleMap();
         Map<Long, Account> accountsById = db.getAllAccountsMap();
-        long t6 = System.currentTimeMillis();
-        Log.i("Financisto", "Collecting accounts =" + (t6 - t5) + "ms");
-        importTransactions(transactions, accountsByName, accountsById, currencies, categories, projects, payees);
-        long t7 = System.currentTimeMillis();
-        Log.i("Financisto", "Inserting transactions =" + (t7 - t6) + "ms");
-        Log.i("Financisto", "Overall csv import =" + ((t7 - t0) / 1000) + "s");
+        long t7 = System.nanoTime();
+        Log.i("Financisto", "Collecting accounts = " + (t7 - t6) + " ns");
+        importTransactions(transactions, accountsByName, accountsById, currencies, categories, projects, payees, tags);
+        long t8 = System.nanoTime();
+        Log.i("Financisto", "Inserting transactions = " + (t8 - t7) + " ns");
+        Log.i("Financisto", "Overall csv import = " + ((t8 - t0) / 1000) + " us");
 
         String path = options.uri.getPath();
         return path.substring(path.lastIndexOf("/") + 1) + " imported!";
@@ -121,6 +126,21 @@ public class CsvImport {
                 p.title = payee;
                 db.saveOrUpdate(p);
                 map.put(payee, p);
+            }
+        }
+        return map;
+    }
+
+    public Map<String, Tag> collectAndInsertTags(List<CsvTransaction> transactions) {
+        Map<String, Tag> map = db.getAllTagByTitleMap();
+        for (CsvTransaction transaction : transactions) {
+            var tagSet = transaction.tags.trim().split("\n");
+            for (String tagString : tagSet) {
+                if (isNewEntity(map, tagString)) {
+                    Tag t = new Tag(tagString);
+                    db.saveOrUpdate(t);
+                    map.put(tagString, t);
+                }
             }
         }
         return map;
@@ -164,7 +184,8 @@ public class CsvImport {
                                     Map<String, Currency> currencies,
                                     Map<String, Category> categories,
                                     Map<String, Project> projects,
-                                    Map<String, Payee> payees) throws ImportExportException {
+                                    Map<String, Payee> payees,
+                                    Map<String, Tag> tags) throws ImportExportException {
         SQLiteDatabase database = db.db();
         database.beginTransaction();
         try {
@@ -269,6 +290,8 @@ public class CsvImport {
                                     transaction.categoryParent = fieldValue;
                                 } else if (transactionField.equals("note")) {
                                     transaction.note = fieldValue;
+                                } else if (transactionField.equals("tags")) {
+                                    transaction.tags = fieldValue.trim();
                                 } else if (transactionField.equals("project")) {
                                     transaction.project = fieldValue;
                                 } else if (transactionField.equals("currency")) {

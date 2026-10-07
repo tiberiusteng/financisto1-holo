@@ -201,6 +201,14 @@
                     android:checked="false"
                     android:text="@string/export_use_currency_specific_decimals" />
 
+                <CheckBox
+                    android:id="@+id/checkboxExportTags"
+                    android:layout_columnWeight="1"
+                    android:layout_width="0dp"
+                    android:layout_gravity="fill"
+                    android:checked="false"
+                    android:text="@string/export_tags" />
+
             </GridLayout>
 
         </LinearLayout>

@@ -37,6 +37,7 @@ public class Tag extends MyEntity implements SortableEntity {
 
     public Tag(String title) {
         this.title = title;
+        this.color = "";
         this.isActive = true;
     }
 

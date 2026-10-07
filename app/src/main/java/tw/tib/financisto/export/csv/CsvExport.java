@@ -42,7 +42,7 @@ import java.util.Set;
 public class CsvExport extends Export {
     private static final String TAG = "CsvExport";
 
-    static final String[] HEADER = "txid,date,time,status,account,amount,balance,currency,to account,to amount,to balance,to currency,original amount,original currency,category,parent,payee,location,project,note".split(",");
+    static final String[] HEADER = "txid,date,time,status,account,amount,balance,currency,to account,to amount,to balance,to currency,original amount,original currency,category,parent,payee,location,project,note,tags".split(",");
     static final String TXID_HEADER = "txid";
     static final String STATUS_HEADER = "status";
     static final String BALANCE_HEADER = "balance";
@@ -50,6 +50,7 @@ public class CsvExport extends Export {
     static final String TO_AMOUNT_HEADER = "to amount";
     static final String TO_BALANCE_HEADER = "to balance";
     static final String TO_CURRENCY_HEADER = "to currency";
+    static final String TAGS_HEADER = "tags";
 
     private static final MyLocation TRANSFER_IN = new MyLocation();
     private static final MyLocation TRANSFER_OUT = new MyLocation();
@@ -106,6 +107,7 @@ public class CsvExport extends Export {
                 if (h.equals(TO_AMOUNT_HEADER) && !options.exportTransferInSingleLine) continue;
                 if (h.equals(TO_BALANCE_HEADER) && !(options.exportTransferInSingleLine && options.exportRunningBalance)) continue;
                 if (h.equals(TO_CURRENCY_HEADER) && !options.exportTransferInSingleLine) continue;
+                if (h.equals(TAGS_HEADER) && !options.exportTags) continue;
                 p.print(h);
             }
             if (options.exportAttributes) {
@@ -155,17 +157,17 @@ public class CsvExport extends Export {
                 writeLine(p, t.id, dt, t.status, fromAccount.title, t.fromAmount, t.fromAccountBalance, fromAccount.currency.id,
                         toAccount.title, t.toAmount, t.toAccountBalance, toAccount.currency.id,
                         0, 0,
-                        category, null, null, project, t.note);
+                        category, null, null, project, t.note, t.tags);
             }
             else {
                 writeLine(p, t.id, dt, t.status, fromAccount.title, t.fromAmount, t.fromAccountBalance, fromAccount.currency.id,
                         null, 0, 0, 0,
                         0, 0,
-                        category, null, TRANSFER_OUT, project, t.note);
+                        category, null, TRANSFER_OUT, project, t.note, t.tags);
                 writeLine(p, t.id, dt, t.status, toAccount.title, t.toAmount, t.toAccountBalance, toAccount.currency.id,
                         null, 0, 0, 0,
                         0, 0,
-                        category, null, TRANSFER_IN, project, t.note);
+                        category, null, TRANSFER_IN, project, t.note, t.tags);
             }
         } else {
             boolean isSplit = (category != null && category.isSplit());
@@ -177,7 +179,7 @@ public class CsvExport extends Export {
                 writeLine(p, t.id, dt, t.status, fromAccount.title, t.fromAmount, t.fromAccountBalance, fromAccount.currency.id,
                         null, 0, 0, 0,
                         t.originalFromAmount, t.originalCurrencyId,
-                        category, payee, location, project, t.note);
+                        category, payee, location, project, t.note, t.tags);
             }
         }
     }
@@ -186,7 +188,9 @@ public class CsvExport extends Export {
                            String account, long amount, long balance, long currencyId,
                            String toAccount, long toAmount, long toBalance, long toCurrencyId,
                            long originalAmount, long originalCurrencyId,
-                           Category category, Payee payee, MyLocation location, Project project, String note) throws IOException {
+                           Category category, Payee payee, MyLocation location, Project project,
+                           String note, String tags) throws IOException
+    {
         if (options.exportTxIDs) {
             p.print(String.valueOf(transactionId));
         }
@@ -280,6 +284,14 @@ public class CsvExport extends Export {
         p.print(location != null ? location.title : "");
         p.print(project != null ? project.title : "");
         p.print(note);
+        if (options.exportTags) {
+            if (tags == null) {
+                p.print("");
+            } else {
+                // strip leading and trailing "\n", but tags are still delimited with "\n"
+                p.print(tags.trim());
+            }
+        }
         if (options.exportAttributes) {
             Map<Long, String> attrs = db.getAllAttributesForTransaction(transactionId);
             for (long i : usedAttributes) {

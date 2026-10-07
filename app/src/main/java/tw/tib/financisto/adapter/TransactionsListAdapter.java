@@ -188,7 +188,7 @@ public class TransactionsListAdapter extends BlotterListAdapter {
         if (v.iconView2 != null) {
             long parentId = cursor.getLong(BlotterColumns.parent_id.ordinal());
             if (parentId == 0) {
-                v.iconView2.setVisibility(View.INVISIBLE);
+                v.iconView2.setVisibility(View.GONE);
             } else {
                 v.iconView2.setVisibility(View.VISIBLE);
                 v.iconView2.setImageDrawable(icBlotterSplit);

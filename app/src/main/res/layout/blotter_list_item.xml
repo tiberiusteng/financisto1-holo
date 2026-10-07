@@ -44,15 +44,18 @@
 
     <TextView
         android:id="@+id/top3"
-        android:layout_width="wrap_content"
+        android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginTop="-1sp"
         android:layout_marginStart="4sp"
         android:paddingTop="1sp"
         android:singleLine="true"
+        android:ellipsize="end"
         android:text="top3"
         android:textAppearance="@style/ListSecondary"
+        app:layout_constraintHorizontal_bias="0"
         app:layout_constraintStart_toEndOf="@id/top2"
+        app:layout_constraintEnd_toStartOf="@id/right_top_2"
         app:layout_constraintTop_toTopOf="parent" />
 
     <ImageView android:id="@+id/right_top_2"

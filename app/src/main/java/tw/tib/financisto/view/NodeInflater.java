@@ -91,7 +91,7 @@ public class NodeInflater {
 			return this;
 		}
 
-		public Builder withData(String label) {
+		public Builder withData(CharSequence label) {
 			TextView labelView = v.findViewById(R.id.data);
 			labelView.setText(label);
 			return this;

@@ -25,7 +25,9 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import java.util.List;
+import java.util.Map;
 
+import it.unimi.dsi.fastutil.objects.ObjectOpenHashSet;
 import tw.tib.financisto.R;
 import tw.tib.financisto.activity.BlotterOperations;
 import tw.tib.financisto.db.DatabaseAdapter;
@@ -34,6 +36,7 @@ import tw.tib.financisto.model.AccountType;
 import tw.tib.financisto.model.Category;
 import tw.tib.financisto.model.MyLocation;
 import tw.tib.financisto.model.Project;
+import tw.tib.financisto.model.Tag;
 import tw.tib.financisto.model.Transaction;
 import tw.tib.financisto.model.TransactionAttributeInfo;
 import tw.tib.financisto.model.TransactionInfo;
@@ -42,6 +45,7 @@ import tw.tib.financisto.recur.Recurrence;
 import tw.tib.financisto.utils.MyPreferences;
 import tw.tib.financisto.utils.Utils;
 import tw.tib.financisto.view.NodeInflater;
+import tw.tib.financisto.view.PillSpan;
 
 import static tw.tib.financisto.utils.Utils.isNotEmpty;
 
@@ -53,6 +57,7 @@ public class TransactionInfoDialog {
     private final LayoutInflater layoutInflater;
     private final int splitPadding;
     private final Utils u;
+    private Map<String, Tag> allTags;
 
     public TransactionInfoDialog(Context context, DatabaseAdapter db, NodeInflater inflater) {
         this.context = context;
@@ -149,6 +154,15 @@ public class TransactionInfoDialog {
                 LinearLayout note = add(layout, context.getString(R.string.note), split.note, true);
                 note.setPadding(splitPadding, 0, 0, 0);
             }
+            // split child tags
+            if (split.tags != null) {
+                if (allTags == null) {
+                    allTags = db.getAllTagByTitleMap();
+                }
+                var tagsSet = new ObjectOpenHashSet<>(split.tags.trim().split("\n"));
+                LinearLayout tags = add(layout, context.getString(R.string.tags), PillSpan.formatAsPills(context, tagsSet, allTags), true);
+                tags.setPadding(splitPadding, 0, 0, 0);
+            }
             inflater.addDivider(layout);
         }
     }
@@ -186,6 +200,14 @@ public class TransactionInfoDialog {
 
         if (!Utils.isEmpty(ti.note)) {
             add(layout, R.string.note, ti.note);
+        }
+
+        if (ti.tags != null) {
+            if (allTags == null) {
+                allTags = db.getAllTagByTitleMap();
+            }
+            var tags = new ObjectOpenHashSet<>(ti.tags.trim().split("\n"));
+            add(layout, R.string.tags, PillSpan.formatAsPills(context, tags, allTags));
         }
 
         MyLocation location = ti.location;
@@ -255,7 +277,7 @@ public class TransactionInfoDialog {
         });
     }
 
-    private TextView add(LinearLayout layout, int labelId, String data) {
+    private TextView add(LinearLayout layout, int labelId, CharSequence data) {
         View v = inflater.new Builder(layout, R.layout.select_entry_simple).withLabel(labelId)
                 .withData(data).create();
 
@@ -297,7 +319,7 @@ public class TransactionInfoDialog {
         return r;
     }
 
-    private LinearLayout add(LinearLayout layout, String label, String data, boolean noDivider) {
+    private LinearLayout add(LinearLayout layout, String label, CharSequence data, boolean noDivider) {
         var builder = inflater.new Builder(layout, R.layout.select_entry_simple).withLabel(label)
                 .withData(data);
         if (noDivider) builder.withNoDivider();

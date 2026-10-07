@@ -44,6 +44,7 @@ public class CsvTransaction {
     public String categoryParent;
     public String note;
     public String project;
+    public String tags;
     public String currency;
     public String toCurrency;
     public long delta;
@@ -127,6 +128,9 @@ public class CsvTransaction {
         if (note != null) {
             t.note = note;
         }
+        if (tags != null) {
+            t.tags = "\n" + tags + "\n";
+        }
     }
 
     Transaction createTransaction(
@@ -191,6 +195,9 @@ public class CsvTransaction {
             t.originalCurrencyId = currency.id;
         }
         t.note = note;
+        if (tags != null) {
+            t.tags = "\n" + tags + "\n";
+        }
         return t;
     }
 

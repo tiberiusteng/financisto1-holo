@@ -181,7 +181,7 @@ public class IntentTransactionProcessor {
                 for (String t : tags) {
                     db.findOrInsertEntityByTitle(Tag.class, t);
                 }
-                tx.tags = String.join("\n", tags);
+                tx.tags = "\n" + String.join("\n", tags) + "\n";
             }
 
             long timestampMillis = intent.getLongExtra(TIMESTAMP_MILLIS, 0);
