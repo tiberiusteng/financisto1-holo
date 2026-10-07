@@ -2,14 +2,12 @@ package tw.tib.financisto;
 
 import android.os.StrictMode;
 
-import androidx.multidex.MultiDexApplication;
-
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
 import it.unimi.dsi.fastutil.longs.Long2LongOpenHashMap;
 
-public class Application extends MultiDexApplication {
+public class Application extends android.app.Application {
     private static Application instance;
     private static ExecutorService executor;
     // transaction ID -> copied timestamp millis

@@ -15,12 +15,12 @@ apply plugin: 'com.android.application'
 
 android {
     namespace = 'tw.tib.financisto'
-    compileSdk = 36
+    compileSdk = 37
 
     defaultConfig {
         applicationId "tw.tib.financisto"
         minSdkVersion 23
-        targetSdkVersion 36
+        targetSdkVersion 37
         multiDexEnabled = true
 
         testApplicationId "tw.tib.financisto.test"
@@ -39,14 +39,15 @@ android {
     buildTypes {
         release {
             minifyEnabled true
-            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.txt', 'proguard-google-api-client.txt'
+            proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.txt', 'proguard-google-api-client.txt'
             signingConfig = signingConfigs.debug
         }
     }
     packagingOptions {
-        pickFirst 'META-INF/LICENSE'
-        exclude 'META-INF/DEPENDENCIES'
-        exclude 'META-INF/INDEX.LIST'
+        resources {
+            excludes += ['META-INF/DEPENDENCIES', 'META-INF/INDEX.LIST']
+            pickFirsts += ['META-INF/LICENSE']
+        }
     }
 
     compileOptions {
@@ -102,17 +103,17 @@ dependencies {
     implementation 'androidx.activity:activity:1.13.0'
     implementation 'androidx.appcompat:appcompat:1.6.1'
     implementation 'androidx.biometric:biometric:1.1.0'
+    implementation 'androidx.coordinatorlayout:coordinatorlayout:1.1.0'
     implementation 'androidx.constraintlayout:constraintlayout:2.1.4'
     implementation 'androidx.documentfile:documentfile:1.0.1'
     implementation 'androidx.fragment:fragment:1.6.2'
     implementation 'androidx.legacy:legacy-support-v4:1.0.0'
     implementation 'androidx.loader:loader:1.1.0'
-    implementation 'androidx.multidex:multidex:2.0.1'
     implementation 'androidx.preference:preference:1.2.1'
     implementation 'androidx.recyclerview:recyclerview:1.3.2'
     implementation 'androidx.tracing:tracing:1.2.0'
     implementation 'androidx.viewpager2:viewpager2:1.0.0'
-    implementation 'androidx.work:work-runtime:2.9.0'
+    implementation 'androidx.work:work-runtime:2.11.2'
 
     implementation 'com.github.bumptech.glide:glide:4.16.0'
 
@@ -144,6 +145,8 @@ dependencies {
     implementation 'commons-io:commons-io:2.5'
 
     implementation 'org.apache.commons:commons-csv:1.14.1'
+
+    implementation 'org.jsoup:jsoup:1.23.2'
 
     coreLibraryDesugaring 'com.android.tools:desugar_jdk_libs:2.1.5'
 
