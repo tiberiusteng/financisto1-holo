@@ -9,9 +9,11 @@ import android.text.Spanned;
 import android.text.style.ReplacementSpan;
 import androidx.core.content.ContextCompat;
 
+import java.util.Map;
 import java.util.Set;
 
 import tw.tib.financisto.R;
+import tw.tib.financisto.model.Tag;
 
 public class PillSpan extends ReplacementSpan {
 
@@ -24,18 +26,18 @@ public class PillSpan extends ReplacementSpan {
     private final float marginHorizontal;
     private final float marginVertical;
 
-    public PillSpan(Context context) {
-        this(context, false);
+    public PillSpan(Context context, Integer backgroundColor) {
+        this(context, false, backgroundColor);
     }
 
-    public PillSpan(Context context, boolean isCounter) {
+    public PillSpan(Context context, boolean isCounter, Integer backgroundColor) {
         float density = context.getResources().getDisplayMetrics().density;
         if (isCounter) {
             this.backgroundColor = ContextCompat.getColor(context, R.color.tag_counter_bg);
             this.textColor = ContextCompat.getColor(context, R.color.tag_counter_text);
             this.strokeColor = ContextCompat.getColor(context, R.color.tag_counter_stroke);
         } else {
-            this.backgroundColor = ContextCompat.getColor(context, R.color.tag_pill_bg);
+            this.backgroundColor = backgroundColor == null ? ContextCompat.getColor(context, R.color.tag_pill_bg) : backgroundColor;
             this.textColor = ContextCompat.getColor(context, R.color.tag_pill_text);
             this.strokeColor = ContextCompat.getColor(context, R.color.tag_pill_stroke);
         }
@@ -82,7 +84,7 @@ public class PillSpan extends ReplacementSpan {
 
         // 2. Draw border
         paint.setStyle(Paint.Style.STROKE);
-        paint.setStrokeWidth(1f);
+        paint.setStrokeWidth(2f);
         paint.setColor(strokeColor);
         canvas.drawRoundRect(rect, cornerRadius, cornerRadius, paint);
 
@@ -96,7 +98,9 @@ public class PillSpan extends ReplacementSpan {
         paint.setStyle(origStyle);
     }
 
-    public static CharSequence formatAsPills(Context context, Set<String> tags) {
+    public static CharSequence formatAsPills(Context context, Set<String> tags, Map<String, Tag> allTags) {
+        final int defaultBackgroundColor = ContextCompat.getColor(context, R.color.tag_pill_bg);
+
         if (tags.isEmpty()) {
             return "";
         }
@@ -112,26 +116,31 @@ public class PillSpan extends ReplacementSpan {
             return "";
         }
 
-        final int MAX_INLINE_TAGS = 4;
-        boolean hasOverflow = validTags.size() > MAX_INLINE_TAGS;
-        int displayCount = hasOverflow ? 3 : validTags.size();
+        // this is only used in tag selector in transaction edit activity
+        // should always show all selected tags
+
+//        final int MAX_INLINE_TAGS = 4;
+//        boolean hasOverflow = validTags.size() > MAX_INLINE_TAGS;
+//        int displayCount = hasOverflow ? 3 : validTags.size();
 
         SpannableStringBuilder ssb = new SpannableStringBuilder();
-        for (int i = 0; i < displayCount; i++) {
+        for (String tag : validTags) {
             if (ssb.length() > 0) {
                 ssb.append(" ");
             }
-            ssb.append(validTags.get(i), new PillSpan(context, false), Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
+            Tag tagEntity = allTags.get(tag);
+            int color = tagEntity == null ? defaultBackgroundColor : tagEntity.getColorInt();
+            ssb.append(tag, new PillSpan(context, color), Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
         }
 
-        if (hasOverflow) {
-            int remaining = validTags.size() - displayCount;
-            String counterText = context.getString(R.string.tags_more, remaining);
-            if (ssb.length() > 0) {
-                ssb.append(" ");
-            }
-            ssb.append(counterText, new PillSpan(context, true), Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
-        }
+//        if (hasOverflow) {
+//            int remaining = validTags.size() - displayCount;
+//            String counterText = context.getString(R.string.tags_more, remaining);
+//            if (ssb.length() > 0) {
+//                ssb.append(" ");
+//            }
+//            ssb.append(counterText, new PillSpan(context, true), Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
+//        }
 
         return ssb;
     }

@@ -29,6 +29,7 @@ import tw.tib.financisto.R;
 import tw.tib.financisto.db.DatabaseAdapter;
 import tw.tib.financisto.db.DatabaseHelper.BlotterColumns;
 import tw.tib.financisto.model.Currency;
+import tw.tib.financisto.model.Tag;
 import tw.tib.financisto.utils.CurrencyCache;
 import tw.tib.financisto.utils.MyPreferences;
 import tw.tib.financisto.utils.Utils;
@@ -138,7 +139,9 @@ public class TransactionsListAdapter extends BlotterListAdapter {
                     else {
                         started = true;
                     }
-                    ssb.append(" " + trimmed + " ", new BackgroundColorSpan(context.getColor(R.color.tag_pill_stroke)), Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
+                    Tag tagEntity = title2Tag.get(tag);
+                    int tagColor = tagEntity == null ? defaultTagColor : tagEntity.getColorInt();
+                    ssb.append(" " + trimmed + " ", new BackgroundColorSpan(tagColor), Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
                 }
             }
             v.top3View.setVisibility(View.VISIBLE);

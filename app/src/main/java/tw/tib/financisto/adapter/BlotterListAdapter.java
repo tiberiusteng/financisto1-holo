@@ -31,6 +31,7 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Map;
 
 import it.unimi.dsi.fastutil.longs.Long2LongOpenHashMap;
 import tw.tib.financisto.Application;
@@ -44,6 +45,7 @@ import com.google.common.primitives.Longs;
 
 import tw.tib.financisto.model.CategoryEntity;
 import tw.tib.financisto.model.Currency;
+import tw.tib.financisto.model.Tag;
 import tw.tib.financisto.model.TransactionStatus;
 import tw.tib.financisto.recur.Recurrence;
 import tw.tib.financisto.utils.CurrencyCache;
@@ -76,6 +78,7 @@ public class BlotterListAdapter extends ResourceCursorAdapter {
     protected final int noteColor;
     protected final int dateColor;
     protected final int dateWeekendColor;
+    protected final int defaultTagColor;
 
     private boolean allChecked = true;
     private final HashMap<Long, Boolean> checkedItems = new HashMap<Long, Boolean>();
@@ -89,6 +92,8 @@ public class BlotterListAdapter extends ResourceCursorAdapter {
     protected boolean highlightCopiedUnedited;
     protected final Long2LongOpenHashMap copiedUneditedTransactions;
     protected final long listAdapterTimestamp;
+
+    protected Map<String, Tag> title2Tag;
 
     protected long highlightTransactionId = -1;
 
@@ -116,6 +121,7 @@ public class BlotterListAdapter extends ResourceCursorAdapter {
         this.noteColor = context.getResources().getColor(R.color.transaction_note);
         this.dateColor = context.getResources().getColor(R.color.transaction_date);
         this.dateWeekendColor = context.getResources().getColor(R.color.transaction_date_weekend);
+        this.defaultTagColor = context.getColor(R.color.tag_pill_bg);
         this.copiedUneditedTransactions = Application.getCopiedUneditedTransactions();
         this.listAdapterTimestamp = System.currentTimeMillis();
         this.db = db;
@@ -130,6 +136,8 @@ public class BlotterListAdapter extends ResourceCursorAdapter {
         this.showTimeOfDay = MyPreferences.isBlotterShowTimeOfDay();
         this.highlightCopiedUnedited = MyPreferences.isHighlightCopiedUneditedTransactions();
         this.transactionTitleUtils = new TransactionTitleUtils(context, MyPreferences.isColorizeBlotterItem());
+
+        title2Tag = db.getAllTagByTitleMap();
     }
 
     protected boolean isShowRunningBalance() {
@@ -296,7 +304,9 @@ public class BlotterListAdapter extends ResourceCursorAdapter {
                         else {
                             started = true;
                         }
-                        ssb.append(" " + trimmed + " ", new BackgroundColorSpan(context.getColor(R.color.tag_pill_stroke)), Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
+                        Tag tagEntity = title2Tag.get(trimmed);
+                        int tagColor = tagEntity == null ? defaultTagColor : tagEntity.getColorInt();
+                        ssb.append(" " + trimmed + " ", new BackgroundColorSpan(tagColor), Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
                     }
                 }
                 v.top3View.setVisibility(View.VISIBLE);

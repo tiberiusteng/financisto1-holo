@@ -17,12 +17,16 @@ import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.util.Log;
 
+import it.unimi.dsi.fastutil.longs.Long2ObjectMap;
+import it.unimi.dsi.fastutil.longs.Long2ObjectOpenHashMap;
+import it.unimi.dsi.fastutil.objects.Object2ObjectOpenHashMap;
 import tw.tib.financisto.blotter.BlotterFilter;
 import tw.tib.financisto.datetime.Period;
 import tw.tib.financisto.filter.Criterion;
 import tw.tib.financisto.filter.WhereFilter;
 import tw.tib.financisto.model.AccountForSearch;
 import tw.tib.financisto.model.Currency;
+import tw.tib.financisto.model.Tag;
 import tw.tib.financisto.utils.MyPreferences;
 import tw.tib.financisto.utils.RecurUtils;
 import tw.tib.financisto.utils.StringUtil;
@@ -447,7 +451,7 @@ public abstract class MyEntityManager extends EntityManager {
 		return entitiesAsTitleMap(getAllProjectsList(includeNoProject));
 	}
 
-	public Map<Long, Project> getAllProjectsByIdMap(boolean includeNoProject) {
+	public Long2ObjectMap<Project> getAllProjectsByIdMap(boolean includeNoProject) {
 		return entitiesAsIdMap(getAllProjectsList(includeNoProject));
 	}
 
@@ -641,12 +645,16 @@ public abstract class MyEntityManager extends EntityManager {
 		return entitiesAsTitleMap(getAllPayeeList());
 	}
 
-	public Map<Long, Payee> getAllPayeeByIdMap() {
+	public Long2ObjectMap<Payee> getAllPayeeByIdMap() {
 		return entitiesAsIdMap(getAllPayeeList());
 	}
 
 	public Cursor getAllPayeesLike(String constraint) {
 		return filterAllEntities(Payee.class, constraint);
+	}
+
+	public Map<String, Tag> getAllTagByTitleMap() {
+		return entitiesAsTitleMap(getAllEntitiesList(Tag.class, false, false));
 	}
 
 	public <T extends MyEntity> Cursor filterAllEntities(Class<T> entityClass, String titleFilter) {
@@ -692,15 +700,15 @@ public abstract class MyEntityManager extends EntityManager {
 	}
 
 	private static <T extends MyEntity> Map<String, T> entitiesAsTitleMap(List<T> entities) {
-		Map<String, T> map = new HashMap<>();
+		Map<String, T> map = new Object2ObjectOpenHashMap<>();
 		for (T e : entities) {
 			map.put(e.title, e);
 		}
 		return map;
 	}
 
-	private static <T extends MyEntity> Map<Long, T> entitiesAsIdMap(List<T> entities) {
-		Map<Long, T> map = new HashMap<>();
+	private static <T extends MyEntity> Long2ObjectMap<T> entitiesAsIdMap(List<T> entities) {
+		var map = new Long2ObjectOpenHashMap<T>();
 		for (T e : entities) {
 			map.put(e.id, e);
 		}

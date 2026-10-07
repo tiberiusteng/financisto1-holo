@@ -24,6 +24,8 @@ import android.database.sqlite.SQLiteException;
 import android.database.sqlite.SQLiteOpenHelper;
 import android.util.Log;
 
+import it.unimi.dsi.fastutil.objects.ObjectOpenHashSet;
+
 /**
  * Schema evolution helper.
  * Put sql files into assets/database directory as following:
@@ -86,14 +88,26 @@ public class DatabaseSchemaEvolution extends SQLiteOpenHelper {
 	@Override
 	public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
 		try {
+			db.beginTransaction();
+
 			Log.i(TAG, "Upgrading database from version "+oldVersion+" to version "+newVersion+"...");
 			Log.i(TAG, "Running alter scripts...");
 			runAllScripts(db, ALTER_PATH, true);
 			Log.i(TAG, "Running create view scripts...");
 			runAllScripts(db, VIEW_PATH, false);
+
+			if (oldVersion < 253) {
+				updateTagDelimiters(db);
+			}
+
+			db.setTransactionSuccessful();
+
 		} catch (Exception ex) {
 			throw new RuntimeException("Failed to upgrade database", ex);
-		}		
+
+		} finally {
+			db.endTransaction();
+		}
 	}
 	
 	public void runAlterScript(SQLiteDatabase db, String name) 
@@ -194,4 +208,35 @@ public class DatabaseSchemaEvolution extends SQLiteOpenHelper {
 		return sb.toString().trim();
 	}
 
+	/**
+	 * Update tags for database versions < 253
+	 * 1. tags are prefixed and suffixed with "\n" so that every tag can be matched with "% \n tag \n %"
+	 * 2. ensure every tags used are in `tag` table, use `tag` table as single source of truth
+	 */
+	private void updateTagDelimiters(SQLiteDatabase db) {
+		var txTags = new ObjectOpenHashSet<String>();
+		var allTags = new ObjectOpenHashSet<String>();
+		var tx = db.query("transactions", new String[]{"_id", "tags"}, "tags IS NOT NULL", null, null, null, null);
+
+		while (tx.moveToNext()) {
+			var id = tx.getLong(0);
+			txTags.clear();
+			for (var tag : tx.getString(1).split("\n")) {
+				if (!tag.isBlank()) {
+					txTags.add(tag);
+					if (!allTags.contains(tag)) {
+						allTags.add(tag);
+						db.execSQL("INSERT OR IGNORE INTO tag (title) VALUES (?)", new String[]{tag});
+					}
+				}
+			}
+			if (!txTags.isEmpty()) {
+				db.execSQL("UPDATE transactions SET tags = ? WHERE _id = ?", new String[]{
+						"\n" + String.join("\n", txTags) + "\n",
+						String.valueOf(id)});
+			}
+		}
+
+		tx.close();
+	}
 }

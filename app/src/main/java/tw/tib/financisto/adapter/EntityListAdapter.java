@@ -14,7 +14,12 @@ import java.util.List;
 
 import tw.tib.financisto.R;
 import tw.tib.financisto.model.MyEntity;
+import tw.tib.financisto.model.Tag;
+import tw.tib.financisto.view.PillSpan;
+
 import android.content.Context;
+import android.text.SpannableStringBuilder;
+import android.text.Spanned;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -25,8 +30,10 @@ public class EntityListAdapter<T extends MyEntity> extends BaseAdapter {
 	private final LayoutInflater inflater;
 	
 	private List<T> entities;
+	private Context context;
 	
 	public EntityListAdapter(Context context, List<T> entities) {
+		this.context = context;
 		this.entities = entities;
 		this.inflater = (LayoutInflater)context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
 	}
@@ -67,7 +74,14 @@ public class EntityListAdapter<T extends MyEntity> extends BaseAdapter {
 		v.amountView.setVisibility(View.GONE);
 		
 		MyEntity e = getItem(position);
-		v.lineView.setText(e.title);
+		CharSequence title;
+		if (e instanceof Tag t) {
+			title = new SpannableStringBuilder().append(t.title, new PillSpan(context, t.getColorInt()), Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
+		}
+		else {
+			title = e.title;
+		}
+		v.lineView.setText(title);
 		if (e.isActive) {
 			v.lineView.setEnabled(true);
 		}

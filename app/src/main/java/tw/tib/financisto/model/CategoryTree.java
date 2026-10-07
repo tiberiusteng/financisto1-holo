@@ -14,6 +14,9 @@ import java.util.*;
 
 import android.database.Cursor;
 
+import it.unimi.dsi.fastutil.longs.Long2ObjectMap;
+import it.unimi.dsi.fastutil.longs.Long2ObjectOpenHashMap;
+
 public class CategoryTree<T extends CategoryEntity<T>> implements Iterable<T> {
 	
 	private final ArrayList<T> roots;
@@ -57,13 +60,13 @@ public class CategoryTree<T extends CategoryEntity<T>> implements Iterable<T> {
 
         T createNode(Cursor c);
     }
-	public Map<Long, T> asMap() {
-		Map<Long, T> map = new HashMap<Long, T>();
+	public Long2ObjectMap<T> asMap() {
+		var map = new Long2ObjectOpenHashMap<T>();
 		initializeMap(map, this);
 		return map;
 	}
 
-	private void initializeMap(Map<Long, T> map, CategoryTree<T> tree) {
+	private void initializeMap(Long2ObjectMap<T> map, CategoryTree<T> tree) {
 		for (T c : tree) {
 			map.put(c.id, c);
 			if (c.hasChildren()) {

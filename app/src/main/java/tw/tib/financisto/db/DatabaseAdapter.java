@@ -28,6 +28,7 @@ import tw.tib.financisto.datetime.DateUtils;
 import tw.tib.financisto.filter.Criterion;
 import tw.tib.financisto.filter.WhereFilter;
 import tw.tib.financisto.model.Currency;
+import tw.tib.financisto.model.Tag;
 import tw.tib.financisto.utils.ArrUtils;
 import tw.tib.financisto.utils.MyPreferences;
 import tw.tib.financisto.utils.StringUtil;
@@ -1353,37 +1354,22 @@ public class DatabaseAdapter extends MyEntityManager {
     }
 
     public List<String> getAllUniqueTags() {
-        TreeSet<String> set = new TreeSet<>(String.CASE_INSENSITIVE_ORDER);
+        var tags = new ArrayList<String>();
         try (Cursor c = db().rawQuery("SELECT title FROM " + DatabaseHelper.TAG_TABLE + " WHERE is_active=1", null)) {
             while (c.moveToNext()) {
                 String title = c.getString(0);
                 if (title != null && !title.trim().isEmpty()) {
-                    set.add(title.trim());
+                    tags.add(title.trim());
                 }
             }
         } catch (Exception e) {
             // tag table might not exist yet during migration
         }
-        try (Cursor c = db().rawQuery("SELECT DISTINCT tags FROM " + DatabaseHelper.TRANSACTION_TABLE + " WHERE tags IS NOT NULL AND tags != ''", null)) {
-            while (c.moveToNext()) {
-                String raw = c.getString(0);
-                if (raw != null) {
-                    for (String t : raw.split("\n")) {
-                        String trimmed = t.trim();
-                        if (!trimmed.isEmpty()) {
-                            set.add(trimmed);
-                        }
-                    }
-                }
-            }
-        } catch (Exception e) {
-            Log.e(TAG, "Failed to get unique tags", e);
-        }
-        return new ArrayList<>(set);
+        return tags;
     }
 
     public void deleteTag(long id) {
-        delete(tw.tib.financisto.model.Tag.class, id);
+        delete(Tag.class, id);
     }
 
     public long insertOrUpdate(Attribute attribute) {

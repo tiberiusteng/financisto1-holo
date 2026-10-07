@@ -1,8 +1,9 @@
 package tw.tib.financisto.activity;
 
 import android.app.AlertDialog;
-import android.content.Context;
 import android.text.InputType;
+import android.text.SpannableStringBuilder;
+import android.text.Spanned;
 import android.text.TextUtils;
 import android.view.View;
 import android.view.ViewGroup;
@@ -13,13 +14,13 @@ import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
-import android.widget.ToggleButton;
 
 import androidx.core.util.Pair;
 
 import java.util.ArrayList;
 import java.util.LinkedHashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
 import tw.tib.financisto.Application;
@@ -41,7 +42,7 @@ public class TagSelector<A extends AbstractActivity> {
     private TextView text;
     private AutoCompleteTextView autoCompleteFilter;
     private final Set<String> selectedTags = new LinkedHashSet<>();
-    private List<Tag> entities = new ArrayList<>();
+    private Map<String, Tag> title2Tag;
     private boolean enabled = true;
     private boolean loaded = false;
 
@@ -130,23 +131,10 @@ public class TagSelector<A extends AbstractActivity> {
             loaded = false;
         }
         Application.getExecutor().execute(() -> {
-            List<Tag> list = db.getAllEntitiesList(Tag.class, false, true);
-            // Also ensure any tags from transactions exist in list
-            List<String> uniqueTagNames = db.getAllUniqueTags();
-            Set<String> known = new LinkedHashSet<>();
-            for (Tag t : list) {
-                known.add(t.title.toLowerCase());
-            }
-            for (String name : uniqueTagNames) {
-                if (!known.contains(name.toLowerCase())) {
-                    Tag t = new Tag(name);
-                    list.add(t);
-                    known.add(name.toLowerCase());
-                }
-            }
+            var allTags = db.getAllTagByTitleMap();
 
             synchronized (TagSelector.this) {
-                entities = list;
+                title2Tag = allTags;
                 loaded = true;
             }
 
@@ -186,15 +174,16 @@ public class TagSelector<A extends AbstractActivity> {
     public void pickTags() {
         List<Tag> currentTags;
         synchronized (this) {
-            currentTags = new ArrayList<>(entities);
+            currentTags = new ArrayList<>(title2Tag.values());
         }
 
-        final String[] titles = new String[currentTags.size()];
+        final CharSequence[] titles = new CharSequence[currentTags.size()];
         final boolean[] checked = new boolean[currentTags.size()];
 
         for (int i = 0; i < currentTags.size(); i++) {
-            titles[i] = currentTags.get(i).title;
-            checked[i] = containsIgnoreCase(selectedTags, titles[i]);
+            Tag t = currentTags.get(i);
+            titles[i] = new SpannableStringBuilder().append(t.title, new PillSpan(this.activity, t.getColorInt()), Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
+            checked[i] = selectedTags.contains(titles[i].toString());
         }
 
         AlertDialog.Builder builder = new AlertDialog.Builder(activity);
@@ -212,7 +201,7 @@ public class TagSelector<A extends AbstractActivity> {
                 selectedTags.clear();
                 for (int i = 0; i < checked.length; i++) {
                     if (checked[i]) {
-                        selectedTags.add(titles[i]);
+                        selectedTags.add(titles[i].toString());
                     }
                 }
                 fillCheckedEntitiesInUI();
@@ -221,7 +210,7 @@ public class TagSelector<A extends AbstractActivity> {
                 selectedTags.clear();
                 for (int i = 0; i < checked.length; i++) {
                     if (checked[i]) {
-                        selectedTags.add(titles[i]);
+                        selectedTags.add(titles[i].toString());
                     }
                 }
                 fillCheckedEntitiesInUI();
@@ -265,12 +254,13 @@ public class TagSelector<A extends AbstractActivity> {
 
     public void fillCheckedEntitiesInUI() {
         if (text == null) return;
+        if (!loaded) return;
 
         if (selectedTags.isEmpty()) {
             text.setText(R.string.select_tags);
             showHideMinusBtn(false);
         } else {
-            text.setText(PillSpan.formatAsPills(activity, selectedTags));
+            text.setText(PillSpan.formatAsPills(activity, selectedTags, title2Tag));
             showHideMinusBtn(true);
         }
     }
@@ -288,7 +278,7 @@ public class TagSelector<A extends AbstractActivity> {
         if (selectedTags.isEmpty()) {
             return null;
         }
-        return String.join("\n", selectedTags);
+        return "\n" + String.join("\n", selectedTags) + "\n";
     }
 
     public void setSelectedTags(String tagsString) {
@@ -302,15 +292,6 @@ public class TagSelector<A extends AbstractActivity> {
             }
         }
         fillCheckedEntitiesInUI();
-    }
-
-    private static boolean containsIgnoreCase(Set<String> set, String target) {
-        for (String s : set) {
-            if (s.equalsIgnoreCase(target)) {
-                return true;
-            }
-        }
-        return false;
     }
 
     public void onDestroy() {
