@@ -38,6 +38,8 @@
 	<item name="tags_clear" type="id" />
 	<item name="tags_add" type="id" />
 	<item name="tags_filter_toggle" type="id" />
+	<item name="tags_show_list" type="id" />
+	<item name="tags_create" type="id" />
 	<item name="split" type="id" />
 	<item name="split_clear" type="id" />
 	<item name="currency" type="id" />

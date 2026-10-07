@@ -1,37 +1,43 @@
 package tw.tib.financisto.activity;
 
+import android.annotation.SuppressLint;
 import android.app.AlertDialog;
+import android.database.Cursor;
+import android.database.DatabaseUtils;
 import android.text.InputType;
 import android.text.SpannableStringBuilder;
 import android.text.Spanned;
 import android.text.TextUtils;
+import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ArrayAdapter;
 import android.widget.AutoCompleteTextView;
 import android.widget.EditText;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
+import android.widget.SimpleCursorAdapter;
 import android.widget.TextView;
 
 import androidx.core.util.Pair;
 
 import java.util.ArrayList;
-import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import it.unimi.dsi.fastutil.objects.ObjectRBTreeSet;
 import tw.tib.financisto.Application;
 import tw.tib.financisto.R;
 import tw.tib.financisto.db.DatabaseAdapter;
 import tw.tib.financisto.model.Tag;
 import tw.tib.financisto.utils.MyPreferences;
+import tw.tib.financisto.utils.TransactionUtils;
 import tw.tib.financisto.utils.Utils;
 import tw.tib.financisto.view.PillSpan;
 
 public class TagSelector<A extends AbstractActivity> {
+    private static final String TAG = "TagSelector";
 
     private final A activity;
     private final DatabaseAdapter db;
@@ -41,16 +47,19 @@ public class TagSelector<A extends AbstractActivity> {
     private View node;
     private TextView text;
     private AutoCompleteTextView autoCompleteFilter;
-    private final Set<String> selectedTags = new LinkedHashSet<>();
+    private SimpleCursorAdapter filterAdapter;
+    private final Set<String> selectedTags = new ObjectRBTreeSet<>();
     private Map<String, Tag> tagFromTitle;
     private boolean enabled = true;
     private boolean loaded = false;
+    private boolean mainSearch;
 
     public TagSelector(A activity, DatabaseAdapter db, ActivityLayout x) {
         this.activity = activity;
         this.db = db;
         this.x = x;
         this.isShow = MyPreferences.isShowTags();
+        this.mainSearch = (MyPreferences.getTagsSelectorType() == MyPreferences.EntitySelectorType.SEARCH);
     }
 
     public TextView createNode(LinearLayout layout) {
@@ -58,16 +67,18 @@ public class TagSelector<A extends AbstractActivity> {
             return null;
         }
 
-        Pair<TextView, AutoCompleteTextView> views = x.addListNodeWithButtonsAndFilter(
-                layout,
-                R.layout.select_entry_with_2btn_and_filter,
-                R.id.tags,
-                R.id.tags_add,
-                R.id.tags_clear,
-                R.string.tags,
-                R.string.select_tags,
-                R.id.tags_filter_toggle
-        );
+        Pair<TextView, AutoCompleteTextView> views;
+
+        if (!mainSearch) {
+            views = x.addListNodeWithButtonsAndFilter(
+                    layout, R.layout.select_entry_with_2btn_and_filter, R.id.tags, R.id.tags_add,
+                    R.id.tags_clear, R.string.tags, R.string.select_tags, R.id.tags_filter_toggle);
+        } else {
+            views = x.addListNodeWithButtonsAndFilterSearchFirst(
+                    layout, R.layout.select_entry_with_2btn_and_list_filter, R.id.tags, R.id.tags_add,
+                    R.id.tags_clear, R.string.tags, R.string.select_tags, R.id.tags_filter_toggle,
+                    R.id.tags_show_list, R.id.tags_create, true);
+        }
 
         text = views.first;
         autoCompleteFilter = views.second;
@@ -95,7 +106,7 @@ public class TagSelector<A extends AbstractActivity> {
     }
 
     private void initAutoCompleteFilter(final AutoCompleteTextView filterTxt) {
-        if (filterTxt == null) return;
+        filterAdapter = createFilterAdapter();
         filterTxt.setInputType(InputType.TYPE_CLASS_TEXT
                 | InputType.TYPE_TEXT_FLAG_CAP_WORDS
                 | InputType.TYPE_TEXT_FLAG_NO_SUGGESTIONS
@@ -104,16 +115,15 @@ public class TagSelector<A extends AbstractActivity> {
 
         filterTxt.setOnFocusChangeListener((view, hasFocus) -> {
             if (hasFocus) {
-                List<String> tags = db.getAllUniqueTags();
-                ArrayAdapter<String> adapter = new ArrayAdapter<>(activity,
-                        android.R.layout.simple_dropdown_item_1line, tags);
-                filterTxt.setAdapter(adapter);
+                filterTxt.setAdapter(filterAdapter);
                 filterTxt.selectAll();
             }
         });
 
         filterTxt.setOnItemClickListener((parent, view, position, id) -> {
-            String tag = (String) parent.getItemAtPosition(position);
+            Log.d(TAG,  DatabaseUtils.dumpCursorToString(((Cursor) parent.getItemAtPosition(position))));
+            var c = (Cursor) parent.getItemAtPosition(position);
+            @SuppressLint("Range") String tag = c.getString(c.getColumnIndex("e_title"));
             if (!TextUtils.isEmpty(tag)) {
                 selectedTags.add(tag.trim());
                 fillCheckedEntitiesInUI();
@@ -158,12 +168,38 @@ public class TagSelector<A extends AbstractActivity> {
         if (!enabled) return;
 
         if (id == R.id.tags) {
-            pickTags();
+            if (mainSearch) {
+                if (filterAdapter == null) initAutoCompleteFilter(autoCompleteFilter);
+            } else {
+                pickTags();
+            }
         } else if (id == R.id.tags_add) {
             showAddTagDialog();
+        } else if (id == R.id.tags_show_list) {
+            pickTags();
+        } else if (id == R.id.tags_filter_toggle) {
+            if (filterAdapter == null) initAutoCompleteFilter(autoCompleteFilter);
+        } else if (id == R.id.tags_create) {
+            new AlertDialog.Builder(activity)
+                    .setMessage(activity.getString(R.string.confirm_create_entity, autoCompleteFilter.getText()))
+                    .setPositiveButton(R.string.yes, (arg0, arg1) -> manualCreateNewEntityFromSearch())
+                    .setNegativeButton(R.string.no, null)
+                    .show();
         } else if (id == R.id.tags_clear) {
             clearSelection();
         }
+    }
+
+    private void manualCreateNewEntityFromSearch() {
+        String title = autoCompleteFilter.getText().toString();
+        Tag e = db.findOrInsertEntityByTitle(Tag.class, title);
+
+        View hideSearch = (View) autoCompleteFilter.getTag();
+        hideSearch.performClick();
+
+        fetchEntities();
+        selectedTags.add(title);
+        fillCheckedEntitiesInUI();
     }
 
     public void clearSelection() {
@@ -232,10 +268,10 @@ public class TagSelector<A extends AbstractActivity> {
         FrameLayout container = new FrameLayout(activity);
         FrameLayout.LayoutParams params = new FrameLayout.LayoutParams(
                 ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT);
-        int margin = (int) (16 * activity.getResources().getDisplayMetrics().density);
-        params.leftMargin = margin;
-        params.rightMargin = margin;
-        input.setLayoutParams(params);
+//        int margin = (int) (16 * activity.getResources().getDisplayMetrics().density);
+//        params.leftMargin = margin;
+//        params.rightMargin = margin;
+//        input.setLayoutParams(params);
         container.addView(input);
         builder.setView(container);
 
@@ -255,6 +291,8 @@ public class TagSelector<A extends AbstractActivity> {
     public void fillCheckedEntitiesInUI() {
         if (text == null) return;
         if (!loaded) return;
+
+        Log.d(TAG, "selectedTags=" + selectedTags);
 
         if (selectedTags.isEmpty()) {
             text.setText(R.string.select_tags);
@@ -292,6 +330,10 @@ public class TagSelector<A extends AbstractActivity> {
             }
         }
         fillCheckedEntitiesInUI();
+    }
+
+    protected SimpleCursorAdapter createFilterAdapter() {
+        return new TransactionUtils.FilterSimpleCursorAdapter<>(activity, db, Tag.class);
     }
 
     public void onDestroy() {

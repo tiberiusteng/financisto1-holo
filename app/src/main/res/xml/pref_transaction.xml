@@ -99,6 +99,14 @@
             android:key="location_selector_type"
             android:title="@string/location_selector_type_title"
             android:summary="@string/location_selector_type_summary" />
+        <ListPreference
+            app:singleLineTitle="false"
+            android:defaultValue="search"
+            android:entries="@array/selector_type_entries"
+            android:entryValues="@array/selector_type_values"
+            android:key="tags_selector_type"
+            android:title="@string/tags_selector_type_title"
+            android:summary="@string/tags_selector_type_summary" />
     </PreferenceCategory>
     <PreferenceCategory android:title="@string/screen_layout">
         <SwitchPreferenceCompat

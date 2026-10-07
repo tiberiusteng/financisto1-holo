@@ -273,6 +273,10 @@ public class MyPreferences {
 		return getEntitySelectorType("location_selector_type");
 	}
 
+	public static EntitySelectorType getTagsSelectorType() {
+		return getEntitySelectorType("tags_selector_type");
+	}
+
 	public static boolean isShowTakePicture() {
 		return getBoolean("ntsl_show_picture", true);
 	}

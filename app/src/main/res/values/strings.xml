@@ -1243,6 +1243,8 @@
     <string name="project_selector_type_summary">Configure primarily using search or showing list when choosing project.</string>
     <string name="location_selector_type_title">Location selector type</string>
     <string name="location_selector_type_summary">Configure primarily using search or showing list when choosing location.</string>
+    <string name="tags_selector_type_title">Tags selector type</string>
+    <string name="tags_selector_type_summary">Configure primarily using search or showing list when choosing tags.</string>
     <string name="selector_type_summary">Selector type for entities</string>
     <string-array name="selector_type_entries">
         <item>Button on left: Search, Center: List</item>

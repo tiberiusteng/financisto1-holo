@@ -19,7 +19,7 @@ import android.util.Log;
 
 import it.unimi.dsi.fastutil.longs.Long2ObjectMap;
 import it.unimi.dsi.fastutil.longs.Long2ObjectOpenHashMap;
-import it.unimi.dsi.fastutil.objects.Object2ObjectOpenHashMap;
+import it.unimi.dsi.fastutil.objects.Object2ObjectRBTreeMap;
 import tw.tib.financisto.blotter.BlotterFilter;
 import tw.tib.financisto.datetime.Period;
 import tw.tib.financisto.filter.Criterion;
@@ -704,7 +704,7 @@ public abstract class MyEntityManager extends EntityManager {
 	}
 
 	private static <T extends MyEntity> Map<String, T> entitiesAsTitleMap(List<T> entities) {
-		Map<String, T> map = new Object2ObjectOpenHashMap<>();
+		Map<String, T> map = new Object2ObjectRBTreeMap<>();
 		for (T e : entities) {
 			map.put(e.title, e);
 		}
