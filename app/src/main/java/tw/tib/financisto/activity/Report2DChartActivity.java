@@ -51,6 +51,7 @@ import tw.tib.financisto.report.LocationByPeriodReport;
 import tw.tib.financisto.report.PayeeByPeriodReport;
 import tw.tib.financisto.report.ProjectByPeriodReport;
 import tw.tib.financisto.report.ReportType;
+import tw.tib.financisto.report.TagByPeriodReport;
 import tw.tib.financisto.report.TotalBalanceByPeriodReport;
 import tw.tib.financisto.utils.CurrencyCache;
 import tw.tib.financisto.utils.MyPreferences;
@@ -189,6 +190,9 @@ public class Report2DChartActivity extends Activity implements OnChartValueSelec
                 break;
             case BY_PROJECT_BY_PERIOD:
                 reportData = new ProjectByPeriodReport(this, db, startPeriod, periodLength, currency, aggregateUnit);
+                break;
+            case BY_TAG_BY_PERIOD:
+                reportData = new TagByPeriodReport(this, db, startPeriod, periodLength, currency, aggregateUnit);
                 break;
             case BY_ACCOUNT_BALANCE_BY_PERIOD:
                 findViewById(R.id.report_sum_result).setVisibility(View.INVISIBLE);

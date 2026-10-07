@@ -199,7 +199,7 @@ public class DatabaseSchemaEvolution extends SQLiteOpenHelper {
 		Scanner scanner = new Scanner(is);
 		try {
 			while (scanner.hasNextLine()) {
-				sb.append(scanner.nextLine().trim()).append(" ");
+				sb.append(scanner.nextLine()).append("\n");
 			}
 		} finally {
 			scanner.close();

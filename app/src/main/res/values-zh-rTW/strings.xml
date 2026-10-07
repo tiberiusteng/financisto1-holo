@@ -128,7 +128,7 @@
   <string name="note">備註</string>
   <string name="tag">標籤</string>
   <string name="tags">標籤</string>
-  <string name="no_tags">沒有標籤</string>
+  <string name="no_tags">無標籤</string>
   <string name="select_tags">選擇標籤…</string>
   <string name="new_tag">新標籤</string>
   <string name="enter_tag_name">輸入標籤名稱</string>
@@ -146,6 +146,7 @@
   <string name="no_reports">無報告</string>
   <string name="select_report">請選擇報告…</string>
   <string name="overall">全體</string>
+
   <string name="report_by_period">以期間統計</string>
   <string name="report_by_period_summary">以期間分別統計的交易報告</string>
   <string name="report_by_category">依分類</string>
@@ -154,6 +155,9 @@
   <string name="report_by_location_summary">以地點分別統計的交易報告</string>
   <string name="report_by_project">以專案統計</string>
   <string name="report_by_project_summary">以專案分別統計的交易報告</string>
+  <string name="report_by_tag">以標籤統計</string>
+  <string name="report_by_tag_summary">以標籤分別統計的交易報告</string>
+
   <string name="report_by_account_by_period">以帳戶 / 期間統計</string>
   <string name="report_by_account_by_period_summary">以帳戶與期間統計的交易報告</string>
   <string name="report_by_category_by_period">以分類 / 期間統計</string>
@@ -162,6 +166,8 @@
   <string name="report_by_location_by_period_summary">以地點與期間統計的交易報告</string>
   <string name="report_by_project_by_period">以專案 / 期間統計</string>
   <string name="report_by_project_by_period_summary">以專案與期間統計的交易報告</string>
+  <string name="report_by_tag_by_period">以標籤 / 期間統計</string>
+  <string name="report_by_tag_by_period_summary">以標籤與期間統計的交易報告</string>
   <string name="report_by_account_balance_by_period">以帳戶結餘 / 期間統計</string>
   <string name="report_by_account_balance_by_period_summary">以帳戶餘額與期間統計的報告</string>
   <string name="report_total_balance_by_period">總餘額 / 期間統計</string>
@@ -180,6 +186,7 @@
   <string name="report_no_project">沒有專案可供過濾報告內容。</string>
   <string name="report_no_account">沒有帳戶可供過濾報告內容。</string>
   <string name="report_no_location">沒有地點可供過濾報告內容。</string>
+  <string name="report_no_tag">沒有標籤可供過濾報告內容。</string>
   <string name="no_account">沒有帳戶</string>
   <string name="period_today">今天</string>
   <string name="period_yesterday">昨天</string>
@@ -332,6 +339,10 @@
   <string name="show_project_summary">顯示專案下拉選單</string>
   <string name="show_project_order">專案順序</string>
   <string name="show_project_order_summary">專案下拉選單的相對位置</string>
+  <string name="show_tags">顯示標籤</string>
+  <string name="show_tags_summary">顯示標籤選單</string>
+  <string name="show_tags_order">標籤順序</string>
+  <string name="show_tags_order_summary">標籤選單的相對位置</string>
   <string name="remember_selection">記憶選取內容</string>
   <string name="remember_last_account">上次帳戶</string>
   <string name="remember_last_account_summary">記住上次選擇的帳戶</string>
@@ -1118,5 +1129,11 @@
     <item>顯示分割彙總與子交易</item>
     <item>只顯示彙總交易</item>
     <item>只顯示子交易</item>
+  </string-array>
+  <string name="tags_op">標籤篩選</string>
+  <string name="tags_op_default">所有 (AND)</string>
+  <string-array name="tags_op_entries">
+    <item>所有 (AND)</item>
+    <item>任一個 (OR)</item>
   </string-array>
 </resources>

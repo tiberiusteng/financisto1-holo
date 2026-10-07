@@ -653,6 +653,10 @@ public abstract class MyEntityManager extends EntityManager {
 		return filterAllEntities(Payee.class, constraint);
 	}
 
+	public List<Tag> getAllTagsList(boolean includeNoTags) {
+		return getAllEntitiesList(Tag.class, includeNoTags, false);
+	}
+
 	public Map<String, Tag> getAllTagByTitleMap() {
 		return entitiesAsTitleMap(getAllEntitiesList(Tag.class, false, false));
 	}

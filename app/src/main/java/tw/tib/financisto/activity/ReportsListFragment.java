@@ -33,11 +33,13 @@ public class ReportsListFragment extends ListFragment {
             ReportType.BY_PAYEE,
             ReportType.BY_LOCATION,
             ReportType.BY_PROJECT,
+            ReportType.BY_TAG,
             ReportType.BY_ACCOUNT_BY_PERIOD,
             ReportType.BY_CATEGORY_BY_PERIOD,
             ReportType.BY_PAYEE_BY_PERIOD,
             ReportType.BY_LOCATION_BY_PERIOD,
             ReportType.BY_PROJECT_BY_PERIOD,
+            ReportType.BY_TAG_BY_PERIOD,
             ReportType.BY_ACCOUNT_BALANCE_BY_PERIOD,
             ReportType.TOTAL_BALANCE_BY_PERIOD
     };

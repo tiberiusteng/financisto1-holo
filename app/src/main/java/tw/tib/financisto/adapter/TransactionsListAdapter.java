@@ -139,7 +139,7 @@ public class TransactionsListAdapter extends BlotterListAdapter {
                     else {
                         started = true;
                     }
-                    Tag tagEntity = title2Tag.get(tag);
+                    Tag tagEntity = tagFromTitle.get(tag);
                     int tagColor = tagEntity == null ? defaultTagColor : tagEntity.getColorInt();
                     ssb.append(" " + trimmed + " ", new BackgroundColorSpan(tagColor), Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
                 }

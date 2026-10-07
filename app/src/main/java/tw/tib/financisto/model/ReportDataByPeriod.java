@@ -3,10 +3,12 @@ package tw.tib.financisto.model;
 import static tw.tib.financisto.db.DatabaseHelper.TRANSACTION_TABLE;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Calendar;
 import java.util.GregorianCalendar;
 import java.util.List;
 
+import tw.tib.financisto.R;
 import tw.tib.financisto.db.DatabaseHelper;
 import tw.tib.financisto.db.MyEntityManager;
 import tw.tib.financisto.db.DatabaseHelper.AccountColumns;
@@ -136,7 +138,7 @@ public class ReportDataByPeriod {
 	 */
 	public ReportDataByPeriod(Context context, int periodLength, Currency currency, String filterColumn, long[] filterId, MyEntityManager em, MyPreferences.ReportAggregateUnit aggregateUnit) {
 		Calendar startPeriod = Report2DChart.getDefaultStartPeriod(periodLength);
-		init(context, startPeriod, periodLength, currency, filterColumn, filterId, em, aggregateUnit);
+		init(context, startPeriod, periodLength, currency, filterColumn, filterId, null, em, aggregateUnit);
 	}
 	
 	/**
@@ -149,7 +151,7 @@ public class ReportDataByPeriod {
 	 */
 	public ReportDataByPeriod(Context context, int periodLength, Currency currency, String filterColumn, long filterId, MyEntityManager em, MyPreferences.ReportAggregateUnit aggregateUnit) {
 		Calendar startPeriod = Report2DChart.getDefaultStartPeriod(periodLength);
-		init(context, startPeriod, periodLength, currency, filterColumn, new long[]{filterId}, em, aggregateUnit);
+		init(context, startPeriod, periodLength, currency, filterColumn, new long[]{filterId}, null, em, aggregateUnit);
 	}
 
 	/**
@@ -162,9 +164,13 @@ public class ReportDataByPeriod {
 	 * @param em Database adapter to query data
 	 */
 	public ReportDataByPeriod(Context context, Calendar startDate, int periodLength, Currency currency, String filterColumn, long[] filterId, MyEntityManager em, MyPreferences.ReportAggregateUnit aggregateUnit) {
-		init(context, startDate, periodLength, currency, filterColumn, filterId, em, aggregateUnit);
+		init(context, startDate, periodLength, currency, filterColumn, filterId, null, em, aggregateUnit);
 	}
-	
+
+	public ReportDataByPeriod(Context context, Calendar startDate, int periodLength, Currency currency, String filterColumn, String filterTitle, MyEntityManager em, MyPreferences.ReportAggregateUnit aggregateUnit) {
+		init(context, startDate, periodLength, currency, filterColumn, null, new String[]{filterTitle}, em, aggregateUnit);
+	}
+
 	/**
 	 * Constructor for report data builder that considers filters in a given period.
 	 * @param startDate The first month of the report period
@@ -175,7 +181,7 @@ public class ReportDataByPeriod {
 	 * @param em Database adapter to query data
 	 */
 	public ReportDataByPeriod(Context context, Calendar startDate, int periodLength, Currency currency, String filterColumn, long filterId, MyEntityManager em, MyPreferences.ReportAggregateUnit aggregateUnit) {
-		init(context, startDate, periodLength, currency, filterColumn, new long[]{filterId}, em, aggregateUnit);
+		init(context, startDate, periodLength, currency, filterColumn, new long[]{filterId}, null, em, aggregateUnit);
 	}
 
 	public ReportDataByPeriod(Context context, Calendar startDate, int periodLength, Currency currency,
@@ -184,7 +190,7 @@ public class ReportDataByPeriod {
 		this.aggregation = aggregation;
 		this.excludeTransfers = excludeTransfers;
 		this.filterAccountByCurrency = filterAccountByCurrency;
-		init(context, startDate, periodLength, currency, filterColumn, new long[]{filterId}, em, aggregateUnit);
+		init(context, startDate, periodLength, currency, filterColumn, new long[]{filterId}, null, em, aggregateUnit);
 	}
 	
 	/**
@@ -196,7 +202,9 @@ public class ReportDataByPeriod {
 	 * @param filterId The report filtering id in transactions table 
 	 * @param em Database adapter to query data
 	 */
-	private void init(Context context, Calendar startDate, int periodLength, Currency currency, String filterColumn, long[] filterId, MyEntityManager em, MyPreferences.ReportAggregateUnit aggregateUnit) {
+	private void init(Context context, Calendar startDate, int periodLength, Currency currency, String filterColumn,
+					  long[] filterId, String[] filterTitle, MyEntityManager em, MyPreferences.ReportAggregateUnit aggregateUnit)
+	{
 		this.context = context;
 		this.periodLength = periodLength;
 		startDate.set(startDate.get(Calendar.YEAR), startDate.get(Calendar.MONTH), 01, 00, 00, 00);
@@ -229,8 +237,10 @@ public class ReportDataByPeriod {
 			}
 			
 			// prepare query based on given report parameters
-			String where = getWhereClause(filterColumn, filterId, accounts);
-			String[] args = getWhereArgs(startDate, periodLength, filterId, accounts);
+			String where = getWhereClause(filterColumn, filterId, filterTitle, accounts);
+			String[] args = getWhereArgs(filterColumn, startDate, periodLength, filterId, filterTitle, accounts);
+			Log.d(TAG, "where=" + where);
+			Log.d(TAG, "args=" + Arrays.toString(args));
 			// query data
 			cursor = queryData(db, filterColumn, where, args);
 			long t1 = System.nanoTime();
@@ -256,7 +266,7 @@ public class ReportDataByPeriod {
 	 * @param filterColumn The report filter (account, category, location or project)
 	 * @param accounts List of account ids for which the reference currency is the report reference currency.
 	 * */
-	private String getWhereClause(String filterColumn, long[] filterId, int[] accounts) {
+	private String getWhereClause(String filterColumn, long[] filterId, String[] filterTitle, int[] accounts) {
 		StringBuffer accountsWhere = new StringBuffer();
 		// no templates and scheduled transactions
 		// don't include transfer to other accounts (transfers to this account is inherently not included)
@@ -268,10 +278,28 @@ public class ReportDataByPeriod {
 		// report filtering (account, category, location or project)
 		if (filterColumn != null) {
 			accountsWhere.append(" and (");
-			for (int i = 0; i < filterId.length; i++) {
-				if (i != 0)
-					accountsWhere.append(" or ");
-				accountsWhere.append(filterColumn + "=? ");
+			if (filterId != null) {
+				for (int i = 0; i < filterId.length; i++) {
+					if (i != 0) {
+						accountsWhere.append(" or ");
+					}
+					accountsWhere.append(filterColumn + "=? ");
+				}
+			}
+			if (filterTitle != null) {
+				for (int i = 0; i < filterTitle.length; i++) {
+					if (i != 0) {
+						accountsWhere.append(" or ");
+					}
+					if (filterColumn.equals("tags")) {
+						if (filterTitle[i].equals(context.getString(R.string.no_tags))) {
+							accountsWhere.append(filterColumn + " IS NULL");
+						}
+						else {
+							accountsWhere.append(filterColumn + " LIKE ? ");
+						}
+					}
+				}
 			}
 			accountsWhere.append(")");
 		}
@@ -299,35 +327,47 @@ public class ReportDataByPeriod {
 	/**
 	 * Build the arguments of the where clause based on the following format:
 	 * <filteredColumn>=? and (datetime>=? and datetime<=?) and (from_account_id=? or from_account_id=? ...)
-	 * 
+	 *
+	 * @param filterColumn The column used to filter (determine filter syntax and source of data type)
 	 * @param startDate The first month of the report period
 	 * @param periodLength The number of months of the report period
 	 * @param filterId The id of the filtering column (account, category, location or project)
+	 * @param filterTitle The title of filtering column (tags)
 	 * @param accounts The ids of accounts to be considered in this query
 	 * */
-	private String[] getWhereArgs(Calendar startDate, int periodLength, long[] filterId, int[] accounts) {
-		String[] args = new String[filterId.length + 2 + accounts.length];
+	private String[] getWhereArgs(String filterColumn, Calendar startDate, int periodLength, long[] filterId, String[] filterTitle, int[] accounts) {
+		var args = new ArrayList<String>();
 
 		// The id of the filtered column
 		int i=0;
-		for (i=0; i<filterId.length ;i++)
-			args[i] = Long.toString(filterId[i]);
+		if (filterId != null) {
+			for (i = 0; i < filterId.length; i++)
+				args.add(Long.toString(filterId[i]));
+		}
+		if (filterTitle != null) {
+			if (filterColumn.equals("tags")) {
+				for (i = 0; i < filterTitle.length; i++) {
+					if (!filterTitle[i].equals(context.getString(R.string.no_tags))) {
+						args.add("%\n" + filterTitle[i] + "\n%");
+					}
+				}
+			}
+		}
 		
 		// The first month of the period in time millis
-		args[i] = String.valueOf(startDate.getTimeInMillis());
+		args.add(String.valueOf(startDate.getTimeInMillis()));
 		
 		// The last month of the period in time millis
-		i++;
 		Calendar endDate = new GregorianCalendar(startDate.get(Calendar.YEAR), startDate.get(Calendar.MONTH), 1, 0, 0, 0);
 		endDate.add(Calendar.MONTH, periodLength);
-		args[i] = String.valueOf(endDate.getTimeInMillis());
+		args.add(String.valueOf(endDate.getTimeInMillis()));
 		
 		// Account ids to be considered in this query due the report reference currency
 		for (int j=0; j<accounts.length; j++) {
-			args[j+i+1] = Long.toString(accounts[j]);
+			args.add(Long.toString(accounts[j]));
 		}
 		
-		return args;
+		return args.toArray(new String[0]);
 	}
 
 	/**

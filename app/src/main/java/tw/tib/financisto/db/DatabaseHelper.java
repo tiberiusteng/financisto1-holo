@@ -66,6 +66,7 @@ public class DatabaseHelper extends DatabaseSchemaEvolution {
     public static final String V_REPORT_LOCATIONS = "v_report_location";
     public static final String V_REPORT_PROJECTS = "v_report_project";
     public static final String V_REPORT_PAYEES = "v_report_payee";
+    public static final String V_REPORT_TAGS = "v_report_tag";
     public static final String V_EXCHANGE_RATE = "v_exchange_rate";
 
     public static enum TransactionColumns {

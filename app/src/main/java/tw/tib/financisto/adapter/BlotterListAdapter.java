@@ -93,7 +93,7 @@ public class BlotterListAdapter extends ResourceCursorAdapter {
     protected final Long2LongOpenHashMap copiedUneditedTransactions;
     protected final long listAdapterTimestamp;
 
-    protected Map<String, Tag> title2Tag;
+    protected Map<String, Tag> tagFromTitle;
 
     protected long highlightTransactionId = -1;
 
@@ -137,7 +137,7 @@ public class BlotterListAdapter extends ResourceCursorAdapter {
         this.highlightCopiedUnedited = MyPreferences.isHighlightCopiedUneditedTransactions();
         this.transactionTitleUtils = new TransactionTitleUtils(context, MyPreferences.isColorizeBlotterItem());
 
-        title2Tag = db.getAllTagByTitleMap();
+        tagFromTitle = db.getAllTagByTitleMap();
     }
 
     protected boolean isShowRunningBalance() {
@@ -304,7 +304,7 @@ public class BlotterListAdapter extends ResourceCursorAdapter {
                         else {
                             started = true;
                         }
-                        Tag tagEntity = title2Tag.get(trimmed);
+                        Tag tagEntity = tagFromTitle.get(trimmed);
                         int tagColor = tagEntity == null ? defaultTagColor : tagEntity.getColorInt();
                         ssb.append(" " + trimmed + " ", new BackgroundColorSpan(tagColor), Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
                     }

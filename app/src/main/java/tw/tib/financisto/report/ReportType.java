@@ -52,7 +52,13 @@ public enum ReportType {
 		public Report createReport(Context context, Currency currency) {
 			return new ProjectsReport(context, currency);
 		}
-	}, 
+	},
+	BY_TAG(R.string.report_by_tag, R.string.report_by_tag_summary, R.drawable.report_icon_default){
+		@Override
+		public Report createReport(Context context, Currency currency) {
+			return new TagsReport(context, currency);
+		}
+	},
 	BY_ACCOUNT_BY_PERIOD(R.string.report_by_account_by_period, R.string.report_by_account_by_period_summary, R.drawable.report_icon_line){
 		@Override
 		public Report createReport(Context context, Currency currency) {
@@ -103,6 +109,17 @@ public enum ReportType {
 			return null;
 		}
 		
+		@Override
+		public boolean isConventionalBarReport() {
+			return false;
+		}
+	},
+	BY_TAG_BY_PERIOD(R.string.report_by_tag_by_period, R.string.report_by_tag_by_period_summary, R.drawable.report_icon_line) {
+		@Override
+		public Report createReport(Context context, Currency currency) {
+			return null;
+		}
+
 		@Override
 		public boolean isConventionalBarReport() {
 			return false;

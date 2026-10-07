@@ -42,7 +42,7 @@ public class TagSelector<A extends AbstractActivity> {
     private TextView text;
     private AutoCompleteTextView autoCompleteFilter;
     private final Set<String> selectedTags = new LinkedHashSet<>();
-    private Map<String, Tag> title2Tag;
+    private Map<String, Tag> tagFromTitle;
     private boolean enabled = true;
     private boolean loaded = false;
 
@@ -134,7 +134,7 @@ public class TagSelector<A extends AbstractActivity> {
             var allTags = db.getAllTagByTitleMap();
 
             synchronized (TagSelector.this) {
-                title2Tag = allTags;
+                tagFromTitle = allTags;
                 loaded = true;
             }
 
@@ -174,7 +174,7 @@ public class TagSelector<A extends AbstractActivity> {
     public void pickTags() {
         List<Tag> currentTags;
         synchronized (this) {
-            currentTags = new ArrayList<>(title2Tag.values());
+            currentTags = new ArrayList<>(tagFromTitle.values());
         }
 
         final CharSequence[] titles = new CharSequence[currentTags.size()];
@@ -260,7 +260,7 @@ public class TagSelector<A extends AbstractActivity> {
             text.setText(R.string.select_tags);
             showHideMinusBtn(false);
         } else {
-            text.setText(PillSpan.formatAsPills(activity, selectedTags, title2Tag));
+            text.setText(PillSpan.formatAsPills(activity, selectedTags, tagFromTitle));
             showHideMinusBtn(true);
         }
     }

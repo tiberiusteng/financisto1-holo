@@ -172,6 +172,8 @@
     <string name="report_by_location_summary">Transactions report by location</string>
     <string name="report_by_project">By Project</string>
     <string name="report_by_project_summary">Transactions report by project</string>
+    <string name="report_by_tag">By Tag</string>
+    <string name="report_by_tag_summary">Transactions report by tag</string>
 
     <string name="report_by_account_by_period">By Account / Period</string>
     <string name="report_by_account_by_period_summary">Transactions report by account and period</string>
@@ -181,6 +183,8 @@
     <string name="report_by_location_by_period_summary">Transactions report by location and period</string>
     <string name="report_by_project_by_period">By Project / Period</string>
     <string name="report_by_project_by_period_summary">Transactions report by project and period</string>
+    <string name="report_by_tag_by_period">By Tag / Period</string>
+    <string name="report_by_tag_by_period_summary">Transactions report by tag and period</string>
     <string name="report_by_account_balance_by_period">By Account Balance / Period</string>
     <string name="report_by_account_balance_by_period_summary">Account balance report by period</string>
     <string name="report_total_balance_by_period">Total Balance / Period</string>
@@ -199,6 +203,7 @@
     <string name="report_no_project">There is no project available for filtering in the report.</string>
     <string name="report_no_account">There is no account available for filtering in the report.</string>
     <string name="report_no_location">There is no location available for filtering in the report.</string>
+    <string name="report_no_tag">There is no tag available for filtering in the report.</string>
     <string name="no_account">No account</string>
     <string name="filter_transfer">Transfer</string>
     <string name="filter_transfer_exclude">Exclude</string>
@@ -1289,5 +1294,11 @@
         <item>Show split summary and children</item>
         <item>Only show split summary</item>
         <item>Only show split children</item>
+    </string-array>
+    <string name="tags_op">Tags filtering</string>
+    <string name="tags_op_default">All of selected (AND)</string>
+    <string-array name="tags_op_entries">
+        <item>All of selected (AND)</item>
+        <item>Any of selected (OR)</item>
     </string-array>
 </resources>

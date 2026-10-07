@@ -27,8 +27,8 @@ public class TagActivity extends MyEntityActivity<Tag> {
         var db = new DatabaseAdapter(this);
         Tag old = db.get(Tag.class, updated.id);
 
-        Log.d(TAG, "preUpdateEntity old=" + old.title + ", updated=" + updated.title);
-        if (!old.title.equals(updated.title)) {
+        Log.d(TAG, "preUpdateEntity old=" + (old != null ? old.title : "null") + ", updated=" + updated.title);
+        if (old != null && !old.title.equals(updated.title)) {
             // update tags in transactions
             var txTags = new ObjectOpenHashSet<String>();
             var sqlitedb = db.db();

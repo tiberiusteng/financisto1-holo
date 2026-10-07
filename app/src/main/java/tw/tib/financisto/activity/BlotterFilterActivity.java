@@ -17,6 +17,8 @@ import android.util.Log;
 import android.view.View;
 import android.view.Window;
 import android.widget.*;
+
+import it.unimi.dsi.fastutil.objects.ObjectOpenHashSet;
 import tw.tib.financisto.R;
 import tw.tib.financisto.datetime.DateUtils;
 import tw.tib.financisto.datetime.Period;
@@ -28,15 +30,20 @@ import tw.tib.financisto.model.Account;
 import tw.tib.financisto.model.Currency;
 import tw.tib.financisto.model.MultiChoiceItem;
 import tw.tib.financisto.model.MyEntity;
+import tw.tib.financisto.model.Tag;
 import tw.tib.financisto.model.TransactionStatus;
 import tw.tib.financisto.utils.TransactionUtils;
+import tw.tib.financisto.view.PillSpan;
 
 import java.text.DateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.Date;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
+import java.util.Set;
 import java.util.TreeSet;
 
 import static tw.tib.financisto.blotter.BlotterFilter.FROM_ACCOUNT_ID;
@@ -55,12 +62,14 @@ public class BlotterFilterActivity extends FilterAbstractActivity {
 	private TextView account;
 	private TextView currency;
 	private TextView note;
+	private TextView tagsOp;
 	private TextView tags;
 	private TextView status;
 	private TextView split;
 	private TextView sortOrder;
 
 	private DateFormat df;
+	private String[] tagsOpEntries;
 	private String[] sortBlotterEntries;
 	private String[] filterSplitEntries;
 
@@ -68,6 +77,7 @@ public class BlotterFilterActivity extends FilterAbstractActivity {
 	private boolean isAccountFilter;
 	private boolean isPlannerFilter;
 
+	private Map<String, Tag> tagFromTitle;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -83,6 +93,7 @@ public class BlotterFilterActivity extends FilterAbstractActivity {
 		df = DateUtils.getShortDateFormat(this);
 		sortBlotterEntries = getResources().getStringArray(R.array.sort_blotter_entries);
 		filterSplitEntries = getResources().getStringArray(R.array.filter_split_entries);
+		tagsOpEntries = getResources().getStringArray(R.array.tags_op_entries);
 		noFilterValue = getString(R.string.no_filter);
 
 		LinearLayout layout = findViewById(R.id.layout);
@@ -94,6 +105,7 @@ public class BlotterFilterActivity extends FilterAbstractActivity {
 		initProjectSelector(layout);
 		initLocationSelector(layout);
 		note = x.addFilterNodeMinus(layout, R.id.note, R.id.note_clear, R.string.note, R.string.no_filter);
+		tagsOp = x.addFilterNodeMinus(layout, R.id.tags_op, R.id.tags_op_clear, R.string.tags_op, R.string.tags_op_default);
 		tags = x.addFilterNodeMinus(layout, R.id.tags, R.id.tags_clear, R.string.tags, R.string.no_filter);
 		status = x.addFilterNodeMinus(layout, R.id.status, R.id.status_clear, R.string.transaction_status, R.string.no_filter);
 		split = x.addFilterNodeMinus(layout, R.id.split, R.id.split_clear, R.string.filter_split, R.string.filter_split_default);
@@ -128,6 +140,8 @@ public class BlotterFilterActivity extends FilterAbstractActivity {
 			}
 		});
 
+		tagFromTitle = db.getAllTagByTitleMap();
+
 		if (intent != null) {
 			filter = WhereFilter.fromIntent(intent);
 			getAccountIdFromFilter(intent);
@@ -138,6 +152,7 @@ public class BlotterFilterActivity extends FilterAbstractActivity {
 			updateProjectFromFilter();
 			updatePayeeFromFilter();
 			updateNoteFromFilter();
+			updateTagsOpFromFilter();
 			updateTagsFromFilter();
 			updateLocationFromFilter();
 			updateSortOrderFromFilter();
@@ -214,10 +229,22 @@ public class BlotterFilterActivity extends FilterAbstractActivity {
 		}
 	}
 
+	private void updateTagsOpFromFilter() {
+		Criterion c = filter.get(BlotterFilter.TAGS_OP);
+		if (c != null) {
+			int selected = c.getIntValue();
+			tagsOp.setText(tagsOpEntries[selected]);
+			showMinusButton(tagsOp);
+		} else {
+			tagsOp.setText(tagsOpEntries[0]);
+			hideMinusButton(tagsOp);
+		}
+	}
+
 	private void updateTagsFromFilter() {
-		List<String> selectedTags = getSelectedTagsFromFilter();
+		Set<String> selectedTags = getSelectedTagsFromFilter();
 		if (!selectedTags.isEmpty()) {
-			tags.setText(String.join(", ", selectedTags));
+			tags.setText(PillSpan.formatAsPills(this, selectedTags, tagFromTitle));
 			showMinusButton(tags);
 		} else {
 			tags.setText(R.string.no_filter);
@@ -225,8 +252,8 @@ public class BlotterFilterActivity extends FilterAbstractActivity {
 		}
 	}
 
-	private List<String> getSelectedTagsFromFilter() {
-		List<String> list = new ArrayList<>();
+	private Set<String> getSelectedTagsFromFilter() {
+		var list = new ObjectOpenHashSet<String>();
 		Criterion c = filter.get(BlotterFilter.TAGS);
 		if (c != null) {
 			extractTagsFromCriterion(c, list);
@@ -234,16 +261,20 @@ public class BlotterFilterActivity extends FilterAbstractActivity {
 		return list;
 	}
 
-	private void extractTagsFromCriterion(Criterion c, List<String> list) {
+	private void extractTagsFromCriterion(Criterion c, Collection<String> list) {
 		if (c.getChildren() != null && c.getChildren().length > 0) {
 			for (Criterion child : c.getChildren()) {
 				extractTagsFromCriterion(child, list);
 			}
-		} else if (c.getValues() != null) {
+		}
+		else if (c.isNull()) {
+			list.add(getString(R.string.no_tags));
+		}
+		else if (c.getValues() != null) {
 			for (String v : c.getValues()) {
 				if (v != null) {
-					if (v.startsWith("%") && v.endsWith("%") && v.length() >= 2) {
-						v = v.substring(1, v.length() - 1);
+					if (v.startsWith("%\n") && v.endsWith("\n%") && v.length() >= 4) {
+						v = v.substring(2, v.length() - 2);
 					}
 					v = v.trim();
 					if (!v.isEmpty() && !list.contains(v)) {
@@ -255,7 +286,10 @@ public class BlotterFilterActivity extends FilterAbstractActivity {
 	}
 
 	private void showTagsFilterDialog() {
-		var allTagsSet = new TreeSet<String>(String.CASE_INSENSITIVE_ORDER);
+		var allTagsSet = new TreeSet<String>();
+
+		allTagsSet.add(getString(R.string.no_tags));
+
 		allTagsSet.addAll(db.getAllUniqueTags());
 		allTagsSet.addAll(getSelectedTagsFromFilter());
 		if (allTagsSet.isEmpty()) {
@@ -264,7 +298,7 @@ public class BlotterFilterActivity extends FilterAbstractActivity {
 		}
 
 		var items = new ArrayList<TagMultiChoiceItem>();
-		var selected = new TreeSet<String>(String.CASE_INSENSITIVE_ORDER);
+		var selected = new TreeSet<String>();
 		selected.addAll(getSelectedTagsFromFilter());
 
 		for (String tag : allTagsSet) {
@@ -348,6 +382,13 @@ public class BlotterFilterActivity extends FilterAbstractActivity {
 			startActivityForResult(intent, REQUEST_NOTE_FILTER);
 		} else if (id == R.id.note_clear) {
 			clear(BlotterFilter.NOTE, note);
+		} else if (id == R.id.tags_op) {
+			ArrayAdapter<String> adapter = new ArrayAdapter<>(this, android.R.layout.simple_spinner_dropdown_item, tagsOpEntries);
+			Criterion c = filter.get(BlotterFilter.TAGS_OP);
+			int selectedPos = c != null ? c.getIntValue() : 0;
+			x.selectPosition(this, R.id.tags_op, R.string.tags_op, adapter, selectedPos);
+		} else if (id == R.id.tags_op_clear) {
+			onSelectedPos(R.id.tags_op, 0);
 		} else if (id == R.id.tags) {
 			showTagsFilterDialog();
 		} else if (id == R.id.tags_clear) {
@@ -423,6 +464,22 @@ public class BlotterFilterActivity extends FilterAbstractActivity {
 			}
 			updateSplitFromFilter();
 		}
+		if (id == R.id.tags_op) {
+			if (selectedPos == 0) {
+				filter.remove(BlotterFilter.TAGS_OP);
+				Criterion c = filter.get(BlotterFilter.TAGS);
+				if (c != null) {
+					filter.put(Criterion.and(c.getChildren()));
+				}
+			} else {
+				filter.put(Criterion.tag(BlotterFilter.TAGS_OP, String.valueOf(selectedPos)));
+				Criterion c = filter.get(BlotterFilter.TAGS);
+				if (c != null) {
+					filter.put(Criterion.or(c.getChildren()));
+				}
+			}
+			updateTagsOpFromFilter();
+		}
 	}
 
 	@Override
@@ -450,14 +507,20 @@ public class BlotterFilterActivity extends FilterAbstractActivity {
 				}
 			}
 			if (!selectedTags.isEmpty()) {
-				if (selectedTags.size() == 1) {
-					filter.put(new Criterion(BlotterFilter.TAGS, WhereFilter.Operation.LIKE, "%" + selectedTags.get(0) + "%"));
-				} else {
-					Criterion[] children = new Criterion[selectedTags.size()];
-					for (int i = 0; i < selectedTags.size(); i++) {
-						children[i] = new Criterion(BlotterFilter.TAGS, WhereFilter.Operation.LIKE, "%" + selectedTags.get(i) + "%");
+				Criterion[] children = new Criterion[selectedTags.size()];
+				for (int i = 0; i < selectedTags.size(); i++) {
+					String tag = selectedTags.get(i);
+					if (tag.equals(getString(R.string.no_tags))) {
+						children[i] = new Criterion(BlotterFilter.TAGS, WhereFilter.Operation.ISNULL);
+					} else {
+						children[i] = new Criterion(BlotterFilter.TAGS, WhereFilter.Operation.LIKE, "%\n" + tag + "\n%");
 					}
+				}
+				Criterion c = filter.get(BlotterFilter.TAGS_OP);
+				if (c != null && c.getIntValue() == 1) {
 					filter.put(Criterion.or(children));
+				} else {
+					filter.put(Criterion.and(children));
 				}
 			} else {
 				clear(BlotterFilter.TAGS, tags);
