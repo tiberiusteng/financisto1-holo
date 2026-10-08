@@ -62,22 +62,17 @@ public class BlotterFilterActivity extends FilterAbstractActivity {
 	private TextView account;
 	private TextView currency;
 	private TextView note;
-	private TextView tagsOp;
-	private TextView tags;
 	private TextView status;
 	private TextView split;
 	private TextView sortOrder;
 
 	private DateFormat df;
-	private String[] tagsOpEntries;
 	private String[] sortBlotterEntries;
 	private String[] filterSplitEntries;
 
 	private long accountId;
 	private boolean isAccountFilter;
 	private boolean isPlannerFilter;
-
-	private Map<String, Tag> tagFromTitle;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -93,7 +88,6 @@ public class BlotterFilterActivity extends FilterAbstractActivity {
 		df = DateUtils.getShortDateFormat(this);
 		sortBlotterEntries = getResources().getStringArray(R.array.sort_blotter_entries);
 		filterSplitEntries = getResources().getStringArray(R.array.filter_split_entries);
-		tagsOpEntries = getResources().getStringArray(R.array.tags_op_entries);
 		noFilterValue = getString(R.string.no_filter);
 
 		LinearLayout layout = findViewById(R.id.layout);
@@ -105,8 +99,7 @@ public class BlotterFilterActivity extends FilterAbstractActivity {
 		initProjectSelector(layout);
 		initLocationSelector(layout);
 		note = x.addFilterNodeMinus(layout, R.id.note, R.id.note_clear, R.string.note, R.string.no_filter);
-		tagsOp = x.addFilterNodeMinus(layout, R.id.tags_op, R.id.tags_op_clear, R.string.tags_op, R.string.tags_op_default);
-		tags = x.addFilterNodeMinus(layout, R.id.tags, R.id.tags_clear, R.string.tags, R.string.no_filter);
+		initTagSelector(layout);
 		status = x.addFilterNodeMinus(layout, R.id.status, R.id.status_clear, R.string.transaction_status, R.string.no_filter);
 		split = x.addFilterNodeMinus(layout, R.id.split, R.id.split_clear, R.string.filter_split, R.string.filter_split_default);
 		if (!isPlannerFilter) {
@@ -139,8 +132,6 @@ public class BlotterFilterActivity extends FilterAbstractActivity {
 				finish();
 			}
 		});
-
-		tagFromTitle = db.getAllTagByTitleMap();
 
 		if (intent != null) {
 			filter = WhereFilter.fromIntent(intent);
@@ -229,88 +220,6 @@ public class BlotterFilterActivity extends FilterAbstractActivity {
 		}
 	}
 
-	private void updateTagsOpFromFilter() {
-		Criterion c = filter.get(BlotterFilter.TAGS_OP);
-		if (c != null) {
-			int selected = c.getIntValue();
-			tagsOp.setText(tagsOpEntries[selected]);
-			showMinusButton(tagsOp);
-		} else {
-			tagsOp.setText(tagsOpEntries[0]);
-			hideMinusButton(tagsOp);
-		}
-	}
-
-	private void updateTagsFromFilter() {
-		Set<String> selectedTags = getSelectedTagsFromFilter();
-		if (!selectedTags.isEmpty()) {
-			tags.setText(PillSpan.formatAsPills(this, selectedTags, tagFromTitle));
-			showMinusButton(tags);
-		} else {
-			tags.setText(R.string.no_filter);
-			hideMinusButton(tags);
-		}
-	}
-
-	private Set<String> getSelectedTagsFromFilter() {
-		var list = new ObjectOpenHashSet<String>();
-		Criterion c = filter.get(BlotterFilter.TAGS);
-		if (c != null) {
-			extractTagsFromCriterion(c, list);
-		}
-		return list;
-	}
-
-	private void extractTagsFromCriterion(Criterion c, Collection<String> list) {
-		if (c.getChildren() != null && c.getChildren().length > 0) {
-			for (Criterion child : c.getChildren()) {
-				extractTagsFromCriterion(child, list);
-			}
-		}
-		else if (c.isNull()) {
-			list.add(getString(R.string.no_tags));
-		}
-		else if (c.getValues() != null) {
-			for (String v : c.getValues()) {
-				if (v != null) {
-					if (v.startsWith("%\n") && v.endsWith("\n%") && v.length() >= 4) {
-						v = v.substring(2, v.length() - 2);
-					}
-					v = v.trim();
-					if (!v.isEmpty() && !list.contains(v)) {
-						list.add(v);
-					}
-				}
-			}
-		}
-	}
-
-	private void showTagsFilterDialog() {
-		var allTagsSet = new TreeSet<String>();
-
-		allTagsSet.add(getString(R.string.no_tags));
-
-		allTagsSet.addAll(db.getAllUniqueTags());
-		allTagsSet.addAll(getSelectedTagsFromFilter());
-		if (allTagsSet.isEmpty()) {
-			Toast.makeText(this, R.string.no_tags, Toast.LENGTH_SHORT).show();
-			return;
-		}
-
-		var items = new ArrayList<TagMultiChoiceItem>();
-		var selected = new TreeSet<String>();
-		selected.addAll(getSelectedTagsFromFilter());
-
-		for (String tag : allTagsSet) {
-			var item = new TagMultiChoiceItem(tag);
-			if (selected.contains(tag)) {
-				item.setChecked(true);
-			}
-			items.add(item);
-		}
-		x.selectMultiChoice(this, R.id.tags, R.string.tags, items);
-	}
-
 	private void updateStatusFromFilter() {
 		Criterion c = filter.get(BlotterFilter.STATUS);
 		if (c != null) {
@@ -382,17 +291,6 @@ public class BlotterFilterActivity extends FilterAbstractActivity {
 			startActivityForResult(intent, REQUEST_NOTE_FILTER);
 		} else if (id == R.id.note_clear) {
 			clear(BlotterFilter.NOTE, note);
-		} else if (id == R.id.tags_op) {
-			ArrayAdapter<String> adapter = new ArrayAdapter<>(this, android.R.layout.simple_spinner_dropdown_item, tagsOpEntries);
-			Criterion c = filter.get(BlotterFilter.TAGS_OP);
-			int selectedPos = c != null ? c.getIntValue() : 0;
-			x.selectPosition(this, R.id.tags_op, R.string.tags_op, adapter, selectedPos);
-		} else if (id == R.id.tags_op_clear) {
-			onSelectedPos(R.id.tags_op, 0);
-		} else if (id == R.id.tags) {
-			showTagsFilterDialog();
-		} else if (id == R.id.tags_clear) {
-			clear(BlotterFilter.TAGS, tags);
 		} else if (id == R.id.sort_order) {
 			ArrayAdapter<String> adapter = new ArrayAdapter<>(this, android.R.layout.simple_spinner_dropdown_item, sortBlotterEntries);
 			int selectedPos = BlotterFilter.SORT_OLDER_TO_NEWER.equals(filter.getSortOrder()) ? 1 : 0;
@@ -464,22 +362,6 @@ public class BlotterFilterActivity extends FilterAbstractActivity {
 			}
 			updateSplitFromFilter();
 		}
-		if (id == R.id.tags_op) {
-			if (selectedPos == 0) {
-				filter.remove(BlotterFilter.TAGS_OP);
-				Criterion c = filter.get(BlotterFilter.TAGS);
-				if (c != null) {
-					filter.put(Criterion.and(c.getChildren()));
-				}
-			} else {
-				filter.put(Criterion.tag(BlotterFilter.TAGS_OP, String.valueOf(selectedPos)));
-				Criterion c = filter.get(BlotterFilter.TAGS);
-				if (c != null) {
-					filter.put(Criterion.or(c.getChildren()));
-				}
-			}
-			updateTagsOpFromFilter();
-		}
 	}
 
 	@Override
@@ -499,33 +381,6 @@ public class BlotterFilterActivity extends FilterAbstractActivity {
 				clear(BlotterFilter.STATUS, status);
 			}
 			updateStatusFromFilter();
-		} else if (id == R.id.tags) {
-			var selectedTags = new ArrayList<String>();
-			for (var item : items) {
-				if (item.isChecked()) {
-					selectedTags.add(((TagMultiChoiceItem) item).tag);
-				}
-			}
-			if (!selectedTags.isEmpty()) {
-				Criterion[] children = new Criterion[selectedTags.size()];
-				for (int i = 0; i < selectedTags.size(); i++) {
-					String tag = selectedTags.get(i);
-					if (tag.equals(getString(R.string.no_tags))) {
-						children[i] = new Criterion(BlotterFilter.TAGS, WhereFilter.Operation.ISNULL);
-					} else {
-						children[i] = new Criterion(BlotterFilter.TAGS, WhereFilter.Operation.LIKE, "%\n" + tag + "\n%");
-					}
-				}
-				Criterion c = filter.get(BlotterFilter.TAGS_OP);
-				if (c != null && c.getIntValue() == 1) {
-					filter.put(Criterion.or(children));
-				} else {
-					filter.put(Criterion.and(children));
-				}
-			} else {
-				clear(BlotterFilter.TAGS, tags);
-			}
-			updateTagsFromFilter();
 		}
 	}
 

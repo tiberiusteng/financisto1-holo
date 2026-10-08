@@ -35,6 +35,7 @@ import java.util.Collections;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.function.Consumer;
 
 /**
  * Created by IntelliJ IDEA.
@@ -63,6 +64,8 @@ public abstract class MyEntitySelector<T extends MyEntity, A extends AbstractAct
     private boolean includeZero;
     private boolean multiSelect;
     private boolean useSearchAsPrimary;
+
+    private List<Runnable> afterLoaded;
 
     private long selectedEntityId = 0;
 
@@ -96,6 +99,8 @@ public abstract class MyEntitySelector<T extends MyEntity, A extends AbstractAct
         this.filterToggleId = filterToggleId;
         this.showListId = showListId;
         this.createEntityId = createEntityId;
+
+        this.afterLoaded = new LinkedList<>();
     }
 
     protected abstract Class getEditActivityClass();
@@ -136,6 +141,9 @@ public abstract class MyEntitySelector<T extends MyEntity, A extends AbstractAct
             }
             synchronized (this) {
                 loaded = true;
+                for (Runnable r : afterLoaded) {
+                    r.run();
+                }
             }
             Log.d(TAG, "fetchEntities " + Thread.currentThread().getName() + " " +
                     entityClass.getSimpleName() + " " + String.format("%,d", System.nanoTime() - t0) + " ns");
@@ -292,18 +300,25 @@ public abstract class MyEntitySelector<T extends MyEntity, A extends AbstractAct
     }
 
     public void fillCheckedEntitiesInUI() {
-        String selectedProjects = getCheckedTitles();
-        if (Utils.isEmpty(selectedProjects)) {
-            clearSelection();
-        } else if (text != null) {
-            text.setText(selectedProjects);
-            showHideMinusBtn(true);
-        }
+        getCheckedTitles((selectedProjects) -> {
+            if (Utils.isEmpty(selectedProjects)) {
+                clearSelection();
+            } else if (text != null) {
+                text.setText(selectedProjects);
+                showHideMinusBtn(true);
+            }
+        });
     }
 
 
-    public String getCheckedTitles() {
-        return getCheckedTitles(entities);
+    public void getCheckedTitles(Consumer<String> callback) {
+        synchronized (this) {
+            if (!loaded) {
+                afterLoaded.add(() -> callback.accept(getCheckedTitles(entities)));
+                return;
+            }
+        }
+        callback.accept(getCheckedTitles(entities));
     }
 
     public static String getCheckedTitles(List<? extends MyEntity> list) {

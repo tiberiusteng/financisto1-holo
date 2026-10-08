@@ -41,6 +41,13 @@ public class Tag extends MyEntity implements SortableEntity {
         this.isActive = true;
     }
 
+    public Tag(String title, boolean checked) {
+        this.title = title;
+        this.color = "";
+        this.isActive = true;
+        this.checked = checked;
+    }
+
     public Integer getColorInt() {
         if (colorInt != null) return colorInt;
         try {

@@ -32,6 +32,7 @@ import tw.tib.financisto.R;
 import tw.tib.financisto.db.DatabaseAdapter;
 import tw.tib.financisto.model.Tag;
 import tw.tib.financisto.utils.MyPreferences;
+import tw.tib.financisto.utils.StringUtil;
 import tw.tib.financisto.utils.TransactionUtils;
 import tw.tib.financisto.utils.Utils;
 import tw.tib.financisto.view.PillSpan;
@@ -44,6 +45,10 @@ public class TagSelector<A extends AbstractActivity> {
     private final ActivityLayout x;
     private final boolean isShow;
 
+    private final int actBtnId;
+    private final int clrBtnId;
+    private final int defaultValueResId;
+
     private View node;
     private TextView text;
     private AutoCompleteTextView autoCompleteFilter;
@@ -53,13 +58,22 @@ public class TagSelector<A extends AbstractActivity> {
     private boolean enabled = true;
     private boolean loaded = false;
     private boolean mainSearch;
+    private boolean enableCreate;
 
     public TagSelector(A activity, DatabaseAdapter db, ActivityLayout x) {
+        this(activity, db, x, R.id.tags_add, R.id.tags_clear, R.string.select_tags, true);
+    }
+
+    public TagSelector(A activity, DatabaseAdapter db, ActivityLayout x, int actBtnId, int clearBtnId, int defaultValueResId, boolean enableCreate) {
         this.activity = activity;
         this.db = db;
         this.x = x;
         this.isShow = MyPreferences.isShowTags();
         this.mainSearch = (MyPreferences.getTagsSelectorType() == MyPreferences.EntitySelectorType.SEARCH);
+        this.actBtnId = actBtnId;
+        this.clrBtnId = clearBtnId;
+        this.defaultValueResId = defaultValueResId;
+        this.enableCreate = enableCreate;
     }
 
     public TextView createNode(LinearLayout layout) {
@@ -71,13 +85,13 @@ public class TagSelector<A extends AbstractActivity> {
 
         if (!mainSearch) {
             views = x.addListNodeWithButtonsAndFilter(
-                    layout, R.layout.select_entry_with_2btn_and_filter, R.id.tags, R.id.tags_add,
-                    R.id.tags_clear, R.string.tags, R.string.select_tags, R.id.tags_filter_toggle);
+                    layout, R.layout.select_entry_with_2btn_and_filter, R.id.tags, actBtnId,
+                    clrBtnId, R.string.tags, defaultValueResId, R.id.tags_filter_toggle);
         } else {
             views = x.addListNodeWithButtonsAndFilterSearchFirst(
-                    layout, R.layout.select_entry_with_2btn_and_list_filter, R.id.tags, R.id.tags_add,
-                    R.id.tags_clear, R.string.tags, R.string.select_tags, R.id.tags_filter_toggle,
-                    R.id.tags_show_list, R.id.tags_create, true);
+                    layout, R.layout.select_entry_with_2btn_and_list_filter, R.id.tags, actBtnId,
+                    clrBtnId, R.string.tags, defaultValueResId, R.id.tags_filter_toggle,
+                    R.id.tags_show_list, R.id.tags_create, enableCreate);
         }
 
         text = views.first;
@@ -85,19 +99,19 @@ public class TagSelector<A extends AbstractActivity> {
         node = (View) text.getTag();
         node.setEnabled(false);
 
-        float density = activity.getResources().getDisplayMetrics().density;
-        int minHeight = (int) (56 * density);
-        node.setMinimumHeight(minHeight);
-        View row = node.findViewById(R.id.list_node_row);
-        if (row != null) {
-            row.setMinimumHeight(minHeight);
-        }
-        View parent = (View) text.getParent();
-        if (parent != null) {
-            parent.setPadding(parent.getPaddingLeft(), (int) (4 * density), parent.getPaddingRight(), (int) (4 * density));
-        }
-        text.setPadding(0, (int) (2 * density), 0, (int) (2 * density));
-        text.setLineSpacing(3 * density, 1.0f);
+//        float density = activity.getResources().getDisplayMetrics().density;
+//        int minHeight = (int) (56 * density);
+//        node.setMinimumHeight(minHeight);
+//        View row = node.findViewById(R.id.list_node_row);
+//        if (row != null) {
+//            row.setMinimumHeight(minHeight);
+//        }
+//        View parent = (View) text.getParent();
+//        if (parent != null) {
+//            parent.setPadding(parent.getPaddingLeft(), (int) (4 * density), parent.getPaddingRight(), (int) (4 * density));
+//        }
+//        text.setPadding(0, (int) (2 * density), 0, (int) (2 * density));
+//        text.setLineSpacing(3 * density, 1.0f);
 
         initAutoCompleteFilter(autoCompleteFilter);
         fetchEntities();
@@ -121,7 +135,6 @@ public class TagSelector<A extends AbstractActivity> {
         });
 
         filterTxt.setOnItemClickListener((parent, view, position, id) -> {
-            Log.d(TAG,  DatabaseUtils.dumpCursorToString(((Cursor) parent.getItemAtPosition(position))));
             var c = (Cursor) parent.getItemAtPosition(position);
             @SuppressLint("Range") String tag = c.getString(c.getColumnIndex("e_title"));
             if (!TextUtils.isEmpty(tag)) {
@@ -133,6 +146,12 @@ public class TagSelector<A extends AbstractActivity> {
             if (toggleBtn != null) {
                 toggleBtn.performClick();
             }
+
+            List<Tag> selectedTagEntities = new ArrayList<>();
+            for (String title : selectedTags) {
+                selectedTagEntities.add(new Tag(title, true));
+            }
+            x.listener.onSelected(R.id.tags, selectedTagEntities);
         });
     }
 
@@ -219,7 +238,7 @@ public class TagSelector<A extends AbstractActivity> {
         for (int i = 0; i < currentTags.size(); i++) {
             Tag t = currentTags.get(i);
             titles[i] = new SpannableStringBuilder().append(t.title, new PillSpan(this.activity, t.getColorInt()), Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
-            checked[i] = selectedTags.contains(titles[i].toString());
+            t.checked = checked[i] = selectedTags.contains(titles[i].toString());
         }
 
         AlertDialog.Builder builder = new AlertDialog.Builder(activity);
@@ -232,6 +251,7 @@ public class TagSelector<A extends AbstractActivity> {
         } else {
             builder.setMultiChoiceItems(titles, checked, (dialog, which, isChecked) -> {
                 checked[which] = isChecked;
+                currentTags.get(which).setChecked(isChecked);
             });
             builder.setPositiveButton(R.string.ok, (dialog, which) -> {
                 selectedTags.clear();
@@ -241,6 +261,7 @@ public class TagSelector<A extends AbstractActivity> {
                     }
                 }
                 fillCheckedEntitiesInUI();
+                x.listener.onSelected(R.id.tags, currentTags);
             });
             builder.setNeutralButton(R.string.new_tag, (dialog, which) -> {
                 selectedTags.clear();
@@ -329,6 +350,12 @@ public class TagSelector<A extends AbstractActivity> {
                 }
             }
         }
+        fillCheckedEntitiesInUI();
+    }
+
+    public void setSelectedTags(Set<String> tags) {
+        selectedTags.clear();
+        selectedTags.addAll(tags);
         fillCheckedEntitiesInUI();
     }
 

@@ -33,7 +33,7 @@ import java.util.List;
 public class ActivityLayout {
 
 	public final NodeInflater inflater;
-	private final ActivityLayoutListener listener;
+	public final ActivityLayoutListener listener;
 
 	public ActivityLayout(NodeInflater inflater, ActivityLayoutListener listener) {
 		this.inflater = inflater;
