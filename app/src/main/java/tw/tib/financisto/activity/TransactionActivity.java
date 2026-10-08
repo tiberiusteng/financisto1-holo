@@ -420,9 +420,10 @@ public class TransactionActivity extends AbstractTransactionActivity {
             split.categoryAttributes = db.getAllAttributesForTransaction(split.id);
             // we are going to recreate them with order
             split.id = --idSequence;
-            if (split.originalCurrencyId > 0) {
-                split.fromAmount = split.originalFromAmount;
-            }
+            // TODO split transactions with foreign currency
+            //if (split.originalCurrencyId > 0) {
+            //    split.fromAmount = split.originalFromAmount;
+            //}
             addOrEditSplit(split);
         }
     }

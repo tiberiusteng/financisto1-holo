@@ -496,8 +496,10 @@ public class DatabaseAdapter extends MyEntityManager {
                     split.payeeId = parent.payeeId;
                 }
                 split.isTemplate = parent.isTemplate;
-                split.status = parent.status;
-                updateSplitOriginalAmount(parent, split);
+                // do not override split's status with parent's status
+                //split.status = parent.status;
+                // TODO split transactions with foreign currency
+                //updateSplitOriginalAmount(parent, split);
                 long splitId = insertTransaction(split);
                 insertAttributes(splitId, split.categoryAttributes);
                 if (logCopied) {
@@ -599,6 +601,10 @@ public class DatabaseAdapter extends MyEntityManager {
             v.put(DatabaseHelper.TransactionColumns.status.name(), status.name());
 
             db.update(DatabaseHelper.TRANSACTION_TABLE, v, DatabaseHelper.TransactionColumns._id + "=?",
+                    new String[]{String.valueOf(id)});
+
+            // split transactions which parent is this transaction
+            db.update(DatabaseHelper.TRANSACTION_TABLE, v, DatabaseHelper.TransactionColumns.parent_id+ "=?",
                     new String[]{String.valueOf(id)});
 
             db.setTransactionSuccessful();
