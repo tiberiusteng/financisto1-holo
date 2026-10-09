@@ -134,6 +134,9 @@ public class CsvImport {
     public Map<String, Tag> collectAndInsertTags(List<CsvTransaction> transactions) {
         Map<String, Tag> map = db.getAllTagByTitleMap();
         for (CsvTransaction transaction : transactions) {
+            if (transaction.tags == null) {
+                continue;
+            }
             var tagSet = transaction.tags.trim().split("\n");
             for (String tagString : tagSet) {
                 if (isNewEntity(map, tagString)) {
