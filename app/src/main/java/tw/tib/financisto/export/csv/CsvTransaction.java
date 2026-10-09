@@ -228,6 +228,7 @@ public class CsvTransaction {
     }
 
     private static <T extends MyEntity> long getEntityIdOrZero(Map<String, T> map, String value) {
+        if (value == null) return 0;
         T e = map.get(value);
         return e != null ? e.id : 0;
     }

@@ -136,7 +136,8 @@ public abstract class ImportExportAsyncTask extends AsyncTask<Uri, String, Objec
                 for (StackTraceElement e : stack) {
                     String fileName = e.getFileName();
                     if (fileName.equals("ImportExportAsyncTask.java")) break;
-                    sb.append(e.getClassName()).append(":").append(e.getMethodName()).append(":")
+                    sb.append(e.getClassName().substring(e.getClassName().lastIndexOf(".") + 1))
+                            .append(":").append(e.getMethodName()).append(":")
                             .append(e.getLineNumber()).append("\n");
                 }
             }

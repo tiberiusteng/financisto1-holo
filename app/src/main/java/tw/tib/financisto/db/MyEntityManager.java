@@ -706,7 +706,9 @@ public abstract class MyEntityManager extends EntityManager {
 	private static <T extends MyEntity> Map<String, T> entitiesAsTitleMap(List<T> entities) {
 		Map<String, T> map = new Object2ObjectRBTreeMap<>();
 		for (T e : entities) {
-			map.put(e.title, e);
+			if (e.title != null) {
+				map.put(e.title, e);
+			}
 		}
 		return map;
 	}
