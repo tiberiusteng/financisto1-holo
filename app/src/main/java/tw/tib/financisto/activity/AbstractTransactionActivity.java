@@ -57,6 +57,7 @@ import tw.tib.financisto.view.AttributeViewFactory;
 import tw.tib.financisto.widget.RateLayoutView;
 
 import java.text.DateFormat;
+import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
@@ -127,6 +128,7 @@ public abstract class AbstractTransactionActivity extends AbstractActivity imple
 	protected String notificationOptions;
 
 	protected boolean isDuplicate = false;
+	private boolean isPrefilled = false;
 
 	protected PayeeSelector<AbstractTransactionActivity> payeeSelector;
 	protected ProjectSelector<AbstractTransactionActivity> projectSelector;
@@ -221,6 +223,7 @@ public abstract class AbstractTransactionActivity extends AbstractActivity imple
 		long accountId = -1;
 		long transactionId = -1;
 		boolean isNewFromTemplate = false;
+		IntentTransactionProcessor.Prefill prefill = null;
 		final Intent intent = getIntent();
 		if (intent != null) {
 			accountId = intent.getLongExtra(ACCOUNT_ID_EXTRA, -1);
@@ -235,6 +238,14 @@ public abstract class AbstractTransactionActivity extends AbstractActivity imple
 					transaction.id = -1;
 					transaction.dateTime = System.currentTimeMillis();
 				}
+			} else if (isIntentPrefillSupported() && IntentTransactionProcessor.hasPrefillExtras(intent)) {
+				// A new transaction pre-filled by another app (the same extras as the
+				// NEW_TRANSACTION service), shown for review and saved only by the user.
+				prefill = new IntentTransactionProcessor(db).createPrefillFromIntent(intent, defaultAccountId(accountId));
+				transaction = prefill.transaction;
+				isPrefilled = true;
+				applyPayeeLastCategory(prefill);
+				applyCategoryLastUsed(prefill);
 			}
 			transaction.isTemplate = intent.getIntExtra(TEMPLATE_EXTRA, transaction.isTemplate);
 		}
@@ -360,6 +371,11 @@ public abstract class AbstractTransactionActivity extends AbstractActivity imple
 			} else {
 				if (saveAndFinish()) {
 					intent.putExtra(DATETIME_EXTRA, transaction.dateTime);
+					if (isPrefilled) {
+						// after a pre-fill the next transaction starts empty; a screen opened with
+						// TAGS only keeps them, as before
+						IntentTransactionProcessor.removePrefillExtras(intent);
+					}
 					startActivityForResult(intent, -1);
 				}
 			}
@@ -368,6 +384,8 @@ public abstract class AbstractTransactionActivity extends AbstractActivity imple
 		if (transactionId != -1) {
 			isOpenCalculatorForTemplates &= isNewFromTemplate;
 			editTransaction(transaction);
+		} else if (prefill != null) {
+			editPrefilledTransaction(prefill);
 		} else {
 			setDateTime(transaction.dateTime);
 			categorySelector.selectCategory(NO_CATEGORY_ID);
@@ -767,6 +785,91 @@ public abstract class AbstractTransactionActivity extends AbstractActivity imple
 	}
 
 	protected abstract void editTransaction(Transaction transaction);
+
+	/** Whether this screen fills a new transaction from IntentTransactionProcessor's extras. */
+	protected boolean isIntentPrefillSupported() {
+		return false;
+	}
+
+	/**
+	 * The payee's last category when the intent names no category, as when the user picks the
+	 * payee by hand (TransactionActivity.onSelectedId with "remember last category" on).
+	 */
+	private void applyPayeeLastCategory(IntentTransactionProcessor.Prefill prefill) {
+		if (transaction.categoryId == NO_CATEGORY_ID && prefill.unknownCategory == null
+				&& isRememberLastCategory && prefill.payeeLastCategoryId > 0) {
+			transaction.categoryId = prefill.payeeLastCategoryId;
+		}
+	}
+
+	/**
+	 * The category's last project and location, as when the user picks the category by hand
+	 * (onCategorySelected with selectLast and the "remember" preferences). editTransaction()
+	 * selects the category the way an edit does, which leaves them out. Runs before the
+	 * selectors are created, so an inactive project or location is still listed.
+	 */
+	private void applyCategoryLastUsed(IntentTransactionProcessor.Prefill prefill) {
+		if (transaction.categoryId <= 0) return;
+		Category category = db.getCategory(transaction.categoryId);
+		if (category == null) return;
+		if (isShowProject && isRememberLastProject && prefill.projectName == null) {
+			transaction.projectId = category.lastProjectId;
+		}
+		if (isShowLocation && isRememberLastLocation) {
+			transaction.locationId = category.lastLocationId;
+		}
+	}
+
+	/**
+	 * The account a new transaction starts with when the intent names none, as for any new
+	 * transaction: the ACCOUNT_ID_EXTRA, else the last account with "remember last account" on.
+	 * 0 for none. Known before the pre-fill is built, so the amount uses that account's decimals.
+	 */
+	private long defaultAccountId(long accountIdExtra) {
+		if (accountIdExtra != -1) {
+			return accountIdExtra;
+		}
+		long lastAccountId = MyPreferences.getLastAccount();
+		return isRememberLastAccount && lastAccountId != -1 ? lastAccountId : 0;
+	}
+
+	private void editPrefilledTransaction(IntentTransactionProcessor.Prefill prefill) {
+		// The payee and project names go into their search boxes, as if typed: the user can edit
+		// them, and saving picks or creates them (checkSelectedEntities). A hidden field keeps
+		// the payee or project found by the intent.
+		boolean payeeAsSearch = isShowPayee && prefill.payeeName != null;
+		boolean projectAsSearch = isShowProject && prefill.projectName != null;
+		if (payeeAsSearch) transaction.payeeId = Payee.EMPTY.id;
+		if (projectAsSearch) transaction.projectId = NO_PROJECT_ID;
+		editTransaction(transaction);
+		if (payeeAsSearch) payeeSelector.setSearchText(prefill.payeeName);
+		if (projectAsSearch) projectSelector.setSearchText(prefill.projectName);
+
+		// say which values were not found or not valid; those fields are left empty
+		List<String> problems = new ArrayList<>();
+		if (prefill.unknownAccount != null) {
+			problems.add(getString(R.string.intent_prefill_account_not_found, prefill.unknownAccount));
+		}
+		if (prefill.unknownCategory != null) {
+			problems.add(getString(R.string.intent_prefill_category_not_found, prefill.unknownCategory));
+		}
+		if (prefill.unknownCurrency != null) {
+			problems.add(getString(R.string.intent_prefill_currency_not_found, prefill.unknownCurrency));
+		}
+		if (prefill.invalidAmount != null) {
+			problems.add(getString(R.string.intent_prefill_invalid_amount, prefill.invalidAmount));
+		}
+		if (prefill.invalidOriginalAmount != null) {
+			problems.add(getString(R.string.intent_prefill_invalid_amount, prefill.invalidOriginalAmount));
+		}
+		if (prefill.originalIncomplete) {
+			problems.add(getString(R.string.intent_prefill_original_incomplete));
+		}
+		if (!problems.isEmpty()) {
+			Toast.makeText(this, String.join("\n", problems), Toast.LENGTH_LONG).show();
+		}
+	}
+
 	protected void updateUIforPreventEditing() {}
 
 	protected boolean isPreventEditing() {
