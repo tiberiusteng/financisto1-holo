@@ -724,11 +724,19 @@ public class DatabaseAdapter extends MyEntityManager {
         db.execSQL(UPDATE_RUNNING_BALANCE, new Object[]{deltaAmount, accountId, datetime, datetime, transactionId});
     }
 
+    /**
+     * Removes both rows of the old version before adding the rows of the new one.
+     *
+     * <p>A row is keyed by (account_id, transaction_id). When an edit turns the receiving account
+     * into the sending one (a transfer "A to B" edited into "B to A" or "B to C"), the new from-side
+     * row and the old to-side row have the same key; adding the new row first would let the
+     * removal of the old one delete it again, leaving the transaction without a running balance row.
+     */
     private void updateRunningBalance(Transaction oldTransaction, Transaction newTransaction) {
         deleteRunningBalance(oldTransaction.fromAccountId, oldTransaction.id, oldTransaction.fromAmount, oldTransaction.dateTime);
+        deleteRunningBalance(oldTransaction.toAccountId, oldTransaction.id, oldTransaction.toAmount, oldTransaction.dateTime);
         insertRunningBalance(newTransaction.fromAccountId, newTransaction.id, newTransaction.dateTime,
                 newTransaction.fromAmount, newTransaction.fromAmount);
-        deleteRunningBalance(oldTransaction.toAccountId, oldTransaction.id, oldTransaction.toAmount, oldTransaction.dateTime);
         insertRunningBalance(newTransaction.toAccountId, newTransaction.id, newTransaction.dateTime,
                 newTransaction.toAmount, newTransaction.toAmount);
     }
