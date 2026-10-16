@@ -1203,6 +1203,7 @@
     <string name="backup_newlines_summary">Newlines will be escaped as `\\n`, backslashes will be escaped as `\\\\`. If not enabled, newlines will be replaced as space (as in old versions).</string>
     <string name="auto_backup_is_not_enabled">You should consider enabling autobackup to Google Drive or Dropbox to keep your data safe. Go to Menu -> Preferences -> Backup.</string>
     <string name="integrity_error_message">%s%n(Tap to dismiss this message)</string>
+    <string name="integrity_error_message_fixable">%s%n(Tap to fix)</string>
     <string name="autobackup_failed_message">Autobackup failed at %s with error [%s].</string>
 
     <string name="request_permissions_storage_not_granted">Write external storage permisson not granted</string>

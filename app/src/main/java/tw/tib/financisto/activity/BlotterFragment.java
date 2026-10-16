@@ -252,6 +252,16 @@ public class BlotterFragment extends AbstractListFragment<Cursor> implements Blo
             });
         }
 
+        // The running balance warning can be fixed right here: tapping it runs Integrity Fix,
+        // then reloads this list and checks again so the warning goes away.
+        View integrityError = view.findViewById(R.id.integrity_error);
+        if (integrityError != null) {
+            integrityError.setOnClickListener(v -> MenuListItem.fixIntegrity(getContext(), () -> {
+                recreateCursor();
+                integrityCheck();
+            }));
+        }
+
         integrityCheck();
 
         backCallback = new OnBackPressedCallback(false) {
@@ -1210,7 +1220,7 @@ public class BlotterFragment extends AbstractListFragment<Cursor> implements Blo
     @Override
     public void integrityCheck() {
         Log.d(TAG, "integrityCheck");
-        new IntegrityCheckTask(this).execute(new IntegrityCheckRunningBalance(getContext()));
+        new IntegrityCheckTask(this, true).execute(new IntegrityCheckRunningBalance(getContext()));
     }
 
     public boolean onBackPressed()
