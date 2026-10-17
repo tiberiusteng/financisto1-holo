@@ -867,9 +867,11 @@
   <string name="startup_screen">啟動畫面</string>
   <string name="startup_screen_summary">選擇啟動時顯示的畫面</string>
   <string name="integrity_error">逐筆餘額似乎不準確。請按選單 -&gt; 更多 -&gt; 修復資料庫</string>
+  <string name="integrity_error_message">%s%n(按此隱藏訊息)</string>
+  <string name="integrity_error_message_fixable">%s%n(按此進行修復)</string>
   <string name="integrity_fix">修復資料庫</string>
-  <string name="integrity_fix_in_progress">正在檢查並修復 (若有需要) ...</string>
-  <string name="select_to_account_differ_from_to_account">無法轉帳到相同帳戶...</string>
+  <string name="integrity_fix_in_progress">正在檢查並修復 (若有需要) …</string>
+  <string name="select_to_account_differ_from_to_account">無法轉帳到相同帳戶…</string>
   <string name="period_this_and_last_week">本週與上週</string>
   <string name="period_this_and_last_month">本月與上月</string>
   <string name="period_this_and_last_year">本年與去年</string>
@@ -937,6 +939,11 @@
   <string name="new_sms_transaction_title">從 %s 自動產生交易</string>
   <string name="new_intent_transaction_text">已透過 Intent 新建交易</string>
   <string name="new_intent_transaction_title">從 Intent 自動產生交易</string>
+  <string name="intent_prefill_account_not_found">找不到帳戶: %s</string>
+  <string name="intent_prefill_category_not_found">找不到分類: %s</string>
+  <string name="intent_prefill_currency_not_found">找不到貨幣: %s</string>
+  <string name="intent_prefill_invalid_amount">無法解析金額: %s</string>
+  <string name="intent_prefill_original_incomplete">未處理外幣金額: 必須傳送 ORIGINAL_CURRENCY 與 ORIGINAL_AMOUNT</string>
   <string name="choose_sms_template_type_and_account">選擇分類與帳戶 (可省略)</string>
   <string name="choose_sms_template_transfer_to_account">選擇轉帳對象 (可省略)</string>
   <string name="tpl_not_transfer">不轉帳</string>
