@@ -231,6 +231,25 @@ public class TransferActivity extends AbstractTransactionActivity {
 		return account;
 	}
 
+	@Override
+	protected FormSwitch.Kind formKind() {
+		return FormSwitch.Kind.TRANSFER;
+	}
+
+	/** The form as it is: both accounts and both amounts (negative out, positive in). A transfer has no splits or original currency. */
+	@Override
+	protected Transaction readFormForSwitch() {
+		Transaction t = super.readFormForSwitch();
+		t.fromAccountId = Math.max(selectedAccountFromId, 0);
+		t.toAccountId = Math.max(selectedAccountToId, 0);
+		t.fromAmount = rateView.getFromAmount();
+		t.toAmount = rateView.getToAmount();
+		t.originalCurrencyId = 0;
+		t.originalFromAmount = 0;
+		t.splits = null;
+		return t;
+	}
+
 	protected void selectAccount(Account account, TextView accountText, TextView accountBalanceText, TextView accountLimitText, boolean selectLast) {
 		u.setAccountTitleBalance(account, accountText, accountBalanceText, accountLimitText);
 		if (selectLast) {

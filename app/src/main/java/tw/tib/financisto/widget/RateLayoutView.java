@@ -179,6 +179,14 @@ public class RateLayoutView implements RateNodeOwner {
         amountInputTo.disableIncomeExpenseButton();
     }
 
+    /**
+     * Whether the income/expense button shows income. Read from the button rather than the
+     * amount, which cannot tell the direction while it is 0.
+     */
+    public boolean isIncomeSelected() {
+        return !amountInputFrom.isExpense();
+    }
+
     public void setIncome() {
         amountInputFrom.setIncome();
         amountInputTo.setIncome();
