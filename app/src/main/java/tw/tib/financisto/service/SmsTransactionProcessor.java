@@ -420,7 +420,7 @@ public class SmsTransactionProcessor {
          */
         ANY("<::>", ".*?", "{{*}}"),
         ACCOUNT("<:A:>", "\\s{0,3}(\\d{4})\\s{0,3}", "{{a}}"),
-        BALANCE("<:B:>", "\\s{0,3}([\\d\\.,\\-\\+\\']+(?:[\\d \\xA0\\.,]+?)*)\\s{0,3}", "{{b}}"),
+        BALANCE("<:B:>", "\\s{0,3}([\\d\\.,\\-\\+\\']+(?:[\\d \\xA0\\u202f\\.,]+?)*)\\s{0,3}", "{{b}}"),
         ACCOUNT_NAME("<:C:>", "(\\S+?)", "{{c}}"),
         DATE("<:D:>", "\\s{0,3}(\\d[\\d\\. /:-]{12,14}\\d)\\s*?", "{{d}}"),
         // (\S+?) fails on merchant names containing a space ("ALPHA THEATRES",
