@@ -15,6 +15,7 @@ import androidx.core.util.Pair;
 
 import android.os.Handler;
 import android.os.Looper;
+import android.view.LayoutInflater;
 import android.text.InputType;
 import android.util.Log;
 import android.view.View;
@@ -62,6 +63,17 @@ public class CategorySelector<A extends AbstractActivity> {
     private Cursor categoryCursor;
     private ListAdapter categoryAdapter;
     private LinearLayout attributesLayout;
+
+    // Filter only: "Include sub-categories".
+    // The category filter is a nested set: btw(category_left, left, right) covers the whole
+    // subtree. Unticked, btw(left, left) is sent instead, which covers the category's own slot
+    // only. The row exists for SelectorType.FILTER and is shown only when a checked category
+    // has children - with leaves only, the choice would never change anything.
+    private View includeSubCategoriesRow;
+    private CheckBox includeSubCategoriesCheckBox;
+    private boolean includeSubCategories = true;
+    /** Set while only syncing the checkbox to the current state, so setChecked does not rebuild the criterion again. */
+    private boolean syncingIncludeSubCategories = false;
 
     private long selectedCategoryId = NO_CATEGORY_ID;
     private Account selectedAccount;
@@ -171,6 +183,9 @@ public class CategorySelector<A extends AbstractActivity> {
                 if (c.id == NO_CATEGORY_ID) { // special case as it must include only itself
                     res.add("0");
                     res.add("0");
+                } else if (!includeSubCategories && hasSubCategories(c)) {
+                    res.add(String.valueOf(c.left));
+                    res.add(String.valueOf(c.left));
                 } else {
                     res.add(String.valueOf(c.left));
                     res.add(String.valueOf(c.right));
@@ -250,6 +265,79 @@ public class CategorySelector<A extends AbstractActivity> {
         return categoryText;
     }
 
+    /**
+     * Adds the "Include sub-categories" row, a small right-aligned row right under the category
+     * field. Only for screens whose criterion comes from {@link #getCheckedCategoryLeafs()}:
+     * other users of SelectorType.FILTER (budgets, SMS templates) store category ids, where the
+     * choice would have no effect. Call after {@link #createNode}.
+     */
+    public void addIncludeSubCategoriesRow(LinearLayout layout) {
+        includeSubCategoriesRow = LayoutInflater.from(activity)
+                .inflate(R.layout.select_entry_include_sub, layout, false);
+        includeSubCategoriesCheckBox = includeSubCategoriesRow.findViewById(R.id.category_include_sub);
+        includeSubCategoriesCheckBox.setChecked(includeSubCategories);
+        includeSubCategoriesCheckBox.setOnCheckedChangeListener((btn, checked) -> {
+            includeSubCategories = checked;
+            // the range changed, so let the activity rebuild the criterion
+            if (!syncingIncludeSubCategories && listener != null) {
+                listener.onCategorySelected(null, false);
+            }
+        });
+        includeSubCategoriesRow.setVisibility(View.GONE);
+        // Every node is followed by a divider (added by NodeInflater.Builder.create). Insert before
+        // it so the row belongs to the category field; appended at the end it would sit below the
+        // divider and look like part of the next field.
+        layout.addView(includeSubCategoriesRow, layout.indexOfChild(node) + 1);
+    }
+
+    /** In the nested set a leaf has right == left + 1; only a category with children has more. */
+    private static boolean hasSubCategories(Category c) {
+        // id 0 is the root of the tree (borrowed by "No category"); its left/right span every category
+        return c.id != NO_CATEGORY_ID && c.right - c.left > 1;
+    }
+
+    private void updateIncludeSubCategoriesRow() {
+        if (includeSubCategoriesRow == null) return;
+        boolean anyParentChecked = false;
+        for (Category c : categories) {
+            if (c.checked && hasSubCategories(c)) {
+                anyParentChecked = true;
+                break;
+            }
+        }
+        includeSubCategoriesRow.setVisibility(anyParentChecked ? View.VISIBLE : View.GONE);
+    }
+
+    /**
+     * Restores the checkbox from the filter. Values come in (left, right) pairs and a category
+     * without its sub-categories is sent as (left, left), so an equal pair means the box was
+     * unticked. ("0", "0") is the "No category" special case and does not count.
+     *
+     * The state lives in the criterion itself rather than in a separate flag: a filter travels
+     * through Intents and SharedPreferences, and a separate flag could fall out of step with it.
+     */
+    public void applyIncludeSubCategoriesFromFilter(String[] values) {
+        boolean collapsed = false;
+        if (values != null) {
+            for (int i = 0; i + 1 < values.length; i += 2) {
+                if (values[i].equals(values[i + 1]) && !"0".equals(values[i])) {
+                    collapsed = true;
+                    break;
+                }
+            }
+        }
+        setIncludeSubCategories(!collapsed);
+    }
+
+    private void setIncludeSubCategories(boolean include) {
+        includeSubCategories = include;
+        if (includeSubCategoriesCheckBox != null && includeSubCategoriesCheckBox.isChecked() != include) {
+            syncingIncludeSubCategories = true;
+            includeSubCategoriesCheckBox.setChecked(include);
+            syncingIncludeSubCategories = false;
+        }
+    }
+
     private void initAutoCompleteFilter(final AutoCompleteTextView filterTxt) { // init only after it's toggled
         autoCompleteAdapter = TransactionUtils.createCategoryFilterAdapter(activity, db);
         filterTxt.setInputType(InputType.TYPE_CLASS_TEXT 
@@ -310,6 +398,7 @@ public class CategorySelector<A extends AbstractActivity> {
         selectedCategoryId = NO_CATEGORY_ID;
         for (MyEntity e : categories) e.setChecked(false);
         showHideMinusBtn(false);
+        updateIncludeSubCategoriesRow();
         if (listener != null) {
             listener.onCategorySelected(Category.noCategory(), false);
         }
@@ -342,6 +431,7 @@ public class CategorySelector<A extends AbstractActivity> {
                 categoryTextIsEmpty = false;
                 showHideMinusBtn(true);
             }
+            updateIncludeSubCategoriesRow();
         }
     }
     
