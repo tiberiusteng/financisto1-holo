@@ -122,6 +122,7 @@ public abstract class FilterAbstractActivity extends AbstractActivity implements
 		categorySelector.setListener(this);
 		categorySelector.initMultiSelect();
 		categoryTxt = categorySelector.createNode(layout, FILTER);
+		categorySelector.addIncludeSubCategoriesRow(layout);
 	}
 
 	protected void clear(String criteria, TextView textView) {
@@ -344,6 +345,7 @@ public abstract class FilterAbstractActivity extends AbstractActivity implements
 			List<String> checkedLeftIds = getLeftCategoryNodesFromFilter(c);
 			List<Long> catIds = db.getCategoryIdsByLeftIds(checkedLeftIds);
 
+			categorySelector.applyIncludeSubCategoriesFromFilter(c.getValues());
 			categorySelector.updateCheckedEntities(catIds);
 			categorySelector.fillCategoryInUI();
 		}

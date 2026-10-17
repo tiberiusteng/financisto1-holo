@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<!--
+  The row under the category field of a filter: whether sub-categories are included.
+  Shown only when a checked category has children (CategorySelector.updateIncludeSubCategoriesRow).
+
+  wrap_content + layout_gravity=end rather than match_parent: the filter screen uses a dialog
+  theme whose window width is measured from wrap_content, so this row stays out of that measurement.
+-->
+<LinearLayout xmlns:a="http://schemas.android.com/apk/res/android"
+	a:id="@+id/category_include_sub_row"
+	a:layout_width="wrap_content"
+	a:layout_height="wrap_content"
+	a:layout_gravity="end"
+	a:orientation="horizontal"
+	a:gravity="center_vertical"
+	a:paddingLeft="8dp"
+	a:paddingRight="12dp"
+	a:paddingBottom="6dp">
+
+	<CheckBox a:id="@+id/category_include_sub"
+		a:layout_width="wrap_content"
+		a:layout_height="wrap_content"
+		a:minWidth="0dp"
+		a:minHeight="0dp"
+		a:checked="true"
+		a:textAppearance="?android:attr/textAppearanceSmall"
+		a:textColor="?android:attr/textColorSecondary"
+		a:text="@string/filter_include_subcategories" />
+
+</LinearLayout>
