@@ -26,9 +26,16 @@ import tw.tib.financisto.utils.IntegrityCheck;
 public class IntegrityCheckTask extends AsyncTask<IntegrityCheck, Void, IntegrityCheck.Result> {
 
     private final Fragment fragment;
+    /** Whether tapping the banner on this screen fixes the problem or only dismisses the banner; only the hint text depends on it. */
+    private final boolean tapToFix;
 
     public IntegrityCheckTask(Fragment fragment) {
+        this(fragment, false);
+    }
+
+    public IntegrityCheckTask(Fragment fragment, boolean tapToFix) {
         this.fragment = fragment;
+        this.tapToFix = tapToFix;
     }
 
     @Override
@@ -45,7 +52,9 @@ public class IntegrityCheckTask extends AsyncTask<IntegrityCheck, Void, Integrit
             } else {
                 textView.setVisibility(View.VISIBLE);
                 textView.setBackgroundColor(fragment.getResources().getColor(colorForLevel(result.level)));
-                textView.setText(fragment.getString(R.string.integrity_error_message, result.message));
+                textView.setText(fragment.getString(tapToFix
+                        ? R.string.integrity_error_message_fixable
+                        : R.string.integrity_error_message, result.message));
             }
         }
     }

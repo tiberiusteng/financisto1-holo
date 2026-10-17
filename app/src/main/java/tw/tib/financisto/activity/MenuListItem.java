@@ -160,7 +160,7 @@ public enum MenuListItem implements SummaryEntityEnum {
     MENU_INTEGRITY_FIX(R.string.integrity_fix, R.string.integrity_fix_summary, R.drawable.actionbar_flash) {
         @Override
         public void call(Fragment fragment) {
-            new IntegrityFixTask(fragment.getContext()).execute();
+            fixIntegrity(fragment.getContext(), null);
         }
     },
 //    MENU_DONATE(R.string.donate, R.string.donate_summary, R.drawable.actionbar_donate) {
@@ -365,13 +365,25 @@ public enum MenuListItem implements SummaryEntityEnum {
         return false;
     }
 
+    /**
+     * Runs Integrity Fix, the same as the menu item.
+     *
+     * @param onDone run on the main thread when the fix has finished, instead of refreshing
+     *               the current tab of MainActivity; null to keep that default
+     */
+    public static void fixIntegrity(Context context, Runnable onDone) {
+        new IntegrityFixTask(context, onDone).execute();
+    }
+
     private static class IntegrityFixTask extends AsyncTask<Void, Void, Void> {
 
         private final Context context;
+        private final Runnable onDone;
         private ProgressDialog progressDialog;
 
-        IntegrityFixTask(Context context) {
+        IntegrityFixTask(Context context, Runnable onDone) {
             this.context = context;
+            this.onDone = onDone;
         }
 
         @Override
@@ -382,7 +394,9 @@ public enum MenuListItem implements SummaryEntityEnum {
 
         @Override
         protected void onPostExecute(Void o) {
-            if (context instanceof MainActivity) {
+            if (onDone != null) {
+                onDone.run();
+            } else if (context instanceof MainActivity) {
                 ((MainActivity) context).refreshCurrentTab();
             }
             progressDialog.dismiss();
