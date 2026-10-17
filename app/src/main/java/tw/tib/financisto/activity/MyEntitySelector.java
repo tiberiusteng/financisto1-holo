@@ -423,9 +423,41 @@ public abstract class MyEntitySelector<T extends MyEntity, A extends AbstractAct
                 && selectedEntityId == 0)
         {
             String title = autoCompleteFilter.getText().toString();
+            if (title.trim().isEmpty()) {
+                // nothing typed means no entry; findOrInsertEntityByTitle("") returns an unsaved
+                // entity whose id -1 would be stored with the transaction
+                return;
+            }
             T e = em.findOrInsertEntityByTitle(entityClass, title);
             selectEntity(e);
         }
+    }
+
+    /**
+     * Opens the search box with this text in it, as if the user had typed it, but without
+     * the keyboard. The user can edit it; on save, autoCreateNewEntityFromSearch() picks the
+     * entity with that title or creates it. Nothing is written to the database before that.
+     */
+    public void setSearchText(String title) {
+        if (!isShow || autoCompleteFilter == null || node == null) return;
+        if (filterAdapter == null) initAutoCompleteFilter(autoCompleteFilter);
+        if (useSearchAsPrimary) {
+            // the same views as a tap on the node (NodeInflater.withAutoCompleteFilterShowHideView)
+            setViewVisibility(node.findViewById(showListId), View.GONE);
+            setViewVisibility(node.findViewById(filterToggleId), View.VISIBLE);
+            if (enableCreate) setViewVisibility(node.findViewById(createEntityId), View.VISIBLE);
+        } else {
+            // the same as checking the filter toggle (NodeInflater.withAutoCompleteFilter)
+            View toggle = node.findViewById(filterToggleId);
+            if (toggle instanceof ToggleButton) ((ToggleButton) toggle).setChecked(true);
+        }
+        setViewVisibility(node.findViewById(R.id.list_node_row), View.GONE);
+        autoCompleteFilter.setVisibility(View.VISIBLE);
+        autoCompleteFilter.setText(title);
+    }
+
+    private static void setViewVisibility(View v, int visibility) {
+        if (v != null) v.setVisibility(visibility);
     }
 
     private void onNewEntity(Intent data) {
