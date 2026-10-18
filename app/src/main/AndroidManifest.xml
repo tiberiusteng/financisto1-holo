@@ -112,6 +112,14 @@
 			</intent-filter>
 		</service>
 
+		<!-- Same backup as CREATE_BACKUP on IntentService, but can be started from the background -->
+		<service android:name=".service.CreateBackupService" android:exported="true"
+			android:foregroundServiceType="dataSync">
+			<intent-filter>
+				<action android:name="tw.tib.financisto.CREATE_BACKUP" />
+			</intent-filter>
+		</service>
+
 		<service android:name=".service.FinancistoService" android:exported="true"
 			android:permission="android.permission.BIND_JOB_SERVICE">
 	    <intent-filter>
