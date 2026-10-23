@@ -216,7 +216,8 @@ public abstract class MyEntitySelector<T extends MyEntity, A extends AbstractAct
         filterTxt.setOnFocusChangeListener((view, hasFocus) -> {
             if (hasFocus) {
                 filterTxt.setAdapter(filterAdapter);
-                filterTxt.selectAll();
+                // search first: the box holds the title to edit, so keep the cursor at its end
+                if (!useSearchAsPrimary) filterTxt.selectAll();
             }
         });
         filterTxt.setOnItemClickListener((parent, view, position, id) -> {
