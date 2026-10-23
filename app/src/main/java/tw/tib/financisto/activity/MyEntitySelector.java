@@ -57,8 +57,6 @@ public abstract class MyEntitySelector<T extends MyEntity, A extends AbstractAct
     private AutoCompleteTextView autoCompleteFilter;
     private SimpleCursorAdapter filterAdapter;
     private List<T> entities = Collections.emptyList();
-    // the text the search box was opened with by a tap; null once a selection is made
-    private String searchBoxOpenedWith;
     private ListAdapter adapter = null;
     private boolean enabled = true;
     private boolean loaded = false;
@@ -237,8 +235,8 @@ public abstract class MyEntitySelector<T extends MyEntity, A extends AbstractAct
                 if (filterAdapter == null) initAutoCompleteFilter(autoCompleteFilter);
                 // open the search box with the current entity's title so it can be edited;
                 // empty when nothing is selected
-                searchBoxOpenedWith = selectedEntityTitle();
-                autoCompleteFilter.setText(searchBoxOpenedWith);
+                // false: no dropdown for the text set here, only for what the user types
+                autoCompleteFilter.setText(selectedEntityTitle(), false);
             } else {
                 pickEntity();
             }
@@ -267,7 +265,6 @@ public abstract class MyEntitySelector<T extends MyEntity, A extends AbstractAct
     }
 
     private void clearSelection() {
-        searchBoxOpenedWith = null;
         if (text != null) {
             text.setText(defaultValueResId);
         }
@@ -403,7 +400,6 @@ public abstract class MyEntitySelector<T extends MyEntity, A extends AbstractAct
 
     private void selectEntity(T e) {
         if (isShow) {
-            searchBoxOpenedWith = null;
             if (e == null) {
                 clearSelection();
             } else {
@@ -441,8 +437,8 @@ public abstract class MyEntitySelector<T extends MyEntity, A extends AbstractAct
                 // entity whose id -1 would be stored with the transaction
                 return;
             }
-            // the box opens with the selected entity's title; only text changed since then counts
-            if (selectedEntityId != 0 && (searchBoxOpenedWith == null || title.equals(searchBoxOpenedWith))) return;
+            // the box opens with the selected entity's title; only changed text counts
+            if (selectedEntityId != 0 && title.equals(selectedEntityTitle())) return;
             T e = em.findOrInsertEntityByTitle(entityClass, title);
             selectEntity(e);
         }
