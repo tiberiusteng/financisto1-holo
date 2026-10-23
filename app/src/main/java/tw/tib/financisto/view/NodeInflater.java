@@ -236,8 +236,10 @@ public class NodeInflater {
 					createEntityButton.setVisibility(VISIBLE);
 				}
 				v.findViewById(R.id.list_node_row).setVisibility(GONE);
-				autoCompleteTxt.setText("");
+				// the box text (empty or the current entity's title) is set by listener.onClick above
 				Utils.openSoftKeyboard(autoCompleteTxt, layout.getContext());
+				// gaining focus selects all; keep the cursor at the end so the text can be edited at once
+				autoCompleteTxt.setSelection(autoCompleteTxt.length());
 			});
 
 			clearButton.setId(hideViewId);
