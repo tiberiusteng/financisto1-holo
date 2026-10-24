@@ -60,6 +60,7 @@ import java.text.DateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
 
 import static tw.tib.financisto.activity.RequestPermission.isRequestingPermission;
@@ -87,10 +88,22 @@ public abstract class AbstractTransactionActivity extends AbstractActivity imple
 	public static final String DATETIME_EXTRA = "dateTimeExtra";
 	public static final String NEW_FROM_TEMPLATE_EXTRA = "newFromTemplateExtra";
 	public static final String TAGS_EXTRA = "tags";
+	/** The form-independent entry carried by a switch between the transaction forms, see {@link FormSwitch}. */
+	public static final String FORM_SWITCH_ORIGIN_EXTRA = "formSwitchOrigin";
+	/** Id of the existing transaction being switched: saving updates it in place (same id) instead of adding one. */
+	public static final String FORM_SWITCH_REPLACES_EXTRA = "formSwitchReplaces";
 
 	private static final int RECURRENCE_REQUEST = 4003;
 	private static final int NOTIFICATION_REQUEST = 4004;
 	private static final int PICTURE_REQUEST = 4005;
+
+	/** The origin this form was switched to with; {@code null} = not opened by a switch. */
+	private FormSwitch.Origin switchOrigin;
+	/** The form as read once loaded and its category applied (normalised): the baseline for "changed". */
+	private FormSwitch.Origin switchBaseline;
+	/** The existing transaction being switched ({@link #FORM_SWITCH_REPLACES_EXTRA}). */
+	private long switchReplacesId = -1;
+	private FormKindBar kindBar;
 
 	private static final TransactionStatus[] statuses = TransactionStatus.values();
 
@@ -247,6 +260,13 @@ public abstract class AbstractTransactionActivity extends AbstractActivity imple
 				applyPayeeLastCategory(prefill);
 				applyCategoryLastUsed(prefill);
 			}
+			if (intent.hasExtra(FORM_SWITCH_ORIGIN_EXTRA)) {
+				// switched from another form: show the origin as this kind of form holds it
+				switchOrigin = (FormSwitch.Origin) intent.getSerializableExtra(FORM_SWITCH_ORIGIN_EXTRA);
+				switchReplacesId = intent.getLongExtra(FORM_SWITCH_REPLACES_EXTRA, -1);
+				transaction = FormSwitch.project(switchOrigin, kindForIntent(intent),
+						intent.getLongExtra(TransactionActivity.CURRENT_BALANCE_EXTRA, 0));
+			}
 			transaction.isTemplate = intent.getIntExtra(TEMPLATE_EXTRA, transaction.isTemplate);
 		}
 
@@ -359,7 +379,9 @@ public abstract class AbstractTransactionActivity extends AbstractActivity imple
 		Button bSave = findViewById(R.id.bSave);
 		bSave.setOnClickListener(arg0 -> saveAndFinish());
 
-		final boolean isEdit = transaction.id > 0;
+		// a form switched from an existing transaction is an edit too: this button cancels and
+		// leaves the transaction as it was
+		final boolean isEdit = transaction.id > 0 || switchReplacesId > 0;
 		Button bSaveAndNew = findViewById(R.id.bSaveAndNew);
 		if (isEdit) {
 			bSaveAndNew.setText(R.string.cancel);
@@ -376,14 +398,16 @@ public abstract class AbstractTransactionActivity extends AbstractActivity imple
 						// TAGS only keeps them, as before
 						IntentTransactionProcessor.removePrefillExtras(intent);
 					}
+					prepareIntentForNext(intent);
 					startActivityForResult(intent, -1);
 				}
 			}
 		});
 
-		if (transactionId != -1) {
+		if (transactionId != -1 || switchOrigin != null) {
 			isOpenCalculatorForTemplates &= isNewFromTemplate;
 			editTransaction(transaction);
+			if (switchOrigin != null) onFormSwitchLoaded(switchOrigin);
 		} else if (prefill != null) {
 			editPrefilledTransaction(prefill);
 		} else {
@@ -448,6 +472,9 @@ public abstract class AbstractTransactionActivity extends AbstractActivity imple
 			});
 		}
 
+		installFormKindBar();
+		if (switchOrigin != null) captureSwitchBaselineWhenSettled(0);
+
 		long t1 = System.currentTimeMillis();
 		Log.i("TransactionActivity", "onCreate " + (t1 - t0) + "ms");
 	}
@@ -482,6 +509,12 @@ public abstract class AbstractTransactionActivity extends AbstractActivity imple
 
 	private long save() {
 		if (onOKClicked()) {
+			// An existing transaction switched to another kind: a transaction and a transfer differ only
+			// in to_account_id, so it is updated in place and keeps its id; updateTransaction recalculates
+			// the account totals and running balances from the old and the new version
+			if (switchReplacesId > 0) {
+				transaction.id = switchReplacesId;
+			}
 			boolean isNew = transaction.id == -1;
 			long id = db.insertOrUpdate(transaction, getAttributes());
 			if (isNew) {
@@ -491,6 +524,171 @@ public abstract class AbstractTransactionActivity extends AbstractActivity imple
 			return id;
 		}
 		return -1;
+	}
+
+	// ---------------- switching between transaction, transfer and update balance ----------------
+
+	/** Whether this form was opened by a switch from another form (it then carries the entry in {@link #transaction}). */
+	protected boolean isOpenedBySwitch() {
+		return switchOrigin != null;
+	}
+
+	/** Which kind of form this is. */
+	protected FormSwitch.Kind formKind() {
+		return FormSwitch.Kind.TRANSACTION;
+	}
+
+	/** The kind of form the intent opens (used early in onCreate, before subclass state exists). */
+	private FormSwitch.Kind kindForIntent(Intent intent) {
+		if (this instanceof TransferActivity) return FormSwitch.Kind.TRANSFER;
+		return intent.hasExtra(TransactionActivity.CURRENT_BALANCE_EXTRA)
+				? FormSwitch.Kind.BALANCE : FormSwitch.Kind.TRANSACTION;
+	}
+
+	/**
+	 * The form as it is (no validation, no saving), in the shape it would be saved: a copy of
+	 * {@link #transaction} updated from the UI, so fields the form does not show (project, payee
+	 * hidden by preferences, ...) keep their values. Subclasses fill in the accounts and amounts.
+	 */
+	protected Transaction readFormForSwitch() {
+		Transaction t = transaction.clone();
+		t.splits = null;
+		updateTransactionFromUI(t);
+		HashMap<Long, String> attrs = new HashMap<>();
+		for (TransactionAttribute a : categorySelector.getAttributes()) {
+			attrs.put(a.attributeId, a.value);
+		}
+		t.categoryAttributes = attrs;
+		return t;
+	}
+
+	/** Whether the form has split parts (no switching to a transfer). TransactionActivity overrides. */
+	protected boolean hasSplitsForSwitch() {
+		return false;
+	}
+
+	/** Adjustments after a switched-to form has loaded (such as the direction of a zero amount). */
+	protected void onFormSwitchLoaded(FormSwitch.Origin origin) {
+	}
+
+	private Boolean transferInflowHint() {
+		return switchOrigin != null ? Boolean.valueOf(Boolean.TRUE.equals(switchOrigin.inflow)) : null;
+	}
+
+	private FormSwitch.Origin readCanonical() {
+		return FormSwitch.canonical(formKind(), readFormForSwitch(), rateView.isIncomeSelected(), transferInflowHint());
+	}
+
+	/** This form's origin: for a switched-to form, the origin with the fields changed here; otherwise the form as it is. */
+	private FormSwitch.Origin currentOrigin() {
+		if (switchOrigin == null) return readCanonical();
+		// no baseline yet = the form is still loading, so nothing can have been edited
+		if (switchBaseline == null) return switchOrigin.copy();
+		return FormSwitch.merge(switchOrigin, switchBaseline, readCanonical());
+	}
+
+	/**
+	 * Reads the baseline once the category is applied (the form adjusts the attribute fields,
+	 * the split section and the income/expense button at that moment); waits up to about two seconds.
+	 */
+	private void captureSwitchBaselineWhenSettled(int attempt) {
+		getWindow().getDecorView().postDelayed(() -> {
+			if (isFinishing()) return;
+			if (!categorySelector.isSettled() && attempt < 40) {
+				captureSwitchBaselineWhenSettled(attempt + 1);
+				return;
+			}
+			switchBaseline = readCanonical();
+		}, attempt == 0 ? 0 : 50);
+	}
+
+	/** The existing transaction being edited, as stored (before saving); null for a new one. */
+	private Transaction existingInDb;
+
+	/**
+	 * The "current balance" for the update balance form: the account total minus what the
+	 * transaction being edited contributes to that account (the total for a new transaction).
+	 * See {@link FormSwitch#balanceExcluding}.
+	 */
+	protected long balanceExcludingThis(Account a) {
+		long id = transaction.id > 0 ? transaction.id : switchReplacesId;
+		if (id > 0 && existingInDb == null) {
+			existingInDb = db.getTransaction(id);
+		}
+		Transaction e = id > 0 ? existingInDb : null;
+		if (e == null) return a.totalAmount;
+		return FormSwitch.balanceExcluding(a.totalAmount, a.id,
+				e.fromAccountId, e.toAccountId, e.fromAmount, e.toAmount);
+	}
+
+	/** The tabs in the title bar. Templates, schedules and split parts keep their own titles. */
+	private void installFormKindBar() {
+		if (transaction.isTemplateLike() || transaction.parentId > 0) return;
+		FormKindBar bar = new FormKindBar(this, formKind(), this::onFormKindTapped);
+		if (bar.install()) {
+			kindBar = bar;
+			refreshFormKindBar();
+		}
+	}
+
+	/** Greys out the kinds that cannot be switched to. Called again when the category changes (split or not). */
+	protected void refreshFormKindBar() {
+		if (kindBar == null) return;
+		boolean splits = hasSplitsForSwitch();
+		boolean locked = isPreventEditing();
+		for (FormSwitch.Kind k : FormSwitch.Kind.values()) {
+			kindBar.setAvailable(k, !locked && FormSwitch.check(k, splits) == null);
+		}
+	}
+
+	private void onFormKindTapped(FormSwitch.Kind target) {
+		// unavailable tabs are greyed out and not tappable; this only double-checks
+		if (target == formKind() || isPreventEditing()
+				|| FormSwitch.check(target, hasSplitsForSwitch()) != null) {
+			return;
+		}
+		launchFormSwitch(target, currentOrigin());
+	}
+
+	/** Opens the target form with the origin and replaces this one (the result goes to whoever opened the first form). */
+	private void launchFormSwitch(FormSwitch.Kind target, FormSwitch.Origin origin) {
+		Intent intent = new Intent(this,
+				target == FormSwitch.Kind.TRANSFER ? TransferActivity.class : TransactionActivity.class);
+		intent.putExtra(FORM_SWITCH_ORIGIN_EXTRA, origin);
+		long replaces = transaction.id > 0 ? transaction.id : switchReplacesId;
+		if (replaces > 0) intent.putExtra(FORM_SWITCH_REPLACES_EXTRA, replaces);
+		if (target == FormSwitch.Kind.BALANCE) {
+			// for an existing transaction the current balance excludes the transaction itself,
+			// otherwise saving would count it twice
+			Account a = origin.account > 0 ? db.getAccount(origin.account) : null;
+			intent.putExtra(TransactionActivity.CURRENT_BALANCE_EXTRA, a != null ? balanceExcludingThis(a) : 0L);
+			if (a != null) intent.putExtra(ACCOUNT_ID_EXTRA, a.id);
+		}
+		intent.addFlags(Intent.FLAG_ACTIVITY_FORWARD_RESULT);
+		startActivity(intent);
+		overridePendingTransition(0, 0);
+		// close this form: switching back and forth never stacks forms, and without the animations
+		// it looks like the form changed in place
+		finish();
+		overridePendingTransition(0, 0);
+	}
+
+	/**
+	 * Prepares the intent before "Save & new" reopens this screen: drops what a switch brought
+	 * (the next entry starts empty), and in update balance mode takes the balance just saved as the
+	 * current balance (the old value would shift the difference by what was just saved).
+	 */
+	private void prepareIntentForNext(Intent intent) {
+		intent.removeExtra(FORM_SWITCH_ORIGIN_EXTRA);
+		intent.removeExtra(FORM_SWITCH_REPLACES_EXTRA);
+		intent.setFlags(intent.getFlags() & ~Intent.FLAG_ACTIVITY_FORWARD_RESULT);
+		if (intent.hasExtra(TransactionActivity.CURRENT_BALANCE_EXTRA)) {
+			Account a = db.getAccount(transaction.fromAccountId);
+			if (a != null) {
+				intent.putExtra(ACCOUNT_ID_EXTRA, a.id);
+				intent.putExtra(TransactionActivity.CURRENT_BALANCE_EXTRA, a.totalAmount);
+			}
+		}
 	}
 
 	private List<TransactionAttribute> getAttributes() {
@@ -682,6 +880,7 @@ public abstract class AbstractTransactionActivity extends AbstractActivity imple
 			}
 		}
 		projectSelector.setNodeVisible(!category.isSplit());
+		refreshFormKindBar();
 	}
 
 	protected void addOrRemoveSplits() {
@@ -901,6 +1100,7 @@ public abstract class AbstractTransactionActivity extends AbstractActivity imple
 		}
 
 		updateUIforPreventEditing();
+		refreshFormKindBar();
 	}
 
 	protected void commonEditTransaction(Transaction transaction) {

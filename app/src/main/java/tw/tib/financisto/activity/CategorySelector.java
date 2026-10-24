@@ -53,6 +53,8 @@ public class CategorySelector<A extends AbstractActivity> {
 
     private View node = null;
     private boolean loaded = false;
+    /** Category selections sent to the background and not yet applied on the main thread (see {@link #isSettled}). */
+    private int pendingSelections = 0;
     private long toSelectCategoryId = NO_CATEGORY_ID;
     private boolean toSelectLast = true;
 
@@ -458,29 +460,48 @@ public class CategorySelector<A extends AbstractActivity> {
             if (listener != null) listener.onCategorySelected(null, false);
         } else {
             if (selectedCategoryId != categoryId) {
+                synchronized (this) {
+                    pendingSelections++;
+                }
                 Application.getExecutor().execute(() -> {
                     Category category = db.getCategoryWithParent(categoryId);
                     List<String> tree = (category == null ? null : db.getFullCategoryPath(category));
                     selectedCategoryId = categoryId;
                     new Handler(Looper.getMainLooper()).post(() -> {
-                        showHideMinusBtn(true);
-                        Log.d(TAG, "selectCategory categoryId=" + categoryId);
-                        categoryTextIsEmpty = false;
-                        if (categoryId == NO_CATEGORY_ID) {
-                            clearCategory();
-                            return;
+                        try {
+                            showHideMinusBtn(true);
+                            Log.d(TAG, "selectCategory categoryId=" + categoryId);
+                            categoryTextIsEmpty = false;
+                            if (categoryId == NO_CATEGORY_ID) {
+                                clearCategory();
+                                return;
+                            }
+                            else if (categoryId == SPLIT_CATEGORY_ID) {
+                                categoryText.setText(R.string.split);
+                            }
+                            else if (tree != null) {
+                                categoryText.setText(String.join(" / ", tree));
+                            }
+                            if (listener != null) listener.onCategorySelected(category, selectLast);
+                        } finally {
+                            synchronized (CategorySelector.this) {
+                                pendingSelections--;
+                            }
                         }
-                        else if (categoryId == SPLIT_CATEGORY_ID) {
-                            categoryText.setText(R.string.split);
-                        }
-                        else if (tree != null) {
-                            categoryText.setText(String.join(" / ", tree));
-                        }
-                        if (listener != null) listener.onCategorySelected(category, selectLast);
                     });
                 });
             }
         }
+    }
+
+    /**
+     * The category list is loaded and no selection is still being applied in the background.
+     * Categories are applied asynchronously, and the form adjusts the attribute fields, the split
+     * section and the income/expense button only when that happens; reading "the form as loaded"
+     * has to wait until this returns true.
+     */
+    public synchronized boolean isSettled() {
+        return loaded && pendingSelections == 0;
     }
 
     public void updateCheckedEntities(String checkedCommaIds) {
