@@ -216,7 +216,8 @@ public abstract class MyEntitySelector<T extends MyEntity, A extends AbstractAct
         filterTxt.setOnFocusChangeListener((view, hasFocus) -> {
             if (hasFocus) {
                 filterTxt.setAdapter(filterAdapter);
-                filterTxt.selectAll();
+                // search first: the box holds the title to edit, so keep the cursor at its end
+                if (!useSearchAsPrimary) filterTxt.selectAll();
             }
         });
         filterTxt.setOnItemClickListener((parent, view, position, id) -> {
@@ -233,6 +234,10 @@ public abstract class MyEntitySelector<T extends MyEntity, A extends AbstractAct
             Log.d(TAG, "onClick Layout");
             if (useSearchAsPrimary) {
                 if (filterAdapter == null) initAutoCompleteFilter(autoCompleteFilter);
+                // open the search box with the current entity's title so it can be edited;
+                // empty when nothing is selected
+                // false: no dropdown for the text set here, only for what the user types
+                autoCompleteFilter.setText(selectedEntityTitle(), false);
             } else {
                 pickEntity();
             }
@@ -252,6 +257,12 @@ public abstract class MyEntitySelector<T extends MyEntity, A extends AbstractAct
         } else if (id == clearBtnId) {
             clearSelection();
         }
+    }
+
+    private String selectedEntityTitle() {
+        if (selectedEntityId <= 0) return "";
+        T e = MyEntity.find(entities, selectedEntityId);
+        return e != null ? e.title : "";
     }
 
     private void clearSelection() {
@@ -419,8 +430,7 @@ public abstract class MyEntitySelector<T extends MyEntity, A extends AbstractAct
 
     protected void autoCreateNewEntityFromSearch() {
         if (autoCompleteFilter != null
-                && autoCompleteFilter.getVisibility() == View.VISIBLE
-                && selectedEntityId == 0)
+                && autoCompleteFilter.getVisibility() == View.VISIBLE)
         {
             String title = autoCompleteFilter.getText().toString();
             if (title.trim().isEmpty()) {
@@ -428,6 +438,8 @@ public abstract class MyEntitySelector<T extends MyEntity, A extends AbstractAct
                 // entity whose id -1 would be stored with the transaction
                 return;
             }
+            // the box opens with the selected entity's title; only changed text counts
+            if (selectedEntityId != 0 && title.equals(selectedEntityTitle())) return;
             T e = em.findOrInsertEntityByTitle(entityClass, title);
             selectEntity(e);
         }
