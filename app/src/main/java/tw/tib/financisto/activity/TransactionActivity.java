@@ -767,7 +767,11 @@ public class TransactionActivity extends AbstractTransactionActivity {
 
     private void setSplitDataTransaction(Transaction split, TextView label, TextView data, TextView secondary) {
         Category category = db.getCategory(split.categoryId);
-        String payee = split.payeeId < 1 ? null : db.get(Payee.class, split.payeeId).title;
+        String payee = null;
+        if (split.payeeId > 0) {
+            var entity = db.get(Payee.class, split.payeeId);
+            if (entity != null) payee = entity.title;
+        }
         label.setText(transactionTitleUtils.generateTransactionTitle(
                 false, payee, null, null, split.tags, null,
                 split.categoryId, category.title));
