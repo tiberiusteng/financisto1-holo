@@ -69,6 +69,8 @@ public class TransactionActivity extends AbstractTransactionActivity {
     private TextView differenceText;
     private boolean isUpdateBalanceMode = false;
     private long currentBalance;
+    /** The account currentBalance belongs to (-1 = opened without an account, not known yet). */
+    private long currentBalanceAccountId = -1;
 
     private LinearLayout splitsLayout;
     private LinearLayout unsplitContainer;
@@ -102,6 +104,7 @@ public class TransactionActivity extends AbstractTransactionActivity {
         if (intent != null) {
             if (intent.hasExtra(CURRENT_BALANCE_EXTRA)) {
                 currentBalance = intent.getLongExtra(CURRENT_BALANCE_EXTRA, 0);
+                currentBalanceAccountId = intent.getLongExtra(ACCOUNT_ID_EXTRA, -1);
                 isUpdateBalanceMode = true;
             } else if (intent.hasExtra(AMOUNT_EXTRA)) {
                 currentBalance = intent.getLongExtra(AMOUNT_EXTRA, 0);
@@ -223,6 +226,62 @@ public class TransactionActivity extends AbstractTransactionActivity {
         // differ by the "_id >= 0" filter, and SPLIT_CATEGORY_ID (-1) is the only negative id.
         // Splits hang off the difference, see calculateUnsplitAmount().
         categorySelector.fetchCategories(true);
+    }
+
+    @Override
+    protected FormSwitch.Kind formKind() {
+        return isUpdateBalanceMode ? FormSwitch.Kind.BALANCE : FormSwitch.Kind.TRANSACTION;
+    }
+
+    /** The form as it is: in update balance mode the amount is the difference; a foreign currency keeps its original amount; a split brings its parts. */
+    @Override
+    protected Transaction readFormForSwitch() {
+        Transaction t = super.readFormForSwitch();
+        t.fromAccountId = selectedAccount != null ? selectedAccount.id : 0;
+        t.toAccountId = 0;
+        t.toAmount = 0;
+        long amount = rateView.getFromAmount();
+        if (isUpdateBalanceMode) {
+            t.fromAmount = amount - currentBalance;
+            t.originalCurrencyId = 0;
+            t.originalFromAmount = 0;
+        } else if (selectedAccount != null && isDifferentCurrency()) {
+            t.originalCurrencyId = selectedOriginCurrencyId;
+            t.originalFromAmount = amount;
+            t.fromAmount = rateView.getToAmount();
+        } else {
+            t.fromAmount = amount;
+            t.originalCurrencyId = 0;
+            t.originalFromAmount = 0;
+        }
+        t.splits = categorySelector.isSplitCategorySelected() ? new ArrayList<>(splits.values()) : null;
+        return t;
+    }
+
+    @Override
+    protected boolean hasSplitsForSwitch() {
+        return categorySelector.isSplitCategorySelected();
+    }
+
+    /**
+     * Update balance mode: always sets the new balance, since loading only fills a non-zero amount
+     * and a new balance of exactly 0 would leave the field at the current balance (difference 0).
+     * Transaction: with a zero amount the form cannot show the direction (and flips it by category
+     * while loading), so the origin sets it.
+     */
+    @Override
+    protected void onFormSwitchLoaded(FormSwitch.Origin origin) {
+        if (isUpdateBalanceMode) {
+            rateView.setFromAmount(currentBalance + origin.signedAmount());
+            return;
+        }
+        if (origin.amount == 0 && origin.inflow != null) {
+            if (origin.inflow) {
+                rateView.setIncome();
+            } else {
+                rateView.setExpense();
+            }
+        }
     }
 
     @Override
@@ -422,10 +481,16 @@ public class TransactionActivity extends AbstractTransactionActivity {
     }
 
     private void fetchSplits() {
-        List<Transaction> splits = db.getSplitsForTransaction(transaction.id);
+        // a form opened by a switch is not in the database (id -1); its parts come with the entry
+        List<Transaction> splits = isOpenedBySwitch()
+                ? (transaction.splits != null ? transaction.splits : new ArrayList<>())
+                : db.getSplitsForTransaction(transaction.id);
         for (Transaction split : splits) {
-            // fetch attributes with original in-database id
-            split.categoryAttributes = db.getAllAttributesForTransaction(split.id);
+            // fetch attributes with original in-database id (parts carried by a switch have
+            // temporary negative ids and already hold their attributes)
+            if (split.id > 0) {
+                split.categoryAttributes = db.getAllAttributesForTransaction(split.id);
+            }
             // we are going to recreate them with order
             split.id = --idSequence;
             // TODO split transactions with foreign currency
@@ -501,8 +566,21 @@ public class TransactionActivity extends AbstractTransactionActivity {
             // account that is selected *now*. currentBalance was only read from the intent
             // once, so after switching accounts the difference was still computed against
             // the balance of the account the form was opened with.
-            if (isUpdateBalanceMode && selectedAccount != null && a.id != selectedAccount.id) {
-                currentBalance = a.totalAmount;
+            // Compared with the account currentBalance belongs to rather than the previously
+            // selected one: a form opened without an account (switched from a transaction that had
+            // none) must take the balance of the first account chosen, not keep 0.
+            if (isUpdateBalanceMode && a.id != currentBalanceAccountId) {
+                boolean balanceWasUnknown = currentBalanceAccountId <= 0;
+                long difference = rateView.getFromAmount() - currentBalance;
+                // for an existing transaction, excluding what it contributes to that account
+                currentBalance = balanceExcludingThis(a);
+                currentBalanceAccountId = a.id;
+                if (balanceWasUnknown) {
+                    // while the balance was unknown, the meaningful number on the form is the
+                    // difference (the amount switched from a transaction): keep it, and let the
+                    // new balance follow the account
+                    rateView.setFromAmount(currentBalance + difference);
+                }
                 if (differenceText != null) {
                     u.setAmountText(differenceText, rateView.getCurrencyFrom(),
                             rateView.getFromAmount() - currentBalance, true);
