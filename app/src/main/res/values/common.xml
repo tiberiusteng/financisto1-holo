@@ -194,6 +194,8 @@
 	<string name="card_issuer_nets" translatable="false">NETS</string>
 	<string name="card_issuer_rupay" translatable="false">RuPay</string>
 	<string name="openexchangerates_app_id" translatable="false">OpenExchangeRates App ID</string>
+	<string name="frankfurter_api_url" translatable="false">Frankfurter API URL</string>
+	<string name="frankfurter_api_url_summary" translatable="false">Used by the AllRatesToday provider. Leave empty for its default, or point it at another Frankfurter API such as https://api.frankfurter.dev/v1</string>
 	<string name="recur_rrule" translatable="false">RFC-2445 RRULE</string>
 	<dimen name="category_padding">10dp</dimen>
 	<dimen name="transaction_icon_padding">10dp</dimen>
@@ -256,12 +258,14 @@
 		<item>OpenExchangeRates</item>
 		<item>FreeCurrency</item>
 		<item>FloatRates</item>
+		<item>AllRatesToday (ECB, with history)</item>
 	</string-array>
 
 	<string-array name="exchange_rate_provider_values">
 		<item>openexchangerates</item>
 		<item>freeCurrency</item>
 		<item>floatRates</item>
+		<item>allRatesToday</item>
 	</string-array>
 
 	<string-array name="pref_transaction_statuses">

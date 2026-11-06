@@ -296,6 +296,12 @@
             android:key="openexchangerates_app_id"
             android:summary="@string/openexchangerates_app_id_summary"
             android:title="@string/openexchangerates_app_id" />
+        <EditTextPreference
+            app:singleLineTitle="false"
+            android:inputType="textUri"
+            android:key="frankfurter_api_url"
+            android:summary="@string/frankfurter_api_url_summary"
+            android:title="@string/frankfurter_api_url" />
     </PreferenceCategory>
 
     <PreferenceCategory android:title="@string/sort_order">

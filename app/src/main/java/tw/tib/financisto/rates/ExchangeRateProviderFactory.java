@@ -40,6 +40,13 @@ public enum ExchangeRateProviderFactory {
         public ExchangeRateProvider createProvider(SharedPreferences sharedPreferences, Context context) {
             return new FloatRatesDownloader(createDefaultWrapper(), context);
         }
+    },
+    allRatesToday(){
+        @Override
+        public ExchangeRateProvider createProvider(SharedPreferences sharedPreferences, Context context) {
+            String baseUrl = sharedPreferences.getString("frankfurter_api_url", "");
+            return new AllRatesTodayDownloader(createDefaultWrapper(), baseUrl, context);
+        }
     };
 
     public abstract ExchangeRateProvider createProvider(SharedPreferences sharedPreferences, Context context);
